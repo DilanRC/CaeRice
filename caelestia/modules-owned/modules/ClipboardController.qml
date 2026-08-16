@@ -10,6 +10,16 @@ import qs.services
 Scope {
     id: root
 
+    function anyOpen(): bool {
+        for (const screen of Screens.screens) {
+            const state = ShellState.forScreen(screen);
+            if (state?.clipboard)
+                return true;
+        }
+
+        return false;
+    }
+
     function closeAll(): void {
         for (const screen of Screens.screens) {
             const state = ShellState.forScreen(screen);
@@ -45,11 +55,9 @@ Scope {
     }
 
     function toggle(): void {
-        const state = ShellState.forActive();
-        if (!state)
-            return;
-
-        if (state.clipboard) {
+        // The focused surface can move to another monitor once the drawer opens.
+        // Do not rely on forActive() to decide whether Clipboard is already open.
+        if (anyOpen()) {
             closeAll();
             return;
         }
@@ -81,8 +89,7 @@ Scope {
         }
 
         function isOpen(): bool {
-            const state = ShellState.forActive();
-            return state?.clipboard ?? false;
+            return root.anyOpen();
         }
     }
 }
