@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia.Config
 import qs.components
 
 Item {
@@ -11,7 +10,8 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
 
-    readonly property bool shouldBeActive: screenState.clipboard
+    readonly property bool shouldBeActive:
+        screenState.clipboard
 
     visible: shouldBeActive
     opacity: shouldBeActive ? 1 : 0
@@ -19,33 +19,41 @@ Item {
     transformOrigin: Item.Center
 
     Behavior on opacity {
-        NumberAnimation { duration: 110 }
+        NumberAnimation {
+            duration: 110
+        }
     }
 
     Behavior on scale {
         NumberAnimation {
             duration: 110
-            easing.type: Easing.OutCubic
         }
     }
 
-    // ContentWindow already supplies the global drawer scrim. This additional
-    // scheme-aware veil is deliberately subtle: it gives the clipboard visual
-    // focus without hard-coding a black rectangle that fights light schemes.
+    /*
+     * Only the desktop scrim is translucent. Content.qml owns a fully opaque
+     * adaptive dark panel, so bright wallpapers cannot bleed through it.
+     */
     Rectangle {
         anchors.fill: parent
-        color: Colours.palette.m3scrim
-        opacity: 0.10
+        color:
+            Qt.alpha(
+                Colours.palette.m3scrim,
+                Colours.light ? 0.20 : 0.15
+            )
         visible: root.shouldBeActive
     }
 
     Loader {
         id: contentLoader
+
         anchors.fill: parent
 
-        // Clipboard has no independent process. Destroy the heavy Content tree
-        // as soon as the drawer closes so FileView/ListView/image delegates stop
-        // consuming resources while hidden.
+        /*
+         * No hidden clipboard tree: closing the drawer destroys FileView,
+         * ListView and image preview delegates. The Clipse listener remains
+         * the lightweight history backend for the whole session.
+         */
         active: root.shouldBeActive
 
         sourceComponent: Content {
