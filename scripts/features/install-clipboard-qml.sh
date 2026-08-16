@@ -11,6 +11,7 @@ LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/clipboard-qml-$STAMP"
+STAGE="$BACKUP/stage"
 SRC="$REPO/caelestia/modules-owned/modules"
 
 for f in \
@@ -37,14 +38,16 @@ sudo cp "$LIVE/modules/drawers/ContentWindow.qml" "$BACKUP/modules/drawers/Conte
 sudo cp "$LIVE/modules/drawers/Panels.qml" "$BACKUP/modules/drawers/Panels.qml"
 cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
 sudo chown -R "$USER:$(id -gn)" "$BACKUP"
+mkdir -p "$STAGE/components" "$STAGE/modules/drawers" "$STAGE/user-config"
 
-export LIVE USERCFG
+export LIVE USERCFG STAGE
 python3 <<'PY'
 from pathlib import Path
 import os
 
 live = Path(os.environ["LIVE"])
 usercfg = Path(os.environ["USERCFG"])
+stage = Path(os.environ["STAGE"])
 
 targets = {
     "screen": live / "components/ScreenState.qml",
@@ -55,15 +58,12 @@ targets = {
 }
 texts = {k: p.read_text(encoding="utf-8") for k, p in targets.items()}
 
-ops = []
-
 def plan(key, old, new, marker):
     text = texts[key]
     if marker in text:
         return
     if old not in text:
         raise SystemExit(f"PREFLIGHT ERROR [{key}]: no encontré el contexto esperado para {marker}")
-    ops.append((key, old, new))
     texts[key] = text.replace(old, new, 1)
 
 plan(
@@ -153,12 +153,29 @@ if clipboard_bind not in texts["user"]:
         1,
     )
 
-# Preflight completo: solo ahora escribimos.
-for key, path in targets.items():
+# Todo se genera primero en un staging propiedad del usuario. No intentamos
+# escribir directamente en /etc desde Python.
+out = {
+    "screen": stage / "components/ScreenState.qml",
+    "shell": stage / "shell.qml",
+    "panels": stage / "modules/drawers/Panels.qml",
+    "content": stage / "modules/drawers/ContentWindow.qml",
+    "user": stage / "user-config/hypr-user.lua",
+}
+for key, path in out.items():
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(texts[key], encoding="utf-8")
 
-print("Native integration patched successfully")
+print("Native integration staged successfully")
 PY
+
+# Solo después de que TODO el preflight y staging terminó correctamente,
+# instalamos los archivos root-owned de forma controlada.
+sudo install -m 0644 "$STAGE/shell.qml" "$LIVE/shell.qml"
+sudo install -m 0644 "$STAGE/components/ScreenState.qml" "$LIVE/components/ScreenState.qml"
+sudo install -m 0644 "$STAGE/modules/drawers/Panels.qml" "$LIVE/modules/drawers/Panels.qml"
+sudo install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/ContentWindow.qml"
+install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
 
 sudo install -m 0644 "$SRC/ClipboardController.qml" "$LIVE/modules/ClipboardController.qml"
 sudo mkdir -p "$LIVE/modules/clipboard"
