@@ -1,0 +1,48 @@
+--- a/modules/drawers/ContentWindow.qml
++++ b/modules/drawers/ContentWindow.qml
+@@ -62,15 +62,16 @@
+         screenState.launcher = false;
+         screenState.session = false;
+         screenState.dashboard = false;
++        screenState.overview = false;
+         panels.popouts.close();
+     }
+ 
+     name: "drawers"
+     WlrLayershell.exclusionMode: ExclusionMode.Ignore
+-    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
+-    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
++    WlrLayershell.layer: screenState.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
++    WlrLayershell.keyboardFocus: screenState.overview || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+ 
+-    mask: hasFullscreen ? emptyRegion : regions
++    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)
+ 
+     anchors.top: true
+     anchors.bottom: true
+@@ -115,6 +116,8 @@
+         active: {
+             const s = root.screenState;
+             const conf = root.contentItem.Config;
++            if (s.overview)
++                return true;
+             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
+                 return true;
+             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
+@@ -129,6 +132,7 @@
+             root.screenState.session = false;
+             root.screenState.sidebar = false;
+             root.screenState.dashboard = false;
++            root.screenState.overview = false;
+             panels.popouts.hasCurrent = false;
+             bar.closeTray();
+         }
+@@ -136,7 +140,7 @@
+ 
+     StyledRect {
+         anchors.fill: parent
+-        opacity: (root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
++        opacity: root.screenState.overview ? 0.58 : ((root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
+         color: Colours.palette.m3scrim
+ 
+         Behavior on opacity {

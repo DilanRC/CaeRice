@@ -1,0 +1,34 @@
+--- a/modules/drawers/Panels.qml
++++ b/modules/drawers/Panels.qml
+@@ -5,6 +5,7 @@
+ import qs.modules.bar as Bar
+ import qs.modules.dashboard as Dashboard
+ import qs.modules.launcher as Launcher
++import qs.modules.overview as Overview
+ import qs.modules.notifications as Notifications
+ import qs.modules.osd as Osd
+ import qs.modules.session as Session
+@@ -27,6 +28,7 @@
+     readonly property alias session: session
+     readonly property alias sessionWrapper: sessionWrapper
+     readonly property alias launcher: launcher
++    readonly property alias overview: overview
+     readonly property alias dashboard: dashboard
+     readonly property alias popouts: popoutsWrapper.content
+     readonly property alias popoutsWrapper: popoutsWrapper
+@@ -107,6 +109,15 @@
+         anchors.bottom: parent.bottom
+     }
+ 
++    Overview.Wrapper {
++        id: overview
++
++        screen: root.screen
++        screenState: root.screenState
++
++        anchors.fill: parent
++    }
++
+     Dashboard.Wrapper {
+         id: dashboard
+ 

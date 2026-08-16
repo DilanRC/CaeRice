@@ -1,0 +1,10 @@
+--- a/components/ScreenState.qml
++++ b/components/ScreenState.qml
+@@ -8,6 +8,7 @@
+     property bool osd
+     property bool session
+     property bool launcher
++    property bool overview
+     property bool dashboard
+     property bool utilities
+     property bool sidebar

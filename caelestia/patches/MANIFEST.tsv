@@ -1,0 +1,13 @@
+patch	path
+shell.qml.patch	shell.qml
+components__ScreenState.qml.patch	components/ScreenState.qml
+services__Hypr.qml.patch	services/Hypr.qml
+utils__NetworkConnection.qml.patch	utils/NetworkConnection.qml
+modules__Shortcuts.qml.patch	modules/Shortcuts.qml
+modules__launcher__AppList.qml.patch	modules/launcher/AppList.qml
+modules__launcher__Content.qml.patch	modules/launcher/Content.qml
+modules__launcher__ContentList.qml.patch	modules/launcher/ContentList.qml
+modules__launcher__Wrapper.qml.patch	modules/launcher/Wrapper.qml
+modules__drawers__Regions.qml.patch	modules/drawers/Regions.qml
+modules__drawers__Panels.qml.patch	modules/drawers/Panels.qml
+modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml

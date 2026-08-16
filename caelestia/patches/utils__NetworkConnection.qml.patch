@@ -1,0 +1,33 @@
+--- a/utils/NetworkConnection.qml
++++ b/utils/NetworkConnection.qml
+@@ -29,9 +29,11 @@
+     id: root
+ 
+     /**
+-     * Handle network connection with automatic disconnection if needed.
+-     * If there's an active network different from the target, disconnects first,
+-     * then connects to the target network.
++     * Handle network connection.
++     *
++     * NetworkManager puede cambiar de red Wi-Fi directamente. Desconectar primero
++     * deja wlan0 en deactivating/scanning, lo que hace carrera con el connect
++     * siguiente e impide que se completen los flujos con contrasena y de red abierta.
+      *
+      * @param network The network object to connect to (must have ssid property)
+      * @param session Optional Session object (for controlcenter - must have network property with showPasswordDialog and pendingNetwork)
+@@ -42,14 +44,7 @@
+             return;
+         }
+ 
+-        if (Nmcli.active && Nmcli.active.ssid !== network.ssid) {
+-            Nmcli.disconnectFromNetwork();
+-            Qt.callLater(() => {
+-                root.connectToNetwork(network, session, onPasswordNeeded);
+-            });
+-        } else {
+-            root.connectToNetwork(network, session, onPasswordNeeded);
+-        }
++        root.connectToNetwork(network, session, onPasswordNeeded);
+     }
+ 
+     /**

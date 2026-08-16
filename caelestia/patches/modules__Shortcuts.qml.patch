@@ -1,0 +1,16 @@
+--- a/modules/Shortcuts.qml
++++ b/modules/Shortcuts.qml
+@@ -67,8 +67,11 @@
+         onPressed: root.launcherInterrupted = false
+         onReleased: {
+             if (!root.launcherInterrupted && !root.hasFullscreen) {
+-                const screenState = ShellState.forActive();
+-                screenState.launcher = !screenState.launcher;
++                Quickshell.execDetached([
++                    "qs", "-c", "caelestia",
++                    "ipc", "call",
++                    "customDock", "launcher"
++                ]);
+             }
+             root.launcherInterrupted = false;
+         }

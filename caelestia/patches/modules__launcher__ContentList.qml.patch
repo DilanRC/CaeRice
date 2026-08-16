@@ -1,0 +1,11 @@
+--- a/modules/launcher/ContentList.qml
++++ b/modules/launcher/ContentList.qml
+@@ -33,7 +33,7 @@
+             name: "apps"
+ 
+             PropertyChanges {
+-                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
++                root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth, 760)
+                 root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
+                 appList.active: true
+             }

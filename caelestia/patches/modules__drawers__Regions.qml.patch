@@ -1,0 +1,27 @@
+--- a/modules/drawers/Regions.qml
++++ b/modules/drawers/Regions.qml
+@@ -27,9 +27,15 @@
+         height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
+     }
+ 
++    /*
++     * IMPORTANTE PARA EL DOCK:
++     * upstream usa `root.win.height - height` porque el launcher toca
++     * el borde inferior. Ahora Wrapper.qml lo desplaza 70px hacia arriba,
++     * así que la región de input debe seguir la posición REAL del panel.
++     */
+     R {
+         panel: root.panels.launcher
+-        y: root.win.height - height
++        y: panel.y + root.borderThickness
+         height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
+     }
+ 
+@@ -79,6 +85,7 @@
+         y: panel.y + root.borderThickness
+         width: panel.width
+         height: panel.height
++
+         intersection: Intersection.Subtract
+     }
+ }
