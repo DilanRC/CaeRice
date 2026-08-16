@@ -2,27 +2,28 @@
 
 ## Objetivo
 
-Reemplazar la apertura de Clipse con un drawer nativo de CaeRice integrado en el mismo árbol de interacción que el Overview.
+Reemplazar la apertura de Clipse con un drawer nativo de CaeRice integrado en el mismo árbol de interacción que Overview, con nivel visual equivalente o superior al Dock y al launcher personalizado.
 
-## Requisitos iniciales
+## Interacción
 
 - `Super+V` abre/cierra el Clipboard.
 - `Esc` cierra.
 - `↑/↓` navegan.
-- `Enter` copia/activa la entrada seleccionada.
+- `Enter` copia/activa la entrada seleccionada y cierra.
 - `Delete` elimina una entrada.
-- búsqueda incremental.
-- mouse/touchpad funcionales.
-- historial persistente.
-- deduplicación.
-- soporte de texto y URLs desde la primera versión estable.
-- arquitectura preparada para previews de imágenes y pin/unpin.
+- `P` fija/desfija la entrada seleccionada.
+- `Ctrl+F` enfoca la búsqueda.
+- clic selecciona.
+- doble clic copia.
+- clic medio elimina.
+- clic derecho fija/desfija.
+- botones por tarjeta: pin, copiar y eliminar.
 
 ## Arquitectura
 
 El overlay se integra en `modules/drawers/ContentWindow.qml`; no se crea un `PanelWindow` separado.
 
-Módulos propios previstos:
+Módulos propios:
 
 ```text
 modules/ClipboardController.qml
@@ -31,18 +32,39 @@ modules/clipboard/Content.qml
 modules/clipboard/ClipboardItem.qml
 ```
 
-Integraciones upstream previstas:
+Integraciones upstream:
 
-- `shell.qml`: instanciar `ClipboardController` si hace falta a nivel raíz.
-- `modules/drawers/ContentWindow.qml`: región/panel del clipboard y focus grab.
-- `modules/drawers/Regions.qml` / `Panels.qml`: solo si el diseño actual lo requiere.
-- `modules/Shortcuts.qml` o IPC: exponer `caelestia:clipboard`.
-- `hypr-user.lua`: `Super+V -> caelestia:clipboard` cuando el endpoint exista.
+- `shell.qml`: instancia `ClipboardController`.
+- `components/ScreenState.qml`: estado `clipboard` por pantalla.
+- `modules/drawers/ContentWindow.qml`: focus/input y scrim del drawer.
+- `modules/drawers/Panels.qml`: integra `Clipboard.Wrapper` en el árbol nativo.
+- `hypr-user.lua`: `Super+V -> caelestia:clipboard`.
 
 ## Backend
 
-No desinstalar `clipse` ni `cliphist` al iniciar el desarrollo. Primero detectar el backend de clipboard ya activo y construir el UI sobre una interfaz desacoplada. Cuando el módulo funcione de punta a punta, decidir cuál dependencia queda.
+Clipse sigue siendo el backend de captura de historial mediante `clipse -listen` y sus procesos `wl-paste --watch`. El QML reemplaza únicamente la interfaz TUI. El historial se consume desde `~/.config/clipse/clipboard_history.json` mediante `FileView` con vigilancia de cambios y escrituras atómicas.
+
+Al cerrar el drawer, `Wrapper.qml` destruye el `Loader` del contenido pesado. `FileView`, `ListView`, previews y delegates dejan de existir mientras el Clipboard está cerrado; no se mata el proceso completo de Quickshell porque ese proceso aloja todo Caelestia.
+
+## Diseño CaeRice
+
+La interfaz sigue el mismo sistema visual que Dock/Launcher:
+
+- ningún color principal está hardcodeado;
+- superficies, texto, bordes y acentos provienen de `Colours.palette` / `Colours.tPalette`;
+- tamaños, radios y tipografía usan `Tokens`;
+- el acento seleccionado usa `m3primary` y `m3secondaryContainer` del esquema activo;
+- el panel usa capas tonales en vez de una caja negra fija, por lo que cambia correctamente con el esquema de Caelestia;
+- header con icono, contador, filtros `All/Pinned` y `Clear`;
+- buscador visual con shortcut `Ctrl+F`;
+- tarjetas compactas con icono contextual para texto, comando, URL o imagen;
+- preview real para imágenes;
+- acciones independientes por tarjeta;
+- selección, hover y foco con transiciones cortas coherentes con el Dock;
+- footer con keycaps para las acciones principales.
+
+La referencia visual es el mock-up premium generado durante el desarrollo, pero la implementación no copia colores fijos del mock-up: traduce la jerarquía, espaciado, tarjetas, controles y acento al esquema Material activo.
 
 ## Criterio de terminado
 
-El módulo se considera estable cuando funciona con teclado y touchpad, conserva historial entre reinicios, no roba foco después de cerrar, no rompe Overview/Dock/Launcher, y `verify-patches.sh` reporta el estado esperado.
+El módulo se considera estable cuando funciona con teclado y touchpad, conserva historial entre reinicios, no roba foco después de cerrar, descarga el contenido pesado al cerrarse, no rompe Overview/Dock/Launcher, responde correctamente a `qs -c caelestia ipc call clipboard ...`, y `verify-patches.sh` reporta el estado esperado.
