@@ -48,7 +48,9 @@ start = log.stat().st_size
 # Ensure a deterministic initial state, then reproduce the bug without keyboard input.
 run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "close")
 time.sleep(0.4)
-open_result = run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "open")nif open_result.returncode != 0:
+
+open_result = run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "open")
+if open_result.returncode != 0:
     print(open_result.stdout, end="")
     print(open_result.stderr, end="")
     raise SystemExit("ERROR: no pude abrir clipboard por IPC")
@@ -111,12 +113,17 @@ for scheme in scheme_candidates:
         found = True
         print(f"Path: {scheme}")
         text = scheme.read_text(encoding="utf-8", errors="replace")
-        # Keep the output focused on fields relevant to the rendering bug.
         for key in [
-            '"name"', '"mode"', '"background"', '"surface"',
-            '"surfaceContainer"', '"surfaceContainerHigh"',
-            '"inverseSurface"', '"inverseOnSurface"',
-            '"onSurface"', '"primaryFixedDim"',
+            '"name"',
+            '"mode"',
+            '"background"',
+            '"surface"',
+            '"surfaceContainer"',
+            '"surfaceContainerHigh"',
+            '"inverseSurface"',
+            '"inverseOnSurface"',
+            '"onSurface"',
+            '"primaryFixedDim"',
         ]:
             for line in text.splitlines():
                 if key in line:
