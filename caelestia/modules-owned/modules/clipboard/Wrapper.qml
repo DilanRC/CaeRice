@@ -11,23 +11,28 @@ Item {
     required property ScreenState screenState
 
     readonly property bool shouldBeActive: screenState.clipboard
-    property real visibilityProgress: shouldBeActive ? 1 : 0
 
-    visible: visibilityProgress > 0.001
-    opacity: visibilityProgress
-    scale: 0.97 + 0.03 * visibilityProgress
+    visible: shouldBeActive
+    opacity: shouldBeActive ? 1 : 0
+    scale: shouldBeActive ? 1 : 0.985
     transformOrigin: Item.Center
 
-    Behavior on visibilityProgress {
-        Anim {
-            type: Anim.StandardLarge
-        }
+    Behavior on opacity {
+        NumberAnimation { duration: 110 }
+    }
+
+    Behavior on scale {
+        NumberAnimation { duration: 110 }
     }
 
     Loader {
         id: contentLoader
         anchors.fill: parent
-        active: root.shouldBeActive || root.visible
+
+        // Clipboard has no independent process. Destroy the heavy Content tree as
+        // soon as the drawer closes so FileView/ListView/image delegates stop
+        // consuming resources while hidden.
+        active: root.shouldBeActive
 
         sourceComponent: Content {
             screen: root.screen
