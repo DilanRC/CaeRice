@@ -31,6 +31,8 @@ for f in \
     [[ -f "$f" ]] || { echo "ERROR: falta $f en el repo" >&2; exit 3; }
 done
 
+python3 "$REPO/scripts/features/validate-clipboard-qml.py"
+
 mkdir -p "$BACKUP/components" "$BACKUP/modules/drawers" "$BACKUP/user-config"
 sudo cp "$LIVE/shell.qml" "$BACKUP/shell.qml"
 sudo cp "$LIVE/components/ScreenState.qml" "$BACKUP/components/ScreenState.qml"
