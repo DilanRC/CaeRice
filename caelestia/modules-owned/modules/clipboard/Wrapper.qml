@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Caelestia.Config
 import qs.components
 
 Item {
@@ -22,25 +23,19 @@ Item {
     }
 
     Behavior on scale {
-        NumberAnimation { duration: 110 }
+        NumberAnimation {
+            duration: 110
+            easing.type: Easing.OutCubic
+        }
     }
 
-    // Extra local dimming for readability. ContentWindow already owns the
-    // global scrim; this only makes Clipboard visually denser.
+    // ContentWindow already supplies the global drawer scrim. This additional
+    // scheme-aware veil is deliberately subtle: it gives the clipboard visual
+    // focus without hard-coding a black rectangle that fights light schemes.
     Rectangle {
         anchors.fill: parent
-        color: "#26000000"
-        visible: root.shouldBeActive
-    }
-
-    // Opaque backing under the translucent Caelestia surface. This keeps the
-    // wallpaper from bleeding through the clipboard rows/search field.
-    Rectangle {
-        anchors.centerIn: parent
-        width: Math.min(780, parent.width - 70)
-        height: Math.min(720, parent.height - 90)
-        radius: 26
-        color: "#F014171D"
+        color: Colours.palette.m3scrim
+        opacity: 0.10
         visible: root.shouldBeActive
     }
 
@@ -48,8 +43,8 @@ Item {
         id: contentLoader
         anchors.fill: parent
 
-        // Clipboard has no independent process. Destroy the heavy Content tree as
-        // soon as the drawer closes so FileView/ListView/image delegates stop
+        // Clipboard has no independent process. Destroy the heavy Content tree
+        // as soon as the drawer closes so FileView/ListView/image delegates stop
         // consuming resources while hidden.
         active: root.shouldBeActive
 
