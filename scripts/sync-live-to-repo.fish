@@ -32,6 +32,17 @@ if test -f "$HOME/.config/caelestia/hypr-user.lua"
     cp "$HOME/.config/caelestia/hypr-user.lua" "$repo/config/hypr-user.lua"
 end
 
+# Conserva también los migradores usados durante esta sesión si siguen en Descargas.
+mkdir -p "$repo/scripts/history"
+for f in \
+    caelestia-maintenance-v2.sh \
+    caelestia-rebuild-upstream-base.sh \
+    caelestia-migrate-v2.1-official-tag.sh
+    if test -f "$HOME/Descargas/$f"
+        cp "$HOME/Descargas/$f" "$repo/scripts/history/$f"
+    end
+end
+
 # Nunca subir artefactos regenerables o potencialmente sensibles por accidente.
 rm -rf "$repo/caelestia/upstream-git" \
        "$repo/caelestia/upstream-package" \
@@ -39,7 +50,7 @@ rm -rf "$repo/caelestia/upstream-git" \
        "$repo/caelestia/snapshots" \
        "$repo/caelestia/reinstall-backups"
 
-git -C "$repo" add README.md caelestia config scripts docs current archive 2>/dev/null; or true
+git -C "$repo" add -A -- README.md .gitignore caelestia config scripts docs
 
 if git -C "$repo" diff --cached --quiet
     echo 'No hay cambios nuevos para subir.'
