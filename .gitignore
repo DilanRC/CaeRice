@@ -1,0 +1,18 @@
+# Regenerable upstream clones
+caelestia/upstream-git/
+caelestia/upstream-package/
+
+# Local rollback material; Git history replaces these
+caelestia/legacy/
+caelestia/snapshots/
+caelestia/reinstall-backups/
+
+# Runtime/cache
+*.log
+*.qslog
+.cache/
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
