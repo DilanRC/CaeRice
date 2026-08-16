@@ -110,7 +110,14 @@ FocusScope {
             return;
         }
 
-        selectedIndex = Math.max(0, Math.min(selectedIndex < 0 ? 0 : selectedIndex, filteredEntries.length - 1));
+        selectedIndex = Math.max(
+            0,
+            Math.min(
+                selectedIndex < 0 ? 0 : selectedIndex,
+                filteredEntries.length - 1
+            )
+        );
+
         Qt.callLater(() => list.positionViewAtIndex(selectedIndex, ListView.Contain));
     }
 
@@ -119,6 +126,7 @@ FocusScope {
             return;
 
         let idx = selectedIndex;
+
         if (idx < 0)
             idx = 0;
         else
@@ -193,9 +201,10 @@ FocusScope {
     function openClipboard(): void {
         historyFile.reload();
         normalizeSelection();
+
         Qt.callLater(() => {
-            search.forceActiveFocus();
-            search.selectAll();
+            searchInput.forceActiveFocus();
+            searchInput.selectAll();
         });
     }
 
@@ -239,8 +248,8 @@ FocusScope {
 
     Keys.onPressed: event => {
         if (event.key === Qt.Key_F && (event.modifiers & Qt.ControlModifier)) {
-            search.forceActiveFocus();
-            search.selectAll();
+            searchInput.forceActiveFocus();
+            searchInput.selectAll();
             event.accepted = true;
             return;
         }
@@ -256,15 +265,59 @@ FocusScope {
         onClicked: root.screenState.clipboard = false
     }
 
+    /*
+     * Premium CaeRice panel. Every colour comes from the active Material
+     * scheme so wallpaper/theme changes propagate exactly like Dock/Launcher.
+     */
+    StyledRect {
+        id: panelHalo
+
+        x: panel.x - 7
+        y: panel.y - 7
+        width: panel.width + 14
+        height: panel.height + 14
+        radius: panel.radius + 7
+        color: "transparent"
+        border.width: 2
+        border.color: Qt.alpha(Colours.palette.m3primary, 0.08)
+    }
+
     StyledRect {
         id: panel
-        anchors.centerIn: parent
-        width: Math.min(780, parent.width - 70)
-        height: Math.min(720, parent.height - 90)
+
+        width: Math.min(860, parent.width - 84)
+        height: Math.min(758, parent.height - 92)
+
+        x: Math.max(
+            30,
+            Math.round(
+                (parent.width - width) / 2 -
+                Math.min(110, parent.width * 0.055)
+            )
+        )
+        y: Math.max(28, Math.round((parent.height - height) / 2))
+
         radius: Tokens.rounding.extraLarge
-        color: Qt.alpha(Colours.tPalette.m3surfaceContainerHigh, 0.97)
+        color: Colours.palette.m3surfaceContainerHigh
         border.width: 1
-        border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.82)
+        border.color: Qt.alpha(Colours.palette.m3primary, 0.38)
+        clip: true
+
+        // Subtle tonal wash gives the panel the same layered glass feel as the
+        // rest of CaeRice without forcing a fixed dark colour.
+        StyledRect {
+            anchors.fill: parent
+            radius: parent.radius
+            color: Qt.alpha(Colours.tPalette.m3surfaceContainerHigh, 0.46)
+        }
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 1
+            color: Qt.alpha(Colours.palette.m3primary, 0.50)
+        }
 
         MouseArea {
             anchors.fill: parent
@@ -273,25 +326,40 @@ FocusScope {
         }
 
         Column {
+            id: panelContent
+
             anchors.fill: parent
-            anchors.margins: 18
+            anchors.margins: 20
             spacing: 12
 
             Row {
-                width: parent.width
-                height: 46
-                spacing: 10
+                id: header
 
-                MaterialIcon {
+                width: parent.width
+                height: 58
+                spacing: 12
+
+                StyledRect {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "content_paste_search"
-                    color: Colours.palette.m3primary
-                    fontStyle: Tokens.font.icon.extraLarge
+                    width: 52
+                    height: 52
+                    radius: Tokens.rounding.extraLarge
+                    color: Qt.alpha(Colours.palette.m3primary, 0.13)
+                    border.width: 1
+                    border.color: Qt.alpha(Colours.palette.m3primary, 0.27)
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        text: "content_paste_search"
+                        color: Colours.palette.m3primary
+                        fill: 1
+                        fontStyle: Tokens.font.icon.extraLarge
+                    }
                 }
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - toolbar.width - 58
+                    width: Math.max(180, parent.width - headerActions.width - 78)
                     spacing: -1
 
                     StyledText {
@@ -306,98 +374,255 @@ FocusScope {
                     }
                 }
 
-                Row {
-                    id: toolbar
+                StyledRect {
+                    id: headerActions
+
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+                    implicitWidth: actionRow.implicitWidth + 12
+                    implicitHeight: 40
+                    radius: Tokens.rounding.full
+                    color: Qt.alpha(Colours.palette.m3surfaceContainer, 0.76)
+                    border.width: 1
+                    border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.58)
 
-                    StyledRect {
-                        implicitWidth: pinnedText.implicitWidth + 24
-                        implicitHeight: 34
-                        radius: Tokens.rounding.full
-                        color: root.pinnedOnly
-                            ? Colours.palette.m3secondaryContainer
-                            : Colours.palette.m3surfaceContainer
+                    Row {
+                        id: actionRow
+                        anchors.centerIn: parent
+                        spacing: 4
 
-                        StyledText {
-                            id: pinnedText
-                            anchors.centerIn: parent
-                            text: root.pinnedOnly ? qsTr("Pinned") : qsTr("All")
-                            font: Tokens.font.label.medium
+                        StyledRect {
+                            implicitWidth: allLabel.implicitWidth + 30
+                            implicitHeight: 32
+                            radius: Tokens.rounding.full
+                            color: !root.pinnedOnly
+                                ? Qt.alpha(Colours.palette.m3primary, 0.16)
+                                : "transparent"
+                            border.width: !root.pinnedOnly ? 1 : 0
+                            border.color: Qt.alpha(Colours.palette.m3primary, 0.68)
+
+                            StyledText {
+                                id: allLabel
+                                anchors.centerIn: parent
+                                text: qsTr("All")
+                                font: Tokens.font.label.medium
+                                color: !root.pinnedOnly
+                                    ? Colours.palette.m3primary
+                                    : Colours.palette.m3outline
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.pinnedOnly = false
+                            }
                         }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.pinnedOnly = !root.pinnedOnly
+                        StyledRect {
+                            implicitWidth: pinnedRow.implicitWidth + 24
+                            implicitHeight: 32
+                            radius: Tokens.rounding.full
+                            color: root.pinnedOnly
+                                ? Qt.alpha(Colours.palette.m3primary, 0.16)
+                                : "transparent"
+                            border.width: root.pinnedOnly ? 1 : 0
+                            border.color: Qt.alpha(Colours.palette.m3primary, 0.68)
+
+                            Row {
+                                id: pinnedRow
+                                anchors.centerIn: parent
+                                spacing: 6
+
+                                MaterialIcon {
+                                    text: "keep"
+                                    fill: root.pinnedOnly ? 1 : 0
+                                    color: root.pinnedOnly
+                                        ? Colours.palette.m3primary
+                                        : Colours.palette.m3outline
+                                    fontStyle: Tokens.font.icon.small
+                                }
+
+                                StyledText {
+                                    text: qsTr("Pinned")
+                                    font: Tokens.font.label.medium
+                                    color: root.pinnedOnly
+                                        ? Colours.palette.m3primary
+                                        : Colours.palette.m3outline
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.pinnedOnly = true
+                            }
                         }
-                    }
 
-                    StyledRect {
-                        implicitWidth: clearText.implicitWidth + 24
-                        implicitHeight: 34
-                        radius: Tokens.rounding.full
-                        color: Colours.palette.m3surfaceContainer
-
-                        StyledText {
-                            id: clearText
-                            anchors.centerIn: parent
-                            text: qsTr("Clear")
-                            font: Tokens.font.label.medium
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 1
+                            height: 20
+                            color: Qt.alpha(Colours.palette.m3outlineVariant, 0.62)
                         }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.clearNonPinned()
+                        StyledRect {
+                            implicitWidth: clearRow.implicitWidth + 22
+                            implicitHeight: 32
+                            radius: Tokens.rounding.full
+                            color: clearMouse.containsMouse
+                                ? Qt.alpha(Colours.palette.m3primary, 0.13)
+                                : "transparent"
+
+                            Row {
+                                id: clearRow
+                                anchors.centerIn: parent
+                                spacing: 6
+
+                                MaterialIcon {
+                                    text: "delete_sweep"
+                                    color: clearMouse.containsMouse
+                                        ? Colours.palette.m3primary
+                                        : Colours.palette.m3outline
+                                    fontStyle: Tokens.font.icon.small
+                                }
+
+                                StyledText {
+                                    text: qsTr("Clear")
+                                    font: Tokens.font.label.medium
+                                    color: clearMouse.containsMouse
+                                        ? Colours.palette.m3primary
+                                        : Colours.palette.m3outline
+                                }
+                            }
+
+                            MouseArea {
+                                id: clearMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.clearNonPinned()
+                            }
                         }
                     }
                 }
             }
 
-            TextField {
-                id: search
-                width: parent.width
-                height: 46
-                placeholderText: qsTr("Search clipboard…")
-                selectByMouse: true
-                color: Colours.palette.m3onSurface
-                placeholderTextColor: Colours.palette.m3outline
-                font: Tokens.font.body.large
-                leftPadding: 16
-                rightPadding: 16
+            StyledRect {
+                id: searchHost
 
-                background: StyledRect {
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainer
-                    border.width: search.activeFocus ? 2 : 1
-                    border.color: search.activeFocus
-                        ? Colours.palette.m3primary
-                        : Colours.palette.m3outlineVariant
+                width: parent.width
+                height: 50
+                radius: Tokens.rounding.extraLarge
+                color: Colours.palette.m3surfaceContainer
+                border.width: searchInput.activeFocus ? 2 : 1
+                border.color: searchInput.activeFocus
+                    ? Qt.alpha(Colours.palette.m3primary, 0.86)
+                    : Qt.alpha(Colours.palette.m3outlineVariant, 0.68)
+
+                Behavior on border.color {
+                    ColorAnimation { duration: 110 }
                 }
 
-                onTextChanged: root.query = text
-                Keys.onUpPressed: root.moveSelection(-1)
-                Keys.onDownPressed: root.moveSelection(1)
-                Keys.onReturnPressed: root.copyEntry(root.selectedEntry)
-                Keys.onEnterPressed: root.copyEntry(root.selectedEntry)
-                Keys.onEscapePressed: root.screenState.clipboard = false
-                Keys.onDeletePressed: {
-                    if (selectionStart === selectionEnd)
-                        root.deleteEntry(root.selectedEntry);
+                MaterialIcon {
+                    id: searchIcon
+                    anchors.left: parent.left
+                    anchors.leftMargin: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "search"
+                    color: searchInput.activeFocus
+                        ? Colours.palette.m3primary
+                        : Colours.palette.m3outline
+                    fontStyle: Tokens.font.icon.medium
+                }
+
+                TextInput {
+                    id: searchInput
+
+                    anchors.left: searchIcon.right
+                    anchors.leftMargin: 10
+                    anchors.right: searchShortcut.left
+                    anchors.rightMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: 28
+
+                    text: root.query
+                    selectByMouse: true
+                    clip: true
+                    color: Colours.palette.m3onSurface
+                    selectionColor: Qt.alpha(Colours.palette.m3primary, 0.38)
+                    selectedTextColor: Colours.palette.m3onSurface
+                    font: Tokens.font.body.large
+
+                    onTextChanged: {
+                        if (root.query !== text)
+                            root.query = text;
+                    }
+
+                    Keys.onUpPressed: root.moveSelection(-1)
+                    Keys.onDownPressed: root.moveSelection(1)
+                    Keys.onReturnPressed: root.copyEntry(root.selectedEntry)
+                    Keys.onEnterPressed: root.copyEntry(root.selectedEntry)
+                    Keys.onEscapePressed: root.screenState.clipboard = false
+                    Keys.onDeletePressed: {
+                        if (selectionStart === selectionEnd && text.length === 0)
+                            root.deleteEntry(root.selectedEntry);
+                    }
+                }
+
+                StyledText {
+                    visible: searchInput.text.length === 0
+                    anchors.left: searchInput.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("Search clipboard…")
+                    color: Colours.palette.m3outline
+                    font: Tokens.font.body.large
+                }
+
+                StyledRect {
+                    id: searchShortcut
+
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: shortcutLabel.implicitWidth + 16
+                    implicitHeight: 26
+                    radius: Tokens.rounding.large
+                    color: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.78)
+                    border.width: 1
+                    border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.55)
+
+                    StyledText {
+                        id: shortcutLabel
+                        anchors.centerIn: parent
+                        text: "Ctrl+F"
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.label.small
+                    }
                 }
             }
 
             Rectangle {
+                id: separator
                 width: parent.width
                 height: 1
-                color: Qt.alpha(Colours.palette.m3outlineVariant, 0.65)
+                color: Qt.alpha(Colours.palette.m3outlineVariant, 0.58)
             }
 
             ListView {
                 id: list
+
                 width: parent.width
-                height: parent.height - 155
+                height: Math.max(
+                    150,
+                    panelContent.height -
+                    header.height -
+                    searchHost.height -
+                    separator.height -
+                    footer.height -
+                    panelContent.spacing * 4
+                )
+
                 model: root.filteredEntries
                 clip: true
                 spacing: 8
@@ -424,41 +649,124 @@ FocusScope {
                     onPinRequested: root.togglePin(modelData)
                 }
 
-                footer: Item { width: 1; height: 4 }
+                footer: Item {
+                    width: 1
+                    height: 5
+                }
+
+                Item {
+                    anchors.centerIn: parent
+                    width: 320
+                    height: 132
+                    visible: root.filteredEntries.length === 0
+
+                    StyledRect {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 56
+                        height: 56
+                        radius: Tokens.rounding.extraLarge
+                        color: Qt.alpha(Colours.palette.m3primary, 0.10)
+
+                        MaterialIcon {
+                            anchors.centerIn: parent
+                            text: root.query.length > 0
+                                ? "search_off"
+                                : "content_paste_off"
+                            color: Colours.palette.m3primary
+                            fontStyle: Tokens.font.icon.large
+                        }
+                    }
+
+                    StyledText {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        anchors.topMargin: 70
+                        text: root.query.length > 0
+                            ? qsTr("No matching clipboard entries")
+                            : qsTr("Clipboard history is empty")
+                        color: Colours.palette.m3outline
+                        font: Tokens.font.body.medium
+                    }
+                }
             }
 
-            StyledText {
+            StyledRect {
+                id: footer
+
                 width: parent.width
-                height: 18
-                text: root.statusText.length > 0
-                    ? root.statusText
-                    : qsTr("↑↓ navigate · Enter copy · Delete remove · P pin · Ctrl+F search · right click pin")
-                elide: Text.ElideRight
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
-            }
-        }
+                height: 40
+                radius: Tokens.rounding.large
+                color: Qt.alpha(Colours.palette.m3surfaceContainer, 0.64)
+                border.width: 1
+                border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.42)
 
-        Item {
-            anchors.centerIn: parent
-            width: 300
-            height: 100
-            visible: root.filteredEntries.length === 0
+                Row {
+                    id: hints
 
-            MaterialIcon {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: root.query.length > 0 ? "search_off" : "content_paste_off"
-                color: Colours.palette.m3outline
-                fontStyle: Tokens.font.icon.extraLarge
-            }
+                    visible: root.statusText.length === 0
+                    anchors.centerIn: parent
+                    spacing: 15
 
-            StyledText {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.verticalCenter
-                anchors.topMargin: 8
-                text: root.query.length > 0 ? qsTr("No matching clipboard entries") : qsTr("Clipboard history is empty")
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.medium
+                    Repeater {
+                        model: [
+                            { key: "↑ ↓", label: "Navigate" },
+                            { key: "Enter", label: "Copy" },
+                            { key: "Delete", label: "Remove" },
+                            { key: "P", label: "Pin" },
+                            { key: "Ctrl+F", label: "Search" }
+                        ]
+
+                        Row {
+                            required property var modelData
+                            spacing: 6
+
+                            StyledRect {
+                                anchors.verticalCenter: parent.verticalCenter
+                                implicitWidth: keyLabel.implicitWidth + 14
+                                implicitHeight: 24
+                                radius: Tokens.rounding.medium
+                                color: Qt.alpha(Colours.palette.m3primary, 0.11)
+                                border.width: 1
+                                border.color: Qt.alpha(Colours.palette.m3primary, 0.28)
+
+                                StyledText {
+                                    id: keyLabel
+                                    anchors.centerIn: parent
+                                    text: modelData.key
+                                    color: Colours.palette.m3primary
+                                    font: Tokens.font.label.small
+                                }
+                            }
+
+                            StyledText {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: modelData.label
+                                color: Colours.palette.m3outline
+                                font: Tokens.font.label.small
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    visible: root.statusText.length > 0
+                    anchors.centerIn: parent
+                    spacing: 7
+
+                    MaterialIcon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "check_circle"
+                        color: Colours.palette.m3primary
+                        fontStyle: Tokens.font.icon.small
+                    }
+
+                    StyledText {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: root.statusText
+                        color: Colours.palette.m3primary
+                        font: Tokens.font.label.medium
+                    }
+                }
             }
         }
     }
