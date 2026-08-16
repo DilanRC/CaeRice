@@ -25,6 +25,25 @@ Item {
         NumberAnimation { duration: 110 }
     }
 
+    // Extra local dimming for readability. ContentWindow already owns the
+    // global scrim; this only makes Clipboard visually denser.
+    Rectangle {
+        anchors.fill: parent
+        color: "#26000000"
+        visible: root.shouldBeActive
+    }
+
+    // Opaque backing under the translucent Caelestia surface. This keeps the
+    // wallpaper from bleeding through the clipboard rows/search field.
+    Rectangle {
+        anchors.centerIn: parent
+        width: Math.min(780, parent.width - 70)
+        height: Math.min(720, parent.height - 90)
+        radius: 26
+        color: "#F014171D"
+        visible: root.shouldBeActive
+    }
+
     Loader {
         id: contentLoader
         anchors.fill: parent
