@@ -92,6 +92,33 @@ def mode_for(monitor: dict) -> str:
     return best or (str(modes[0]) if modes else "preferred")
 
 
+def current_bitdepth(monitor: dict) -> int:
+    configured = monitor.get("configured_bitdepth")
+    try:
+        if int(configured) in {8, 10}:
+            return int(configured)
+    except (TypeError, ValueError):
+        pass
+    fmt = str(monitor.get("current_format", "")).upper()
+    return 10 if "2101010" in fmt or "101010" in fmt else 8
+
+
+def current_vrr(monitor: dict) -> int:
+    configured = monitor.get("configured_vrr")
+    try:
+        value = int(configured)
+        if 0 <= value <= 3:
+            return value
+    except (TypeError, ValueError):
+        pass
+    return 1 if bool(monitor.get("vrr", False)) else 0
+
+
+def current_cm(monitor: dict) -> str:
+    configured = str(monitor.get("configured_cm") or "").strip().lower()
+    return configured or "srgb"
+
+
 def candidate_from_snapshot(snapshot: dict) -> dict:
     outputs = []
     for monitor in snapshot.get("hyprland", []):
@@ -105,6 +132,9 @@ def candidate_from_snapshot(snapshot: dict) -> dict:
             "y": int(monitor.get("y") or 0),
             "scale": float(monitor.get("scale") or 1),
             "transform": int(monitor.get("transform") or 0),
+            "bitdepth": current_bitdepth(monitor),
+            "cm": current_cm(monitor),
+            "vrr": current_vrr(monitor),
         })
     return {"outputs": outputs}
 
@@ -130,7 +160,7 @@ def execute_plan(planned: dict) -> tuple[bool, str]:
 
 
 def verify_candidate(candidate: dict) -> tuple[bool, str]:
-    time.sleep(0.6)
+    time.sleep(0.7)
     live = current_snapshot()
     by_name = {str(m.get("name", "")): m for m in live.get("hyprland", []) if isinstance(m, dict)}
     for item in candidate.get("outputs", []):
@@ -148,6 +178,14 @@ def verify_candidate(candidate: dict) -> tuple[bool, str]:
             return False, f"{name} x position did not match preview"
         if abs(int(monitor.get("y") or 0) - int(item.get("y") or 0)) > 2:
             return False, f"{name} y position did not match preview"
+        if int(item.get("bitdepth", 8)) == 10:
+            fmt = str(monitor.get("current_format", "")).upper()
+            if "2101010" not in fmt and "101010" not in fmt:
+                return False, f"{name} did not enter a 10-bit format"
+        # Mode 1 is always-on VRR and can be verified immediately. Conditional
+        # modes may correctly report idle until a fullscreen/game surface exists.
+        if int(item.get("vrr", 0)) == 1 and not bool(monitor.get("vrr", False)):
+            return False, f"{name} always-on VRR did not become active"
     return True, ""
 
 
@@ -171,8 +209,14 @@ def preview(candidate: dict, timeout_seconds: int) -> tuple[dict, int]:
     if not planned.get("ok"):
         return {"ok": False, "error": "candidate validation failed", "plan": planned}, 3
 
+    normalized_candidate = planned.get("candidate", candidate)
     try:
         original = candidate_from_snapshot(current_snapshot())
+        # Planning the rollback snapshot now proves it can be restored before
+        # the live candidate is ever touched.
+        original_plan = plan(original)
+        if not original_plan.get("ok"):
+            return {"ok": False, "error": "current layout cannot be represented safely for rollback", "rollback_plan": original_plan}, 2
     except Exception as exc:
         return {"ok": False, "error": f"could not snapshot current layout: {exc}"}, 2
 
@@ -185,7 +229,7 @@ def preview(candidate: dict, timeout_seconds: int) -> tuple[dict, int]:
         "deadline": now + timeout_seconds,
         "timeout_seconds": timeout_seconds,
         "original": original,
-        "candidate": candidate,
+        "candidate": normalized_candidate,
         "confirmed": False,
     }
     write_state(state)
@@ -197,7 +241,7 @@ def preview(candidate: dict, timeout_seconds: int) -> tuple[dict, int]:
         return {"ok": False, "error": error, "reverted": True}, 5
 
     try:
-        verified, verify_error = verify_candidate(candidate)
+        verified, verify_error = verify_candidate(normalized_candidate)
     except Exception as exc:
         verified, verify_error = False, str(exc)
     if not verified:
@@ -212,7 +256,15 @@ def preview(candidate: dict, timeout_seconds: int) -> tuple[dict, int]:
         stderr=subprocess.DEVNULL,
         start_new_session=True,
     )
-    return {"ok": True, "preview": True, "deadline": state["deadline"], "timeout_seconds": timeout_seconds, "token": token}, 0
+    return {
+        "ok": True,
+        "preview": True,
+        "deadline": state["deadline"],
+        "timeout_seconds": timeout_seconds,
+        "token": token,
+        "candidate": normalized_candidate,
+        "rollback_captures_color_policy": True,
+    }, 0
 
 
 def confirm() -> tuple[dict, int]:
@@ -223,7 +275,13 @@ def confirm() -> tuple[dict, int]:
     state["active"] = False
     write_state(state)
     clear_state()
-    return {"ok": True, "confirmed": True, "persistent": False, "note": "layout kept for this Hyprland session; persistence is a separate step"}, 0
+    return {
+        "ok": True,
+        "confirmed": True,
+        "persistent": False,
+        "candidate": state.get("candidate", {}),
+        "note": "layout kept for this Hyprland session; persistence is a separate step",
+    }, 0
 
 
 def revert(token: str | None = None) -> tuple[dict, int]:
@@ -235,7 +293,7 @@ def revert(token: str | None = None) -> tuple[dict, int]:
         return {"ok": False, "error": "preview token mismatch"}, 3
     ok, error = restore_original(state.get("original", {}))
     clear_state()
-    return {"ok": ok, "reverted": ok, "error": error}, 0 if ok else 5
+    return {"ok": ok, "reverted": ok, "error": error, "restored_color_policy": ok}, 0 if ok else 5
 
 
 def watch(token: str) -> int:
@@ -245,7 +303,7 @@ def watch(token: str) -> int:
             return 0
         remaining = float(state.get("deadline", 0)) - time.time()
         if remaining <= 0:
-            payload, code = revert(token)
+            _payload, code = revert(token)
             return code
         time.sleep(min(0.5, max(0.1, remaining)))
 
@@ -261,6 +319,7 @@ def status() -> dict:
         "deadline": state.get("deadline"),
         "remaining_seconds": max(0, round(float(state.get("deadline", 0)) - time.time(), 1)),
         "candidate": state.get("candidate", {}),
+        "rollback": state.get("original", {}),
     }
 
 
