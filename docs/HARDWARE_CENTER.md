@@ -21,24 +21,26 @@ uses the same window that already hosts Launcher, Overview and Clipboard.
 
 ## Pages
 
-1. **Overview** — CPU, RAM, root storage, AMD/NVIDIA GPUs, battery/network and cooling summary.
-2. **Performance** — rolling CPU/RAM/network/disk/GPU graphs with auto-scaled throughput graphs.
-3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, pause, process detail and SIGTERM/SIGKILL actions.
+1. **Overview** — CPU, RAM, root storage, AMD/NVIDIA GPUs, battery/network and cooling summary. CPU can switch `% / GHz`; memory defaults to GiB and can switch `GiB / %`.
+2. **Performance** — rolling CPU/RAM/network/NVMe/GPU graphs. Every graph shows a visible scale plus min/average/max. CPU can cycle Total → Core 0 → Core 1…; RAM can switch its second history between cache and swap.
+3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, display mode `123 / %`, list freeze, process detail, Pause/Resume, Interrupt, Terminate and Force kill actions.
 4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fans and battery data.
+5. **I/O** — detailed root storage/NVMe throughput, IOPS and totals plus network rate/totals, IPv4, MAC and Wi-Fi metadata when exposed.
 
-Keyboard: `1`–`4` switches pages, `R` refreshes, `Esc` closes.
+Keyboard: `1`–`5` switches pages, `R` refreshes, `Esc` closes.
 
 ## Telemetry
 
 `~/.local/bin/caerice-hardware-probe` returns one compact JSON snapshot with:
 
 - CPU total/per-core usage, average frequency, package temperature and governor.
-- RAM and swap usage.
-- Root filesystem usage and root-device read/write throughput + IOPS.
+- RAM used/available/cache/buffers plus swap usage.
+- Root filesystem usage.
+- Physical block-device read/write throughput, IOPS and cumulative read/write totals, with NVMe model/serial where exposed by sysfs.
 - AMD GPU telemetry from `/sys/class/drm` when exported by the driver.
 - NVIDIA GPU telemetry from `nvidia-smi` when available.
 - Battery percentage/status/power.
-- Active network interface and RX/TX rates.
+- Active network interface, RX/TX rates/totals, IPv4/MAC and Wi-Fi SSID/signal/link bitrate when `iw` exposes them.
 - Exposed fan RPM values.
 - Up to 80 processes with instantaneous CPU deltas, RAM, user, state, threads,
   parent PID, elapsed time and command line.
