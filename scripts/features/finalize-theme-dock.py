@@ -265,6 +265,48 @@ def patch_launcher_text(text: str) -> tuple[str, bool]:
     return text, changed
 
 
+def ensure_delegate_indices(text: str) -> tuple[str, bool]:
+    """Bind GridView's injected index role explicitly in every custom delegate.
+
+    With pragma ComponentBehavior: Bound, relying on an undeclared `index`
+    identifier is not safe. The click handlers were receiving mouse events but
+    aborted at `root.currentIndex = index` with ReferenceError before launching
+    apps, toggling pins or applying schemes.
+    """
+    changed = False
+    delegates = {
+        "app": "required property DesktopEntry modelData",
+        "action": "required property var modelData",
+        "calc": "required property var modelData",
+        "scheme": "required property var modelData",
+        "variant": "required property var modelData",
+    }
+
+    for delegate_id, model_line in delegates.items():
+        already = re.search(
+            rf"id:\s*{re.escape(delegate_id)}\b.*?{re.escape(model_line)}\s*\n\s*required property int index\b",
+            text,
+            flags=re.S,
+        )
+        if already:
+            continue
+
+        pattern = re.compile(
+            rf"(id:\s*{re.escape(delegate_id)}\b.*?\n\s*{re.escape(model_line)})(\s*\n)",
+            flags=re.S,
+        )
+        match = pattern.search(text)
+        if not match:
+            raise SystemExit(f"ERROR: no encontré modelData del delegate {delegate_id}")
+
+        insertion = match.group(1) + "\n            required property int index" + match.group(2)
+        text = text[:match.start()] + insertion + text[match.end():]
+        changed = True
+        print(f"Launcher: index role ligado explícitamente en {delegate_id}Delegate")
+
+    return text, changed
+
+
 def regenerate_app_patch(live_text: str) -> None:
     with tempfile.TemporaryDirectory(prefix="caerice-shell-") as td:
         root = Path(td) / "shell"
@@ -299,6 +341,8 @@ def fix_launcher() -> bool:
         raise SystemExit(f"ERROR: no existe {APP_LIVE}")
     text = APP_LIVE.read_text(encoding="utf-8")
     text, changed = patch_launcher_text(text)
+    text, index_changed = ensure_delegate_indices(text)
+    changed = changed or index_changed
     if changed:
         with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False) as tmp:
             tmp.write(text)
@@ -323,7 +367,7 @@ def save_repo_changes() -> None:
         return
     commit = run(
         "git", "-C", str(REPO), "commit", "-m",
-        "fix(theme-dock): center clipboard and refine launcher schemes",
+        "fix(theme-dock): bind launcher delegate indices",
         "--", *paths, check=False, capture=True
     )
     if commit.returncode:
@@ -340,11 +384,12 @@ def main() -> None:
     fix_launcher()
     save_repo_changes()
     print("\nReinicia Caelestia para validar:")
-    print("pkill -TERM -f 'qs -c caelestia'; sleep 1; caelestia shell -d")
+    print("pkill -TERM -x qs; sleep 1; caelestia shell -d")
     print("\nPruebas:")
     print("  1) Super+V: Clipboard debe quedar geométricamente centrado.")
-    print("  2) Super: clic derecho en una app debe fijar/quitar del Dock.")
-    print("  3) >scheme <texto>: tarjetas con 6 swatches; clic/Enter aplica el scheme.")
+    print("  2) Super: clic izquierdo abre; clic derecho fija/quita del Dock.")
+    print("  3) >scheme <texto>: clic/Enter aplica el scheme.")
+    print("  4) log.qslog no debe contener 'ReferenceError: index is not defined'.")
 
 
 if __name__ == "__main__":
