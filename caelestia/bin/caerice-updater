@@ -43,30 +43,39 @@ def atomic_json(path: Path, payload: dict) -> None:
             json.dump(payload, handle, separators=(",", ":"), ensure_ascii=False)
         os.replace(tmp, path)
     finally:
-        try: os.unlink(tmp)
-        except FileNotFoundError: pass
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
 
 
 def read_json(path: Path) -> dict:
     try:
-        data = json.loads(path.read_text(encoding="utf-8")); return data if isinstance(data, dict) else {}
-    except (OSError, json.JSONDecodeError): return {}
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
 def parse_base() -> dict:
     out = {}
-    try: lines = BASE_INFO.read_text(encoding="utf-8").splitlines()
-    except OSError: return out
+    try:
+        lines = BASE_INFO.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return out
     for line in lines:
         if "=" in line:
-            key, value = line.split("=", 1); out[key.strip()] = value.strip()
+            key, value = line.split("=", 1)
+            out[key.strip()] = value.strip()
     return out
 
 
 def manifest() -> list[dict]:
     rows = []
-    try: lines = MANIFEST.read_text(encoding="utf-8").splitlines()[1:]
-    except OSError: lines = []
+    try:
+        lines = MANIFEST.read_text(encoding="utf-8").splitlines()[1:]
+    except OSError:
+        lines = []
     for line in lines:
         parts = line.split("\t")
         if len(parts) >= 2:
@@ -92,10 +101,12 @@ def fetch(ref: str) -> tuple[dict, int]:
     CANDIDATES.mkdir(parents=True, exist_ok=True)
     dest = CANDIDATES / safe_ref(ref)
     tmp = CANDIDATES / (safe_ref(ref) + ".tmp")
-    if tmp.exists(): shutil.rmtree(tmp)
+    if tmp.exists():
+        shutil.rmtree(tmp)
     tmp.mkdir(parents=True)
     cp = run(["git", "init", "-q"], cwd=tmp, timeout=20)
-    if cp.returncode != 0: return {"ok": False, "error": cp.stderr.strip()}, 2
+    if cp.returncode != 0:
+        return {"ok": False, "error": cp.stderr.strip()}, 2
     run(["git", "remote", "add", "origin", upstream_repo()], cwd=tmp, timeout=20)
     cp = run(["git", "fetch", "--depth", "1", "origin", ref], cwd=tmp, timeout=180)
     if cp.returncode != 0:
@@ -103,26 +114,32 @@ def fetch(ref: str) -> tuple[dict, int]:
         return {"ok": False, "error": (cp.stderr or cp.stdout).strip(), "ref": ref}, 3
     cp = run(["git", "checkout", "-q", "--detach", "FETCH_HEAD"], cwd=tmp, timeout=30)
     if cp.returncode != 0:
-        shutil.rmtree(tmp, ignore_errors=True); return {"ok": False, "error": cp.stderr.strip()}, 3
+        shutil.rmtree(tmp, ignore_errors=True)
+        return {"ok": False, "error": cp.stderr.strip()}, 3
     sha = run(["git", "rev-parse", "HEAD"], cwd=tmp, timeout=10).stdout.strip()
     meta = {"ref": ref, "commit": sha, "repo": upstream_repo(), "fetched_at": int(time.time())}
     atomic_json(tmp / ".caerice-candidate.json", meta)
-    if dest.exists(): shutil.rmtree(dest)
+    if dest.exists():
+        shutil.rmtree(dest)
     os.replace(tmp, dest)
-    state = read_json(STATE); state.update({"candidate_ref": ref, "candidate_path": str(dest), "candidate_commit": sha}); atomic_json(STATE, state)
+    state = read_json(STATE)
+    state.update({"candidate_ref": ref, "candidate_path": str(dest), "candidate_commit": sha})
+    atomic_json(STATE, state)
     return {"ok": True, "candidate": str(dest), **meta}, 0
 
 
 def sha(path: Path) -> str:
-    try: return hashlib.sha256(path.read_bytes()).hexdigest()
-    except OSError: return ""
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return ""
 
 
 def classify_patch(stage: Path, patch_path: Path) -> tuple[str, str]:
     check = run(["git", "apply", "--check", str(patch_path)], cwd=stage, timeout=30)
     if check.returncode == 0:
-        apply = run(["git", "apply", str(patch_path)], cwd=stage, timeout=30)
-        return ("clean", "") if apply.returncode == 0 else ("conflict", (apply.stderr or apply.stdout).strip())
+        applied = run(["git", "apply", str(patch_path)], cwd=stage, timeout=30)
+        return ("clean", "") if applied.returncode == 0 else ("conflict", (applied.stderr or applied.stdout).strip())
     reverse = run(["git", "apply", "--reverse", "--check", str(patch_path)], cwd=stage, timeout=30)
     if reverse.returncode == 0:
         return "upstream-equivalent", (check.stderr or check.stdout).strip()
@@ -136,7 +153,8 @@ def classify_patch(stage: Path, patch_path: Path) -> tuple[str, str]:
 def test(ref: str) -> tuple[dict, int]:
     meta = candidate_meta(ref)
     candidate = Path(meta["path"])
-    if not candidate.is_dir(): return {"ok": False, "error": f"candidate {ref} is not fetched"}, 2
+    if not candidate.is_dir():
+        return {"ok": False, "error": f"candidate {ref} is not fetched"}, 2
     stage = CACHE / ("test-stage-" + str(os.getpid()))
     shutil.rmtree(stage, ignore_errors=True)
     shutil.copytree(candidate, stage, ignore=shutil.ignore_patterns(".git", ".caerice-candidate.json"))
@@ -150,9 +168,12 @@ def test(ref: str) -> tuple[dict, int]:
     for row in manifest():
         patch = PATCH_DIR / row["patch"]
         if not patch.is_file():
-            results.append({**row, "status": "missing", "detail": "patch file missing"}); blockers += 1; continue
+            results.append({**row, "status": "missing", "detail": "patch file missing"})
+            blockers += 1
+            continue
         status, detail = classify_patch(stage, patch)
-        if status == "conflict": blockers += 1
+        if status == "conflict":
+            blockers += 1
         results.append({**row, "status": status, "detail": detail[:700]})
     owned = REPO / "caelestia/modules-owned/modules"
     owned_files = [str(p.relative_to(owned)) for p in owned.rglob("*.qml")] if owned.is_dir() else []
@@ -170,7 +191,9 @@ def test(ref: str) -> tuple[dict, int]:
         "safety": "candidate tested in an isolated copy; live /etc tree was not modified",
     }
     atomic_json(REPORT, report)
-    state = read_json(STATE); state.update({"last_report": str(REPORT), "tested_ref": ref, "tested_commit": meta.get("commit", ""), "test_ok": blockers == 0}); atomic_json(STATE, state)
+    state = read_json(STATE)
+    state.update({"last_report": str(REPORT), "tested_ref": ref, "tested_commit": meta.get("commit", ""), "test_ok": blockers == 0})
+    atomic_json(STATE, state)
     shutil.rmtree(stage, ignore_errors=True)
     return report, 0 if blockers == 0 else 4
 
@@ -180,7 +203,8 @@ def live_matches_candidate(ref: str) -> tuple[bool, list[dict]]:
     rows = []
     ok = True
     for row in manifest():
-        live = LIVE / row["target"]; cand = candidate / row["target"]
+        live = LIVE / row["target"]
+        cand = candidate / row["target"]
         same = live.is_file() and cand.is_file() and sha(live) == sha(cand)
         rows.append({"target": row["target"], "match": same, "live_sha": sha(live), "candidate_sha": sha(cand)})
         ok = ok and same
@@ -193,25 +217,34 @@ def snapshot() -> tuple[Path, dict]:
     root.mkdir(parents=True, exist_ok=True)
     live_backup = root / "live-caelestia"
     cp = run(["sudo", "cp", "-a", str(LIVE), str(live_backup)], timeout=180)
-    if cp.returncode != 0: raise RuntimeError((cp.stderr or cp.stdout).strip() or "failed to snapshot live tree")
-    if USERCFG.is_file(): shutil.copy2(USERCFG, root / "hypr-user.lua")
-    if BASE_INFO.is_file(): shutil.copy2(BASE_INFO, root / "PATCH_BASE_INFO.txt")
+    if cp.returncode != 0:
+        raise RuntimeError((cp.stderr or cp.stdout).strip() or "failed to snapshot live tree")
+    if USERCFG.is_file():
+        shutil.copy2(USERCFG, root / "hypr-user.lua")
+    if BASE_INFO.is_file():
+        shutil.copy2(BASE_INFO, root / "PATCH_BASE_INFO.txt")
     meta = {"created": int(time.time()), "root": str(root), "live": str(live_backup), "usercfg": str(root / "hypr-user.lua")}
     atomic_json(root / "snapshot.json", meta)
-    state = read_json(STATE); state["last_snapshot"] = str(root); atomic_json(STATE, state)
+    state = read_json(STATE)
+    state["last_snapshot"] = str(root)
+    atomic_json(STATE, state)
     return root, meta
 
 
 def rollback(path: Path) -> tuple[dict, int]:
     meta = read_json(path / "snapshot.json")
     live_backup = Path(meta.get("live", path / "live-caelestia"))
-    if not live_backup.is_dir(): return {"ok": False, "error": "snapshot has no live tree"}, 2
+    if not live_backup.is_dir():
+        return {"ok": False, "error": "snapshot has no live tree"}, 2
     cp = run(["sudo", "rm", "-rf", str(LIVE)], timeout=120)
-    if cp.returncode != 0: return {"ok": False, "error": cp.stderr.strip()}, 3
+    if cp.returncode != 0:
+        return {"ok": False, "error": cp.stderr.strip()}, 3
     cp = run(["sudo", "cp", "-a", str(live_backup), str(LIVE)], timeout=180)
-    if cp.returncode != 0: return {"ok": False, "error": cp.stderr.strip()}, 3
+    if cp.returncode != 0:
+        return {"ok": False, "error": cp.stderr.strip()}, 3
     cfg = path / "hypr-user.lua"
-    if cfg.is_file(): shutil.copy2(cfg, USERCFG)
+    if cfg.is_file():
+        shutil.copy2(cfg, USERCFG)
     run(["hyprctl", "reload"], timeout=20)
     return {"ok": True, "rolled_back": True, "snapshot": str(path)}, 0
 
@@ -220,6 +253,7 @@ def verify() -> tuple[bool, list[dict]]:
     checks = []
     scripts = [
         REPO / "scripts/features/audit-theme-colours.py",
+        REPO / "scripts/features/validate-clipboard-qml.py",
         REPO / "scripts/features/validate-hardware-center.py",
         REPO / "scripts/features/validate-display-manager.py",
         REPO / "scripts/features/validate-gaming-center.py",
@@ -227,7 +261,8 @@ def verify() -> tuple[bool, list[dict]]:
     ]
     ok = True
     for script in scripts:
-        if not script.is_file(): continue
+        if not script.is_file():
+            continue
         cp = run([sys.executable, str(script)], cwd=REPO, timeout=90)
         passed = cp.returncode == 0
         checks.append({"script": script.name, "ok": passed, "output": (cp.stdout + cp.stderr)[-2000:]})
@@ -239,7 +274,8 @@ def write_base(ref: str) -> None:
     meta = candidate_meta(ref)
     package = ""
     cp = run(["pacman", "-Q", "caelestia-shell"], timeout=10)
-    if cp.returncode == 0: package = cp.stdout.strip().split(maxsplit=1)[-1]
+    if cp.returncode == 0:
+        package = cp.stdout.strip().split(maxsplit=1)[-1]
     text = "\n".join([
         f"installed_package={package}",
         f"upstream_tag={ref}",
@@ -249,11 +285,13 @@ def write_base(ref: str) -> None:
     ])
     BASE_INFO.write_text(text, encoding="utf-8")
     local = Path.home() / ".local/share/caelestia-custom-system/PATCH_BASE_INFO.txt"
-    local.parent.mkdir(parents=True, exist_ok=True); local.write_text(text, encoding="utf-8")
+    local.parent.mkdir(parents=True, exist_ok=True)
+    local.write_text(text, encoding="utf-8")
 
 
 def apply(ref: str, confirm: str) -> tuple[dict, int]:
-    if confirm != "APPLY": return {"ok": False, "error": "explicit --confirm APPLY is required"}, 2
+    if confirm != "APPLY":
+        return {"ok": False, "error": "explicit --confirm APPLY is required"}, 2
     report = read_json(REPORT)
     meta = candidate_meta(ref)
     if not report.get("ok") or report.get("candidate_commit") != meta.get("commit"):
@@ -261,9 +299,15 @@ def apply(ref: str, confirm: str) -> tuple[dict, int]:
     matches, hashes = live_matches_candidate(ref)
     if not matches:
         return {"ok": False, "error": "live Caelestia tree does not match the tested raw candidate; update the Caelestia package separately first", "targets": hashes}, 4
-    snap, snap_meta = snapshot()
+
+    snap, _snap_meta = snapshot()
     scripts = [
         REPO / "caelestia/bin/install-patches.sh",
+        # The native patch series contains Overview but Clipboard integration is
+        # intentionally installed as a live-derived staged transformation.
+        # It must exist before Hardware/Display/Gaming/Updater extend the same
+        # ScreenState/Panels/ContentWindow chain.
+        REPO / "scripts/features/install-clipboard-qml.sh",
         REPO / "scripts/features/install-hardware-center.sh",
         REPO / "scripts/features/install-display-manager.sh",
         REPO / "scripts/features/install-gaming-center.sh",
@@ -272,50 +316,87 @@ def apply(ref: str, confirm: str) -> tuple[dict, int]:
     executed = []
     try:
         for script in scripts:
-            if not script.is_file(): continue
+            if not script.is_file():
+                continue
             cp = run(["bash", str(script)], cwd=REPO, timeout=300)
             executed.append({"script": script.name, "code": cp.returncode, "output": (cp.stdout + cp.stderr)[-2500:]})
-            if cp.returncode != 0: raise RuntimeError(f"{script.name} failed")
+            if cp.returncode != 0:
+                raise RuntimeError(f"{script.name} failed")
         ok, checks = verify()
-        if not ok: raise RuntimeError("post-apply validation failed")
+        if not ok:
+            raise RuntimeError("post-apply validation failed")
         write_base(ref)
-        state = read_json(STATE); state.update({"last_apply": int(time.time()), "applied_ref": ref, "applied_commit": meta.get("commit", ""), "last_snapshot": str(snap)}); atomic_json(STATE, state)
-        return {"ok": True, "applied": True, "ref": ref, "commit": meta.get("commit", ""), "snapshot": str(snap), "scripts": executed, "checks": checks, "package_updated": False}, 0
+        state = read_json(STATE)
+        state.update({"last_apply": int(time.time()), "applied_ref": ref, "applied_commit": meta.get("commit", ""), "last_snapshot": str(snap)})
+        atomic_json(STATE, state)
+        return {
+            "ok": True,
+            "applied": True,
+            "ref": ref,
+            "commit": meta.get("commit", ""),
+            "snapshot": str(snap),
+            "scripts": executed,
+            "checks": checks,
+            "package_updated": False,
+        }, 0
     except Exception as exc:
         rb, _ = rollback(snap)
         return {"ok": False, "error": str(exc), "rolled_back": rb.get("rolled_back", False), "snapshot": str(snap), "scripts": executed}, 5
 
 
 def status() -> dict:
-    return {"state": read_json(STATE), "report": read_json(REPORT), "base": parse_base(), "candidate_cache": [p.name for p in CANDIDATES.iterdir() if p.is_dir()] if CANDIDATES.is_dir() else []}
+    return {
+        "state": read_json(STATE),
+        "report": read_json(REPORT),
+        "base": parse_base(),
+        "candidate_cache": [p.name for p in CANDIDATES.iterdir() if p.is_dir()] if CANDIDATES.is_dir() else [],
+    }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Safe staged CaeRice compatibility updater")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("discover")
-    f = sub.add_parser("fetch"); f.add_argument("--ref", required=True)
-    t = sub.add_parser("test"); t.add_argument("--ref", required=True)
-    a = sub.add_parser("apply"); a.add_argument("--ref", required=True); a.add_argument("--confirm", default="")
-    r = sub.add_parser("rollback"); r.add_argument("--snapshot", default="")
+    fetch_parser = sub.add_parser("fetch")
+    fetch_parser.add_argument("--ref", required=True)
+    test_parser = sub.add_parser("test")
+    test_parser.add_argument("--ref", required=True)
+    apply_parser = sub.add_parser("apply")
+    apply_parser.add_argument("--ref", required=True)
+    apply_parser.add_argument("--confirm", default="")
+    rollback_parser = sub.add_parser("rollback")
+    rollback_parser.add_argument("--snapshot", default="")
     sub.add_parser("status")
     args = parser.parse_args()
+
     try:
         if args.command == "discover":
             audit = REPO / "caelestia/bin/caerice-upstream-audit"
             cp = run([sys.executable, str(audit)], cwd=REPO, timeout=30)
-            if cp.returncode != 0: return emit({"ok": False, "error": cp.stderr.strip()}, 2)
-            data = json.loads(cp.stdout); data["ok"] = True; return emit(data)
-        if args.command == "fetch": payload, code = fetch(args.ref); return emit(payload, code)
-        if args.command == "test": payload, code = test(args.ref); return emit(payload, code)
-        if args.command == "apply": payload, code = apply(args.ref, args.confirm); return emit(payload, code)
+            if cp.returncode != 0:
+                return emit({"ok": False, "error": cp.stderr.strip()}, 2)
+            data = json.loads(cp.stdout)
+            data["ok"] = True
+            return emit(data)
+        if args.command == "fetch":
+            payload, code = fetch(args.ref)
+            return emit(payload, code)
+        if args.command == "test":
+            payload, code = test(args.ref)
+            return emit(payload, code)
+        if args.command == "apply":
+            payload, code = apply(args.ref, args.confirm)
+            return emit(payload, code)
         if args.command == "rollback":
             path = Path(args.snapshot) if args.snapshot else Path(read_json(STATE).get("last_snapshot", ""))
-            payload, code = rollback(path); return emit(payload, code)
-        if args.command == "status": return emit({"ok": True, **status()})
+            payload, code = rollback(path)
+            return emit(payload, code)
+        if args.command == "status":
+            return emit({"ok": True, **status()})
     except (OSError, RuntimeError, ValueError, json.JSONDecodeError, subprocess.SubprocessError) as exc:
         return emit({"ok": False, "error": str(exc)}, 2)
     return 2
 
 
-if __name__ == "__main__": raise SystemExit(main())
+if __name__ == "__main__":
+    raise SystemExit(main())
