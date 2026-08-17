@@ -97,7 +97,11 @@ FocusScope {
         refresh();
     }
 
-    Keys.onEscapePressed: root.screenState.hardware = false
+    function closeHardware(): void {
+        root.screenState.hardware = false;
+    }
+
+    Keys.onEscapePressed: root.closeHardware()
 
     Keys.onPressed: event => {
         if (event.key === Qt.Key_R) {
@@ -105,7 +109,7 @@ FocusScope {
             event.accepted = true;
             return;
         }
-        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_7) {
+        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_8) {
             root.currentPage = event.key - Qt.Key_1;
             event.accepted = true;
         }
@@ -150,7 +154,7 @@ FocusScope {
                 mouse.y >= panel.y + panel.height;
 
             if (outsidePanel)
-                root.screenState.hardware = false;
+                root.closeHardware();
         }
     }
 
@@ -204,7 +208,7 @@ FocusScope {
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - 52 - refreshButton.width - 28
+                    width: parent.width - 52 - refreshButton.width - closeButton.width - 42
                     spacing: 0
 
                     StyledText {
@@ -255,6 +259,27 @@ FocusScope {
                         fontStyle: Tokens.font.icon.large
                     }
                 }
+
+                StyledRect {
+                    id: closeButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 46
+                    height: 46
+                    radius: Tokens.rounding.large
+                    color: Colours.palette.m3surfaceContainerHighest
+
+                    StateLayer {
+                        radius: parent.radius
+                        onClicked: root.closeHardware()
+                    }
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        text: "close"
+                        color: Colours.palette.m3onSurfaceVariant
+                        fontStyle: Tokens.font.icon.large
+                    }
+                }
             }
 
             Row {
@@ -271,13 +296,14 @@ FocusScope {
                         { label: qsTr("Sensors"), icon: "device_thermostat" },
                         { label: qsTr("I/O"), icon: "lan" },
                         { label: qsTr("Power"), icon: "bolt" },
-                        { label: qsTr("Auto"), icon: "auto_mode" }
+                        { label: qsTr("Auto"), icon: "auto_mode" },
+                        { label: qsTr("Energy"), icon: "electric_bolt" }
                     ]
 
                     delegate: StyledRect {
                         required property var modelData
                         required property int index
-                        width: Math.min(150, (tabs.width - tabs.spacing * 6) / 7)
+                        width: Math.min(145, (tabs.width - tabs.spacing * 7) / 8)
                         height: 42
                         radius: Tokens.rounding.large
                         color: root.currentPage === index
@@ -293,7 +319,7 @@ FocusScope {
 
                         Row {
                             anchors.centerIn: parent
-                            spacing: 7
+                            spacing: 6
 
                             MaterialIcon {
                                 text: modelData.icon
@@ -308,7 +334,7 @@ FocusScope {
                                 color: root.currentPage === index
                                     ? Colours.palette.m3onSecondaryContainer
                                     : Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.medium
+                                font: Tokens.font.label.small
                             }
                         }
                     }
@@ -331,7 +357,9 @@ FocusScope {
                                     ? ioComponent
                                     : root.currentPage === 5
                                         ? powerComponent
-                                        : automationComponent
+                                        : root.currentPage === 6
+                                            ? automationComponent
+                                            : energyComponent
             }
         }
     }
@@ -398,5 +426,11 @@ FocusScope {
         id: automationComponent
 
         PowerAutomationPage {}
+    }
+
+    Component {
+        id: energyComponent
+
+        EnergyPage {}
     }
 }
