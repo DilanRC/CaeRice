@@ -46,6 +46,10 @@ def drm_connectors() -> list[dict]:
         if not status_path.exists():
             continue
         card_name, output_name = connector.name.split("-", 1)
+        # DRM writeback connectors are compositor capture endpoints, not physical displays.
+        # Exposing them in Display Manager makes a connected pseudo-output look actionable.
+        if output_name.startswith("Writeback-"):
+            continue
         card = drm / card_name
         modes = [line for line in read_text(connector / "modes").splitlines() if line]
         out.append({
