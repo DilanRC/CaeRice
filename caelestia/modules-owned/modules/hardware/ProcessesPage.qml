@@ -11,11 +11,13 @@ Item {
     id: root
 
     required property var processes
+    property real memoryTotalGb: 0
 
     property string filterText: ""
     property string sortKey: "cpu"
     property bool sortDescending: true
     property bool paused: false
+    property bool numericMode: true
     property var frozenProcesses: []
     property int selectedPid: -1
     property string actionStatus: ""
@@ -23,6 +25,7 @@ Item {
     readonly property var sourceProcesses: paused ? frozenProcesses : processes
     readonly property var visibleProcesses: buildProcesses(sourceProcesses)
     readonly property var selectedProcess: findSelected()
+    readonly property bool selectedStopped: String(selectedProcess?.state ?? "") === "T"
 
     function buildProcesses(source): var {
         const query = filterText.trim().toLowerCase();
@@ -82,6 +85,27 @@ Item {
         actionStatus = `${signal} → PID ${pid}`;
     }
 
+    function toggleSelectedPause(): void {
+        sendSignal(selectedStopped ? "CONT" : "STOP");
+    }
+
+    function cpuText(proc): string {
+        const usage = Number(proc?.cpu ?? 0);
+        return numericMode ? `${(usage / 100).toFixed(2)} core` : `${usage.toFixed(1)}%`;
+    }
+
+    function ramGiB(proc): real {
+        return Math.max(0, Number(memoryTotalGb)) * Math.max(0, Number(proc?.mem ?? 0)) / 100;
+    }
+
+    function ramText(proc): string {
+        const pct = Number(proc?.mem ?? 0);
+        if (!numericMode)
+            return `${pct.toFixed(1)}%`;
+        const gib = ramGiB(proc);
+        return gib < 1 ? `${Math.round(gib * 1024)} MiB` : `${gib.toFixed(2)} GiB`;
+    }
+
     onVisibleProcessesChanged: {
         if (visibleProcesses.length === 0) {
             selectedPid = -1;
@@ -115,7 +139,7 @@ Item {
                     spacing: 9
 
                     StyledRect {
-                        width: parent.width - sortControls.width - pauseButton.width - 18
+                        width: parent.width - sortControls.width - pauseButton.width - unitsButton.width - 27
                         height: 42
                         radius: Tokens.rounding.large
                         color: Colours.palette.m3surfaceContainerHigh
@@ -197,6 +221,30 @@ Item {
                     }
 
                     StyledRect {
+                        id: unitsButton
+                        width: 48
+                        height: 42
+                        radius: Tokens.rounding.large
+                        color: root.numericMode
+                            ? Colours.palette.m3secondaryContainer
+                            : Colours.palette.m3surfaceContainerHigh
+
+                        StateLayer {
+                            radius: parent.radius
+                            onClicked: root.numericMode = !root.numericMode
+                        }
+
+                        StyledText {
+                            anchors.centerIn: parent
+                            text: root.numericMode ? "123" : "%"
+                            color: root.numericMode
+                                ? Colours.palette.m3onSecondaryContainer
+                                : Colours.palette.m3onSurfaceVariant
+                            font: Tokens.font.label.medium
+                        }
+                    }
+
+                    StyledRect {
                         id: pauseButton
                         width: 44
                         height: 42
@@ -245,14 +293,14 @@ Item {
                     }
                     StyledText {
                         width: parent.width * 0.14
-                        text: qsTr("CPU")
+                        text: root.numericMode ? qsTr("CPU cores") : qsTr("CPU %")
                         color: Colours.palette.m3outline
                         font: Tokens.font.label.small
                         horizontalAlignment: Text.AlignRight
                     }
                     StyledText {
                         width: parent.width * 0.14
-                        text: qsTr("RAM")
+                        text: root.numericMode ? qsTr("RAM") : qsTr("RAM %")
                         color: Colours.palette.m3outline
                         font: Tokens.font.label.small
                         horizontalAlignment: Text.AlignRight
@@ -318,20 +366,22 @@ Item {
                             StyledText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.14
-                                text: `${Number(processRow.modelData?.cpu ?? 0).toFixed(1)}%`
+                                text: root.cpuText(processRow.modelData)
                                 color: Number(processRow.modelData?.cpu ?? 0) >= 50
                                     ? Colours.palette.m3primary
                                     : Colours.palette.m3onSurfaceVariant
                                 font: Tokens.font.label.small
                                 horizontalAlignment: Text.AlignRight
+                                elide: Text.ElideLeft
                             }
                             StyledText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.14
-                                text: `${Number(processRow.modelData?.mem ?? 0).toFixed(1)}%`
+                                text: root.ramText(processRow.modelData)
                                 color: Colours.palette.m3onSurfaceVariant
                                 font: Tokens.font.label.small
                                 horizontalAlignment: Text.AlignRight
+                                elide: Text.ElideLeft
                             }
                         }
                     }
@@ -349,8 +399,13 @@ Item {
             border.color: Colours.palette.m3outlineVariant
 
             Column {
-                anchors.fill: parent
+                id: detailsBody
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: actionArea.top
                 anchors.margins: 18
+                anchors.bottomMargin: 12
                 spacing: 12
 
                 Row {
@@ -414,8 +469,8 @@ Item {
 
                 Repeater {
                     model: [
-                        { label: qsTr("CPU"), value: root.selectedProcess?.cpu !== undefined ? `${Number(root.selectedProcess.cpu).toFixed(1)}%` : "—" },
-                        { label: qsTr("Memory"), value: root.selectedProcess?.mem !== undefined ? `${Number(root.selectedProcess.mem).toFixed(1)}%` : "—" },
+                        { label: qsTr("CPU"), value: root.cpuText(root.selectedProcess) },
+                        { label: qsTr("Memory"), value: root.ramText(root.selectedProcess) },
                         { label: qsTr("State"), value: root.selectedProcess?.state ?? "—" },
                         { label: qsTr("Threads"), value: String(root.selectedProcess?.threads ?? "—") },
                         { label: qsTr("Parent PID"), value: String(root.selectedProcess?.ppid ?? "—") },
@@ -444,48 +499,117 @@ Item {
                         }
                     }
                 }
+            }
 
-                Item {
-                    width: 1
-                    height: Math.max(0, parent.height - 390)
-                }
+            Column {
+                id: actionArea
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.leftMargin: 18
+                anchors.rightMargin: 18
+                anchors.bottomMargin: 18
+                spacing: 8
 
                 StyledText {
                     width: parent.width
-                    text: root.actionStatus.length > 0
-                        ? root.actionStatus
-                        : qsTr("Process controls send Unix signals directly.")
-                    color: Colours.palette.m3outline
+                    visible: root.actionStatus.length > 0
+                    text: root.actionStatus
+                    color: Colours.palette.m3primary
                     font: Tokens.font.label.small
-                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
                 }
 
-                Row {
+                Grid {
                     width: parent.width
-                    spacing: 8
+                    columns: 2
+                    columnSpacing: 8
+                    rowSpacing: 8
 
                     StyledRect {
                         width: (parent.width - 8) / 2
-                        height: 42
+                        height: 40
                         radius: Tokens.rounding.large
                         color: Colours.palette.m3secondaryContainer
+
+                        StateLayer {
+                            radius: parent.radius
+                            onClicked: root.toggleSelectedPause()
+                        }
+
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            MaterialIcon {
+                                text: root.selectedStopped ? "play_arrow" : "pause"
+                                color: Colours.palette.m3onSecondaryContainer
+                                fontStyle: Tokens.font.icon.small
+                            }
+                            StyledText {
+                                text: root.selectedStopped ? qsTr("Resume") : qsTr("Pause")
+                                color: Colours.palette.m3onSecondaryContainer
+                                font: Tokens.font.label.medium
+                            }
+                        }
+                    }
+
+                    StyledRect {
+                        width: (parent.width - 8) / 2
+                        height: 40
+                        radius: Tokens.rounding.large
+                        color: Colours.palette.m3surfaceContainerHigh
+
+                        StateLayer {
+                            radius: parent.radius
+                            onClicked: root.sendSignal("INT")
+                        }
+
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            MaterialIcon {
+                                text: "cancel"
+                                color: Colours.palette.m3onSurfaceVariant
+                                fontStyle: Tokens.font.icon.small
+                            }
+                            StyledText {
+                                text: qsTr("Interrupt")
+                                color: Colours.palette.m3onSurfaceVariant
+                                font: Tokens.font.label.medium
+                            }
+                        }
+                    }
+
+                    StyledRect {
+                        width: (parent.width - 8) / 2
+                        height: 40
+                        radius: Tokens.rounding.large
+                        color: Colours.palette.m3tertiaryContainer
 
                         StateLayer {
                             radius: parent.radius
                             onClicked: root.sendSignal("TERM")
                         }
 
-                        StyledText {
+                        Row {
                             anchors.centerIn: parent
-                            text: qsTr("Terminate")
-                            color: Colours.palette.m3onSecondaryContainer
-                            font: Tokens.font.label.medium
+                            spacing: 6
+                            MaterialIcon {
+                                text: "power_settings_new"
+                                color: Colours.palette.m3onTertiaryContainer
+                                fontStyle: Tokens.font.icon.small
+                            }
+                            StyledText {
+                                text: qsTr("Terminate")
+                                color: Colours.palette.m3onTertiaryContainer
+                                font: Tokens.font.label.medium
+                            }
                         }
                     }
 
                     StyledRect {
                         width: (parent.width - 8) / 2
-                        height: 42
+                        height: 40
                         radius: Tokens.rounding.large
                         color: Colours.palette.m3errorContainer
 
@@ -494,11 +618,19 @@ Item {
                             onClicked: root.sendSignal("KILL")
                         }
 
-                        StyledText {
+                        Row {
                             anchors.centerIn: parent
-                            text: qsTr("Kill")
-                            color: Colours.palette.m3onErrorContainer
-                            font: Tokens.font.label.medium
+                            spacing: 6
+                            MaterialIcon {
+                                text: "dangerous"
+                                color: Colours.palette.m3onErrorContainer
+                                fontStyle: Tokens.font.icon.small
+                            }
+                            StyledText {
+                                text: qsTr("Force kill")
+                                color: Colours.palette.m3onErrorContainer
+                                font: Tokens.font.label.medium
+                            }
                         }
                     }
                 }
