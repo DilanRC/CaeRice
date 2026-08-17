@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.components.controls
 import qs.services
 
 StyledRect {
@@ -14,6 +15,9 @@ StyledRect {
     property string subtitle: ""
     property real progress: -1
     property var rows: []
+    property string modeLabel: ""
+
+    signal modeRequested()
 
     implicitHeight: 190
     radius: Tokens.rounding.extraLarge
@@ -48,7 +52,7 @@ StyledRect {
         }
 
         Column {
-            width: Math.max(40, parent.width - 54)
+            width: Math.max(40, parent.width - 54 - (modeButton.visible ? 48 : 0))
             spacing: 0
 
             Row {
@@ -80,6 +84,34 @@ StyledRect {
                 font: Tokens.font.body.small
                 elide: Text.ElideRight
             }
+        }
+    }
+
+    StyledRect {
+        id: modeButton
+        visible: root.modeLabel.length > 0
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 14
+        anchors.rightMargin: 16
+        width: 42
+        height: 26
+        radius: Tokens.rounding.full
+        color: Colours.palette.m3surfaceContainerHighest
+        border.width: 1
+        border.color: Colours.palette.m3outlineVariant
+        z: 3
+
+        StateLayer {
+            radius: parent.radius
+            onClicked: root.modeRequested()
+        }
+
+        StyledText {
+            anchors.centerIn: parent
+            text: root.modeLabel
+            color: Colours.palette.m3primary
+            font: Tokens.font.label.small
         }
     }
 
