@@ -21,7 +21,7 @@ for helper in caerice-gaming-probe caerice-gaming-profile; do install -m 0755 "$
 sudo install -m 0644 "$REPO/caelestia/modules-owned/modules/UpdaterController.qml" "$LIVE/modules/UpdaterController.qml"
 sudo mkdir -p "$LIVE/modules/updater"
 for qml in "$REPO/caelestia/modules-owned/modules/updater/"*.qml; do sudo install -m 0644 "$qml" "$LIVE/modules/updater/$(basename "$qml")"; done
-for helper in caerice-upstream-audit caerice-updater; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
+for helper in caerice-upstream-audit caerice-updater caerice-updater-commit-base; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
 
 pkill -TERM -x qs 2>/dev/null || true
 sleep 1
