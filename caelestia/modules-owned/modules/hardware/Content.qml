@@ -332,6 +332,7 @@ FocusScope {
 
         ProcessesPage {
             processes: root.processes
+            memoryTotalGb: Number(root.snapshot?.memory?.total_gb ?? 0)
         }
     }
 
