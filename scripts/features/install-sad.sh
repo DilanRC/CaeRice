@@ -5,8 +5,8 @@ REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"; [[ -n "$REPO" ]] ||
 echo "==> Display Manager"
 bash "$REPO/scripts/features/install-display-manager.sh"
 mkdir -p "$HOME/.local/bin"
-install -m 0755 "$REPO/caelestia/bin/caerice-display-presets" "$HOME/.local/bin/caerice-display-presets"
-# install-display-manager copies every display/*.qml, including DisplayPresets.qml.
+for helper in caerice-display-presets caerice-display-workspaces; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
+# install-display-manager copies every display/*.qml, including DisplayPresets/DisplayCapabilities.
 
 echo "==> Gaming Center"
 bash "$REPO/scripts/features/install-gaming-center.sh"
