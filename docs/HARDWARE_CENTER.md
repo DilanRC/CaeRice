@@ -17,6 +17,8 @@ uses the same window that already hosts Launcher, Overview and Clipboard.
 - While open, telemetry refreshes every 1500 ms.
 - `caerice-hardware-probe` is a one-shot Python process; there is no extra
   permanent monitor daemon.
+- The Power page uses a second one-shot helper, `caerice-hardware-power`, only
+  while that page is loaded.
 - Closing Hardware Center destroys the polling/UI tree.
 
 ## Pages
@@ -26,12 +28,13 @@ uses the same window that already hosts Launcher, Overview and Clipboard.
 3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, display mode `123 / %`, list freeze, process detail, Pause/Resume, Interrupt, Terminate and Force kill actions.
 4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fans and battery data.
 5. **I/O** — detailed root storage/NVMe throughput, IOPS and totals plus network rate/totals, IPv4, MAC and Wi-Fi metadata when exposed.
+6. **Power** — AC/battery state, battery health, CPU driver/governor/EPP/platform profile, AMD/NVIDIA power state and safe power-profile switching.
 
-Keyboard: `1`–`5` switches pages, `R` refreshes, `Esc` closes.
+Keyboard: `1`–`6` switches pages, `R` refreshes the main telemetry, `Esc` closes.
 
 ## Telemetry
 
-`~/.local/bin/caerice-hardware-probe` returns one compact JSON snapshot with:
+`~/.local/bin/caerice-hardware-probe` returns the main compact JSON snapshot with:
 
 - CPU total/per-core usage, average frequency, package temperature and governor.
 - RAM used/available/cache/buffers plus swap usage.
@@ -46,7 +49,24 @@ Keyboard: `1`–`5` switches pages, `R` refreshes, `Esc` closes.
   parent PID, elapsed time and command line.
 - Host, kernel, uptime and load average.
 
-The probe degrades gracefully when a metric is not available.
+`~/.local/bin/caerice-hardware-power` provides the Power page with:
+
+- AC source detection from kernel `power_supply`.
+- Battery capacity, draw and health when energy/design values are exposed.
+- CPU scaling driver, governor, EPP, frequency range and ACPI platform profile.
+- AMD runtime/performance level from sysfs.
+- NVIDIA P-state, clocks, draw and power limit from `nvidia-smi`.
+- Power Profiles daemon state through `powerprofilesctl`, when installed.
+
+Both helpers degrade gracefully when a metric is not available.
+
+## Safe power controls
+
+Hardware Center deliberately does **not** write raw governor/EPP/GPU sysfs
+controls and does not apply overclocking or power-limit changes. Profile buttons
+only invoke the session's `powerprofilesctl set power-saver|balanced|performance`
+backend when those profiles are reported as available. If no compatible backend
+is installed, the Power page stays read-only.
 
 ## btop relationship
 
@@ -84,7 +104,7 @@ git pull --ff-only
 bash scripts/features/update-hardware-center.sh
 ```
 
-The fast updater synchronizes every QML page plus the probe and restarts
-Caelestia. The full installer creates a snapshot under
+The fast updater synchronizes every QML page plus both helper scripts and
+restarts Caelestia. The full installer creates a snapshot under
 `~/.local/share/caelestia-custom-system/snapshots/hardware-center-*` before
 changing native integration files.
