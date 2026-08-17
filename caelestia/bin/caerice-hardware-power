@@ -50,6 +50,10 @@ def unique(values):
     return out
 
 
+def finite(value, digits=1):
+    return round(value, digits) if value is not None else None
+
+
 def powerprofiles_snapshot() -> dict:
     exe = shutil.which("powerprofilesctl")
     if not exe:
@@ -58,6 +62,7 @@ def powerprofiles_snapshot() -> dict:
             "current": "",
             "available": [],
             "can_set": False,
+            "degraded": None,
         }
 
     current_cp = run([exe, "get"])
@@ -73,11 +78,22 @@ def powerprofiles_snapshot() -> dict:
     if current and current not in available:
         available.append(current)
 
+    degraded = None
+    current_block = re.search(
+        rf"(?ms)^\s*\*?\s*{re.escape(current)}:\s*$\n(.*?)(?=^\s*\*?\s*(?:{'|'.join(map(re.escape, VALID_PROFILES))}):\s*$|\Z)",
+        listing,
+    ) if current else None
+    if current_block:
+        match = re.search(r"(?mi)^\s*Degraded:\s*(\S+)", current_block.group(1))
+        if match:
+            degraded = match.group(1).lower() not in {"no", "false", "0"}
+
     return {
         "backend": "powerprofilesctl",
         "current": current,
         "available": available,
         "can_set": bool(available),
+        "degraded": degraded,
     }
 
 
@@ -101,43 +117,73 @@ def battery_snapshot() -> dict:
         return {"present": False}
 
     root = roots[0]
+    status = read_text(root / "status", "Unknown")
     percent = read_num(root / "capacity")
-    power_uw = read_num(root / "power_now")
-    if power_uw is None:
-        current_ua = read_num(root / "current_now")
-        voltage_uv = read_num(root / "voltage_now")
-        if current_ua is not None and voltage_uv is not None:
-            power_uw = current_ua * voltage_uv / 1_000_000.0
+
+    power_w = read_num(root / "power_now", 1_000_000.0)
+    voltage_v = read_num(root / "voltage_now", 1_000_000.0)
+    if power_w is None:
+        current_a = read_num(root / "current_now", 1_000_000.0)
+        if current_a is not None and voltage_v is not None:
+            power_w = current_a * voltage_v
 
     energy_now = read_num(root / "energy_now", 1_000_000.0)
     energy_full = read_num(root / "energy_full", 1_000_000.0)
     energy_design = read_num(root / "energy_full_design", 1_000_000.0)
-    if energy_full is None:
-        charge_full = read_num(root / "charge_full", 1_000_000.0)
-        voltage = read_num(root / "voltage_now", 1_000_000.0)
-        if charge_full is not None and voltage is not None:
-            energy_full = charge_full * voltage
-    if energy_design is None:
-        charge_design = read_num(root / "charge_full_design", 1_000_000.0)
-        voltage = read_num(root / "voltage_now", 1_000_000.0)
-        if charge_design is not None and voltage is not None:
-            energy_design = charge_design * voltage
+
+    if voltage_v is not None:
+        if energy_now is None:
+            charge_now_ah = read_num(root / "charge_now", 1_000_000.0)
+            if charge_now_ah is not None:
+                energy_now = charge_now_ah * voltage_v
+        if energy_full is None:
+            charge_full_ah = read_num(root / "charge_full", 1_000_000.0)
+            if charge_full_ah is not None:
+                energy_full = charge_full_ah * voltage_v
+        if energy_design is None:
+            charge_design_ah = read_num(root / "charge_full_design", 1_000_000.0)
+            if charge_design_ah is not None:
+                energy_design = charge_design_ah * voltage_v
 
     health = None
     if energy_full is not None and energy_design and energy_design > 0:
         health = max(0.0, min(100.0, energy_full / energy_design * 100.0))
 
+    remaining_min = None
+    to_full_min = None
+    if power_w is not None and power_w > 0.2:
+        if status.lower() == "discharging" and energy_now is not None:
+            remaining_min = max(0.0, energy_now / power_w * 60.0)
+        elif status.lower() == "charging" and energy_now is not None and energy_full is not None:
+            to_full_min = max(0.0, (energy_full - energy_now) / power_w * 60.0)
+
     return {
         "present": True,
         "name": root.name,
-        "percent": round(percent, 0) if percent is not None else None,
-        "status": read_text(root / "status", "Unknown"),
-        "power_w": round(power_uw / 1_000_000.0, 1) if power_uw is not None else None,
-        "energy_now_wh": round(energy_now, 2) if energy_now is not None else None,
-        "energy_full_wh": round(energy_full, 2) if energy_full is not None else None,
-        "energy_design_wh": round(energy_design, 2) if energy_design is not None else None,
-        "health_percent": round(health, 1) if health is not None else None,
+        "percent": finite(percent, 0),
+        "status": status,
+        "power_w": finite(power_w, 2),
+        "voltage_v": finite(voltage_v, 2),
+        "energy_now_wh": finite(energy_now, 2),
+        "energy_full_wh": finite(energy_full, 2),
+        "energy_design_wh": finite(energy_design, 2),
+        "health_percent": finite(health, 1),
+        "remaining_minutes": finite(remaining_min, 0),
+        "time_to_full_minutes": finite(to_full_min, 0),
     }
+
+
+def cpu_package_power() -> float | None:
+    candidates = []
+    for hwmon in Path("/sys/class/hwmon").glob("hwmon*"):
+        name = read_text(hwmon / "name").lower()
+        if name not in {"k10temp", "zenpower", "amd_energy", "coretemp"}:
+            continue
+        for path in list(hwmon.glob("power*_average")) + list(hwmon.glob("power*_input")):
+            watts = read_num(path, 1_000_000.0)
+            if watts is not None and 0 <= watts <= 350:
+                candidates.append(watts)
+    return max(candidates) if candidates else None
 
 
 def cpu_policy_snapshot() -> dict:
@@ -167,11 +213,12 @@ def cpu_policy_snapshot() -> dict:
         "governor": ", ".join(governors) if governors else "unknown",
         "epp": ", ".join(epps) if epps else "",
         "epp_choices": epp_choices,
-        "current_mhz": round(sum(cur) / len(cur), 0) if cur else None,
-        "min_mhz": round(min(mins), 0) if mins else None,
-        "max_mhz": round(max(maxs), 0) if maxs else None,
+        "current_mhz": finite(sum(cur) / len(cur), 0) if cur else None,
+        "min_mhz": finite(min(mins), 0) if mins else None,
+        "max_mhz": finite(max(maxs), 0) if maxs else None,
         "platform_profile": read_text(platform_path),
         "platform_profile_choices": read_text(platform_choices_path).split(),
+        "package_power_w": finite(cpu_package_power(), 2),
     }
 
 
@@ -190,6 +237,8 @@ def amd_gpu_power() -> list[dict]:
             if temps:
                 temp = max(temps)
             watts = read_num(hwmon / "power1_average", 1_000_000.0)
+            if watts is None:
+                watts = read_num(hwmon / "power1_input", 1_000_000.0)
             if watts is not None:
                 power = watts
 
@@ -200,8 +249,8 @@ def amd_gpu_power() -> list[dict]:
                 "performance_level": read_text(device / "power_dpm_force_performance_level"),
                 "power_state": read_text(device / "power_dpm_state"),
                 "runtime_status": read_text(device / "power/runtime_status"),
-                "temp_c": round(temp, 1) if temp is not None else None,
-                "power_w": round(power, 1) if power is not None else None,
+                "temp_c": finite(temp, 1),
+                "power_w": finite(power, 2),
             }
         )
     return out
@@ -234,23 +283,26 @@ def nvidia_gpu_power() -> list[dict]:
                 "vendor": "NVIDIA",
                 "name": parts[0],
                 "pstate": parts[1],
-                "power_w": number(2),
-                "power_limit_w": number(3),
-                "temp_c": number(4),
-                "graphics_clock_mhz": number(5),
-                "memory_clock_mhz": number(6),
+                "power_w": finite(number(2), 2),
+                "power_limit_w": finite(number(3), 2),
+                "temp_c": finite(number(4), 1),
+                "graphics_clock_mhz": finite(number(5), 0),
+                "memory_clock_mhz": finite(number(6), 0),
             }
         )
     return out
 
 
 def snapshot() -> dict:
+    gpus = amd_gpu_power() + nvidia_gpu_power()
+    gpu_watts = [float(g.get("power_w")) for g in gpus if g.get("power_w") is not None]
     return {
         "profiles": powerprofiles_snapshot(),
         "ac": ac_snapshot(),
         "battery": battery_snapshot(),
         "cpu": cpu_policy_snapshot(),
-        "gpus": amd_gpu_power() + nvidia_gpu_power(),
+        "gpus": gpus,
+        "total_gpu_power_w": finite(sum(gpu_watts), 2) if gpu_watts else None,
     }
 
 
@@ -272,8 +324,11 @@ def set_profile(profile: str) -> int:
         print(json.dumps({"ok": False, "error": (cp.stderr or cp.stdout).strip()}))
         return cp.returncode or 5
 
-    print(json.dumps({"ok": True, "profile": profile}))
-    return 0
+    verify = run([exe, "get"], timeout=3.0)
+    current = verify.stdout.strip() if verify and verify.returncode == 0 else ""
+    ok = current == profile
+    print(json.dumps({"ok": ok, "profile": profile, "current": current}))
+    return 0 if ok else 6
 
 
 def main() -> int:
