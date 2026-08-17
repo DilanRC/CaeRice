@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BASE="${HOME}/.local/share/caelestia-custom-system"
+
+if [[ ! -d /etc/xdg/quickshell/caelestia ]]; then
+    echo "ERROR: no existe /etc/xdg/quickshell/caelestia" >&2
+    exit 1
+fi
+
+mkdir -p "$BASE"
+rm -rf "$BASE/patches" "$BASE/modules-owned"
+cp -a "$REPO/caelestia/patches" "$BASE/patches"
+cp -a "$REPO/caelestia/modules-owned" "$BASE/modules-owned"
+
+echo "==> 1/6 Patches nativos + módulos propios"
+bash "$REPO/caelestia/bin/install-patches.sh"
+
+echo
+echo "==> 2/6 hypr-user.lua"
+if [[ -f "$REPO/caelestia/user-config/.config/caelestia/hypr-user.lua" ]]; then
+    mkdir -p "$HOME/.config/caelestia"
+    cp "$REPO/caelestia/user-config/.config/caelestia/hypr-user.lua" \
+       "$HOME/.config/caelestia/hypr-user.lua"
+fi
+
+echo
+echo "==> 3/6 Theme bridge + Kitty"
+python3 "$REPO/scripts/features/install-theme-bridge.py"
+
+echo
+echo "==> 4/6 Schemes + favoritos persistentes + Dock"
+python3 "$REPO/scripts/features/finish-theme-dock.py"
+
+echo
+echo "==> 5/6 Brave Origin bridge"
+if command -v brave-origin >/dev/null 2>&1 || command -v brave-origin-stable >/dev/null 2>&1; then
+    python3 "$REPO/scripts/features/install-brave-origin-theme.py"
+else
+    echo "Brave Origin no está instalado; omitido"
+fi
+
+echo
+echo "==> 6/6 Verificación temática"
+python3 "$REPO/scripts/features/audit-theme-colours.py" || {
+    echo "WARN: el audit encontró colores hardcodeados; revisar antes de considerar el rice reproducible." >&2
+}
+
+echo
+echo "CaeRice reconstruido desde el repositorio."
+echo "Reinicia Caelestia con:"
+echo "  pkill -TERM -f 'qs -c caelestia'"
+echo "  sleep 1"
+echo "  caelestia shell -d"
