@@ -31,6 +31,7 @@ FocusScope {
     readonly property var selectedCandidate:
         selectedIndex >= 0 && selectedIndex < candidateOutputs.length ? candidateOutputs[selectedIndex] : ({})
     readonly property var selectedLive: liveByName(selectedCandidate?.name ?? "")
+    readonly property int enabledCount: candidateOutputs.filter(item => item?.enabled ?? true).length
 
     function liveByName(name): var {
         for (const monitor of monitors) {
@@ -93,6 +94,17 @@ FocusScope {
         planStatus = qsTr("Candidate changed · run Dry run again");
     }
 
+    function toggleSelectedEnabled(): void {
+        if (selectedIndex < 0 || selectedIndex >= candidateOutputs.length)
+            return;
+        const current = candidateOutputs[selectedIndex];
+        if ((current?.enabled ?? true) && enabledCount <= 1) {
+            planStatus = qsTr("Blocked: at least one output must stay enabled");
+            return;
+        }
+        updateSelected("enabled", !(current?.enabled ?? true));
+    }
+
     function cycleMode(delta): void {
         const modes = selectedLive?.available_modes ?? [];
         if (!modes.length)
@@ -105,11 +117,80 @@ FocusScope {
         updateSelected("mode", String(modes[index]));
     }
 
+    function cycleTransform(delta): void {
+        const current = Number(selectedCandidate?.transform ?? 0);
+        updateSelected("transform", (current + delta + 8) % 8);
+    }
+
     function parseMode(mode): var {
         const match = String(mode ?? "").match(/^(\d+)x(\d+)@?([0-9.]*)/);
         if (!match)
             return ({ width: 1920, height: 1080 });
         return ({ width: Number(match[1]), height: Number(match[2]) });
+    }
+
+    function logicalWidth(output): real {
+        const size = parseMode(output?.mode);
+        return size.width / Math.max(0.5, Number(output?.scale ?? 1));
+    }
+
+    function applyLaptopPreset(): void {
+        const next = candidateOutputs.map(item => Object.assign({}, item));
+        let found = false;
+        for (const item of next) {
+            const internal = String(item?.name ?? "").startsWith("eDP-");
+            item.enabled = internal;
+            if (internal) {
+                item.x = 0;
+                item.y = 0;
+                found = true;
+            }
+        }
+        if (!found) {
+            planStatus = qsTr("Laptop preset unavailable: no eDP output is active");
+            return;
+        }
+        candidateOutputs = next;
+        selectedIndex = Math.max(0, next.findIndex(item => String(item?.name ?? "").startsWith("eDP-")));
+        planResult = ({});
+        planStatus = qsTr("Preset: Laptop only · run Dry run");
+    }
+
+    function applyDualPreset(): void {
+        const next = candidateOutputs.map(item => Object.assign({}, item));
+        const internalIndex = next.findIndex(item => String(item?.name ?? "").startsWith("eDP-"));
+        const externalIndex = next.findIndex(item => !String(item?.name ?? "").startsWith("eDP-"));
+        if (internalIndex < 0 || externalIndex < 0) {
+            planStatus = qsTr("Dual preset unavailable: connect an external output first");
+            return;
+        }
+        for (let i = 0; i < next.length; ++i)
+            next[i].enabled = i === internalIndex || i === externalIndex;
+        next[externalIndex].x = 0;
+        next[externalIndex].y = 0;
+        next[internalIndex].x = Math.round(logicalWidth(next[externalIndex]));
+        next[internalIndex].y = 0;
+        candidateOutputs = next;
+        selectedIndex = externalIndex;
+        planResult = ({});
+        planStatus = qsTr("Preset: Dual · external left, laptop right · run Dry run");
+    }
+
+    function applyExternalPreset(): void {
+        const next = candidateOutputs.map(item => Object.assign({}, item));
+        const externalIndex = next.findIndex(item => !String(item?.name ?? "").startsWith("eDP-"));
+        if (externalIndex < 0) {
+            planStatus = qsTr("External-only preset unavailable: no external output connected");
+            return;
+        }
+        for (let i = 0; i < next.length; ++i)
+            next[i].enabled = i === externalIndex;
+        next[externalIndex].x = 0;
+        next[externalIndex].y = 0;
+        candidateOutputs = next;
+        selectedIndex = externalIndex;
+        planResult = ({});
+        planStatus = qsTr("Preset: External only · run Dry run");
     }
 
     function layoutBounds(): var {
@@ -407,7 +488,7 @@ FocusScope {
                     Column {
                         anchors.fill: parent
                         anchors.margins: 15
-                        spacing: 9
+                        spacing: 7
 
                         Row {
                             width: parent.width
@@ -434,18 +515,40 @@ FocusScope {
                         }
 
                         Row {
-                            width: parent.width; height: 46; spacing: 8
+                            width: parent.width
+                            height: 34
+                            spacing: 7
+                            Repeater {
+                                model: [
+                                    { label: qsTr("Laptop"), action: () => root.applyLaptopPreset() },
+                                    { label: qsTr("Dual"), action: () => root.applyDualPreset() },
+                                    { label: qsTr("External"), action: () => root.applyExternalPreset() }
+                                ]
+                                delegate: StyledRect {
+                                    required property var modelData
+                                    width: (parent.width - 14) / 3
+                                    height: 34
+                                    radius: Tokens.rounding.medium
+                                    color: Colours.palette.m3surfaceContainerHigh
+                                    StateLayer { radius: parent.radius; onClicked: modelData.action() }
+                                    StyledText { anchors.centerIn: parent; text: modelData.label; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                                }
+                            }
+                        }
+
+                        Row {
+                            width: parent.width; height: 42; spacing: 8
                             StyledRect {
-                                width: 46; height: 46; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
+                                width: 42; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
                                 StateLayer { radius: parent.radius; onClicked: root.cycleMode(-1) }
                                 MaterialIcon { anchors.centerIn: parent; text: "chevron_left"; color: Colours.palette.m3onSurfaceVariant }
                             }
                             StyledRect {
-                                width: parent.width - 100; height: 46; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
+                                width: parent.width - 92; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
                                 StyledText { anchors.centerIn: parent; width: parent.width - 12; text: root.selectedCandidate?.mode ?? "—"; color: Colours.palette.m3onSurface; font: Tokens.font.label.medium; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideMiddle }
                             }
                             StyledRect {
-                                width: 46; height: 46; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
+                                width: 42; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
                                 StateLayer { radius: parent.radius; onClicked: root.cycleMode(1) }
                                 MaterialIcon { anchors.centerIn: parent; text: "chevron_right"; color: Colours.palette.m3onSurfaceVariant }
                             }
@@ -455,23 +558,38 @@ FocusScope {
                             model: [
                                 { label: qsTr("Scale"), value: Number(root.selectedCandidate?.scale ?? 1).toFixed(2), minus: () => root.updateSelected("scale", Math.max(0.5, Number(root.selectedCandidate?.scale ?? 1) - 0.25)), plus: () => root.updateSelected("scale", Math.min(3, Number(root.selectedCandidate?.scale ?? 1) + 0.25)) },
                                 { label: qsTr("X position"), value: String(root.selectedCandidate?.x ?? 0), minus: () => root.updateSelected("x", Number(root.selectedCandidate?.x ?? 0) - 100), plus: () => root.updateSelected("x", Number(root.selectedCandidate?.x ?? 0) + 100) },
-                                { label: qsTr("Y position"), value: String(root.selectedCandidate?.y ?? 0), minus: () => root.updateSelected("y", Number(root.selectedCandidate?.y ?? 0) - 100), plus: () => root.updateSelected("y", Number(root.selectedCandidate?.y ?? 0) + 100) }
+                                { label: qsTr("Y position"), value: String(root.selectedCandidate?.y ?? 0), minus: () => root.updateSelected("y", Number(root.selectedCandidate?.y ?? 0) - 100), plus: () => root.updateSelected("y", Number(root.selectedCandidate?.y ?? 0) + 100) },
+                                { label: qsTr("Transform"), value: String(root.selectedCandidate?.transform ?? 0), minus: () => root.cycleTransform(-1), plus: () => root.cycleTransform(1) }
                             ]
                             delegate: Row {
                                 required property var modelData
-                                width: parent.width; height: 36; spacing: 7
+                                width: parent.width; height: 31; spacing: 7
                                 StyledText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: Colours.palette.m3outline; font: Tokens.font.label.small }
                                 StyledRect {
-                                    width: 34; height: 34; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
+                                    width: 30; height: 30; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
                                     StateLayer { radius: parent.radius; onClicked: modelData.minus() }
                                     MaterialIcon { anchors.centerIn: parent; text: "remove"; color: Colours.palette.m3onSurfaceVariant; fontStyle: Tokens.font.icon.small }
                                 }
                                 StyledText { width: parent.width * 0.28; anchors.verticalCenter: parent.verticalCenter; text: modelData.value; color: Colours.palette.m3onSurface; font: Tokens.font.label.medium; horizontalAlignment: Text.AlignHCenter }
                                 StyledRect {
-                                    width: 34; height: 34; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
+                                    width: 30; height: 30; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
                                     StateLayer { radius: parent.radius; onClicked: modelData.plus() }
                                     MaterialIcon { anchors.centerIn: parent; text: "add"; color: Colours.palette.m3onSurfaceVariant; fontStyle: Tokens.font.icon.small }
                                 }
+                            }
+                        }
+
+                        StyledRect {
+                            width: parent.width
+                            height: 32
+                            radius: Tokens.rounding.medium
+                            color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                            StateLayer { radius: parent.radius; onClicked: root.toggleSelectedEnabled() }
+                            Row {
+                                anchors.centerIn: parent
+                                spacing: 7
+                                MaterialIcon { text: (root.selectedCandidate?.enabled ?? true) ? "toggle_on" : "toggle_off"; color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3outline }
+                                StyledText { text: (root.selectedCandidate?.enabled ?? true) ? qsTr("Output enabled") : qsTr("Output disabled"); color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3outline; font: Tokens.font.label.small }
                             }
                         }
                     }
@@ -495,14 +613,15 @@ FocusScope {
                         color: root.selectedIndex === index ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainer
                         border.width: root.selectedIndex === index ? 1 : 0
                         border.color: Colours.palette.m3primary
+                        opacity: outputCard.modelData?.enabled ?? true ? 1 : 0.58
                         StateLayer { radius: parent.radius; onClicked: root.selectedIndex = outputCard.index }
                         Column {
                             anchors.fill: parent; anchors.margins: 13; spacing: 5
                             StyledText { text: outputCard.modelData?.name ?? ""; color: root.selectedIndex === outputCard.index ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface; font: Tokens.font.title.small }
                             StyledText { width: parent.width; text: String(outputCard.modelData?.mode ?? ""); color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small; elide: Text.ElideRight }
-                            StyledText { text: `${outputCard.modelData?.x ?? 0} × ${outputCard.modelData?.y ?? 0} · scale ${Number(outputCard.modelData?.scale ?? 1).toFixed(2)}`; color: Colours.palette.m3outline; font: Tokens.font.label.small }
+                            StyledText { text: `${outputCard.modelData?.x ?? 0} × ${outputCard.modelData?.y ?? 0} · scale ${Number(outputCard.modelData?.scale ?? 1).toFixed(2)} · transform ${outputCard.modelData?.transform ?? 0}`; color: Colours.palette.m3outline; font: Tokens.font.label.small }
                             StyledText { text: `${root.liveByName(outputCard.modelData?.name)?.gpu_vendor ?? "—"} · ${root.liveByName(outputCard.modelData?.name)?.drm_card ?? "—"}`; color: Colours.palette.m3primary; font: Tokens.font.label.small }
-                            StyledText { text: `${root.liveByName(outputCard.modelData?.name)?.workspace?.name ?? qsTr("no workspace")} · DPMS ${root.liveByName(outputCard.modelData?.name)?.dpms ? qsTr("on") : qsTr("off")}`; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                            StyledText { text: `${root.liveByName(outputCard.modelData?.name)?.workspace?.name ?? qsTr("no workspace")} · ${(outputCard.modelData?.enabled ?? true) ? qsTr("enabled") : qsTr("disabled")}`; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
                         }
                     }
                 }
