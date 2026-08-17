@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, os, re, subprocess, sys
+import hashlib, json, os, re, subprocess
 from pathlib import Path
 
 REPO=Path(__file__).resolve().parents[2]
@@ -13,7 +13,7 @@ def sha(p):
  except OSError:return ''
 def cmd(args,timeout=20):
  try:return subprocess.run(args,text=True,capture_output=True,timeout=timeout,check=False)
- except Exception as e:return None
+ except Exception:return None
 def check_file(rel):
  src=REPO/'caelestia/modules-owned'/rel; live=LIVE/rel
  same=src.is_file() and live.is_file() and sha(src)==sha(live)
@@ -30,9 +30,9 @@ def json_helper(name,args=None):
 
 for rel in [
  'modules/HardwareController.qml','modules/hardware/Wrapper.qml','modules/hardware/Content.qml',
- 'modules/DisplayController.qml','modules/display/Wrapper.qml','modules/display/Content.qml','modules/display/Editor.qml','modules/display/PreviewControls.qml','modules/display/DisplayPresets.qml','modules/display/DisplayCapabilities.qml',
+ 'modules/DisplayController.qml','modules/display/Wrapper.qml','modules/display/Content.qml','modules/display/Editor.qml','modules/display/PreviewControls.qml','modules/display/DisplayPresets.qml','modules/display/DisplayCapabilities.qml','modules/display/DisplayOutputControls.qml',
  'modules/GamingController.qml','modules/gaming/Wrapper.qml','modules/gaming/Content.qml','modules/gaming/AdvancedProfileControls.qml',
- 'modules/UpdaterController.qml','modules/updater/Wrapper.qml','modules/updater/Content.qml',
+ 'modules/UpdaterController.qml','modules/updater/Wrapper.qml','modules/updater/Content.qml','modules/updater/CommitBaseControl.qml',
 ]: check_file(rel)
 
 json_helper('caerice-hardware-probe')
@@ -58,6 +58,14 @@ for action in ['is-enabled','is-active']:
  cp=cmd(['systemctl','--user',action,'caerice-power-auto.service'],8)
  auto[action]=cp.stdout.strip() if cp else 'unknown'
 
+persistent=[]
+cp=cmd(['ps','-eo','pid=,args='],10)
+if cp:
+ for line in cp.stdout.splitlines():
+  if re.search(r'caerice-(hardware-(probe|power)|display-(probe|plan|persist|presets|workspaces)|gaming-(probe|profile)|updater($|\s))',line) and 'diagnose-sad.py' not in line:
+   persistent.append(line.strip())
+if persistent: warnings.extend([f'helper still running: {line}' for line in persistent[:12]])
+
 qml_errors=[]
 root=Path(f'/run/user/{UID}/quickshell/by-id')
 logs=sorted(root.glob('*/log.qslog'),key=lambda p:p.stat().st_mtime if p.exists() else 0,reverse=True) if root.exists() else []
@@ -73,6 +81,7 @@ print('===== SAD LIVE DIAGNOSTICS =====')
 for r in rows: print(('MATCH ' if r['match'] else 'MISS  ')+r['path'])
 print('\nIPC:',json.dumps(ipc,ensure_ascii=False))
 print('Power Auto:',json.dumps(auto,ensure_ascii=False))
+print('Unexpected persistent helpers:',len(persistent))
 print('QML log:',str(logs[0]) if logs else 'none')
 print('QML errors:',len(qml_errors))
 if warnings:
