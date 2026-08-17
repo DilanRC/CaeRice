@@ -284,7 +284,7 @@ FocusScope {
                     }
                     StyledText {
                         width: parent.width
-                        text: qsTr("Candidate editor is dry-run only · P validates · no display changes are applied")
+                        text: qsTr("Edit safely · P validates · Preview is temporary · Keep confirms · Save persists")
                         color: Colours.palette.m3outline
                         font: Tokens.font.label.small
                         elide: Text.ElideRight
@@ -555,7 +555,7 @@ FocusScope {
                         }
                         StyledText {
                             width: parent.width
-                            text: qsTr("No monitor command is executed in this phase. The next phase will add timed Preview → Confirm/Revert.")
+                            text: qsTr("Dry run never changes outputs. Use Preview for a timed live test, Keep to confirm it, then Save to persist with backup/rollback.")
                             color: Colours.palette.m3outline
                             font: Tokens.font.body.small
                             wrapMode: Text.WordWrap
