@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -68,6 +69,11 @@ for name in helpers:
         except SyntaxError as exc:
             errors.append(f"{name}: {exc}")
 
+# Lightweight QML structure guard. A semicolon between two declarative child
+# object blocks ("... } ; Type {") is invalid QML and can pass our semantic
+# source checks while preventing the entire shell from loading.
+invalid_child_separator = re.compile(r"}\s*;\s*[A-Za-z_][A-Za-z0-9_.]*\s*{")
+
 for path in [DISPLAY / name for name in qml if (DISPLAY / name).is_file()]:
     text = path.read_text(encoding="utf-8")
     if "Colours." in text:
@@ -75,6 +81,7 @@ for path in [DISPLAY / name for name in qml if (DISPLAY / name).is_file()]:
     if "Tokens." in text:
         req("import Caelestia.Config" in text, f"{path.name}: Tokens without Config")
     req("#" not in text, f"{path.name}: possible hardcoded hex")
+    req(not invalid_child_separator.search(text), f"{path.name}: invalid semicolon between QML child objects")
 
 controller = (MODULES / "DisplayController.qml").read_text(encoding="utf-8") if (MODULES / "DisplayController.qml").is_file() else ""
 req('target: "display"' in controller, "controller missing IPC")
@@ -163,6 +170,7 @@ if errors:
     raise SystemExit(1)
 
 print("status: OK")
+print("QML declarative child-separator guard: OK")
 print("dry run + timed preview + exact-candidate Save: covered")
 print("geometry + color/bitdepth/VRR + workspace ranges: one rollback-protected persistence transaction")
 print("10-bit/HDR/Wide/VRR writes: capability-gated; unknown support remains disabled")
