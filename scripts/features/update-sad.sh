@@ -26,5 +26,14 @@ for helper in caerice-upstream-audit caerice-updater caerice-updater-commit-base
 pkill -TERM -x qs 2>/dev/null || true
 sleep 1
 caelestia shell -d
+sleep 1
 
-echo "SAD modules synchronized and Caelestia restarted."
+# `caelestia shell -d` may return success even when Quickshell rejects the QML
+# configuration. Treat live IPC/log diagnostics as the authoritative restart
+# health check so this updater never prints a false success message.
+if ! python3 "$REPO/scripts/features/diagnose-sad.py"; then
+    echo "SAD live synchronization completed, but Caelestia failed post-restart diagnostics." >&2
+    exit 1
+fi
+
+echo "SAD modules synchronized, Caelestia restarted, and live diagnostics passed."
