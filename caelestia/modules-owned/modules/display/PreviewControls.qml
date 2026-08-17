@@ -9,7 +9,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-Item {
+StyledRect {
     id: root
 
     required property var candidateOutputs
@@ -22,6 +22,11 @@ Item {
         StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-transaction"
     readonly property bool active: previewState?.active ?? false
     readonly property real remaining: Number(previewState?.remaining_seconds ?? 0)
+
+    radius: Tokens.rounding.extraLarge
+    color: Colours.palette.m3surfaceContainerHigh
+    border.width: 1
+    border.color: root.active ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
 
     function refresh(): void {
         if (!statusProbe.running)
@@ -106,31 +111,47 @@ Item {
 
     Column {
         anchors.fill: parent
+        anchors.margins: 12
         spacing: 7
 
-        StyledText {
+        Row {
             width: parent.width
-            text: qsTr("Timed preview")
-            color: Colours.palette.m3onSurface
-            font: Tokens.font.title.small
+            height: 24
+
+            StyledText {
+                width: parent.width * 0.58
+                text: qsTr("Timed preview")
+                color: Colours.palette.m3onSurface
+                font: Tokens.font.title.small
+            }
+
+            StyledText {
+                width: parent.width * 0.42
+                text: root.active ? qsTr("%1 s").arg(root.remaining.toFixed(1)) : qsTr("safe rollback")
+                color: root.active ? Colours.palette.m3primary : Colours.palette.m3outline
+                font: Tokens.font.label.small
+                horizontalAlignment: Text.AlignRight
+            }
         }
 
         StyledText {
             width: parent.width
+            height: 34
             text: root.statusText
             color: root.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
             font: Tokens.font.label.small
             wrapMode: Text.WordWrap
+            elide: Text.ElideRight
         }
 
         Row {
             width: parent.width
-            height: 44
+            height: 42
             spacing: 7
 
             StyledRect {
                 width: (parent.width - 14) / 3
-                height: 44
+                height: 42
                 radius: Tokens.rounding.large
                 color: root.active ? Colours.palette.m3surfaceContainerHighest : Colours.palette.m3primaryContainer
                 enabled: !root.active && !action.running
@@ -146,7 +167,7 @@ Item {
 
             StyledRect {
                 width: (parent.width - 14) / 3
-                height: 44
+                height: 42
                 radius: Tokens.rounding.large
                 color: root.active ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
                 enabled: root.active && !action.running
@@ -162,7 +183,7 @@ Item {
 
             StyledRect {
                 width: (parent.width - 14) / 3
-                height: 44
+                height: 42
                 radius: Tokens.rounding.large
                 color: root.active ? Colours.palette.m3errorContainer : Colours.palette.m3surfaceContainerHighest
                 enabled: root.active && !action.running
