@@ -25,16 +25,24 @@ for f in \
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
 done
 
+[[ -f "$SRC/HardwareController.qml" ]] || { echo "ERROR: falta HardwareController.qml" >&2; exit 3; }
+[[ -f "$PROBE_SRC" ]] || { echo "ERROR: falta caerice-hardware-probe" >&2; exit 3; }
+
 for f in \
-    "$SRC/HardwareController.qml" \
-    "$SRC/hardware/Wrapper.qml" \
-    "$SRC/hardware/Content.qml" \
-    "$SRC/hardware/MetricCard.qml" \
-    "$PROBE_SRC"; do
-    [[ -f "$f" ]] || { echo "ERROR: falta $f en el repo" >&2; exit 3; }
+    Wrapper.qml \
+    Content.qml \
+    MetricCard.qml \
+    HistoryGraph.qml \
+    OverviewPage.qml \
+    PerformancePage.qml \
+    ProcessesPage.qml \
+    SensorsPage.qml; do
+    [[ -f "$SRC/hardware/$f" ]] || { echo "ERROR: falta hardware/$f" >&2; exit 3; }
 done
 
 echo "==> Probe preflight"
+python3 "$PROBE_SRC" | python3 -m json.tool >/dev/null
+sleep 0.2
 python3 "$PROBE_SRC" | python3 -m json.tool >/dev/null
 echo "probe: OK"
 
@@ -299,9 +307,9 @@ install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
 
 sudo install -m 0644 "$SRC/HardwareController.qml" "$LIVE/modules/HardwareController.qml"
 sudo mkdir -p "$LIVE/modules/hardware"
-sudo install -m 0644 "$SRC/hardware/Wrapper.qml" "$LIVE/modules/hardware/Wrapper.qml"
-sudo install -m 0644 "$SRC/hardware/Content.qml" "$LIVE/modules/hardware/Content.qml"
-sudo install -m 0644 "$SRC/hardware/MetricCard.qml" "$LIVE/modules/hardware/MetricCard.qml"
+for qml in "$SRC/hardware/"*.qml; do
+    sudo install -m 0644 "$qml" "$LIVE/modules/hardware/$(basename "$qml")"
+done
 
 mkdir -p "$HOME/.local/bin"
 install -m 0755 "$PROBE_SRC" "$PROBE_DST"
@@ -312,6 +320,7 @@ echo
 echo "Hardware Center instalado."
 echo "Backup: $BACKUP"
 echo "Probe: $PROBE_DST"
+echo "Pages: Overview · Performance · Processes · Sensors"
 echo
 echo "Reinicia Caelestia:"
 echo "  pkill -TERM -x qs"
