@@ -105,7 +105,7 @@ FocusScope {
             event.accepted = true;
             return;
         }
-        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_6) {
+        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_7) {
             root.currentPage = event.key - Qt.Key_1;
             event.accepted = true;
         }
@@ -270,13 +270,14 @@ FocusScope {
                         { label: qsTr("Processes"), icon: "account_tree" },
                         { label: qsTr("Sensors"), icon: "device_thermostat" },
                         { label: qsTr("I/O"), icon: "lan" },
-                        { label: qsTr("Power"), icon: "bolt" }
+                        { label: qsTr("Power"), icon: "bolt" },
+                        { label: qsTr("Auto"), icon: "auto_mode" }
                     ]
 
                     delegate: StyledRect {
                         required property var modelData
                         required property int index
-                        width: Math.min(168, (tabs.width - tabs.spacing * 5) / 6)
+                        width: Math.min(150, (tabs.width - tabs.spacing * 6) / 7)
                         height: 42
                         radius: Tokens.rounding.large
                         color: root.currentPage === index
@@ -328,7 +329,9 @@ FocusScope {
                                 ? sensorsComponent
                                 : root.currentPage === 4
                                     ? ioComponent
-                                    : powerComponent
+                                    : root.currentPage === 5
+                                        ? powerComponent
+                                        : automationComponent
             }
         }
     }
@@ -389,5 +392,11 @@ FocusScope {
         id: powerComponent
 
         PowerPage {}
+    }
+
+    Component {
+        id: automationComponent
+
+        PowerAutomationPage {}
     }
 }
