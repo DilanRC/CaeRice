@@ -15,6 +15,7 @@ scripts = [
     "scripts/features/validate-display-manager.py",
     "scripts/features/validate-gaming-center.py",
     "scripts/features/validate-caerice-updater.py",
+    "scripts/features/test-diagnose-sad-wiring.py",
 ]
 failed: list[str] = []
 

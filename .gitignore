@@ -16,3 +16,5 @@ caelestia/reinstall-backups/
 # Editor
 .idea/
 .vscode/
+__pycache__/
+*.pyc
