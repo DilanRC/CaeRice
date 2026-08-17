@@ -29,20 +29,28 @@ FocusScope {
     DisplayPresets {
         id: presets
         z: 20
-        width: Math.min(430, Math.max(360, parent.width * 0.31))
+        width: Math.min(390, Math.max(340, parent.width * 0.28))
         height: 144
         x: root.panelLeft + 36
         y: root.panelTop + root.panelHeight - height - 36
         candidateOutputs: editor.candidateOutputs
         onCandidateLoaded: candidate => {
             const outputs = candidate?.outputs ?? [];
-            if (!outputs.length)
-                return;
+            if (!outputs.length) return;
             editor.candidateOutputs = outputs.map(item => Object.assign({}, item));
             editor.selectedIndex = 0;
             editor.planResult = ({});
             editor.planStatus = qsTr("Saved layout loaded · run Dry run before Preview");
         }
+    }
+
+    DisplayCapabilities {
+        z: 20
+        width: Math.min(330, Math.max(290, parent.width * 0.235))
+        height: 144
+        x: Math.round(root.panelLeft + (root.panelWidth - width) / 2)
+        y: root.panelTop + root.panelHeight - height - 36
+        monitor: editor.selectedLive
     }
 
     PreviewControls {
