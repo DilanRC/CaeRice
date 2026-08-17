@@ -21,6 +21,7 @@ Item {
     required property var gpu1History
 
     property int selectedCpuCore: -1
+    property bool showSwapHistory: false
 
     readonly property var cpu: snapshot?.cpu ?? ({})
     readonly property var memory: snapshot?.memory ?? ({})
@@ -84,15 +85,17 @@ Item {
             title: qsTr("Memory")
             icon: "developer_board"
             headline: `${root.number(root.memory?.used_gb, 2)} / ${root.number(root.memory?.total_gb, 2)} GiB`
-            subtitle: `${qsTr("available")} ${root.number(root.memory?.available_gb, 2)} GiB · ${qsTr("swap")} ${root.number(root.memory?.swap_used_gb, 2)} GiB`
+            subtitle: `${qsTr("available")} ${root.number(root.memory?.available_gb, 2)} GiB · ${qsTr("cache")} ${root.number(root.memory?.cache_gb, 2)} · ${qsTr("swap")} ${root.number(root.memory?.swap_used_gb, 2)}`
             legendA: qsTr("Used")
-            legendB: qsTr("Cache")
+            legendB: root.showSwapHistory ? qsTr("Swap") : qsTr("Cache")
             seriesA: root.memoryUsedHistory
-            seriesB: root.memoryCacheHistory
+            seriesB: root.showSwapHistory ? root.swapUsedHistory : root.memoryCacheHistory
             maxValue: Math.max(1, Number(root.memory?.total_gb ?? 1))
             unit: "GiB"
             colourA: Colours.palette.m3primary
-            colourB: Colours.palette.m3secondary
+            colourB: root.showSwapHistory ? Colours.palette.m3tertiary : Colours.palette.m3secondary
+            actionLabel: root.showSwapHistory ? qsTr("Swap") : qsTr("Cache")
+            onActionRequested: root.showSwapHistory = !root.showSwapHistory
         }
 
         HistoryGraph {
