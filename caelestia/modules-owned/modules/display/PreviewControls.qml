@@ -18,6 +18,8 @@ StyledRect {
     property var lastResult: ({})
     property string statusText: qsTr("No active preview")
     property string actionPath: ""
+    property string previewCandidateJson: ""
+    property string confirmedCandidateJson: ""
 
     readonly property string transactionPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-transaction"
@@ -25,7 +27,10 @@ StyledRect {
         StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-persist"
     readonly property bool active: previewState?.active ?? false
     readonly property real remaining: Number(previewState?.remaining_seconds ?? 0)
-    readonly property bool canPersist: !root.active && (root.lastResult?.confirmed ?? false)
+    readonly property string currentCandidateJson: JSON.stringify({ outputs: candidateOutputs })
+    readonly property bool canPersist:
+        !root.active && (root.lastResult?.confirmed ?? false) &&
+        root.confirmedCandidateJson.length > 0 && root.confirmedCandidateJson === root.currentCandidateJson
 
     radius: Tokens.rounding.extraLarge
     color: Colours.palette.m3surfaceContainerHigh
@@ -49,8 +54,10 @@ StyledRect {
         if (!candidateOutputs.length)
             return;
         lastResult = ({});
+        confirmedCandidateJson = "";
+        previewCandidateJson = currentCandidateJson;
         statusText = qsTr("Starting 15 second preview…");
-        runTool(transactionPath, ["preview", "--timeout", "15", "--candidate", JSON.stringify({ outputs: candidateOutputs })]);
+        runTool(transactionPath, ["preview", "--timeout", "15", "--candidate", previewCandidateJson]);
     }
 
     function confirm(): void {
@@ -62,12 +69,18 @@ StyledRect {
         if (!canPersist)
             return;
         statusText = qsTr("Saving verified layout with rollback protection…");
-        runTool(persistPath, ["persist", "--candidate", JSON.stringify({ outputs: candidateOutputs })]);
+        runTool(persistPath, ["persist", "--candidate", confirmedCandidateJson]);
     }
 
     function revert(): void {
         statusText = qsTr("Restoring previous layout…");
+        confirmedCandidateJson = "";
         runTool(transactionPath, ["revert"]);
+    }
+
+    onCurrentCandidateJsonChanged: {
+        if (confirmedCandidateJson.length > 0 && confirmedCandidateJson !== currentCandidateJson && !root.active)
+            statusText = qsTr("Candidate changed after Keep · preview it again before Save");
     }
 
     Component.onCompleted: refresh()
@@ -107,22 +120,29 @@ StyledRect {
                     const parsed = JSON.parse(text.trim());
                     root.lastResult = parsed;
                     if (root.actionPath === root.persistPath) {
-                        if (parsed?.ok && parsed?.persisted)
+                        if (parsed?.ok && parsed?.persisted) {
                             root.statusText = parsed?.changed
                                 ? qsTr("Layout persisted · backup created · reload verified")
                                 : qsTr("Layout already matches the persisted configuration");
-                        else
+                        } else {
                             root.statusText = parsed?.error ?? qsTr("Persistence failed and was rolled back");
+                        }
                     } else if (parsed?.ok && parsed?.preview) {
                         root.statusText = qsTr("Preview applied · Keep before the countdown expires");
                     } else if (parsed?.ok && parsed?.confirmed) {
-                        root.statusText = qsTr("Session layout kept · Save makes it persistent");
+                        root.confirmedCandidateJson = root.previewCandidateJson;
+                        root.statusText = root.confirmedCandidateJson === root.currentCandidateJson
+                            ? qsTr("Session layout kept · Save makes this exact candidate persistent")
+                            : qsTr("Session layout kept · candidate changed, preview again before Save");
                     } else if (parsed?.ok && parsed?.reverted) {
+                        root.confirmedCandidateJson = "";
                         root.statusText = qsTr("Previous layout restored");
                     } else if (!(parsed?.ok ?? false)) {
+                        root.confirmedCandidateJson = "";
                         root.statusText = parsed?.error ?? qsTr("Display action failed");
                     }
                 } catch (error) {
+                    root.confirmedCandidateJson = "";
                     root.statusText = qsTr("Display action returned invalid JSON");
                 }
                 root.refresh();
