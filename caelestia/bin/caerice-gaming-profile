@@ -14,19 +14,21 @@ from pathlib import Path
 CONFIG = Path.home() / ".config/caerice/gaming-profiles.json"
 STATE = Path.home() / ".local/state/caerice/gaming-last-launch.json"
 ALLOWED_GPU = {"default", "integrated", "nvidia"}
+ALLOWED_SCALERS = {"auto", "integer", "fit", "fill", "stretch"}
+ALLOWED_FILTERS = {"linear", "nearest", "fsr", "nis", "pixel"}
 
 
 def emit(payload: dict, code: int = 0) -> int:
-    print(json.dumps(payload, separators=(",", ":")))
+    print(json.dumps(payload, separators=(",", ":"), ensure_ascii=False))
     return code
 
 
 def load() -> dict:
     try:
         data = json.loads(CONFIG.read_text(encoding="utf-8"))
-        return data if isinstance(data, dict) else {"version": 1, "profiles": {}}
+        return data if isinstance(data, dict) else {"version": 2, "profiles": {}}
     except (OSError, json.JSONDecodeError):
-        return {"version": 1, "profiles": {}}
+        return {"version": 2, "profiles": {}}
 
 
 def atomic_write(path: Path, payload: dict) -> None:
@@ -37,18 +39,35 @@ def atomic_write(path: Path, payload: dict) -> None:
             json.dump(payload, handle, separators=(",", ":"), ensure_ascii=False)
         os.replace(tmp, path)
     finally:
-        try: os.unlink(tmp)
-        except FileNotFoundError: pass
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
 
 
 def normalize(appid: str, name: str, raw: dict) -> dict:
+    def integer(key: str, default: int, low: int, high: int) -> int:
+        try:
+            value = int(raw.get(key, default))
+        except (TypeError, ValueError):
+            value = default
+        return max(low, min(high, value))
+
     gpu = str(raw.get("gpu", "default"))
     if gpu not in ALLOWED_GPU:
         gpu = "default"
-    def integer(key: str, default: int, low: int, high: int) -> int:
-        try: value = int(raw.get(key, default))
-        except (TypeError, ValueError): value = default
-        return max(low, min(high, value))
+    scaler = str(raw.get("scaler", "auto"))
+    if scaler not in ALLOWED_SCALERS:
+        scaler = "auto"
+    filter_name = str(raw.get("filter", "linear"))
+    if filter_name not in ALLOWED_FILTERS:
+        filter_name = "linear"
+
+    # Migration from the first profile schema where width/height represented
+    # Gamescope output dimensions.
+    output_width = integer("output_width", integer("width", 0, 0, 7680), 0, 7680)
+    output_height = integer("output_height", integer("height", 0, 0, 4320), 0, 4320)
+
     return {
         "appid": str(appid),
         "name": str(name or raw.get("name") or appid),
@@ -57,8 +76,14 @@ def normalize(appid: str, name: str, raw: dict) -> dict:
         "gamescope": bool(raw.get("gamescope", False)),
         "gpu": gpu,
         "fps_cap": integer("fps_cap", 0, 0, 360),
-        "width": integer("width", 0, 0, 7680),
-        "height": integer("height", 0, 0, 4320),
+        "game_width": integer("game_width", 0, 0, 7680),
+        "game_height": integer("game_height", 0, 0, 4320),
+        "output_width": output_width,
+        "output_height": output_height,
+        "scaler": scaler,
+        "filter": filter_name,
+        "sharpness": integer("sharpness", -1, -1, 20),
+        "adaptive_sync": bool(raw.get("adaptive_sync", False)),
         "fullscreen": bool(raw.get("fullscreen", True)),
         "updated": int(time.time()),
     }
@@ -68,34 +93,74 @@ def build(profile: dict) -> tuple[list[str], dict[str, str], list[str]]:
     steam = shutil.which("steam")
     if not steam:
         raise RuntimeError("steam is not installed")
-    env = dict(os.environ)
+
     env_changes: dict[str, str] = {}
     gpu = profile.get("gpu", "default")
     if gpu == "nvidia":
-        env_changes.update({"__NV_PRIME_RENDER_OFFLOAD": "1", "__GLX_VENDOR_LIBRARY_NAME": "nvidia", "__VK_LAYER_NV_optimus": "NVIDIA_only"})
+        env_changes.update({
+            "__NV_PRIME_RENDER_OFFLOAD": "1",
+            "__GLX_VENDOR_LIBRARY_NAME": "nvidia",
+            "__VK_LAYER_NV_optimus": "NVIDIA_only",
+        })
     elif gpu == "integrated":
-        env_changes.update({"DRI_PRIME": "0"})
-    if profile.get("mangohud"):
-        env_changes["MANGOHUD"] = "1"
-    env.update(env_changes)
+        env_changes["DRI_PRIME"] = "0"
 
     base = [steam, "-applaunch", str(profile["appid"])]
     wrappers: list[str] = []
-    if profile.get("gamescope") and shutil.which("gamescope"):
-        gs = [shutil.which("gamescope") or "gamescope"]
-        width, height, fps = int(profile.get("width") or 0), int(profile.get("height") or 0), int(profile.get("fps_cap") or 0)
-        if width: gs += ["-W", str(width)]
-        if height: gs += ["-H", str(height)]
-        if fps: gs += ["-r", str(fps)]
-        if profile.get("fullscreen"): gs += ["-f"]
+    use_gamescope = bool(profile.get("gamescope"))
+    gamescope = shutil.which("gamescope")
+    if use_gamescope and not gamescope:
+        raise RuntimeError("profile requires Gamescope but gamescope is not installed")
+
+    if use_gamescope and gamescope:
+        gs = [gamescope]
+        game_width = int(profile.get("game_width") or 0)
+        game_height = int(profile.get("game_height") or 0)
+        output_width = int(profile.get("output_width") or 0)
+        output_height = int(profile.get("output_height") or 0)
+        fps = int(profile.get("fps_cap") or 0)
+        scaler = str(profile.get("scaler") or "auto")
+        filter_name = str(profile.get("filter") or "linear")
+        sharpness = int(profile.get("sharpness", -1))
+
+        if game_width:
+            gs += ["-w", str(game_width)]
+        if game_height:
+            gs += ["-h", str(game_height)]
+        if output_width:
+            gs += ["-W", str(output_width)]
+        if output_height:
+            gs += ["-H", str(output_height)]
+        if fps:
+            gs += ["-r", str(fps)]
+        if scaler != "auto":
+            gs += ["-S", scaler]
+        if filter_name != "linear":
+            gs += ["-F", filter_name]
+        if sharpness >= 0 and filter_name in {"fsr", "nis"}:
+            gs += ["--sharpness", str(sharpness)]
+        if profile.get("adaptive_sync"):
+            gs += ["--adaptive-sync"]
+        if profile.get("mangohud"):
+            gs += ["--mangoapp"]
+        if profile.get("fullscreen"):
+            gs += ["-f"]
         gs += ["--"]
         base = gs + base
         wrappers.append("gamescope")
-    if profile.get("gamemode") and shutil.which("gamemoderun"):
-        base = [shutil.which("gamemoderun") or "gamemoderun"] + base
-        wrappers.append("gamemode")
-    if profile.get("mangohud"):
+        if profile.get("mangohud"):
+            wrappers.append("mangoapp")
+    elif profile.get("mangohud"):
+        env_changes["MANGOHUD"] = "1"
         wrappers.append("mangohud")
+
+    if profile.get("gamemode"):
+        gamemoderun = shutil.which("gamemoderun")
+        if not gamemoderun:
+            raise RuntimeError("profile requires GameMode but gamemoderun is not installed")
+        base = [gamemoderun] + base
+        wrappers.append("gamemode")
+
     return base, env_changes, wrappers
 
 
@@ -128,7 +193,7 @@ def main() -> int:
         profiles = data.setdefault("profiles", {})
         if args.command == "list":
             items = [normalize(appid, str(raw.get("name", "")), raw) for appid, raw in profiles.items() if isinstance(raw, dict)]
-            return emit({"ok": True, "profiles": sorted(items, key=lambda x: x["name"].lower()), "config": str(CONFIG)})
+            return emit({"ok": True, "profiles": sorted(items, key=lambda x: x["name"].lower()), "config": str(CONFIG), "schema": 2})
         if args.command == "get":
             profile = get_profile(args.appid, args.name)
             return emit({"ok": True, "profile": profile, "command": command_preview(profile)})
@@ -137,22 +202,52 @@ def main() -> int:
             if not isinstance(raw, dict):
                 raise ValueError("profile JSON must be an object")
             profile = normalize(args.appid, args.name, raw)
+            # Build now so unsupported required tools are reported before saving
+            # a profile which could never be launched on this machine.
+            command = command_preview(profile)
             profiles[str(args.appid)] = profile
-            data["version"] = 1
+            data["version"] = 2
             atomic_write(CONFIG, data)
-            return emit({"ok": True, "saved": True, "profile": profile, "command": command_preview(profile)})
+            return emit({"ok": True, "saved": True, "profile": profile, "command": command})
         if args.command == "delete":
             removed = profiles.pop(str(args.appid), None) is not None
+            data["version"] = 2
             atomic_write(CONFIG, data)
             return emit({"ok": True, "deleted": removed})
+
         profile = get_profile(args.appid, args.name)
         argv, env_changes, wrappers = build(profile)
         if args.command == "command":
-            return emit({"ok": True, "profile": profile, "argv": argv, "env": env_changes, "wrappers": wrappers, "command": command_preview(profile), "mutates_steam_config": False})
-        env = dict(os.environ); env.update(env_changes)
-        proc = subprocess.Popen(argv, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-        atomic_write(STATE, {"appid": profile["appid"], "name": profile["name"], "pid": proc.pid, "started": int(time.time()), "argv": argv, "env": env_changes})
-        return emit({"ok": True, "launched": True, "pid": proc.pid, "profile": profile, "command": command_preview(profile)})
+            return emit({
+                "ok": True,
+                "profile": profile,
+                "argv": argv,
+                "env": env_changes,
+                "wrappers": wrappers,
+                "command": command_preview(profile),
+                "mutates_steam_config": False,
+            })
+
+        env = dict(os.environ)
+        env.update(env_changes)
+        proc = subprocess.Popen(
+            argv,
+            env=env,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+        atomic_write(STATE, {
+            "appid": profile["appid"],
+            "name": profile["name"],
+            "pid": proc.pid,
+            "started": int(time.time()),
+            "argv": argv,
+            "env": env_changes,
+            "wrappers": wrappers,
+        })
+        return emit({"ok": True, "launched": True, "pid": proc.pid, "profile": profile, "command": command_preview(profile), "wrappers": wrappers})
     except (ValueError, json.JSONDecodeError, OSError, RuntimeError, subprocess.SubprocessError) as exc:
         return emit({"ok": False, "error": str(exc)}, 2)
 
