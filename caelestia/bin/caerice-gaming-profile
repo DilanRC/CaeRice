@@ -63,15 +63,14 @@ def normalize(appid: str, name: str, raw: dict) -> dict:
     if filter_name not in ALLOWED_FILTERS:
         filter_name = "linear"
 
-    # Migration from the first profile schema where width/height represented
-    # Gamescope output dimensions.
     output_width = integer("output_width", integer("width", 0, 0, 7680), 0, 7680)
     output_height = integer("output_height", integer("height", 0, 0, 4320), 0, 4320)
+    default_gamemode = bool(shutil.which("gamemoderun"))
 
     return {
         "appid": str(appid),
         "name": str(name or raw.get("name") or appid),
-        "gamemode": bool(raw.get("gamemode", True)),
+        "gamemode": bool(raw.get("gamemode", default_gamemode)),
         "mangohud": bool(raw.get("mangohud", False)),
         "gamescope": bool(raw.get("gamescope", False)),
         "gpu": gpu,
@@ -171,6 +170,13 @@ def command_preview(profile: dict) -> str:
     return f"{env} {command}".strip()
 
 
+def safe_preview(profile: dict) -> tuple[str, str]:
+    try:
+        return command_preview(profile), ""
+    except RuntimeError as exc:
+        return "", str(exc)
+
+
 def get_profile(appid: str, name: str = "") -> dict:
     data = load()
     raw = data.get("profiles", {}).get(str(appid), {}) if isinstance(data.get("profiles"), dict) else {}
@@ -196,14 +202,13 @@ def main() -> int:
             return emit({"ok": True, "profiles": sorted(items, key=lambda x: x["name"].lower()), "config": str(CONFIG), "schema": 2})
         if args.command == "get":
             profile = get_profile(args.appid, args.name)
-            return emit({"ok": True, "profile": profile, "command": command_preview(profile)})
+            preview, preview_error = safe_preview(profile)
+            return emit({"ok": True, "profile": profile, "command": preview, "command_error": preview_error})
         if args.command == "set":
             raw = json.loads(args.json)
             if not isinstance(raw, dict):
                 raise ValueError("profile JSON must be an object")
             profile = normalize(args.appid, args.name, raw)
-            # Build now so unsupported required tools are reported before saving
-            # a profile which could never be launched on this machine.
             command = command_preview(profile)
             profiles[str(args.appid)] = profile
             data["version"] = 2
