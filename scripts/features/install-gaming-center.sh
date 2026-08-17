@@ -13,10 +13,13 @@ STAGE="$BACKUP/stage"
 for f in "$LIVE/shell.qml" "$LIVE/components/ScreenState.qml" "$LIVE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/Panels.qml" "$USERCFG"; do
   [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
 done
-for f in "$SRC/GamingController.qml" "$SRC/gaming/Wrapper.qml" "$SRC/gaming/Content.qml" "$REPO/caelestia/bin/caerice-gaming-probe" "$REPO/caelestia/bin/caerice-gaming-profile"; do
+[[ -f "$SRC/GamingController.qml" ]] || { echo "ERROR: falta GamingController.qml" >&2; exit 3; }
+for qml in "$SRC/gaming/"*.qml; do [[ -f "$qml" ]] || { echo "ERROR: falta $qml" >&2; exit 3; }; done
+for f in "$REPO/caelestia/bin/caerice-gaming-probe" "$REPO/caelestia/bin/caerice-gaming-profile" "$REPO/scripts/features/validate-gaming-center.py"; do
   [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
 done
 
+python3 "$REPO/scripts/features/validate-gaming-center.py"
 python3 "$REPO/caelestia/bin/caerice-gaming-probe" | python3 -m json.tool >/dev/null
 python3 "$REPO/caelestia/bin/caerice-gaming-profile" list | python3 -m json.tool >/dev/null
 
@@ -72,12 +75,12 @@ sudo install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/d
 install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
 sudo install -m 0644 "$SRC/GamingController.qml" "$LIVE/modules/GamingController.qml"
 sudo mkdir -p "$LIVE/modules/gaming"
-sudo install -m 0644 "$SRC/gaming/Wrapper.qml" "$LIVE/modules/gaming/Wrapper.qml"
-sudo install -m 0644 "$SRC/gaming/Content.qml" "$LIVE/modules/gaming/Content.qml"
+for qml in "$SRC/gaming/"*.qml; do sudo install -m 0644 "$qml" "$LIVE/modules/gaming/$(basename "$qml")"; done
 mkdir -p "$HOME/.local/bin"
 install -m 0755 "$REPO/caelestia/bin/caerice-gaming-probe" "$HOME/.local/bin/caerice-gaming-probe"
 install -m 0755 "$REPO/caelestia/bin/caerice-gaming-profile" "$HOME/.local/bin/caerice-gaming-profile"
 hyprctl reload >/dev/null
 
 echo "Gaming Center instalado. Backup: $BACKUP"
+echo "Per-game profiles: Steam inventory + Gamescope/GameMode/MangoHud + process-local GPU selection."
 echo "Abre con Super+Shift+G o: qs -c caelestia ipc call gaming open"
