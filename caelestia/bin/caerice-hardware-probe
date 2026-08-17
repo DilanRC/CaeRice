@@ -630,9 +630,12 @@ def process_snapshot(previous: dict, now: float, uptime: float, total_mem: int) 
             }
         )
 
+    # Keep the default view sorted by activity, but do not truncate the source.
+    # ProcessesPage applies its own filter/sort, so PID/name/command searches must
+    # be able to reach low-CPU and sleeping processes as well.
     out.sort(key=lambda p: (-p["cpu"], -p["mem"], p["name"].lower()))
     return (
-        out[:80],
+        out,
         {
             "process_time": now,
             "process_ticks": current_ticks,
