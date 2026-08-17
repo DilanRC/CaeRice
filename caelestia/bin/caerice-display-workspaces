@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse, json, os, shutil, subprocess, tempfile, time
+from pathlib import Path
+
+HERE=Path(__file__).resolve().parent
+PLANNER=HERE/'caerice-display-plan'
+CFG=Path.home()/'.config/caelestia/hypr-user.lua'
+STATE=Path.home()/'.config/caerice/display-workspaces.json'
+SNAPS=Path.home()/'.local/share/caelestia-custom-system/snapshots'
+BEGIN='-- CAERICE_WORKSPACE_POLICY_BEGIN'
+END='-- CAERICE_WORKSPACE_POLICY_END'
+
+def emit(p,c=0): print(json.dumps(p,separators=(',',':'),ensure_ascii=False)); return c
+def atomic_text(path,text):
+ path.parent.mkdir(parents=True,exist_ok=True); fd,tmp=tempfile.mkstemp(prefix=path.name+'.',suffix='.tmp',dir=path.parent)
+ try:
+  with os.fdopen(fd,'w',encoding='utf-8') as h:h.write(text)
+  os.replace(tmp,path)
+ finally:
+  try:os.unlink(tmp)
+  except FileNotFoundError:pass
+
+def plan(candidate):
+ cp=subprocess.run([str(PLANNER),'--candidate',json.dumps(candidate,separators=(',',':'))],text=True,capture_output=True,timeout=12,check=False)
+ if cp.returncode not in (0,3): raise RuntimeError((cp.stderr or cp.stdout).strip())
+ p=json.loads(cp.stdout)
+ if not p.get('ok'): raise ValueError('candidate is invalid')
+ return p.get('candidate',candidate)
+
+def policy(candidate):
+ outputs=[x for x in candidate.get('outputs',[]) if isinstance(x,dict) and x.get('enabled',True)]
+ if not outputs: raise ValueError('no enabled output')
+ internal=next((x for x in outputs if str(x.get('name','')).startswith('eDP-')),outputs[0])
+ external=next((x for x in outputs if x is not internal and not str(x.get('name','')).startswith('eDP-')),None)
+ m1=str(internal.get('name','')); m2=str(external.get('name','')) if external else m1
+ block=f'''{BEGIN}\n-- Managed by Display Manager. 1-10 follow the internal/primary output;\n-- 11-20 follow the selected external output and fall back to the primary output.\nfor i = 1, 10 do\n    hl.workspace_rule({{\n        workspace = tostring(i),\n        monitor = "{m1}",\n        default = i == 1,\n        persistent = true,\n    }})\n\n    hl.workspace_rule({{\n        workspace = tostring(i + 10),\n        monitor = "{m2}",\n        default = i == 1,\n        persistent = true,\n    }})\nend\n{END}'''
+ return block,m1,m2
+
+def rewrite(text,block):
+ if BEGIN in text and END in text:
+  a=text.index(BEGIN); b=text.index(END,a)+len(END); return text[:a]+block+text[b:]
+ anchor='-- ============================================================\n-- TECLADO'
+ idx=text.find(anchor)
+ payload='\n\n'+block+'\n\n'
+ return text[:idx]+payload+text[idx:] if idx>=0 else text.rstrip()+payload+'\n'
+
+def sync(candidate):
+ if not CFG.is_file(): return {'ok':False,'error':f'missing {CFG}'},2
+ normalized=plan(candidate); block,m1,m2=policy(normalized); original=CFG.read_text(encoding='utf-8'); updated=rewrite(original,block)
+ stamp=time.strftime('%Y%m%d-%H%M%S'); snap=SNAPS/f'display-workspaces-{stamp}'; snap.mkdir(parents=True,exist_ok=True); shutil.copy2(CFG,snap/'hypr-user.lua')
+ atomic_text(CFG,updated); cp=subprocess.run(['hyprctl','reload'],text=True,capture_output=True,timeout=10,check=False)
+ if cp.returncode!=0:
+  shutil.copy2(snap/'hypr-user.lua',CFG); subprocess.run(['hyprctl','reload'],text=True,capture_output=True,timeout=10,check=False)
+  return {'ok':False,'error':(cp.stderr or cp.stdout).strip(),'rolled_back':True,'backup':str(snap/'hypr-user.lua')},3
+ STATE.parent.mkdir(parents=True,exist_ok=True); STATE.write_text(json.dumps({'version':1,'primary':m1,'secondary':m2,'saved_at':int(time.time()),'backup':str(snap/'hypr-user.lua')},separators=(',',':')),encoding='utf-8')
+ return {'ok':True,'synced':True,'primary':m1,'secondary':m2,'backup':str(snap/'hypr-user.lua')},0
+
+def main():
+ p=argparse.ArgumentParser(); s=p.add_subparsers(dest='command',required=True); sp=s.add_parser('sync'); sp.add_argument('--candidate',required=True); s.add_parser('status'); a=p.parse_args()
+ try:
+  if a.command=='status':
+   try:data=json.loads(STATE.read_text(encoding='utf-8'))
+   except Exception:data={}
+   return emit({'ok':True,'managed':CFG.is_file() and BEGIN in CFG.read_text(encoding='utf-8'),'state':data})
+  cand=json.loads(a.candidate); out,code=sync(cand); return emit(out,code)
+ except Exception as e:return emit({'ok':False,'error':str(e)},2)
+if __name__=='__main__': raise SystemExit(main())
