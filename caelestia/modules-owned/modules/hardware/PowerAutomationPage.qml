@@ -220,6 +220,7 @@ Item {
                 ]
 
                 delegate: StyledRect {
+                    id: scenarioCard
                     required property var modelData
                     width: (profileGrid.width - 12) / 2
                     height: profileGrid.height
@@ -244,7 +245,7 @@ Item {
                                 color: Colours.palette.m3secondaryContainer
                                 MaterialIcon {
                                     anchors.centerIn: parent
-                                    text: modelData.icon
+                                    text: scenarioCard.modelData.icon
                                     color: Colours.palette.m3onSecondaryContainer
                                     fontStyle: Tokens.font.icon.large
                                 }
@@ -255,13 +256,13 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: 1
                                 StyledText {
-                                    text: modelData.title
+                                    text: scenarioCard.modelData.title
                                     color: Colours.palette.m3onSurface
                                     font: Tokens.font.title.small
                                 }
                                 StyledText {
                                     width: parent.width
-                                    text: modelData.subtitle
+                                    text: scenarioCard.modelData.subtitle
                                     color: Colours.palette.m3outline
                                     font: Tokens.font.label.small
                                     elide: Text.ElideRight
@@ -279,7 +280,7 @@ Item {
                                 delegate: StyledRect {
                                     id: profileChoice
                                     required property string modelData
-                                    readonly property bool active: modelData === parent.parent.parent.parent.modelData.value
+                                    readonly property bool active: modelData === scenarioCard.modelData.value
                                     width: (parent.width - 16) / 3
                                     height: 84
                                     radius: Tokens.rounding.large
@@ -291,7 +292,7 @@ Item {
 
                                     StateLayer {
                                         radius: parent.radius
-                                        onClicked: root.setProfile(parent.parent.parent.parent.modelData.slot, profileChoice.modelData)
+                                        onClicked: root.setProfile(scenarioCard.modelData.slot, profileChoice.modelData)
                                     }
 
                                     Column {
