@@ -14,6 +14,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PROBE = HERE / "caerice-display-probe"
 PLANNER = HERE / "caerice-display-plan"
+WORKSPACES = HERE / "caerice-display-workspaces"
 USERCFG = Path.home() / ".config/caelestia/hypr-user.lua"
 STATE = Path.home() / ".config/caerice/display-persisted.json"
 SNAPSHOT_ROOT = Path.home() / ".local/share/caelestia-custom-system/snapshots"
@@ -57,6 +58,10 @@ def current_snapshot() -> dict:
     return run_json([str(PROBE)], 5)
 
 
+def configured_or(value, default):
+    return default if value is None else value
+
+
 def candidate_from_snapshot(snapshot: dict) -> dict:
     outputs = []
     for monitor in snapshot.get("hyprland", []):
@@ -77,6 +82,11 @@ def candidate_from_snapshot(snapshot: dict) -> dict:
             if delta < best_delta:
                 best_delta = delta
                 best = text
+        fmt = str(monitor.get("current_format", "")).upper()
+        runtime_depth = 10 if "2101010" in fmt or "101010" in fmt else 8
+        configured_depth = configured_or(monitor.get("configured_bitdepth"), runtime_depth)
+        configured_cm = str(configured_or(monitor.get("configured_cm"), "srgb"))
+        configured_vrr = configured_or(monitor.get("configured_vrr"), 1 if bool(monitor.get("vrr", False)) else 0)
         outputs.append({
             "name": str(monitor.get("name", "")),
             "enabled": not bool(monitor.get("disabled", False)),
@@ -85,6 +95,9 @@ def candidate_from_snapshot(snapshot: dict) -> dict:
             "y": int(monitor.get("y") or 0),
             "scale": float(monitor.get("scale") or 1),
             "transform": int(monitor.get("transform") or 0),
+            "bitdepth": int(configured_depth),
+            "cm": configured_cm,
+            "vrr": int(configured_vrr),
         })
     return {"outputs": outputs}
 
@@ -204,7 +217,7 @@ def rewrite_config(text: str, candidate: dict) -> tuple[str, list[str]]:
     return updated, managed
 
 
-def verify(candidate: dict) -> tuple[bool, str]:
+def verify_geometry(candidate: dict) -> tuple[bool, str]:
     time.sleep(0.8)
     live = current_snapshot()
     by_name = {str(m.get("name", "")): m for m in live.get("hyprland", []) if isinstance(m, dict)}
@@ -228,9 +241,22 @@ def verify(candidate: dict) -> tuple[bool, str]:
     return True, ""
 
 
+def restore(backup_file: Path, original_live: dict) -> None:
+    shutil.copy2(backup_file, USERCFG)
+    subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=8, check=False)
+    try:
+        original_plan = plan(original_live)
+        for command in original_plan.get("commands", []):
+            subprocess.run(command, text=True, capture_output=True, timeout=6, check=False)
+    except Exception:
+        pass
+
+
 def persist(candidate: dict) -> tuple[dict, int]:
     if not USERCFG.is_file():
         return {"ok": False, "error": f"missing {USERCFG}"}, 2
+    if not WORKSPACES.is_file():
+        return {"ok": False, "error": f"missing {WORKSPACES}"}, 2
 
     planned = plan(candidate)
     if not planned.get("ok"):
@@ -238,10 +264,12 @@ def persist(candidate: dict) -> tuple[dict, int]:
     normalized = planned.get("candidate", candidate)
 
     original_live = candidate_from_snapshot(current_snapshot())
+    rollback_plan = plan(original_live)
+    if not rollback_plan.get("ok"):
+        return {"ok": False, "error": "current display state cannot be represented safely for rollback", "rollback_plan": rollback_plan}, 3
+
     original_text = USERCFG.read_text(encoding="utf-8")
     updated_text, managed = rewrite_config(original_text, normalized)
-    if updated_text == original_text:
-        return {"ok": True, "persisted": True, "changed": False, "outputs": managed}, 0
 
     stamp = time.strftime("%Y%m%d-%H%M%S")
     backup_dir = SNAPSHOT_ROOT / f"display-persist-{stamp}"
@@ -249,38 +277,62 @@ def persist(candidate: dict) -> tuple[dict, int]:
     backup_file = backup_dir / "hypr-user.lua"
     shutil.copy2(USERCFG, backup_file)
 
-    atomic_write(USERCFG, updated_text)
-    cp = subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=8, check=False)
-    if cp.returncode != 0:
-        shutil.copy2(backup_file, USERCFG)
-        subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=8, check=False)
-        return {"ok": False, "error": (cp.stderr or cp.stdout).strip(), "rolled_back": True, "backup": str(backup_file)}, 5
+    if updated_text != original_text:
+        atomic_write(USERCFG, updated_text)
+        cp = subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=8, check=False)
+        if cp.returncode != 0:
+            restore(backup_file, original_live)
+            return {"ok": False, "error": (cp.stderr or cp.stdout).strip(), "rolled_back": True, "backup": str(backup_file)}, 5
 
-    try:
-        ok, error = verify(normalized)
-    except Exception as exc:
-        ok, error = False, str(exc)
-    if not ok:
-        shutil.copy2(backup_file, USERCFG)
-        subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=8, check=False)
-        # Best effort restoration if a reload did not fully return the runtime layout.
         try:
-            original_plan = plan(original_live)
-            for command in original_plan.get("commands", []):
-                subprocess.run(command, text=True, capture_output=True, timeout=6, check=False)
-        except Exception:
-            pass
-        return {"ok": False, "error": error, "rolled_back": True, "backup": str(backup_file)}, 6
+            ok, error = verify_geometry(normalized)
+        except Exception as exc:
+            ok, error = False, str(exc)
+        if not ok:
+            restore(backup_file, original_live)
+            return {"ok": False, "error": error, "rolled_back": True, "backup": str(backup_file)}, 6
+
+    # Color/bitdepth/VRR and workspace placement are part of the same persistent
+    # transaction. Failure here restores the pre-Save config and runtime state.
+    policy_cp = subprocess.run(
+        [str(WORKSPACES), "sync", "--candidate", json.dumps(normalized, separators=(",", ":"))],
+        text=True,
+        capture_output=True,
+        timeout=20,
+        check=False,
+    )
+    try:
+        policy_result = json.loads(policy_cp.stdout) if policy_cp.stdout.strip() else {}
+    except json.JSONDecodeError:
+        policy_result = {}
+    if policy_cp.returncode != 0 or not policy_result.get("ok"):
+        restore(backup_file, original_live)
+        return {
+            "ok": False,
+            "error": policy_result.get("error") or (policy_cp.stderr or policy_cp.stdout).strip() or "workspace/color policy failed",
+            "rolled_back": True,
+            "backup": str(backup_file),
+            "policy": policy_result,
+        }, 7
 
     STATE.parent.mkdir(parents=True, exist_ok=True)
     atomic_write(STATE, json.dumps({
-        "version": 1,
+        "version": 2,
         "saved_at": int(time.time()),
         "outputs": normalized.get("outputs", []),
         "managed_outputs": managed,
+        "workspace_policy": policy_result,
         "backup": str(backup_file),
     }, separators=(",", ":")))
-    return {"ok": True, "persisted": True, "changed": True, "outputs": managed, "backup": str(backup_file)}, 0
+    return {
+        "ok": True,
+        "persisted": True,
+        "changed": updated_text != original_text or bool(policy_result.get("output_policy")),
+        "outputs": managed,
+        "workspace_policy": policy_result,
+        "backup": str(backup_file),
+        "atomic": True,
+    }, 0
 
 
 def status() -> dict:
@@ -293,10 +345,11 @@ def status() -> dict:
         pass
     text = USERCFG.read_text(encoding="utf-8") if USERCFG.is_file() else ""
     return {
-        "available": USERCFG.is_file(),
+        "available": USERCFG.is_file() and WORKSPACES.is_file(),
         "managed": MARKER in text,
         "state": saved,
         "config": str(USERCFG),
+        "atomic_scope": "geometry + color/bitdepth/vrr + workspace ranges",
     }
 
 
