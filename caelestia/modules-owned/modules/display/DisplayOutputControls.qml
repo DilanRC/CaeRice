@@ -31,20 +31,14 @@ StyledRect {
         editorItem.updateSelected("cm", cm)
     }
 
-    function cycleVrr(): void {
+    function toggleVrr(): void {
         if (!vrrProven) return
-        const values = [0, 2, 1, 3]
-        let index = values.indexOf(vrr)
-        if (index < 0) index = 0
-        editorItem.updateSelected("vrr", values[(index + 1) % values.length])
+        editorItem.updateSelected("vrr", vrr > 0 ? 0 : 1)
     }
 
     function vrrLabel(): string {
         if (!vrrProven) return qsTr("unsupported/unknown")
-        if (vrr === 1) return qsTr("always")
-        if (vrr === 2) return qsTr("fullscreen")
-        if (vrr === 3) return qsTr("game/video fullscreen")
-        return qsTr("off")
+        return vrr > 0 ? qsTr("on") : qsTr("off")
     }
 
     Column {
@@ -91,11 +85,11 @@ StyledRect {
             color: root.vrr > 0 && root.vrrProven ? Colours.palette.m3tertiaryContainer : Colours.palette.m3surfaceContainer
             enabled: root.vrrProven
             opacity: enabled ? 1 : 0.5
-            StateLayer { radius: parent.radius; onClicked: root.cycleVrr() }
+            StateLayer { radius: parent.radius; onClicked: root.toggleVrr() }
             Row {
                 anchors.fill: parent
                 anchors.margins: 8
-                StyledText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: qsTr("VRR mode"); color: Colours.palette.m3outline; font: Tokens.font.label.small }
+                StyledText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: qsTr("VRR"); color: Colours.palette.m3outline; font: Tokens.font.label.small }
                 StyledText { width: parent.width * 0.64; anchors.verticalCenter: parent.verticalCenter; text: root.vrrLabel(); color: root.vrr > 0 ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small; horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft }
             }
         }
