@@ -4,11 +4,9 @@ Branch: `feature/display-manager`
 
 Reserved bind: `Super+Shift+O`.
 
-Display Manager reuses the same native `ContentWindow` integration model as Hardware Center. Its controller is always light; the actual UI/probe tree is loaded only while the panel is open.
+Display Manager reuses the same native `ContentWindow` integration model as Hardware Center. The controller is always light; the display editor/probes are loaded only while the panel is open.
 
-## Current phase
-
-This phase is intentionally **read-only with respect to the live monitor layout**.
+## Current implementation
 
 Implemented:
 
@@ -18,45 +16,47 @@ Implemented:
 - workspace inventory from `hyprctl -j workspaces`;
 - DRM connector → card → GPU vendor mapping from `/sys/class/drm`;
 - current geometry, refresh, scale, transform, DPMS, VRR/current-format fields when Hyprland reports them;
-- topology canvas using the candidate logical coordinates;
+- topology canvas based on candidate logical coordinates;
 - per-output candidate mode, scale and X/Y editing;
 - current workspace, DPMS and GPU/card visibility;
-- a separate `caerice-display-plan` helper that validates the candidate and produces the exact future `hyprctl keyword monitor ...` commands without executing them;
-- overlap warnings and guardrails for unknown outputs, invalid modes, unsafe scales, duplicate outputs, transforms and disabling every output;
+- `caerice-display-plan`: validates a complete candidate and renders the exact Hyprland monitor commands without executing them;
+- `caerice-display-transaction`: timed live preview with automatic rollback;
+- explicit `Preview 15s`, `Keep` and `Revert` controls;
 - full installer, development updater and validator.
 
-## Safety boundary
+## Safety model
 
-`caerice-display-probe` never changes the display configuration.
+`caerice-display-probe` is read-only.
 
-`caerice-display-plan` is also dry-run only. Its output explicitly contains:
+`caerice-display-plan` is dry-run only and always reports `"applied": false`.
 
-```json
-{"applied": false}
-```
+The preview transaction follows this sequence:
 
-No command produced by the planner is executed in this phase.
+1. validate the whole candidate again;
+2. snapshot the currently live layout;
+3. write a runtime transaction state under `$XDG_RUNTIME_DIR`;
+4. apply only the generated `hyprctl keyword monitor ...` commands;
+5. verify output presence, scale and position;
+6. start a detached watchdog;
+7. automatically restore the snapshot after 15 seconds unless `Keep` is pressed;
+8. restore immediately when `Revert` is pressed or when application/verification fails.
 
-The next write-capable phase must implement the complete transaction:
+The watchdog is independent of the QML panel, so closing Display Manager does not defeat the timeout rollback.
 
-1. build and validate a full candidate layout;
-2. snapshot the existing monitor configuration;
-3. apply the candidate only as a temporary preview;
-4. display a visible countdown inside Display Manager;
-5. require explicit **Keep layout** confirmation;
-6. automatically revert on timeout, shell failure or rejection;
-7. persist only after confirmation;
-8. verify the persisted layout after reload.
+`Keep` currently means **keep for the current Hyprland session**. Persistence across login/reboot is deliberately not enabled until the managed `hypr-user.lua` write path is implemented with its own snapshot/rollback QA.
 
-There will be no normal UI for raw EDID mutation, arbitrary modelines, GPU overclocking or permanent writes without a preview/revert path.
+No normal Display Manager action edits EDID data, creates arbitrary modelines, overclocks a GPU, writes color calibration blindly or leaves an unconfirmed monitor layout permanent.
 
 ## Files
 
 - `caelestia/bin/caerice-display-probe`
 - `caelestia/bin/caerice-display-plan`
+- `caelestia/bin/caerice-display-transaction`
 - `caelestia/modules-owned/modules/DisplayController.qml`
 - `caelestia/modules-owned/modules/display/Wrapper.qml`
 - `caelestia/modules-owned/modules/display/Content.qml`
+- `caelestia/modules-owned/modules/display/Editor.qml`
+- `caelestia/modules-owned/modules/display/PreviewControls.qml`
 - `scripts/features/install-display-manager.sh`
 - `scripts/features/update-display-manager.sh`
 - `scripts/features/validate-display-manager.py`
@@ -70,7 +70,7 @@ git pull --ff-only
 bash scripts/features/install-display-manager.sh
 ```
 
-Then restart Caelestia and open:
+Restart Caelestia and open:
 
 ```text
 Super+Shift+O
@@ -82,11 +82,24 @@ or:
 qs -c caelestia ipc call display open
 ```
 
-## Dry-run diagnostics
+## Validation
 
 ```fish
 python3 scripts/features/validate-display-manager.py
 ~/.local/bin/caerice-display-probe | jq
+~/.local/bin/caerice-display-transaction status | jq
 ```
 
-Inside the UI, edit a candidate and press **Dry run candidate** or `P`. The generated monitor lines are for review only until the timed preview transaction is implemented and QA'd on the real machine.
+Before testing a modified layout, first use **Dry run candidate**. Then `Preview 15s` may apply it temporarily. If no confirmation occurs, the watchdog restores the original live layout.
+
+## Next implementation block
+
+The next block is persistence and presets:
+
+- convert a confirmed candidate to managed `hl.monitor({...})` entries;
+- snapshot `~/.config/caelestia/hypr-user.lua` before every persistence attempt;
+- replace only a CaeRice-owned monitor block rather than arbitrary user Lua;
+- reload and verify;
+- restore the previous file and live layout if verification fails;
+- named layouts such as Laptop only, Desk dual-monitor and external-display presets;
+- workspace-range reassignment only after monitor persistence is proven.

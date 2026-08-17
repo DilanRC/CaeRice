@@ -9,6 +9,7 @@ USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 SRC="$REPO/caelestia/modules-owned/modules"
 PROBE_SRC="$REPO/caelestia/bin/caerice-display-probe"
 PLAN_SRC="$REPO/caelestia/bin/caerice-display-plan"
+TX_SRC="$REPO/caelestia/bin/caerice-display-transaction"
 VALIDATOR="$REPO/scripts/features/validate-display-manager.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/display-manager-$STAMP"
@@ -17,7 +18,13 @@ STAGE="$BACKUP/stage"
 for f in "$LIVE/shell.qml" "$LIVE/components/ScreenState.qml" "$LIVE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/Panels.qml" "$USERCFG"; do
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
 done
-for f in "$SRC/DisplayController.qml" "$SRC/display/Wrapper.qml" "$SRC/display/Content.qml" "$PROBE_SRC" "$PLAN_SRC" "$VALIDATOR"; do
+for f in \
+    "$SRC/DisplayController.qml" \
+    "$SRC/display/Wrapper.qml" \
+    "$SRC/display/Content.qml" \
+    "$SRC/display/Editor.qml" \
+    "$SRC/display/PreviewControls.qml" \
+    "$PROBE_SRC" "$PLAN_SRC" "$TX_SRC" "$VALIDATOR"; do
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
 done
 
@@ -175,11 +182,13 @@ done
 mkdir -p "$HOME/.local/bin"
 install -m 0755 "$PROBE_SRC" "$HOME/.local/bin/caerice-display-probe"
 install -m 0755 "$PLAN_SRC" "$HOME/.local/bin/caerice-display-plan"
+install -m 0755 "$TX_SRC" "$HOME/.local/bin/caerice-display-transaction"
 
 hyprctl reload >/dev/null
 
 echo
 echo "Display Manager instalado."
 echo "Backup: $BACKUP"
+echo "Preview: 15 s con auto-revert; Keep conserva la sesión pero aún no persiste al reiniciar."
 echo "Reinicia Caelestia y prueba Super+Shift+O."
 echo "IPC: qs -c caelestia ipc call display open"

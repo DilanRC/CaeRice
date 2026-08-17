@@ -19,8 +19,9 @@ for qml in "$SRC/display/"*.qml; do
     sudo install -m 0644 "$qml" "$LIVE/modules/display/$(basename "$qml")"
 done
 mkdir -p "$HOME/.local/bin"
-install -m 0755 "$REPO/caelestia/bin/caerice-display-probe" "$HOME/.local/bin/caerice-display-probe"
-install -m 0755 "$REPO/caelestia/bin/caerice-display-plan" "$HOME/.local/bin/caerice-display-plan"
+for helper in caerice-display-probe caerice-display-plan caerice-display-transaction; do
+    install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"
+done
 
 pkill -TERM -x qs 2>/dev/null || true
 sleep 1
@@ -28,3 +29,4 @@ caelestia shell -d
 
 echo
 echo "Display Manager actualizado. Prueba Super+Shift+O."
+echo "Preview transaccional: 15 s con auto-revert; Keep aún no persiste al reiniciar."

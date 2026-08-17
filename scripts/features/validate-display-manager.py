@@ -19,13 +19,13 @@ def require(condition: bool, message: str) -> None:
         errors.append(message)
 
 
-def run_json(command: list[str], label: str) -> dict:
+def run_json(command: list[str], label: str, allowed_codes=(0,)) -> dict:
     try:
         cp = subprocess.run(command, text=True, capture_output=True, timeout=12, check=False)
     except (OSError, subprocess.SubprocessError) as exc:
         errors.append(f"{label}: {exc}")
         return {}
-    if cp.returncode != 0:
+    if cp.returncode not in allowed_codes:
         errors.append(f"{label}: exit {cp.returncode}: {(cp.stderr or cp.stdout).strip()}")
         return {}
     try:
@@ -37,40 +37,46 @@ def run_json(command: list[str], label: str) -> dict:
     return parsed if isinstance(parsed, dict) else {}
 
 
-required = [
-    MODULES / "DisplayController.qml",
-    DISPLAY / "Wrapper.qml",
-    DISPLAY / "Content.qml",
-    BIN / "caerice-display-probe",
-    BIN / "caerice-display-plan",
-]
-for path in required:
-    require(path.is_file(), f"falta {path.relative_to(REPO)}")
+qml_required = ["Wrapper.qml", "Content.qml", "Editor.qml", "PreviewControls.qml"]
+helpers = ["caerice-display-probe", "caerice-display-plan", "caerice-display-transaction"]
 
-for path in [BIN / "caerice-display-probe", BIN / "caerice-display-plan"]:
+require((MODULES / "DisplayController.qml").is_file(), "falta DisplayController.qml")
+for name in qml_required:
+    require((DISPLAY / name).is_file(), f"falta display/{name}")
+for name in helpers:
+    require((BIN / name).is_file(), f"falta caelestia/bin/{name}")
+
+for name in helpers:
+    path = BIN / name
     if path.exists():
         try:
             compile(path.read_text(encoding="utf-8"), str(path), "exec")
         except SyntaxError as exc:
-            errors.append(f"{path.name}: SyntaxError {exc}")
+            errors.append(f"{name}: SyntaxError {exc}")
 
-for path in [DISPLAY / "Wrapper.qml", DISPLAY / "Content.qml"]:
-    if path.exists():
-        text = path.read_text(encoding="utf-8")
-        if "Colours." in text:
-            require("import qs.services" in text, f"{path.name}: Colours sin qs.services")
-        if "Tokens." in text:
-            require("import Caelestia.Config" in text, f"{path.name}: Tokens sin Caelestia.Config")
-        require("#" not in text, f"{path.name}: posible color hex hardcodeado")
+for path in [DISPLAY / name for name in qml_required if (DISPLAY / name).exists()]:
+    text = path.read_text(encoding="utf-8")
+    if "Colours." in text:
+        require("import qs.services" in text, f"{path.name}: Colours sin qs.services")
+    if "Tokens." in text:
+        require("import Caelestia.Config" in text, f"{path.name}: Tokens sin Caelestia.Config")
+    require("#" not in text, f"{path.name}: posible color hex hardcodeado")
 
 controller = (MODULES / "DisplayController.qml").read_text(encoding="utf-8") if (MODULES / "DisplayController.qml").exists() else ""
 require('target: "display"' in controller, "DisplayController: falta IPC target display")
 require('name: "displaymanager"' in controller, "DisplayController: falta shortcut displaymanager")
 
-content = (DISPLAY / "Content.qml").read_text(encoding="utf-8") if (DISPLAY / "Content.qml").exists() else ""
+editor = (DISPLAY / "Editor.qml").read_text(encoding="utf-8") if (DISPLAY / "Editor.qml").exists() else ""
 for needle in ["outsidePanel", "Dry run candidate", "caerice-display-plan", "closeDisplayManager", "topologyCanvas"]:
-    require(needle in content, f"Content.qml: falta {needle}")
+    require(needle in editor, f"Editor.qml: falta {needle}")
 
+content = (DISPLAY / "Content.qml").read_text(encoding="utf-8") if (DISPLAY / "Content.qml").exists() else ""
+require("PreviewControls" in content and "Editor" in content, "Content.qml: wrapper Editor/PreviewControls incompleto")
+preview_qml = (DISPLAY / "PreviewControls.qml").read_text(encoding="utf-8") if (DISPLAY / "PreviewControls.qml").exists() else ""
+for needle in ["Preview 15s", "Keep", "Revert", "caerice-display-transaction"]:
+    require(needle in preview_qml, f"PreviewControls.qml: falta {needle}")
+
+probe = {}
 if not errors:
     probe = run_json([sys.executable, str(BIN / "caerice-display-probe")], "display-probe")
     monitors = probe.get("hyprland", []) if probe else []
@@ -81,30 +87,48 @@ if not errors:
             if not isinstance(monitor, dict):
                 continue
             modes = monitor.get("available_modes", []) if isinstance(monitor.get("available_modes"), list) else []
-            mode = modes[0] if modes else "preferred"
+            current = "preferred"
+            width = int(monitor.get("width") or 0)
+            height = int(monitor.get("height") or 0)
+            refresh = float(monitor.get("refresh_hz") or 0)
+            best_delta = 99999.0
+            for mode in modes:
+                text = str(mode)
+                try:
+                    wh, hz = text.split("@", 1)
+                    w, h = wh.split("x", 1)
+                    delta = abs(float(hz.removesuffix("Hz")) - refresh)
+                except ValueError:
+                    continue
+                if int(w) == width and int(h) == height and delta < best_delta:
+                    current = text
+                    best_delta = delta
             outputs.append({
                 "name": monitor.get("name", ""),
                 "enabled": not bool(monitor.get("disabled", False)),
-                "mode": mode,
+                "mode": current,
                 "x": int(monitor.get("x") or 0),
                 "y": int(monitor.get("y") or 0),
                 "scale": float(monitor.get("scale") or 1),
                 "transform": int(monitor.get("transform") or 0),
             })
-        cp = subprocess.run(
+        plan = run_json(
             [sys.executable, str(BIN / "caerice-display-plan"), "--candidate", json.dumps({"outputs": outputs})],
-            text=True,
-            capture_output=True,
-            timeout=12,
-            check=False,
+            "display-plan",
+            allowed_codes=(0, 3),
         )
-        try:
-            plan = json.loads(cp.stdout)
-        except json.JSONDecodeError as exc:
-            errors.append(f"display-plan: JSON inválido: {exc}")
-        else:
-            require(plan.get("applied") is False, "display-plan: dry run afirmó haber aplicado cambios")
-            require(isinstance(plan.get("commands"), list), "display-plan: commands no es array")
+        require(plan.get("applied") is False, "display-plan: dry run afirmó haber aplicado cambios")
+        require(isinstance(plan.get("commands"), list), "display-plan: commands no es array")
+
+if not errors:
+    tx = run_json([sys.executable, str(BIN / "caerice-display-transaction"), "status"], "display-transaction status")
+    require("active" in tx, "display-transaction: status sin active")
+
+install = (REPO / "scripts/features/install-display-manager.sh").read_text(encoding="utf-8") if (REPO / "scripts/features/install-display-manager.sh").exists() else ""
+update = (REPO / "scripts/features/update-display-manager.sh").read_text(encoding="utf-8") if (REPO / "scripts/features/update-display-manager.sh").exists() else ""
+for needle in ["caerice-display-probe", "caerice-display-plan", "caerice-display-transaction", "DisplayController.qml"]:
+    require(needle in install, f"install-display-manager.sh no instala {needle}")
+    require(needle in update, f"update-display-manager.sh no sincroniza {needle}")
 
 print("===== DISPLAY MANAGER VALIDATION =====")
 if errors:
@@ -113,4 +137,6 @@ if errors:
     print(f"FAIL: {len(errors)} error(es)")
     raise SystemExit(1)
 print("status: OK")
-print("write path: disabled; planner is dry-run only")
+print("dry run: validated")
+print("timed preview backend: present; auto-revert watchdog available")
+print("persistence: intentionally not enabled yet")
