@@ -10,6 +10,9 @@ Item {
 
     required property var snapshot
 
+    property bool cpuNumeric: false
+    property bool memoryNumeric: true
+
     readonly property var cpu: snapshot?.cpu ?? ({})
     readonly property var memory: snapshot?.memory ?? ({})
     readonly property var disk: snapshot?.disk ?? ({})
@@ -44,6 +47,17 @@ Item {
         return value === null || value === undefined ? "—" : `${number(value, 2)} Mb/s`;
     }
 
+    function cpuHeadline(): string {
+        if (!cpuNumeric)
+            return pct(cpu?.usage);
+        const mhz = Number(cpu?.freq_mhz ?? 0);
+        return mhz > 0 ? `${number(mhz / 1000, 2)} GHz` : "—";
+    }
+
+    function memoryHeadline(): string {
+        return memoryNumeric ? gb(memory?.used_gb) : pct(memory?.usage);
+    }
+
     function gpuAt(index): var {
         return index >= 0 && index < gpus.length ? gpus[index] : ({});
     }
@@ -61,9 +75,13 @@ Item {
             width: (cards.width - cards.columnSpacing * 2) / 3
             title: qsTr("CPU")
             icon: "memory"
-            headline: root.pct(root.cpu?.usage)
-            subtitle: root.cpu?.model ?? "CPU"
+            headline: root.cpuHeadline()
+            subtitle: root.cpuNumeric
+                ? `${root.pct(root.cpu?.usage)} · ${root.cpu?.model ?? "CPU"}`
+                : (root.cpu?.model ?? "CPU")
             progress: Number(root.cpu?.usage ?? 0) / 100
+            modeLabel: root.cpuNumeric ? "GHz" : "%"
+            onModeRequested: root.cpuNumeric = !root.cpuNumeric
             rows: [
                 { label: qsTr("Temperature"), value: root.temp(root.cpu?.temp_c) },
                 { label: qsTr("Frequency"), value: root.cpu?.freq_mhz ? `${root.number(root.cpu.freq_mhz, 0)} MHz` : "—" },
@@ -75,9 +93,13 @@ Item {
             width: (cards.width - cards.columnSpacing * 2) / 3
             title: qsTr("Memory")
             icon: "developer_board"
-            headline: root.pct(root.memory?.usage)
-            subtitle: `${root.gb(root.memory?.used_gb)} / ${root.gb(root.memory?.total_gb)}`
+            headline: root.memoryHeadline()
+            subtitle: root.memoryNumeric
+                ? `${root.gb(root.memory?.total_gb)} total · ${root.pct(root.memory?.usage)}`
+                : `${root.gb(root.memory?.used_gb)} / ${root.gb(root.memory?.total_gb)}`
             progress: Number(root.memory?.usage ?? 0) / 100
+            modeLabel: root.memoryNumeric ? "GiB" : "%"
+            onModeRequested: root.memoryNumeric = !root.memoryNumeric
             rows: [
                 { label: qsTr("Used"), value: root.gb(root.memory?.used_gb) },
                 { label: qsTr("Available"), value: root.gb(Math.max(0, Number(root.memory?.total_gb ?? 0) - Number(root.memory?.used_gb ?? 0))) },
