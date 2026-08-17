@@ -16,6 +16,7 @@ scripts = [
     "scripts/features/validate-gaming-center.py",
     "scripts/features/validate-caerice-updater.py",
     "scripts/features/test-diagnose-sad-wiring.py",
+    "scripts/features/test-updater-ref-injection.py",
 ]
 failed: list[str] = []
 

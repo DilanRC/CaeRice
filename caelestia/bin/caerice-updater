@@ -87,6 +87,17 @@ def safe_ref(ref: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]+", "_", ref)[:80] or "candidate"
 
 
+def is_git_safe_ref(ref: str) -> bool:
+    # `ref` comes straight from the Updater UI's free-text field and is
+    # passed as a positional argv element to `git fetch ... origin <ref>`.
+    # git treats a leading "-" as an option, not a refname, so a value like
+    # "--upload-pack=/tmp/x" reaching that argv turns a ref fetch into
+    # arbitrary command execution as the invoking user (verified locally
+    # against an isolated bare repo). No legitimate branch/tag/commit ever
+    # starts with "-", so reject it outright rather than trying to escape it.
+    return bool(ref) and not ref.startswith("-")
+
+
 def upstream_repo() -> str:
     return parse_base().get("upstream_repo", "https://github.com/caelestia-dots/shell")
 
@@ -98,6 +109,8 @@ def candidate_meta(ref: str) -> dict:
 
 
 def fetch(ref: str) -> tuple[dict, int]:
+    if not is_git_safe_ref(ref):
+        return {"ok": False, "error": f"unsafe ref (must not start with '-'): {ref!r}", "ref": ref}, 4
     CANDIDATES.mkdir(parents=True, exist_ok=True)
     dest = CANDIDATES / safe_ref(ref)
     tmp = CANDIDATES / (safe_ref(ref) + ".tmp")
