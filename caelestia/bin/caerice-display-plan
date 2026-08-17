@@ -8,6 +8,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PROBE = HERE / "caerice-display-probe"
+ALLOWED_CM = {"auto", "srgb", "dcip3", "dp3", "adobe", "wide", "edid", "hdr", "hdredid"}
 
 
 def current_snapshot() -> dict:
@@ -39,6 +40,23 @@ def mode_dimensions(mode: str) -> tuple[int, int] | None:
         return int(left), int(right)
     except ValueError:
         return None
+
+
+def current_bitdepth(monitor: dict) -> int:
+    fmt = str(monitor.get("current_format", "")).upper()
+    if "2101010" in fmt or "101010" in fmt:
+        return 10
+    return 8
+
+
+def proven_10bit(monitor: dict) -> bool:
+    max_bpc = monitor.get("max_bpc")
+    try:
+        if max_bpc is not None and int(max_bpc) >= 10:
+            return True
+    except (TypeError, ValueError):
+        pass
+    return current_bitdepth(monitor) == 10
 
 
 def main() -> int:
@@ -105,11 +123,34 @@ def main() -> int:
             x = int(raw.get("x", monitor.get("x", 0)))
             y = int(raw.get("y", monitor.get("y", 0)))
             transform = int(raw.get("transform", monitor.get("transform", 0)))
+            bitdepth = int(raw.get("bitdepth", current_bitdepth(monitor)))
+            vrr = int(raw.get("vrr", 1 if bool(monitor.get("vrr", False)) else 0))
         except (TypeError, ValueError):
-            errors.append(f"{name}: x/y/transform must be numeric")
+            errors.append(f"{name}: x/y/transform/bitdepth/vrr must be numeric")
             continue
+
         if transform < 0 or transform > 7:
             errors.append(f"{name}: transform {transform} outside Hyprland range 0..7")
+        if bitdepth not in {8, 10}:
+            errors.append(f"{name}: bitdepth must be 8 or 10")
+        if bitdepth == 10 and not proven_10bit(monitor):
+            errors.append(f"{name}: 10-bit was requested but support is not established by DRM/current format")
+        if vrr < 0 or vrr > 3:
+            errors.append(f"{name}: vrr {vrr} outside Hyprland range 0..3")
+        if vrr > 0 and not bool(monitor.get("vrr_capable", False)):
+            errors.append(f"{name}: VRR was requested but DRM does not report VRR capability")
+
+        cm = str(raw.get("cm", "srgb")).strip().lower() or "srgb"
+        if cm not in ALLOWED_CM:
+            errors.append(f"{name}: unsupported color-management preset {cm}")
+        if cm in {"wide", "hdr", "hdredid"} and bitdepth != 10:
+            errors.append(f"{name}: {cm} requires 10-bit in CaeRice safety policy")
+        if cm in {"hdr", "hdredid"} and monitor.get("hdr_capable") is not True:
+            errors.append(f"{name}: HDR requested but EDID support is not established")
+        if cm == "wide" and monitor.get("wide_color_capable") is not True:
+            errors.append(f"{name}: wide color requested but EDID support is not established")
+        if cm == "auto" and bitdepth == 10 and monitor.get("wide_color_capable") is not True:
+            warnings.append(f"{name}: 10-bit auto color mode has no established wide-color EDID capability")
 
         normalized.append({
             "name": name,
@@ -119,6 +160,9 @@ def main() -> int:
             "y": y,
             "scale": round(scale, 3),
             "transform": transform,
+            "bitdepth": bitdepth,
+            "cm": cm,
+            "vrr": vrr,
         })
 
     if normalized and not any(item.get("enabled") for item in normalized):
@@ -140,10 +184,8 @@ def main() -> int:
             rw = right_dim[0] / max(0.5, float(right.get("scale", 1)))
             rh = right_dim[1] / max(0.5, float(right.get("scale", 1)))
             overlap = not (
-                left["x"] + lw <= right["x"] or
-                right["x"] + rw <= left["x"] or
-                left["y"] + lh <= right["y"] or
-                right["y"] + rh <= left["y"]
+                left["x"] + lw <= right["x"] or right["x"] + rw <= left["x"] or
+                left["y"] + lh <= right["y"] or right["y"] + rh <= left["y"]
             )
             if overlap:
                 warnings.append(f"{left['name']} and {right['name']} overlap; this may be intentional for mirroring")
@@ -155,8 +197,8 @@ def main() -> int:
             value = f"{item['name']},disable"
         else:
             value = (
-                f"{item['name']},{item['mode']},{item['x']}x{item['y']},"
-                f"{item['scale']},transform,{item['transform']}"
+                f"{item['name']},{item['mode']},{item['x']}x{item['y']},{item['scale']},"
+                f"transform,{item['transform']},bitdepth,{item['bitdepth']},cm,{item['cm']},vrr,{item['vrr']}"
             )
         commands.append(["hyprctl", "keyword", "monitor", value])
         hypr_lines.append(f"monitor = {value}")
@@ -169,7 +211,7 @@ def main() -> int:
         "commands": commands if not errors else [],
         "hypr_lines": hypr_lines if not errors else [],
         "applied": False,
-        "safety": "dry-run only; no hyprctl write command was executed",
+        "safety": "dry-run only; 10-bit/VRR/HDR require established capability; no hyprctl write command was executed",
     }
     print(json.dumps(payload, separators=(",", ":")))
     return 0 if not errors else 3
