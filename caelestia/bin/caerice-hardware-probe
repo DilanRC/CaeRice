@@ -185,6 +185,8 @@ def memory_snapshot() -> tuple[dict, int]:
     total = info.get("MemTotal", 0)
     available = info.get("MemAvailable", 0)
     used = max(0, total - available)
+    cache = info.get("Cached", 0) + info.get("SReclaimable", 0)
+    buffers = info.get("Buffers", 0)
     swap_total = info.get("SwapTotal", 0)
     swap_free = info.get("SwapFree", 0)
     return (
@@ -192,6 +194,8 @@ def memory_snapshot() -> tuple[dict, int]:
             "total_gb": bytes_gib(total),
             "used_gb": bytes_gib(used),
             "available_gb": bytes_gib(available),
+            "cache_gb": bytes_gib(cache),
+            "buffers_gb": bytes_gib(buffers),
             "usage": round((used / total * 100.0) if total else 0.0, 1),
             "swap_used_gb": bytes_gib(max(0, swap_total - swap_free)),
             "swap_total_gb": bytes_gib(swap_total),
@@ -210,50 +214,124 @@ def disk_snapshot() -> dict:
     }
 
 
-def disk_io_snapshot(previous: dict, now: float) -> tuple[dict, dict]:
-    try:
-        st = os.stat("/")
-        dev_key = f"{os.major(st.st_dev)}:{os.minor(st.st_dev)}"
-        link = Path("/sys/dev/block") / dev_key
-        resolved = link.resolve(strict=True)
-        fields = [int(v) for v in read_text(resolved / "stat").split()]
-        if len(fields) < 7:
-            raise ValueError("short disk stat")
-        reads = fields[0]
-        read_sectors = fields[2]
-        writes = fields[4]
-        write_sectors = fields[6]
-    except (OSError, ValueError):
-        return (
-            {"device": "root", "read_mib_s": 0.0, "write_mib_s": 0.0, "read_iops": 0.0, "write_iops": 0.0},
-            {},
-        )
+def root_source_name() -> str:
+    if shutil.which("findmnt"):
+        try:
+            cp = subprocess.run(
+                ["findmnt", "-n", "-o", "SOURCE", "/"],
+                text=True,
+                capture_output=True,
+                timeout=0.7,
+                check=False,
+            )
+            source = cp.stdout.strip().split("[", 1)[0]
+            if source.startswith("/dev/"):
+                name = Path(source).name
+                sys_block = Path("/sys/class/block") / name
+                if sys_block.exists():
+                    resolved = sys_block.resolve()
+                    if (sys_block / "partition").exists():
+                        return resolved.parent.name
+                    if name.startswith("dm-"):
+                        slaves = list((sys_block / "slaves").glob("*"))
+                        if slaves:
+                            slave = slaves[0].name
+                            slave_path = Path("/sys/class/block") / slave
+                            if (slave_path / "partition").exists():
+                                return slave_path.resolve().parent.name
+                            return slave
+                    return name
+        except (OSError, subprocess.SubprocessError):
+            pass
+    return ""
 
-    old = previous.get("disk_io", {})
-    elapsed = max(0.001, now - float(old.get("time", now)))
-    read_mib = max(0, read_sectors - int(old.get("read_sectors", read_sectors))) * 512 / (1024 ** 2) / elapsed
-    write_mib = max(0, write_sectors - int(old.get("write_sectors", write_sectors))) * 512 / (1024 ** 2) / elapsed
+
+def block_device_names() -> list[str]:
+    names = []
+    root = Path("/sys/class/block")
+    for path in root.iterdir():
+        name = path.name
+        if (path / "partition").exists():
+            continue
+        if name.startswith(("loop", "ram", "zram", "dm-", "md")):
+            continue
+        if re.match(r"^(nvme\d+n\d+|sd[a-z]+|vd[a-z]+|mmcblk\d+)$", name):
+            names.append(name)
+    return sorted(names)
+
+
+def block_metric(name: str, old: dict, elapsed: float) -> tuple[dict, dict] | tuple[None, None]:
+    root = Path("/sys/class/block") / name
+    try:
+        fields = [int(v) for v in read_text(root / "stat").split()]
+        if len(fields) < 7:
+            return None, None
+        reads, read_sectors = fields[0], fields[2]
+        writes, write_sectors = fields[4], fields[6]
+        sector_size = int(read_text(root / "queue/hw_sector_size", "512") or 512)
+    except (OSError, ValueError):
+        return None, None
+
+    read_mib = max(0, read_sectors - int(old.get("read_sectors", read_sectors))) * sector_size / (1024 ** 2) / elapsed
+    write_mib = max(0, write_sectors - int(old.get("write_sectors", write_sectors))) * sector_size / (1024 ** 2) / elapsed
     read_iops = max(0, reads - int(old.get("reads", reads))) / elapsed
     write_iops = max(0, writes - int(old.get("writes", writes))) / elapsed
 
-    return (
-        {
-            "device": resolved.name,
-            "read_mib_s": round(read_mib, 2),
-            "write_mib_s": round(write_mib, 2),
-            "read_iops": round(read_iops, 1),
-            "write_iops": round(write_iops, 1),
-        },
-        {
-            "disk_io": {
-                "time": now,
-                "read_sectors": read_sectors,
-                "write_sectors": write_sectors,
-                "reads": reads,
-                "writes": writes,
-            }
-        },
-    )
+    model = read_text(root / "device/model") or read_text(root / "device/name")
+    serial = read_text(root / "device/serial")
+    metric = {
+        "device": name,
+        "model": model,
+        "serial": serial,
+        "rotational": read_text(root / "queue/rotational", "0") == "1",
+        "read_mib_s": round(read_mib, 2),
+        "write_mib_s": round(write_mib, 2),
+        "read_iops": round(read_iops, 1),
+        "write_iops": round(write_iops, 1),
+        "read_total_gb": round(read_sectors * sector_size / 1_000_000_000, 2),
+        "write_total_gb": round(write_sectors * sector_size / 1_000_000_000, 2),
+    }
+    state = {
+        "read_sectors": read_sectors,
+        "write_sectors": write_sectors,
+        "reads": reads,
+        "writes": writes,
+    }
+    return metric, state
+
+
+def disk_io_snapshot(previous: dict, now: float) -> tuple[dict, list[dict], dict]:
+    old_root = previous.get("disk_io", {})
+    old_devices = old_root.get("devices", {})
+    elapsed = max(0.001, now - float(old_root.get("time", now)))
+    devices = []
+    next_devices = {}
+
+    for name in block_device_names():
+        metric, state = block_metric(name, old_devices.get(name, {}), elapsed)
+        if metric is None:
+            continue
+        devices.append(metric)
+        next_devices[name] = state
+
+    root_name = root_source_name()
+    root_metric = next((d for d in devices if d.get("device") == root_name), None)
+    if root_metric is None and devices:
+        root_metric = devices[0]
+    if root_metric is None:
+        root_metric = {
+            "device": root_name or "root",
+            "model": "",
+            "serial": "",
+            "read_mib_s": 0.0,
+            "write_mib_s": 0.0,
+            "read_iops": 0.0,
+            "write_iops": 0.0,
+            "read_total_gb": 0.0,
+            "write_total_gb": 0.0,
+        }
+
+    return root_metric, devices, {"disk_io": {"time": now, "devices": next_devices}}
 
 
 def battery_snapshot() -> dict:
@@ -292,6 +370,57 @@ def default_interface() -> str:
     return ""
 
 
+def network_metadata(iface: str) -> dict:
+    data = {
+        "mac": read_text(Path("/sys/class/net") / iface / "address"),
+        "ipv4": "",
+        "ssid": "",
+        "signal_dbm": None,
+        "bitrate_mbps": None,
+    }
+
+    if shutil.which("ip"):
+        try:
+            cp = subprocess.run(
+                ["ip", "-4", "-o", "addr", "show", "dev", iface],
+                text=True,
+                capture_output=True,
+                timeout=0.6,
+                check=False,
+            )
+            match = re.search(r"\binet\s+([0-9.]+)/", cp.stdout)
+            if match:
+                data["ipv4"] = match.group(1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+
+    if shutil.which("iw") and (Path("/sys/class/net") / iface / "wireless").exists():
+        try:
+            cp = subprocess.run(
+                ["iw", "dev", iface, "link"],
+                text=True,
+                capture_output=True,
+                timeout=0.7,
+                check=False,
+            )
+            for line in cp.stdout.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("SSID:"):
+                    data["ssid"] = stripped.split(":", 1)[1].strip()
+                elif stripped.startswith("signal:"):
+                    match = re.search(r"signal:\s*(-?[0-9.]+)", stripped)
+                    if match:
+                        data["signal_dbm"] = round(float(match.group(1)), 0)
+                elif stripped.startswith("tx bitrate:"):
+                    match = re.search(r"tx bitrate:\s*([0-9.]+)", stripped)
+                    if match:
+                        data["bitrate_mbps"] = round(float(match.group(1)), 1)
+        except (OSError, subprocess.SubprocessError, ValueError):
+            pass
+
+    return data
+
+
 def network_snapshot(previous: dict, now: float) -> tuple[dict, dict]:
     iface = default_interface()
     if not iface:
@@ -303,6 +432,7 @@ def network_snapshot(previous: dict, now: float) -> tuple[dict, dict]:
     elapsed = max(0.001, now - float(old.get("time", now)))
     rx_rate = max(0, rx - int(old.get("rx", rx))) * 8 / elapsed / 1_000_000
     tx_rate = max(0, tx - int(old.get("tx", tx))) * 8 / elapsed / 1_000_000
+    metadata = network_metadata(iface)
     return (
         {
             "interface": iface,
@@ -310,6 +440,7 @@ def network_snapshot(previous: dict, now: float) -> tuple[dict, dict]:
             "tx_mbps": round(tx_rate, 2),
             "rx_total_gb": round(rx / 1_000_000_000, 2),
             "tx_total_gb": round(tx / 1_000_000_000, 2),
+            **metadata,
         },
         {"network": {"time": now, "rx": rx, "tx": tx}},
     )
@@ -521,7 +652,7 @@ def main() -> None:
     cpu, cpu_state = cpu_snapshot(previous)
     memory, total_mem = memory_snapshot()
     network, network_state = network_snapshot(previous, now)
-    disk_io, disk_state = disk_io_snapshot(previous, now)
+    disk_io, disks_io, disk_state = disk_io_snapshot(previous, now)
     processes, process_state = process_snapshot(previous, now, uptime, total_mem)
 
     state = {
@@ -542,6 +673,7 @@ def main() -> None:
         "memory": memory,
         "disk": disk_snapshot(),
         "disk_io": disk_io,
+        "disks_io": disks_io,
         "battery": battery_snapshot(),
         "network": network,
         "gpus": amd_gpu_snapshot() + nvidia_gpu_snapshot(),
