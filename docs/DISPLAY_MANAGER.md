@@ -1,54 +1,92 @@
-# CaeRice Display Manager — skeleton
+# CaeRice Display Manager
 
 Branch: `feature/display-manager`
 
-Reserved bind after integration: `Super+Shift+O`.
+Reserved bind: `Super+Shift+O`.
 
-This branch starts from the completed Hardware Center candidate so it can reuse
-the same controller → native `ContentWindow` → Wrapper/Loader architecture.
+Display Manager reuses the same native `ContentWindow` integration model as Hardware Center. Its controller is always light; the actual UI/probe tree is loaded only while the panel is open.
 
-## Current skeleton
+## Current phase
 
-`caelestia/bin/caerice-display-probe` is intentionally read-only. It combines:
+This phase is intentionally **read-only with respect to the live monitor layout**.
 
-- `hyprctl -j monitors all`
-- DRM connector state under `/sys/class/drm`
-- connector → DRM card → GPU vendor mapping
-- current geometry, refresh, scale, transform, focus and available modes
+Implemented:
 
-It does not issue `hyprctl keyword monitor`, change DPMS or edit configuration.
+- native `DisplayController.qml` + `display/Wrapper.qml` integration;
+- `Super+Shift+O` and IPC target `display`;
+- monitor inventory from `hyprctl -j monitors all`;
+- workspace inventory from `hyprctl -j workspaces`;
+- DRM connector → card → GPU vendor mapping from `/sys/class/drm`;
+- current geometry, refresh, scale, transform, DPMS, VRR/current-format fields when Hyprland reports them;
+- topology canvas using the candidate logical coordinates;
+- per-output candidate mode, scale and X/Y editing;
+- current workspace, DPMS and GPU/card visibility;
+- a separate `caerice-display-plan` helper that validates the candidate and produces the exact future `hyprctl keyword monitor ...` commands without executing them;
+- overlap warnings and guardrails for unknown outputs, invalid modes, unsafe scales, duplicate outputs, transforms and disabling every output;
+- full installer, development updater and validator.
 
-## Planned UI
+## Safety boundary
 
-- monitor cards for internal eDP and external outputs;
-- live topology canvas with drag positioning;
-- resolution/refresh/scale/transform controls;
-- primary/focus role and workspace-range presets;
-- GPU/connector ownership visibility;
-- HDR/10-bit controls only if driver/Hyprland/output support is actually reported;
-- saved named layouts.
+`caerice-display-probe` never changes the display configuration.
 
-## Safety contract
+`caerice-display-plan` is also dry-run only. Its output explicitly contains:
 
-Every write must follow:
+```json
+{"applied": false}
+```
 
-1. build a complete candidate monitor layout;
-2. validate it against currently connected outputs/modes;
-3. snapshot existing Hyprland monitor configuration;
-4. apply as a temporary preview;
-5. start a visible revert countdown;
-6. persist only after explicit confirmation;
-7. automatically revert on timeout/failure.
+No command produced by the planner is executed in this phase.
 
-No raw EDID editing or unsafe custom modelines in the normal UI.
+The next write-capable phase must implement the complete transaction:
 
-## First probe test
+1. build and validate a full candidate layout;
+2. snapshot the existing monitor configuration;
+3. apply the candidate only as a temporary preview;
+4. display a visible countdown inside Display Manager;
+5. require explicit **Keep layout** confirmation;
+6. automatically revert on timeout, shell failure or rejection;
+7. persist only after confirmation;
+8. verify the persisted layout after reload.
+
+There will be no normal UI for raw EDID mutation, arbitrary modelines, GPU overclocking or permanent writes without a preview/revert path.
+
+## Files
+
+- `caelestia/bin/caerice-display-probe`
+- `caelestia/bin/caerice-display-plan`
+- `caelestia/modules-owned/modules/DisplayController.qml`
+- `caelestia/modules-owned/modules/display/Wrapper.qml`
+- `caelestia/modules-owned/modules/display/Content.qml`
+- `scripts/features/install-display-manager.sh`
+- `scripts/features/update-display-manager.sh`
+- `scripts/features/validate-display-manager.py`
+
+## Install
 
 ```fish
 cd ~/CaeRice
 git switch feature/display-manager
-python3 caelestia/bin/caerice-display-probe | jq
+git pull --ff-only
+bash scripts/features/install-display-manager.sh
 ```
 
-The next implementation pass will add the native QML shell and a dry-run layout
-planner before any write capability is introduced.
+Then restart Caelestia and open:
+
+```text
+Super+Shift+O
+```
+
+or:
+
+```fish
+qs -c caelestia ipc call display open
+```
+
+## Dry-run diagnostics
+
+```fish
+python3 scripts/features/validate-display-manager.py
+~/.local/bin/caerice-display-probe | jq
+```
+
+Inside the UI, edit a candidate and press **Dry run candidate** or `P`. The generated monitor lines are for review only until the timed preview transaction is implemented and QA'd on the real machine.

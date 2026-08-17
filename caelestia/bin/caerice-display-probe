@@ -13,46 +13,17 @@ def read_text(path: Path, default: str = "") -> str:
         return default
 
 
-def hypr_monitors() -> list[dict]:
+def run_json(command: list[str], timeout: float = 3.0):
     try:
-        cp = subprocess.run(
-            ["hyprctl", "-j", "monitors", "all"],
-            text=True,
-            capture_output=True,
-            timeout=3,
-            check=False,
-        )
+        cp = subprocess.run(command, text=True, capture_output=True, timeout=timeout, check=False)
     except (OSError, subprocess.SubprocessError):
-        return []
+        return None
     if cp.returncode != 0:
-        return []
+        return None
     try:
-        raw = json.loads(cp.stdout)
+        return json.loads(cp.stdout)
     except json.JSONDecodeError:
-        return []
-    out = []
-    for m in raw if isinstance(raw, list) else []:
-        out.append({
-            "id": m.get("id"),
-            "name": m.get("name", ""),
-            "description": m.get("description", ""),
-            "make": m.get("make", ""),
-            "model": m.get("model", ""),
-            "serial": m.get("serial", ""),
-            "width": m.get("width"),
-            "height": m.get("height"),
-            "refresh_hz": m.get("refreshRate"),
-            "x": m.get("x"),
-            "y": m.get("y"),
-            "scale": m.get("scale"),
-            "transform": m.get("transform"),
-            "focused": m.get("focused", False),
-            "disabled": m.get("disabled", False),
-            "dpms": m.get("dpmsStatus"),
-            "available_modes": m.get("availableModes", []),
-            "workspace": m.get("activeWorkspace", {}),
-        })
-    return out
+        return None
 
 
 def gpu_vendor(card: Path) -> str:
@@ -65,17 +36,21 @@ def gpu_vendor(card: Path) -> str:
 
 
 def drm_connectors() -> list[dict]:
-    out = []
+    out: list[dict] = []
     drm = Path("/sys/class/drm")
+    if not drm.exists():
+        return out
+
     for connector in sorted(drm.glob("card[0-9]-*")):
         status_path = connector / "status"
         if not status_path.exists():
             continue
-        card_name = connector.name.split("-", 1)[0]
+        card_name, output_name = connector.name.split("-", 1)
         card = drm / card_name
-        modes = read_text(connector / "modes").splitlines()
+        modes = [line for line in read_text(connector / "modes").splitlines() if line]
         out.append({
             "connector": connector.name,
+            "output_name": output_name,
             "card": card_name,
             "gpu_vendor": gpu_vendor(card),
             "status": read_text(status_path, "unknown"),
@@ -85,12 +60,82 @@ def drm_connectors() -> list[dict]:
     return out
 
 
+def hypr_monitors(connectors: list[dict]) -> list[dict]:
+    raw = run_json(["hyprctl", "-j", "monitors", "all"])
+    if not isinstance(raw, list):
+        return []
+    by_output = {c["output_name"]: c for c in connectors}
+    out: list[dict] = []
+    for monitor in raw:
+        if not isinstance(monitor, dict):
+            continue
+        name = str(monitor.get("name", ""))
+        drm = by_output.get(name, {})
+        out.append({
+            "id": monitor.get("id"),
+            "name": name,
+            "description": monitor.get("description", ""),
+            "make": monitor.get("make", ""),
+            "model": monitor.get("model", ""),
+            "serial": monitor.get("serial", ""),
+            "width": monitor.get("width"),
+            "height": monitor.get("height"),
+            "refresh_hz": monitor.get("refreshRate"),
+            "x": monitor.get("x"),
+            "y": monitor.get("y"),
+            "scale": monitor.get("scale"),
+            "transform": monitor.get("transform"),
+            "focused": bool(monitor.get("focused", False)),
+            "disabled": bool(monitor.get("disabled", False)),
+            "dpms": monitor.get("dpmsStatus"),
+            "vrr": monitor.get("vrr"),
+            "current_format": monitor.get("currentFormat"),
+            "available_modes": monitor.get("availableModes", []) if isinstance(monitor.get("availableModes"), list) else [],
+            "workspace": monitor.get("activeWorkspace", {}),
+            "special_workspace": monitor.get("specialWorkspace", {}),
+            "gpu_vendor": drm.get("gpu_vendor", "unknown"),
+            "drm_card": drm.get("card", ""),
+            "drm_connector": drm.get("connector", ""),
+            "drm_status": drm.get("status", "unknown"),
+        })
+    return out
+
+
+def workspaces() -> list[dict]:
+    raw = run_json(["hyprctl", "-j", "workspaces"])
+    if not isinstance(raw, list):
+        return []
+    out = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        out.append({
+            "id": item.get("id"),
+            "name": item.get("name", ""),
+            "monitor": item.get("monitor", ""),
+            "monitor_id": item.get("monitorID"),
+            "windows": item.get("windows", 0),
+            "last_window": item.get("lastwindow", ""),
+            "last_window_title": item.get("lastwindowtitle", ""),
+        })
+    return out
+
+
 def main() -> None:
+    drm = drm_connectors()
+    monitors = hypr_monitors(drm)
     payload = {
-        "hyprland": hypr_monitors(),
-        "drm": drm_connectors(),
+        "hyprland": monitors,
+        "drm": drm,
+        "workspaces": workspaces(),
+        "summary": {
+            "connected": sum(1 for m in monitors if not m.get("disabled")),
+            "focused": next((m.get("name") for m in monitors if m.get("focused")), ""),
+            "gpu_vendors": sorted({m.get("gpu_vendor", "unknown") for m in monitors}),
+        },
         "write_capability": False,
-        "safety": "read-only skeleton; no monitor commands are applied",
+        "planner_capability": True,
+        "safety": "probe is read-only; monitor writes require a separate preview/confirm workflow",
     }
     print(json.dumps(payload, separators=(",", ":")))
 
