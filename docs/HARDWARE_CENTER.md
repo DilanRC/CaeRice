@@ -6,93 +6,112 @@ Branch: `feature/hardware-center`
 
 Native, theme-adaptive hardware dashboard opened with `Super+H`. It lives inside
 Caelestia's existing drawer `ContentWindow`, so mouse/touchpad/keyboard input
-uses the same window that already hosts Launcher, Overview and Clipboard.
+uses the same native surface as Launcher, Overview and Clipboard.
 
 ## Resource model
 
 - `HardwareController.qml` is always loaded and only tracks open/close state.
-- `hardware/Wrapper.qml` uses a `Loader`.
-- `hardware/Content.qml`, its pages, graphs and polling `Process` exist **only
-  while Hardware Center is open**.
-- While open, telemetry refreshes every 1500 ms.
-- `caerice-hardware-probe` is a one-shot Python process; there is no extra
-  permanent monitor daemon.
+- `hardware/Wrapper.qml` owns a `Loader` whose `active` state follows the panel.
+- Main telemetry, graphs and page QML exist only while Hardware Center is open.
+- Main telemetry refreshes every 1500 ms while open.
+- Power and Energy pages use an on-demand power helper only while those pages exist.
 - Closing Hardware Center destroys the polling/UI tree.
 - Automatic AC/battery switching is separate and **disabled by default**. It
-  only starts the tiny `caerice-power-auto.service` user service when the user
-  explicitly enables automation on page 7.
+  starts `caerice-power-auto.service` only after explicit user opt-in on page 7.
 
 ## Pages
 
-1. **Overview** — CPU, RAM, root storage, AMD/NVIDIA GPUs, battery/network and cooling summary. CPU can switch `% / GHz`; memory defaults to GiB and can switch `GiB / %`.
-2. **Performance** — rolling CPU/RAM/network/NVMe/GPU graphs. Every graph shows a visible scale plus min/average/max. CPU can cycle Total → Core 0 → Core 1…; RAM can switch its second history between cache and swap.
-3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, display mode `123 / %`, list freeze, process detail, Pause/Resume, Interrupt, Terminate and Force kill actions.
-4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fans and battery data.
-5. **I/O** — detailed root storage/NVMe throughput, IOPS and totals plus network rate/totals, IPv4, MAC and Wi-Fi metadata when exposed.
-6. **Power** — manual Power Profiles selection plus CPU policy, AC/battery, AMD runtime power state and NVIDIA P-state/clocks/power telemetry.
-7. **Auto** — optional AC/battery profile rules. Defaults: AC=performance, battery=balanced, low battery (<=25%)=power-saver. The watcher is disabled until explicitly enabled.
+1. **Overview** — CPU, RAM, root storage, AMD/NVIDIA GPUs, battery/network and cooling. CPU can switch `% / GHz`; memory defaults to GiB and can switch `GiB / %`.
+2. **Performance** — rolling CPU/RAM/network/NVMe/GPU graphs with visible scales and min/average/max. CPU cycles Total → Core 0 → Core 1…; RAM toggles cache/swap history.
+3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, `123 / %`, list freeze, detail view and Pause/Resume, Interrupt, Terminate and Force kill controls.
+4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fan RPM and battery sensor data.
+5. **I/O** — root filesystem and physical block-device throughput, IOPS and totals plus network rates/totals, IPv4, MAC and Wi-Fi metadata.
+6. **Power** — manual Power Profiles switching plus CPU driver/governor/EPP/platform profile, AC/battery state, AMD runtime power state and NVIDIA P-state/clocks/power.
+7. **Auto** — optional AC/battery/low-battery profile rules with verified actions and a small persistent event history. Automation remains disabled until explicitly enabled.
+8. **Energy** — rolling battery/CPU/AMD/NVIDIA power histories, battery energy/health and estimated remaining/charge time when the kernel exposes enough data.
 
-Keyboard: `1`–`7` switches pages, `R` refreshes, `Esc` closes.
+Keyboard: `1`–`8` switches pages, `R` refreshes main telemetry and `Esc` closes.
+There is also an explicit close button. Clicking empty space inside the panel does
+not close it; only clicking outside the panel, `Esc`, the close button or
+`Super+H` closes/toggles it.
 
 ## Telemetry
 
-`~/.local/bin/caerice-hardware-probe` returns one compact JSON snapshot with:
+`~/.local/bin/caerice-hardware-probe` provides:
 
 - CPU total/per-core usage, average frequency, package temperature and governor.
-- RAM used/available/cache/buffers plus swap usage.
+- RAM used/available/cache/buffers plus swap.
 - Root filesystem usage.
-- Physical block-device read/write throughput, IOPS and cumulative read/write totals, with NVMe model/serial where exposed by sysfs.
-- AMD GPU telemetry from `/sys/class/drm` when exported by the driver.
-- NVIDIA GPU telemetry from `nvidia-smi` when available.
+- Physical block-device throughput, IOPS and cumulative read/write totals, with model/serial where exposed by sysfs.
+- AMD telemetry from `/sys/class/drm`.
+- NVIDIA telemetry from `nvidia-smi` when available.
 - Battery percentage/status/power.
-- Active network interface, RX/TX rates/totals, IPv4/MAC and Wi-Fi SSID/signal/link bitrate when `iw` exposes them.
+- Active network interface, RX/TX rates/totals, IPv4/MAC and Wi-Fi SSID/signal/link bitrate when available.
 - Exposed fan RPM values.
-- Up to 80 processes with instantaneous CPU deltas, RAM, user, state, threads,
-  parent PID, elapsed time and command line.
+- Up to 80 processes with instantaneous CPU deltas, RAM, user, state, threads, parent PID, elapsed time and command line.
 - Host, kernel, uptime and load average.
 
-`~/.local/bin/caerice-hardware-power` is a separate on-demand reader/controller
-for `powerprofilesctl`, cpufreq/amd-pstate policy, AC/battery health and GPU power
-state. Manual profile changes are restricted to `power-saver`, `balanced` and
-`performance`.
+`~/.local/bin/caerice-hardware-power` provides:
+
+- `powerprofilesctl` backend/current/available/degraded state.
+- AC sources and battery energy, health, voltage, draw and runtime estimates.
+- CPU scaling driver, governor, EPP, frequency range, ACPI platform profile and package power if hwmon exposes it.
+- AMD runtime/performance/power state.
+- NVIDIA P-state, clocks, temperature, draw and power limit when available.
+
+All unavailable fields degrade to `null`/empty values rather than aborting the UI.
+
+## Safe power controls
+
+Manual and automatic profile changes are strictly limited to:
+
+- `power-saver`
+- `balanced`
+- `performance`
+
+Hardware Center does not write governors, EPP, platform profiles, GPU clocks,
+voltages or GPU power limits directly. It delegates supported profile changes to
+`powerprofilesctl` and verifies the resulting profile.
 
 ## Automatic power rules
 
-Automation uses three user-owned pieces:
+Automation uses:
 
 - `~/.local/bin/caerice-power-auto`
 - `~/.local/bin/caerice-power-auto-control`
 - `~/.config/systemd/user/caerice-power-auto.service`
+- `~/.config/caerice/power-auto.json`
+- `~/.local/state/caerice/power-auto-events.jsonl`
 
-Configuration is stored at `~/.config/caerice/power-auto.json`. Enabling the
-feature starts the user service; disabling it stops and disables the service,
-so there is no background watcher when automation is off.
+Defaults:
 
-The watcher polls power-source state every four seconds by default and only
-calls `powerprofilesctl set` when the desired profile differs from the current
-profile. It does not write governors, EPP, platform profiles, GPU clocks,
-voltages or power limits directly.
+- AC: `performance`
+- Battery: `balanced`
+- Battery <= 25%: `power-saver`
+- Poll: 4 seconds
+- Enabled: `false`
+
+`Apply current rule once` works while automation is disabled and does not enable
+the background service. Event history is capped by the watcher and can be cleared
+from the UI.
 
 ## btop relationship
 
-The interaction model intentionally takes inspiration from upstream btop:
-resource histories, process filtering/sorting/details/signals, auto-scaled
-network graphs, disk I/O, battery and sensor monitoring.
-
-No btop C++/terminal UI source is vendored and Hardware Center does not launch
-btop. CaeRice implements its own `/proc`/`/sys` collectors and QML interface so
-all of this lives under `Super+H` and follows the Caelestia scheme.
+The interaction model takes inspiration from btop resource histories, process
+filter/sort/detail/signal controls, network auto-scaling, disk I/O and sensors.
+No btop C++/terminal UI source is vendored or launched. CaeRice uses its own
+`/proc`/`/sys` collectors and native QML.
 
 Reference: https://github.com/aristocratos/btop
 
 ## Theme
 
-The UI uses `Colours.palette.*` and `Tokens.*`. There are no independent accent
-colours. It follows the active Caelestia scheme automatically.
+The UI uses `Colours.palette.*`, `Colours.tPalette.*` where appropriate and
+`Tokens.*`; no independent accent palette is maintained.
 
-## Install
+## Install / update
 
-First installation/integration:
+First installation:
 
 ```fish
 cd ~/CaeRice
@@ -101,7 +120,7 @@ git pull --ff-only
 bash scripts/features/install-hardware-center.sh
 ```
 
-During development, once native integration already exists:
+Development update after native integration already exists:
 
 ```fish
 cd ~/CaeRice
@@ -109,6 +128,23 @@ git pull --ff-only
 bash scripts/features/update-hardware-center.sh
 ```
 
-The fast updater synchronizes every QML page, telemetry helpers and the optional
-systemd user unit, then restarts Caelestia. It never enables automatic power
-switching on its own.
+Both paths validate telemetry/helpers. The full installer snapshots native files
+before changing them. Neither path enables automatic power switching by itself.
+
+## Validation / diagnostics
+
+Repository + helper validation:
+
+```fish
+python3 scripts/features/validate-hardware-center.py
+```
+
+Live installation, hashes, probes, IPC, systemd and QML log check:
+
+```fish
+python3 scripts/features/diagnose-hardware-center.py
+```
+
+The feature is considered merge-ready when validation is `OK`, live hashes match,
+all eight pages open without QML errors, process controls work on a disposable
+process, profile switching verifies, and Auto remains opt-in across an update.
