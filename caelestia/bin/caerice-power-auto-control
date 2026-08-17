@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 UID = os.getuid()
@@ -59,9 +60,23 @@ def load_config() -> dict:
 def save_config(cfg: dict) -> None:
     cfg = normalize_config(cfg)
     CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = CONFIG_PATH.with_suffix(".tmp")
-    tmp.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
-    tmp.replace(CONFIG_PATH)
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{CONFIG_PATH.name}.",
+        suffix=".tmp",
+        dir=CONFIG_PATH.parent,
+        text=True,
+    )
+    tmp = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(cfg, indent=2) + "\n")
+        tmp.replace(CONFIG_PATH)
+    except Exception:
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+        raise
 
 
 def systemctl(*args: str) -> subprocess.CompletedProcess[str]:
