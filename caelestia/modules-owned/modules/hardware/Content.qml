@@ -22,7 +22,10 @@ FocusScope {
     property int currentPage: 0
 
     property var cpuHistory: []
-    property var memoryHistory: []
+    property var cpuCoreHistories: []
+    property var memoryUsedHistory: []
+    property var memoryCacheHistory: []
+    property var swapUsedHistory: []
     property var networkRxHistory: []
     property var networkTxHistory: []
     property var diskReadHistory: []
@@ -62,7 +65,18 @@ FocusScope {
 
     function recordHistory(parsed): void {
         root.cpuHistory = pushHistory(root.cpuHistory, parsed?.cpu?.usage);
-        root.memoryHistory = pushHistory(root.memoryHistory, parsed?.memory?.usage);
+
+        const coreValues = parsed?.cpu?.per_core ?? [];
+        const coreHistories = Array.from(root.cpuCoreHistories ?? []);
+        while (coreHistories.length < coreValues.length)
+            coreHistories.push([]);
+        for (let i = 0; i < coreValues.length; ++i)
+            coreHistories[i] = pushHistory(coreHistories[i], coreValues[i]);
+        root.cpuCoreHistories = coreHistories;
+
+        root.memoryUsedHistory = pushHistory(root.memoryUsedHistory, parsed?.memory?.used_gb);
+        root.memoryCacheHistory = pushHistory(root.memoryCacheHistory, parsed?.memory?.cache_gb);
+        root.swapUsedHistory = pushHistory(root.swapUsedHistory, parsed?.memory?.swap_used_gb);
         root.networkRxHistory = pushHistory(root.networkRxHistory, parsed?.network?.rx_mbps);
         root.networkTxHistory = pushHistory(root.networkTxHistory, parsed?.network?.tx_mbps);
         root.diskReadHistory = pushHistory(root.diskReadHistory, parsed?.disk_io?.read_mib_s);
@@ -91,7 +105,7 @@ FocusScope {
             event.accepted = true;
             return;
         }
-        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_4) {
+        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_5) {
             root.currentPage = event.key - Qt.Key_1;
             event.accepted = true;
         }
@@ -244,13 +258,14 @@ FocusScope {
                         { label: qsTr("Overview"), icon: "dashboard" },
                         { label: qsTr("Performance"), icon: "monitoring" },
                         { label: qsTr("Processes"), icon: "account_tree" },
-                        { label: qsTr("Sensors"), icon: "device_thermostat" }
+                        { label: qsTr("Sensors"), icon: "device_thermostat" },
+                        { label: qsTr("I/O"), icon: "lan" }
                     ]
 
                     delegate: StyledRect {
                         required property var modelData
                         required property int index
-                        width: Math.min(178, (tabs.width - tabs.spacing * 3) / 4)
+                        width: Math.min(178, (tabs.width - tabs.spacing * 4) / 5)
                         height: 42
                         radius: Tokens.rounding.large
                         color: root.currentPage === index
@@ -298,7 +313,9 @@ FocusScope {
                         ? performanceComponent
                         : root.currentPage === 2
                             ? processesComponent
-                            : sensorsComponent
+                            : root.currentPage === 3
+                                ? sensorsComponent
+                                : ioComponent
             }
         }
     }
@@ -317,7 +334,10 @@ FocusScope {
         PerformancePage {
             snapshot: root.snapshot
             cpuHistory: root.cpuHistory
-            memoryHistory: root.memoryHistory
+            cpuCoreHistories: root.cpuCoreHistories
+            memoryUsedHistory: root.memoryUsedHistory
+            memoryCacheHistory: root.memoryCacheHistory
+            swapUsedHistory: root.swapUsedHistory
             networkRxHistory: root.networkRxHistory
             networkTxHistory: root.networkTxHistory
             diskReadHistory: root.diskReadHistory
@@ -340,6 +360,14 @@ FocusScope {
         id: sensorsComponent
 
         SensorsPage {
+            snapshot: root.snapshot
+        }
+    }
+
+    Component {
+        id: ioComponent
+
+        IOPage {
             snapshot: root.snapshot
         }
     }
