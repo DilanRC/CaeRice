@@ -103,8 +103,8 @@ FocusScope {
                     StyledText { width: parent.width; text: root.statusText; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.medium; elide: Text.ElideRight }
                     StyledText { width: parent.width; text: qsTr("Discover → Fetch → Test → package update separately → Snapshot → Apply → Verify/Rollback"); color: Colours.palette.m3outline; font: Tokens.font.label.small; elide: Text.ElideRight }
                 }
-                StyledRect { width: 44; height: 44; anchors.verticalCenter: parent.verticalCenter; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHighest; StateLayer { radius: parent.radius; onClicked: root.run("status", []) }; MaterialIcon { anchors.centerIn: parent; text: "refresh"; color: Colours.palette.m3primary } }
-                StyledRect { width: 44; height: 44; anchors.verticalCenter: parent.verticalCenter; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHighest; StateLayer { radius: parent.radius; onClicked: root.closeUpdater() }; MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant } }
+                StyledRect { width: 44; height: 44; anchors.verticalCenter: parent.verticalCenter; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHighest; StateLayer { radius: parent.radius; onClicked: root.run("status", []) } MaterialIcon { anchors.centerIn: parent; text: "refresh"; color: Colours.palette.m3primary } }
+                StyledRect { width: 44; height: 44; anchors.verticalCenter: parent.verticalCenter; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHighest; StateLayer { radius: parent.radius; onClicked: root.closeUpdater() } MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant } }
             }
 
             Row {
@@ -128,8 +128,8 @@ FocusScope {
                         StyledText { anchors.centerIn: parent; text: modelData.label; color: Colours.palette.m3onSecondaryContainer; font: Tokens.font.label.medium }
                     }
                 }
-                StyledRect { width: parent.width * 0.13 - 4; height: 48; radius: Tokens.rounding.large; color: Colours.palette.m3tertiaryContainer; StateLayer { radius: parent.radius; onClicked: root.openApplyTerminal() }; StyledText { anchors.centerIn: parent; text: qsTr("Apply terminal"); color: Colours.palette.m3onTertiaryContainer; font: Tokens.font.label.small } }
-                StyledRect { width: parent.width * 0.13 - 4; height: 48; radius: Tokens.rounding.large; color: Colours.palette.m3errorContainer; StateLayer { radius: parent.radius; onClicked: root.openRollbackTerminal() }; StyledText { anchors.centerIn: parent; text: qsTr("Rollback"); color: Colours.palette.m3onErrorContainer; font: Tokens.font.label.small } }
+                StyledRect { width: parent.width * 0.13 - 4; height: 48; radius: Tokens.rounding.large; color: Colours.palette.m3tertiaryContainer; StateLayer { radius: parent.radius; onClicked: root.openApplyTerminal() } StyledText { anchors.centerIn: parent; text: qsTr("Apply terminal"); color: Colours.palette.m3onTertiaryContainer; font: Tokens.font.label.small } }
+                StyledRect { width: parent.width * 0.13 - 4; height: 48; radius: Tokens.rounding.large; color: Colours.palette.m3errorContainer; StateLayer { radius: parent.radius; onClicked: root.openRollbackTerminal() } StyledText { anchors.centerIn: parent; text: qsTr("Rollback"); color: Colours.palette.m3onErrorContainer; font: Tokens.font.label.small } }
             }
 
             Row {
