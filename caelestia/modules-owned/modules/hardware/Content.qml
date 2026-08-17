@@ -19,44 +19,27 @@ FocusScope {
     property var snapshot: ({})
     property string statusText: qsTr("Waiting for first sample…")
     property int sampleCount: 0
+    property int currentPage: 0
+
+    property var cpuHistory: []
+    property var memoryHistory: []
+    property var networkRxHistory: []
+    property var networkTxHistory: []
+    property var diskReadHistory: []
+    property var diskWriteHistory: []
+    property var gpu0History: []
+    property var gpu1History: []
 
     readonly property string probePath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
         "/.local/bin/caerice-hardware-probe"
 
-    readonly property var cpu: snapshot?.cpu ?? ({})
-    readonly property var memory: snapshot?.memory ?? ({})
-    readonly property var disk: snapshot?.disk ?? ({})
-    readonly property var battery: snapshot?.battery ?? ({})
-    readonly property var network: snapshot?.network ?? ({})
-    readonly property var gpus: snapshot?.gpus ?? []
-    readonly property var fans: snapshot?.fans ?? []
     readonly property var processes: snapshot?.processes ?? []
 
     function number(value, digits = 1): string {
         if (value === null || value === undefined || isNaN(Number(value)))
             return "—";
         return Number(value).toFixed(digits);
-    }
-
-    function pct(value): string {
-        return `${number(value, 1)}%`;
-    }
-
-    function temp(value): string {
-        return value === null || value === undefined ? "—" : `${number(value, 1)} °C`;
-    }
-
-    function gb(value): string {
-        return value === null || value === undefined ? "—" : `${number(value, 2)} GiB`;
-    }
-
-    function watt(value): string {
-        return value === null || value === undefined ? "—" : `${number(value, 1)} W`;
-    }
-
-    function speed(value): string {
-        return value === null || value === undefined ? "—" : `${number(value, 2)} Mb/s`;
     }
 
     function uptimeText(seconds): string {
@@ -71,8 +54,21 @@ FocusScope {
         return `${mins}m`;
     }
 
-    function gpuAt(index): var {
-        return index >= 0 && index < gpus.length ? gpus[index] : ({});
+    function pushHistory(source, value): var {
+        const next = Array.from(source ?? []);
+        next.push(Number(value ?? 0));
+        return next.slice(-72);
+    }
+
+    function recordHistory(parsed): void {
+        root.cpuHistory = pushHistory(root.cpuHistory, parsed?.cpu?.usage);
+        root.memoryHistory = pushHistory(root.memoryHistory, parsed?.memory?.usage);
+        root.networkRxHistory = pushHistory(root.networkRxHistory, parsed?.network?.rx_mbps);
+        root.networkTxHistory = pushHistory(root.networkTxHistory, parsed?.network?.tx_mbps);
+        root.diskReadHistory = pushHistory(root.diskReadHistory, parsed?.disk_io?.read_mib_s);
+        root.diskWriteHistory = pushHistory(root.diskWriteHistory, parsed?.disk_io?.write_mib_s);
+        root.gpu0History = pushHistory(root.gpu0History, parsed?.gpus?.[0]?.usage);
+        root.gpu1History = pushHistory(root.gpu1History, parsed?.gpus?.[1]?.usage);
     }
 
     function refresh(): void {
@@ -92,6 +88,11 @@ FocusScope {
     Keys.onPressed: event => {
         if (event.key === Qt.Key_R) {
             root.refresh();
+            event.accepted = true;
+            return;
+        }
+        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_4) {
+            root.currentPage = event.key - Qt.Key_1;
             event.accepted = true;
         }
     }
@@ -113,6 +114,7 @@ FocusScope {
                 try {
                     const parsed = JSON.parse(text.trim());
                     root.snapshot = parsed;
+                    root.recordHistory(parsed);
                     root.sampleCount += 1;
                     root.statusText = qsTr("Live · %1 ms cadence").arg(1500);
                 } catch (error) {
@@ -131,8 +133,8 @@ FocusScope {
     StyledRect {
         id: panel
 
-        width: Math.min(1180, parent.width - 96)
-        height: Math.min(840, parent.height - 80)
+        width: Math.min(1260, parent.width - 96)
+        height: Math.min(900, parent.height - 64)
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
         radius: 30
@@ -153,17 +155,17 @@ FocusScope {
         Column {
             anchors.fill: parent
             anchors.margins: 22
-            spacing: 14
+            spacing: 12
 
             Row {
                 id: header
                 width: parent.width
-                height: 62
+                height: 58
                 spacing: 14
 
                 StyledRect {
-                    width: 54
-                    height: 54
+                    width: 52
+                    height: 52
                     radius: Tokens.rounding.extraLarge
                     color: Colours.palette.m3primaryContainer
 
@@ -178,8 +180,8 @@ FocusScope {
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - 54 - refreshButton.width - 28
-                    spacing: 1
+                    width: parent.width - 52 - refreshButton.width - 28
+                    spacing: 0
 
                     StyledText {
                         width: parent.width
@@ -231,249 +233,113 @@ FocusScope {
                 }
             }
 
-            Grid {
-                id: cards
+            Row {
+                id: tabs
                 width: parent.width
-                columns: 3
-                columnSpacing: 12
-                rowSpacing: 12
+                height: 42
+                spacing: 7
 
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: qsTr("CPU")
-                    icon: "memory"
-                    headline: root.pct(root.cpu?.usage)
-                    subtitle: root.cpu?.model ?? "CPU"
-                    progress: Number(root.cpu?.usage ?? 0) / 100
-                    rows: [
-                        { label: qsTr("Temperature"), value: root.temp(root.cpu?.temp_c) },
-                        { label: qsTr("Frequency"), value: root.cpu?.freq_mhz ? `${root.number(root.cpu.freq_mhz, 0)} MHz` : "—" },
-                        { label: qsTr("Governor"), value: root.cpu?.governor ?? "—" }
+                Repeater {
+                    model: [
+                        { label: qsTr("Overview"), icon: "dashboard" },
+                        { label: qsTr("Performance"), icon: "monitoring" },
+                        { label: qsTr("Processes"), icon: "account_tree" },
+                        { label: qsTr("Sensors"), icon: "device_thermostat" }
                     ]
-                }
 
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: qsTr("Memory")
-                    icon: "developer_board"
-                    headline: root.pct(root.memory?.usage)
-                    subtitle:
-                        `${root.gb(root.memory?.used_gb)} / ${root.gb(root.memory?.total_gb)}`
-                    progress: Number(root.memory?.usage ?? 0) / 100
-                    rows: [
-                        { label: qsTr("Used"), value: root.gb(root.memory?.used_gb) },
-                        { label: qsTr("Available"), value: root.gb(Math.max(0, Number(root.memory?.total_gb ?? 0) - Number(root.memory?.used_gb ?? 0))) },
-                        { label: qsTr("Swap"), value: `${root.gb(root.memory?.swap_used_gb)} / ${root.gb(root.memory?.swap_total_gb)}` }
-                    ]
-                }
+                    delegate: StyledRect {
+                        required property var modelData
+                        required property int index
+                        width: Math.min(178, (tabs.width - tabs.spacing * 3) / 4)
+                        height: 42
+                        radius: Tokens.rounding.large
+                        color: root.currentPage === index
+                            ? Colours.palette.m3secondaryContainer
+                            : Colours.palette.m3surfaceContainer
+                        border.width: root.currentPage === index ? 1 : 0
+                        border.color: Colours.palette.m3primary
 
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: qsTr("Storage /")
-                    icon: "hard_drive"
-                    headline: root.pct(root.disk?.usage)
-                    subtitle:
-                        `${root.gb(root.disk?.used_gb)} / ${root.gb(root.disk?.total_gb)}`
-                    progress: Number(root.disk?.usage ?? 0) / 100
-                    rows: [
-                        { label: qsTr("Used"), value: root.gb(root.disk?.used_gb) },
-                        { label: qsTr("Free"), value: root.gb(root.disk?.free_gb) },
-                        { label: qsTr("Filesystem"), value: "/" }
-                    ]
-                }
+                        StateLayer {
+                            radius: parent.radius
+                            onClicked: root.currentPage = index
+                        }
 
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: root.gpuAt(0)?.vendor ? `${root.gpuAt(0).vendor} GPU` : qsTr("GPU 1")
-                    icon: "view_in_ar"
-                    headline: root.gpus.length > 0 ? root.pct(root.gpuAt(0)?.usage) : qsTr("Not detected")
-                    subtitle: root.gpuAt(0)?.name ?? qsTr("No GPU telemetry")
-                    progress: root.gpus.length > 0 ? Number(root.gpuAt(0)?.usage ?? 0) / 100 : -1
-                    rows: [
-                        { label: qsTr("Temperature"), value: root.temp(root.gpuAt(0)?.temp_c) },
-                        { label: qsTr("VRAM"), value: `${root.gb(root.gpuAt(0)?.vram_used_gb)} / ${root.gb(root.gpuAt(0)?.vram_total_gb)}` },
-                        { label: qsTr("Power"), value: root.watt(root.gpuAt(0)?.power_w) }
-                    ]
-                }
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 7
 
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: root.gpuAt(1)?.vendor ? `${root.gpuAt(1).vendor} GPU` : qsTr("GPU 2")
-                    icon: "sports_esports"
-                    headline: root.gpus.length > 1 ? root.pct(root.gpuAt(1)?.usage) : qsTr("Not detected")
-                    subtitle: root.gpuAt(1)?.name ?? qsTr("No second GPU telemetry")
-                    progress: root.gpus.length > 1 ? Number(root.gpuAt(1)?.usage ?? 0) / 100 : -1
-                    rows: [
-                        { label: qsTr("Temperature"), value: root.temp(root.gpuAt(1)?.temp_c) },
-                        { label: qsTr("VRAM"), value: `${root.gb(root.gpuAt(1)?.vram_used_gb)} / ${root.gb(root.gpuAt(1)?.vram_total_gb)}` },
-                        { label: qsTr("Power"), value: root.watt(root.gpuAt(1)?.power_w) }
-                    ]
-                }
-
-                MetricCard {
-                    width: (cards.width - cards.columnSpacing * 2) / 3
-                    title: root.battery?.present ? qsTr("Battery") : qsTr("Network")
-                    icon: root.battery?.present ? "battery_charging_full" : "wifi"
-                    headline:
-                        root.battery?.present
-                            ? root.pct(root.battery?.percent)
-                            : (root.network?.interface ?? "—")
-                    subtitle:
-                        root.battery?.present
-                            ? (root.battery?.status ?? "—")
-                            : `${qsTr("Down")} ${root.speed(root.network?.rx_mbps)}`
-                    progress:
-                        root.battery?.present
-                            ? Number(root.battery?.percent ?? 0) / 100
-                            : -1
-                    rows:
-                        root.battery?.present
-                            ? [
-                                { label: qsTr("Power"), value: root.watt(root.battery?.power_w) },
-                                { label: qsTr("Network"), value: root.network?.interface ?? "—" },
-                                { label: qsTr("Down / Up"), value: `${root.speed(root.network?.rx_mbps)} / ${root.speed(root.network?.tx_mbps)}` }
-                            ]
-                            : [
-                                { label: qsTr("Down"), value: root.speed(root.network?.rx_mbps) },
-                                { label: qsTr("Up"), value: root.speed(root.network?.tx_mbps) },
-                                { label: qsTr("Load 1m"), value: root.snapshot?.load?.length ? root.number(root.snapshot.load[0], 2) : "—" }
-                            ]
-                }
-            }
-
-            StyledRect {
-                id: processCard
-                width: parent.width
-                height: Math.max(136, panel.height - header.height - cards.height - 22 * 2 - 14 * 3)
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
-                border.width: 1
-                border.color: Colours.palette.m3outlineVariant
-
-                Row {
-                    id: processHeader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.margins: 15
-
-                    StyledText {
-                        width: parent.width * 0.58
-                        text: qsTr("Top processes")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
-                    }
-
-                    StyledText {
-                        width: parent.width * 0.14
-                        text: qsTr("PID")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                        horizontalAlignment: Text.AlignRight
-                    }
-
-                    StyledText {
-                        width: parent.width * 0.14
-                        text: qsTr("CPU")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                        horizontalAlignment: Text.AlignRight
-                    }
-
-                    StyledText {
-                        width: parent.width * 0.14
-                        text: qsTr("RAM")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                        horizontalAlignment: Text.AlignRight
-                    }
-                }
-
-                Column {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: processHeader.bottom
-                    anchors.bottom: footer.top
-                    anchors.leftMargin: 15
-                    anchors.rightMargin: 15
-                    anchors.topMargin: 8
-                    spacing: 4
-                    clip: true
-
-                    Repeater {
-                        model: root.processes.slice(0, 5)
-
-                        delegate: Row {
-                            required property var modelData
-                            width: parent.width
-                            height: 20
-
-                            StyledText {
-                                width: parent.width * 0.58
-                                text: modelData?.name ?? "—"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.body.small
-                                elide: Text.ElideRight
+                            MaterialIcon {
+                                text: modelData.icon
+                                color: root.currentPage === index
+                                    ? Colours.palette.m3onSecondaryContainer
+                                    : Colours.palette.m3onSurfaceVariant
+                                fontStyle: Tokens.font.icon.small
                             }
 
                             StyledText {
-                                width: parent.width * 0.14
-                                text: String(modelData?.pid ?? "—")
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
-                                horizontalAlignment: Text.AlignRight
-                            }
-
-                            StyledText {
-                                width: parent.width * 0.14
-                                text: root.pct(modelData?.cpu)
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
-                                horizontalAlignment: Text.AlignRight
-                            }
-
-                            StyledText {
-                                width: parent.width * 0.14
-                                text: root.pct(modelData?.mem)
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
-                                horizontalAlignment: Text.AlignRight
+                                text: `${index + 1}  ${modelData.label}`
+                                color: root.currentPage === index
+                                    ? Colours.palette.m3onSecondaryContainer
+                                    : Colours.palette.m3onSurfaceVariant
+                                font: Tokens.font.label.medium
                             }
                         }
                     }
                 }
-
-                Row {
-                    id: footer
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.margins: 14
-                    spacing: 18
-
-                    StyledText {
-                        text: qsTr("Esc  Close")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                    }
-
-                    StyledText {
-                        text: qsTr("R  Refresh")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                    }
-
-                    StyledText {
-                        visible: root.fans.length > 0
-                        text:
-                            root.fans.length > 0
-                                ? `${root.fans[0].name}: ${root.fans[0].rpm} RPM`
-                                : ""
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
-                    }
-                }
             }
+
+            Loader {
+                id: pageLoader
+                width: parent.width
+                height: parent.height - header.height - tabs.height - 24
+                sourceComponent: root.currentPage === 0
+                    ? overviewComponent
+                    : root.currentPage === 1
+                        ? performanceComponent
+                        : root.currentPage === 2
+                            ? processesComponent
+                            : sensorsComponent
+            }
+        }
+    }
+
+    Component {
+        id: overviewComponent
+
+        OverviewPage {
+            snapshot: root.snapshot
+        }
+    }
+
+    Component {
+        id: performanceComponent
+
+        PerformancePage {
+            snapshot: root.snapshot
+            cpuHistory: root.cpuHistory
+            memoryHistory: root.memoryHistory
+            networkRxHistory: root.networkRxHistory
+            networkTxHistory: root.networkTxHistory
+            diskReadHistory: root.diskReadHistory
+            diskWriteHistory: root.diskWriteHistory
+            gpu0History: root.gpu0History
+            gpu1History: root.gpu1History
+        }
+    }
+
+    Component {
+        id: processesComponent
+
+        ProcessesPage {
+            processes: root.processes
+        }
+    }
+
+    Component {
+        id: sensorsComponent
+
+        SensorsPage {
+            snapshot: root.snapshot
         }
     }
 }
