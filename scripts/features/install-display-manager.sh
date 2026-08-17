@@ -7,26 +7,26 @@ REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 SRC="$REPO/caelestia/modules-owned/modules"
-PROBE_SRC="$REPO/caelestia/bin/caerice-display-probe"
-PLAN_SRC="$REPO/caelestia/bin/caerice-display-plan"
-TX_SRC="$REPO/caelestia/bin/caerice-display-transaction"
 VALIDATOR="$REPO/scripts/features/validate-display-manager.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/display-manager-$STAMP"
 STAGE="$BACKUP/stage"
+HELPERS=(
+    caerice-display-probe
+    caerice-display-plan
+    caerice-display-transaction
+    caerice-display-persist
+    caerice-display-presets
+    caerice-display-workspaces
+)
 
 for f in "$LIVE/shell.qml" "$LIVE/components/ScreenState.qml" "$LIVE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/Panels.qml" "$USERCFG"; do
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
 done
-for f in \
-    "$SRC/DisplayController.qml" \
-    "$SRC/display/Wrapper.qml" \
-    "$SRC/display/Content.qml" \
-    "$SRC/display/Editor.qml" \
-    "$SRC/display/PreviewControls.qml" \
-    "$PROBE_SRC" "$PLAN_SRC" "$TX_SRC" "$VALIDATOR"; do
-    [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
-done
+[[ -f "$SRC/DisplayController.qml" ]] || { echo "ERROR: falta DisplayController.qml" >&2; exit 3; }
+for qml in "$SRC/display/"*.qml; do [[ -f "$qml" ]] || { echo "ERROR: falta $qml" >&2; exit 3; }; done
+for helper in "${HELPERS[@]}"; do [[ -f "$REPO/caelestia/bin/$helper" ]] || { echo "ERROR: falta $helper" >&2; exit 3; }; done
+[[ -f "$VALIDATOR" ]] || { echo "ERROR: falta validator" >&2; exit 3; }
 
 python3 "$VALIDATOR"
 
@@ -180,15 +180,16 @@ for qml in "$SRC/display/"*.qml; do
     sudo install -m 0644 "$qml" "$LIVE/modules/display/$(basename "$qml")"
 done
 mkdir -p "$HOME/.local/bin"
-install -m 0755 "$PROBE_SRC" "$HOME/.local/bin/caerice-display-probe"
-install -m 0755 "$PLAN_SRC" "$HOME/.local/bin/caerice-display-plan"
-install -m 0755 "$TX_SRC" "$HOME/.local/bin/caerice-display-transaction"
+for helper in "${HELPERS[@]}"; do
+    install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"
+done
 
 hyprctl reload >/dev/null
 
 echo
 echo "Display Manager instalado."
 echo "Backup: $BACKUP"
-echo "Preview: 15 s con auto-revert; Keep conserva la sesión pero aún no persiste al reiniciar."
+echo "Flujo: Dry run -> Preview 15s -> Keep/Revert -> Save exacto -> workspace/color policy."
+echo "Named presets, VRR/10-bit/HDR capability gating y rollback instalados."
 echo "Reinicia Caelestia y prueba Super+Shift+O."
 echo "IPC: qs -c caelestia ipc call display open"
