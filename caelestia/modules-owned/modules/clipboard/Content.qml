@@ -400,13 +400,10 @@ FocusScope {
         width: Math.min(910, parent.width - 88)
         height: Math.min(770, parent.height - 96)
 
-        x: Math.max(
-            32,
-            Math.round(
-                (parent.width - width) / 2 -
-                Math.min(105, parent.width * 0.05)
-            )
-        )
+        // True monitor center. Do not compensate for the Caelestia side bar:
+        // ContentWindow already spans the monitor and the previous -105px bias
+        // is exactly what pushed Clipboard to the left.
+        x: Math.round((parent.width - width) / 2)
 
         y: Math.max(
             32,

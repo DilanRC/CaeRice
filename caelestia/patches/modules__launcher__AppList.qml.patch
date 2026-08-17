@@ -62,7 +62,7 @@
          if (text.startsWith(prefix)) {
              for (const action of ["calc", "scheme", "variant"])
                  if (text.startsWith(`${prefix}${action} `))
-@@ -54,252 +74,642 @@
+@@ -54,252 +74,645 @@
          }
      }
  
@@ -182,6 +182,7 @@
 +        case "calc":
 +            return 118;
 +        case "scheme":
++            return 154;
 +        case "variant":
 +            return 116;
 +        default:
@@ -306,31 +307,33 @@
 +                maximumLineCount: 1
 +            }
 +
-+            MaterialIcon {
-+                visible: app.favourite
-+
-+                anchors.top: parent.top
-+                anchors.right: parent.right
-+                anchors.topMargin: 8
-+                anchors.rightMargin: 9
-+
-+                text: "push_pin"
-+                fill: 1
-+                color: Colours.palette.m3primary
-+                fontStyle: Tokens.font.icon.small
-+            }
-+
 +            /*
-+             * StateLayer conserva el click izquierdo nativo.
-+             * Este MouseArea acepta SOLO el derecho, para pin/unpin.
++             * Un único MouseArea controla ambos botones. En algunas versiones
++             * de Qt/Quickshell el StateLayer absorbía el botón derecho antes de
++             * que llegara al MouseArea right-only, por eso pin/unpin no ocurría
++             * desde el launcher aunque sí funcionara en el Dock.
 +             */
 +            MouseArea {
++                id: appMouse
 +                anchors.fill: parent
-+                acceptedButtons: Qt.RightButton
++                hoverEnabled: true
++                acceptedButtons: Qt.LeftButton | Qt.RightButton
++                cursorShape: Qt.PointingHandCursor
 +
-+                onClicked: {
++                onEntered: root.currentIndex = index
++
++                onClicked: event => {
 +                    root.currentIndex = index;
-+                    root.toggleFavourite(app.modelData);
++
++                    if (event.button === Qt.RightButton) {
++                        root.toggleFavourite(app.modelData);
++                        event.accepted = true;
++                        return;
++                    }
++
++                    Apps.launch(app.modelData);
++                    root.screenState.launcher = false;
++                    event.accepted = true;
 +                }
              }
 -        },
@@ -677,6 +680,27 @@
 +            height: root.cellHeight
 +
 +            readonly property bool selected: GridView.isCurrentItem
++            readonly property bool current:
++                `${modelData?.name} ${modelData?.flavour}` === Schemes.currentScheme
++
++            readonly property var previewSwatches: [
++                modelData?.colours?.surface,
++                modelData?.colours?.primary,
++                modelData?.colours?.secondary,
++                modelData?.colours?.tertiary,
++                modelData?.colours?.error,
++                modelData?.colours?.onSurface
++            ]
++
++            readonly property bool previewLight: {
++                const raw = String(modelData?.colours?.surface ?? "").replace("#", "");
++                if (raw.length !== 6)
++                    return false;
++                const r = parseInt(raw.slice(0, 2), 16);
++                const g = parseInt(raw.slice(2, 4), 16);
++                const b = parseInt(raw.slice(4, 6), 16);
++                return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.56;
++            }
 +
 +            StyledRect {
 +                anchors.fill: parent
@@ -684,61 +708,42 @@
 +                radius: Tokens.rounding.large
 +                color: scheme.selected
 +                    ? Colours.palette.m3secondaryContainer
-+                    : "transparent"
++                    : Colours.palette.m3surfaceContainerLow
++                border.width: scheme.current ? 1 : 0
++                border.color: Colours.palette.m3primary
 +            }
 +
 +            StateLayer {
 +                anchors.fill: parent
 +                anchors.margins: 4
 +                radius: Tokens.rounding.large
-+
 +                onEntered: root.currentIndex = index
 +                onClicked: scheme.modelData?.onClicked(root)
 +            }
 +
-+            StyledRect {
-+                id: schemePreview
-+
-+                anchors.horizontalCenter: parent.horizontalCenter
++            Row {
++                id: swatches
++                anchors.left: parent.left
++                anchors.right: parent.right
 +                anchors.top: parent.top
-+                anchors.topMargin: 11
++                anchors.leftMargin: 16
++                anchors.rightMargin: 16
++                anchors.topMargin: 17
++                spacing: 6
 +
-+                width: 46
-+                height: 46
++                Repeater {
++                    model: scheme.previewSwatches
 +
-+                radius: Tokens.rounding.full
-+                border.width: 1
-+                border.color:
-+                    scheme.modelData?.colours?.outline
-+                    ? Qt.alpha(
-+                        `#${scheme.modelData.colours.outline}`,
-+                        0.5
-+                    )
-+                    : Colours.palette.m3outlineVariant
-+
-+                color:
-+                    scheme.modelData?.colours?.surface
-+                    ? `#${scheme.modelData.colours.surface}`
-+                    : "transparent"
-+
-+                Item {
-+                    anchors.top: parent.top
-+                    anchors.bottom: parent.bottom
-+                    anchors.right: parent.right
-+                    width: parent.width / 2
-+                    clip: true
-+
-+                    StyledRect {
-+                        anchors.top: parent.top
-+                        anchors.bottom: parent.bottom
-+                        anchors.right: parent.right
-+                        width: schemePreview.width
-+                        radius: Tokens.rounding.full
-+
-+                        color:
-+                            scheme.modelData?.colours?.primary
-+                            ? `#${scheme.modelData.colours.primary}`
-+                            : Colours.palette.m3primary
++                    delegate: Rectangle {
++                        required property var modelData
++                        width: Math.max(15, (swatches.width - 30) / 6)
++                        height: 24
++                        radius: 8
++                        color: modelData
++                            ? `#${modelData}`
++                            : Colours.palette.m3surfaceContainerHighest
++                        border.width: 1
++                        border.color: Qt.alpha(Colours.palette.m3outline, 0.34)
 +                    }
 +                }
 +            }
@@ -746,45 +751,43 @@
 +            StyledText {
 +                anchors.left: parent.left
 +                anchors.right: parent.right
-+                anchors.top: schemePreview.bottom
-+                anchors.topMargin: 5
-+                anchors.leftMargin: 8
-+                anchors.rightMargin: 8
++                anchors.top: swatches.bottom
++                anchors.topMargin: 13
++                anchors.leftMargin: 14
++                anchors.rightMargin: 14
 +
-+                text: scheme.modelData?.flavour ?? ""
-+                font: Tokens.font.body.small
++                text: scheme.modelData?.name ?? ""
++                font: Tokens.font.body.medium
 +                horizontalAlignment: Text.AlignHCenter
 +                elide: Text.ElideRight
++                maximumLineCount: 1
 +            }
 +
 +            StyledText {
 +                anchors.left: parent.left
 +                anchors.right: parent.right
-+                anchors.bottom: parent.bottom
-+                anchors.bottomMargin: 7
-+                anchors.leftMargin: 8
-+                anchors.rightMargin: 8
++                anchors.top: parent.top
++                anchors.topMargin: 102
++                anchors.leftMargin: 12
++                anchors.rightMargin: 12
 +
-+                text: scheme.modelData?.name ?? ""
-+                color: Colours.palette.m3outline
-+                font: Tokens.font.body.small
++                text: `${scheme.modelData?.flavour ?? "default"} · ${scheme.previewLight ? qsTr("Light") : qsTr("Dark")}`
++                color: Colours.palette.m3onSurfaceVariant
++                font: Tokens.font.label.small
 +                horizontalAlignment: Text.AlignHCenter
 +                elide: Text.ElideRight
 +            }
 +
 +            MaterialIcon {
-+                visible:
-+                    `${scheme.modelData?.name} ${scheme.modelData?.flavour}` ===
-+                    Schemes.currentScheme
-+
++                visible: scheme.current
 +                anchors.top: parent.top
 +                anchors.right: parent.right
-+                anchors.topMargin: 7
-+                anchors.rightMargin: 8
-+
-+                text: "check"
++                anchors.topMargin: 9
++                anchors.rightMargin: 10
++                text: "check_circle"
 +                fill: 1
 +                color: Colours.palette.m3primary
++                fontStyle: Tokens.font.icon.small
 +            }
          }
      }
