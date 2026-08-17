@@ -9,7 +9,10 @@ Item {
 
     required property var snapshot
     required property var cpuHistory
-    required property var memoryHistory
+    required property var cpuCoreHistories
+    required property var memoryUsedHistory
+    required property var memoryCacheHistory
+    required property var swapUsedHistory
     required property var networkRxHistory
     required property var networkTxHistory
     required property var diskReadHistory
@@ -17,11 +20,19 @@ Item {
     required property var gpu0History
     required property var gpu1History
 
+    property int selectedCpuCore: -1
+
     readonly property var cpu: snapshot?.cpu ?? ({})
     readonly property var memory: snapshot?.memory ?? ({})
     readonly property var network: snapshot?.network ?? ({})
     readonly property var diskIo: snapshot?.disk_io ?? ({})
     readonly property var gpus: snapshot?.gpus ?? []
+    readonly property var selectedCpuHistory: selectedCpuCore < 0
+        ? cpuHistory
+        : (selectedCpuCore < cpuCoreHistories.length ? cpuCoreHistories[selectedCpuCore] : [])
+    readonly property real selectedCpuNow: selectedCpuCore < 0
+        ? Number(cpu?.usage ?? 0)
+        : Number(cpu?.per_core?.[selectedCpuCore] ?? 0)
 
     function number(value, digits = 1): string {
         if (value === null || value === undefined || isNaN(Number(value)))
@@ -37,6 +48,15 @@ Item {
         return index >= 0 && index < gpus.length ? gpus[index] : ({});
     }
 
+    function cycleCpu(): void {
+        const count = Number(cpu?.cores ?? 0);
+        if (count <= 0) {
+            selectedCpuCore = -1;
+            return;
+        }
+        selectedCpuCore = selectedCpuCore >= count - 1 ? -1 : selectedCpuCore + 1;
+    }
+
     Grid {
         anchors.fill: parent
         columns: 2
@@ -46,26 +66,33 @@ Item {
         HistoryGraph {
             width: (parent.width - 12) / 2
             height: (parent.height - 24) / 3
-            title: qsTr("CPU history")
+            title: root.selectedCpuCore < 0 ? qsTr("CPU total") : `CPU ${root.selectedCpuCore}`
             icon: "memory"
-            headline: root.pct(root.cpu?.usage)
+            headline: root.pct(root.selectedCpuNow)
             subtitle: `${root.number(root.cpu?.temp_c, 1)} °C · ${root.number(root.cpu?.freq_mhz, 0)} MHz · ${root.cpu?.governor ?? "—"}`
-            legendA: qsTr("Total CPU")
-            seriesA: root.cpuHistory
+            legendA: root.selectedCpuCore < 0 ? qsTr("Total") : `Core ${root.selectedCpuCore}`
+            seriesA: root.selectedCpuHistory
             maxValue: 100
+            unit: "%"
+            actionLabel: root.selectedCpuCore < 0 ? qsTr("Total") : `C${root.selectedCpuCore}`
+            onActionRequested: root.cycleCpu()
         }
 
         HistoryGraph {
             width: (parent.width - 12) / 2
             height: (parent.height - 24) / 3
-            title: qsTr("Memory history")
+            title: qsTr("Memory")
             icon: "developer_board"
-            headline: root.pct(root.memory?.usage)
-            subtitle: `${root.number(root.memory?.used_gb, 2)} / ${root.number(root.memory?.total_gb, 2)} GiB`
-            legendA: qsTr("RAM")
-            seriesA: root.memoryHistory
-            maxValue: 100
-            colourA: Colours.palette.m3secondary
+            headline: `${root.number(root.memory?.used_gb, 2)} / ${root.number(root.memory?.total_gb, 2)} GiB`
+            subtitle: `${qsTr("available")} ${root.number(root.memory?.available_gb, 2)} GiB · ${qsTr("swap")} ${root.number(root.memory?.swap_used_gb, 2)} GiB`
+            legendA: qsTr("Used")
+            legendB: qsTr("Cache")
+            seriesA: root.memoryUsedHistory
+            seriesB: root.memoryCacheHistory
+            maxValue: Math.max(1, Number(root.memory?.total_gb ?? 1))
+            unit: "GiB"
+            colourA: Colours.palette.m3primary
+            colourB: Colours.palette.m3secondary
         }
 
         HistoryGraph {
@@ -74,11 +101,12 @@ Item {
             title: qsTr("Network")
             icon: "wifi"
             headline: `${root.number(root.network?.rx_mbps, 2)} ↓  ${root.number(root.network?.tx_mbps, 2)} ↑ Mb/s`
-            subtitle: root.network?.interface ?? "—"
+            subtitle: `${root.network?.interface ?? "—"} · RX ${root.number(root.network?.rx_total_gb, 2)} GiB · TX ${root.number(root.network?.tx_total_gb, 2)} GiB`
             legendA: qsTr("Download")
             legendB: qsTr("Upload")
             seriesA: root.networkRxHistory
             seriesB: root.networkTxHistory
+            unit: "Mb/s"
             colourA: Colours.palette.m3primary
             colourB: Colours.palette.m3tertiary
         }
@@ -86,14 +114,15 @@ Item {
         HistoryGraph {
             width: (parent.width - 12) / 2
             height: (parent.height - 24) / 3
-            title: qsTr("Disk I/O")
+            title: qsTr("NVMe / disk I/O")
             icon: "hard_drive"
             headline: `${root.number(root.diskIo?.read_mib_s, 2)} R · ${root.number(root.diskIo?.write_mib_s, 2)} W MiB/s`
-            subtitle: root.diskIo?.device ?? qsTr("Root device")
+            subtitle: `${root.diskIo?.device ?? qsTr("Root device")} · ${root.number(root.diskIo?.read_iops, 0)} / ${root.number(root.diskIo?.write_iops, 0)} IOPS`
             legendA: qsTr("Read")
             legendB: qsTr("Write")
             seriesA: root.diskReadHistory
             seriesB: root.diskWriteHistory
+            unit: "MiB/s"
             colourA: Colours.palette.m3secondary
             colourB: Colours.palette.m3tertiary
         }
@@ -105,11 +134,12 @@ Item {
             icon: "view_in_ar"
             headline: root.gpus.length > 0 ? root.pct(root.gpuAt(0)?.usage) : qsTr("Not detected")
             subtitle: root.gpus.length > 0
-                ? `${root.number(root.gpuAt(0)?.temp_c, 1)} °C · ${root.number(root.gpuAt(0)?.power_w, 1)} W`
+                ? `${root.number(root.gpuAt(0)?.temp_c, 1)} °C · ${root.number(root.gpuAt(0)?.power_w, 1)} W · ${root.number(root.gpuAt(0)?.vram_used_gb, 2)} / ${root.number(root.gpuAt(0)?.vram_total_gb, 2)} GiB`
                 : qsTr("No telemetry")
             legendA: qsTr("GPU usage")
             seriesA: root.gpu0History
             maxValue: 100
+            unit: "%"
             colourA: Colours.palette.m3primary
         }
 
@@ -120,11 +150,12 @@ Item {
             icon: "sports_esports"
             headline: root.gpus.length > 1 ? root.pct(root.gpuAt(1)?.usage) : qsTr("Not detected")
             subtitle: root.gpus.length > 1
-                ? `${root.number(root.gpuAt(1)?.temp_c, 1)} °C · ${root.number(root.gpuAt(1)?.power_w, 1)} W`
+                ? `${root.number(root.gpuAt(1)?.temp_c, 1)} °C · ${root.number(root.gpuAt(1)?.power_w, 1)} W · ${root.number(root.gpuAt(1)?.vram_used_gb, 2)} / ${root.number(root.gpuAt(1)?.vram_total_gb, 2)} GiB`
                 : qsTr("No telemetry")
             legendA: qsTr("GPU usage")
             seriesA: root.gpu1History
             maxValue: 100
+            unit: "%"
             colourA: Colours.palette.m3tertiary
         }
     }
