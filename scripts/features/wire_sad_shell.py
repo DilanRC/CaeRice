@@ -1,38 +1,14 @@
 #!/usr/bin/env python3
-"""Idempotent wiring for the "post-Hardware" SAD centers: Display Manager,
-Gaming Center, CaeRice Updater.
+"""Canonical SAD shell wiring.
 
-Hardware Center's own live wiring is a separate, already-correct
-prerequisite path via install-hardware-center.sh (see docs/SAD_SCOPE.md:
-"install-sad.sh integrates the post-Hardware centers"). This module only
-covers the three centers that sit on top of it.
+The retained SAD runtime consists of Hardware Center (prerequisite, wired by
+install-hardware-center.sh) and Display Manager. Gaming Center and CaeRice
+Updater were retired from the product and must not be reintroduced by rebuilds.
 
-Why this exists: install-display-manager.sh / install-gaming-center.sh /
-install-caerice-updater.sh each carry their own copy of this exact
-shell.qml + ScreenState.qml + Panels.qml + ContentWindow.qml +
-hypr-user.lua patch logic. update-sad.sh (the official resync/rebuild
-entrypoint) used to skip it entirely and only copy module *.qml files,
-which let GamingController.qml/UpdaterController.qml sit on disk
-byte-identical to source while never being instantiated anywhere -
-diagnose-sad.py's MATCH rows and validate-sad.py both reported OK while
-Super+Shift+G/U did nothing and `qs ipc call gaming/updater isOpen`
-answered "Target not found." (see docs/SAD_QA.md). This module centralizes
-the wiring so the official rebuild path can reproduce a complete install
-without requiring a human to have separately run the standalone
-installers first.
-
-Idempotent by construction: every edit is a replace_once() keyed on a
-marker string; if the marker is already present the edit is a no-op. The
-Panels.qml Wrapper blocks use the same rule (checked via `id: <flag>`).
-Running wire_all() twice therefore never duplicates a block - the second
-call reports every feature as unchanged.
-
-Features are chained in a fixed order (display -> gaming -> updater),
-each anchored on the previous feature's freshly-wired text, exactly like
-the standalone installers assume when run in sequence. That means this
-module still requires Hardware Center to already be wired (its markers
-are the anchor for Display) - which install-hardware-center.sh guarantees
-independently and diagnose-sad.py verifies.
+Every run first removes legacy Gaming/Updater integration from an older live
+tree, then idempotently ensures Display Manager is wired on top of Hardware.
+The transform is staged before installation and fails loudly when the retained
+Hardware anchors are missing.
 """
 from __future__ import annotations
 
@@ -44,9 +20,7 @@ from pathlib import Path
 
 
 class WiringError(RuntimeError):
-    """Raised when an expected anchor is missing - the live tree diverged
-    from what this module knows how to patch. Never silently skip: fail
-    loudly so update-sad.sh aborts instead of reporting false success."""
+    pass
 
 
 def replace_once(texts: dict[str, str], key: str, old: str, new: str, marker: str) -> bool:
@@ -58,47 +32,30 @@ def replace_once(texts: dict[str, str], key: str, old: str, new: str, marker: st
     return True
 
 
-def _find_span(text: str, anchor: str, tail: str, what: str) -> re.Match:
-    # Non-greedy: matches the *first* anchor...tail pair, i.e. the shortest
-    # chain already accumulated between them (whatever earlier features
-    # inserted stays inside the captured group untouched).
+def _find_span(text: str, anchor: str, tail: str, what: str) -> re.Match[str]:
     pattern = re.compile(re.escape(anchor) + r"(.*?)" + re.escape(tail), re.DOTALL)
-    m = pattern.search(text)
-    if not m:
+    match = pattern.search(text)
+    if not match:
         raise WiringError(f"PREFLIGHT ERROR: missing anchor/tail for {what!r}")
-    return m
+    return match
 
 
 def ensure_or_member(texts: dict[str, str], key: str, anchor: str, tail: str, member: str) -> bool:
-    """Idempotently ensure `member` sits in the `anchor(...)tail` OR-chain.
-
-    Unlike a literal replace_once() on the full old/new strings, this stays
-    correct even after a *later* feature extends the same chain past this
-    feature's own insertion point - which is exactly what breaks a plain
-    string match here (see module docstring / commit message: the flag's
-    own text is no longer immediately adjacent to `tail` once something
-    else was chained in between). The idempotency check is scoped to the
-    captured span, so it never collides with a different edit's marker for
-    the same flag (e.g. the close-handler assignment vs. this condition).
-    """
     text = texts[key]
-    m = _find_span(text, anchor, tail, member)
-    if member in m.group(1):
+    match = _find_span(text, anchor, tail, member)
+    if member in match.group(1):
         return False
-    insertion_point = m.start(1) + len(m.group(1))
+    insertion_point = match.start(1) + len(match.group(1))
     texts[key] = text[:insertion_point] + f" || {member}" + text[insertion_point:]
     return True
 
 
 def ensure_statement(texts: dict[str, str], key: str, anchor: str, tail: str, statement: str) -> bool:
-    """Same idea as ensure_or_member() but for a statement list (e.g. a
-    `screenState.<flag> = false;` reset line) inserted right before a fixed
-    tail statement, instead of an ` || member` OR-chain fragment."""
     text = texts[key]
-    m = _find_span(text, anchor, tail, statement)
-    if statement in m.group(1):
+    match = _find_span(text, anchor, tail, statement)
+    if statement in match.group(1):
         return False
-    insertion_point = m.start(1) + len(m.group(1))
+    insertion_point = match.start(1) + len(match.group(1))
     texts[key] = text[:insertion_point] + "\n" + statement + text[insertion_point:]
     return True
 
@@ -121,146 +78,170 @@ def insert_bind(texts: dict[str, str], bind: str, anchor: str, comment: str) -> 
     return True
 
 
+def _remove_legacy_bind(text: str, key: str, target: str, comment: str) -> str:
+    bind = f'''hl.bind(
+    "{key}",
+    hl.dsp.global("{target}")
+)'''
+    for block in (f"-- {comment}\n{bind}\n", f"-- {comment}\n{bind}", bind + "\n", bind):
+        text = text.replace(block, "")
+    return text
+
+
+def retire_removed_centers(texts: dict[str, str]) -> bool:
+    """Remove exactly the runtime integration owned by the retired centers."""
+    before = dict(texts)
+
+    for flag in ("gamingCenter", "updaterCenter"):
+        texts["screen"] = re.sub(
+            rf"(?m)^\s*property bool {flag}\s*\n", "", texts["screen"]
+        )
+
+    for controller in ("GamingController", "UpdaterController"):
+        texts["shell"] = re.sub(
+            rf"(?m)^\s*{controller} \{{\}}\s*\n", "", texts["shell"]
+        )
+
+    for module, alias, flag in (
+        ("gaming", "Gaming", "gamingCenter"),
+        ("updater", "Updater", "updaterCenter"),
+    ):
+        texts["panels"] = re.sub(
+            rf"(?m)^\s*import qs\.modules\.{module} as {alias}\s*\n", "", texts["panels"]
+        )
+        texts["panels"] = re.sub(
+            rf"(?m)^\s*readonly property alias {flag}: {flag}\s*\n", "", texts["panels"]
+        )
+        compact_block = (
+            f"    {alias}.Wrapper {{\n"
+            f"        id: {flag}\n"
+            "        screen: root.screen\n"
+            "        screenState: root.screenState\n"
+            "        anchors.fill: parent\n"
+            "    }\n\n"
+        )
+        spaced_block = (
+            f"    {alias}.Wrapper {{\n"
+            f"        id: {flag}\n\n"
+            "        screen: root.screen\n"
+            "        screenState: root.screenState\n\n"
+            "        anchors.fill: parent\n"
+            "    }\n\n"
+        )
+        texts["panels"] = texts["panels"].replace(compact_block, "")
+        texts["panels"] = texts["panels"].replace(spaced_block, "")
+
+    for flag in ("gamingCenter", "updaterCenter"):
+        texts["content"] = re.sub(
+            rf"(?m)^\s*(?:root\.)?screenState\.{flag}\s*=\s*false;\s*\n",
+            "",
+            texts["content"],
+        )
+        texts["content"] = texts["content"].replace(f" || screenState.{flag}", "")
+        texts["content"] = texts["content"].replace(f"screenState.{flag} || ", "")
+        texts["content"] = texts["content"].replace(f" || s.{flag}", "")
+        texts["content"] = texts["content"].replace(f"s.{flag} || ", "")
+
+    texts["user"] = _remove_legacy_bind(
+        texts["user"], "SUPER + SHIFT + G", "caelestia:gamingcenter", "Gaming Center QML nativo"
+    )
+    texts["user"] = _remove_legacy_bind(
+        texts["user"], "SUPER + SHIFT + U", "caelestia:updatercenter", "CaeRice Updater QML nativo"
+    )
+
+    leftovers = {
+        "screen": ("gamingCenter", "updaterCenter"),
+        "shell": ("GamingController", "UpdaterController"),
+        "panels": (
+            "qs.modules.gaming", "qs.modules.updater", "gamingCenter", "updaterCenter",
+            "Gaming.Wrapper", "Updater.Wrapper",
+        ),
+        "content": ("gamingCenter", "updaterCenter"),
+        "user": ("caelestia:gamingcenter", "caelestia:updatercenter"),
+    }
+    for key, markers in leftovers.items():
+        present = [marker for marker in markers if marker in texts[key]]
+        if present:
+            raise WiringError(
+                f"RETIREMENT ERROR [{key}]: legacy Gaming/Updater marker(s) remain: "
+                + ", ".join(present)
+            )
+
+    return any(before[key] != texts[key] for key in texts)
+
+
 def _wire_display(texts: dict[str, str]) -> bool:
     changed = False
-    changed |= replace_once(texts, "screen",
+    changed |= replace_once(
+        texts, "screen",
         "    property bool hardware\n    property bool dashboard",
         "    property bool hardware\n    property bool displayManager\n    property bool dashboard",
-        "property bool displayManager")
-    changed |= replace_once(texts, "shell",
+        "property bool displayManager",
+    )
+    changed |= replace_once(
+        texts, "shell",
         "    HardwareController {}\n    BatteryMonitor {}",
         "    HardwareController {}\n    DisplayController {}\n    BatteryMonitor {}",
-        "DisplayController {}")
-    changed |= replace_once(texts, "panels",
+        "DisplayController {}",
+    )
+    changed |= replace_once(
+        texts, "panels",
         "import qs.modules.hardware as Hardware\nimport qs.modules.notifications as Notifications",
         "import qs.modules.hardware as Hardware\nimport qs.modules.display as Display\nimport qs.modules.notifications as Notifications",
-        "import qs.modules.display as Display")
-    changed |= replace_once(texts, "panels",
+        "import qs.modules.display as Display",
+    )
+    changed |= replace_once(
+        texts, "panels",
         "    readonly property alias hardware: hardware\n    readonly property alias dashboard: dashboard",
         "    readonly property alias hardware: hardware\n    readonly property alias displayManager: displayManager\n    readonly property alias dashboard: dashboard",
-        "readonly property alias displayManager: displayManager")
-    changed |= insert_wrapper(texts, "displayManager",
-        "    Display.Wrapper {\n        id: displayManager\n\n        screen: root.screen\n        screenState: root.screenState\n\n        anchors.fill: parent\n    }\n\n")
-    changed |= ensure_statement(texts, "content",
+        "readonly property alias displayManager: displayManager",
+    )
+    changed |= insert_wrapper(
+        texts,
+        "displayManager",
+        "    Display.Wrapper {\n        id: displayManager\n\n        screen: root.screen\n        screenState: root.screenState\n\n        anchors.fill: parent\n    }\n\n",
+    )
+    changed |= ensure_statement(
+        texts, "content",
         "        screenState.hardware = false;", "\n        panels.popouts.close();",
-        "        screenState.displayManager = false;")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware", " ? WlrLayer.Overlay",
-        "screenState.displayManager")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware", " || screenState.launcher",
-        "screenState.displayManager")
-    changed |= ensure_or_member(texts, "content",
-        "mask: screenState.overview || screenState.clipboard || screenState.hardware", " ? null",
-        "screenState.displayManager")
-    changed |= ensure_or_member(texts, "content",
+        "        screenState.displayManager = false;",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware",
+        " ? WlrLayer.Overlay", "screenState.displayManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware",
+        " || screenState.launcher", "screenState.displayManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "mask: screenState.overview || screenState.clipboard || screenState.hardware",
+        " ? null", "screenState.displayManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
         "if (s.overview || s.clipboard || s.hardware", ")\n                return true;",
-        "s.displayManager")
-    changed |= ensure_statement(texts, "content",
+        "s.displayManager",
+    )
+    changed |= ensure_statement(
+        texts, "content",
         "            root.screenState.hardware = false;", "\n            panels.popouts.hasCurrent = false;",
-        "            root.screenState.displayManager = false;")
-    changed |= insert_bind(texts,
+        "            root.screenState.displayManager = false;",
+    )
+    changed |= insert_bind(
+        texts,
         'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("caelestia:displaymanager")\n)',
         'hl.bind(\n    "SUPER + H",\n    hl.dsp.global("caelestia:hardware")\n)',
-        "Display Manager QML nativo")
+        "Display Manager QML nativo",
+    )
     return changed
 
 
-def _wire_gaming(texts: dict[str, str]) -> bool:
-    changed = False
-    changed |= replace_once(texts, "screen",
-        "    property bool displayManager\n    property bool dashboard",
-        "    property bool displayManager\n    property bool gamingCenter\n    property bool dashboard",
-        "property bool gamingCenter")
-    changed |= replace_once(texts, "shell",
-        "    DisplayController {}\n    BatteryMonitor {}",
-        "    DisplayController {}\n    GamingController {}\n    BatteryMonitor {}",
-        "GamingController {}")
-    changed |= replace_once(texts, "panels",
-        "import qs.modules.display as Display\nimport qs.modules.notifications as Notifications",
-        "import qs.modules.display as Display\nimport qs.modules.gaming as Gaming\nimport qs.modules.notifications as Notifications",
-        "import qs.modules.gaming as Gaming")
-    changed |= replace_once(texts, "panels",
-        "    readonly property alias displayManager: displayManager\n    readonly property alias dashboard: dashboard",
-        "    readonly property alias displayManager: displayManager\n    readonly property alias gamingCenter: gamingCenter\n    readonly property alias dashboard: dashboard",
-        "readonly property alias gamingCenter: gamingCenter")
-    changed |= insert_wrapper(texts, "gamingCenter",
-        "    Gaming.Wrapper {\n        id: gamingCenter\n        screen: root.screen\n        screenState: root.screenState\n        anchors.fill: parent\n    }\n\n")
-    changed |= ensure_statement(texts, "content",
-        "        screenState.hardware = false;", "\n        panels.popouts.close();",
-        "        screenState.gamingCenter = false;")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware", " ? WlrLayer.Overlay",
-        "screenState.gamingCenter")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware", " || screenState.launcher",
-        "screenState.gamingCenter")
-    changed |= ensure_or_member(texts, "content",
-        "mask: screenState.overview || screenState.clipboard || screenState.hardware", " ? null",
-        "screenState.gamingCenter")
-    changed |= ensure_or_member(texts, "content",
-        "if (s.overview || s.clipboard || s.hardware", ")\n                return true;",
-        "s.gamingCenter")
-    changed |= ensure_statement(texts, "content",
-        "            root.screenState.hardware = false;", "\n            panels.popouts.hasCurrent = false;",
-        "            root.screenState.gamingCenter = false;")
-    changed |= insert_bind(texts,
-        'hl.bind(\n    "SUPER + SHIFT + G",\n    hl.dsp.global("caelestia:gamingcenter")\n)',
-        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("caelestia:displaymanager")\n)',
-        "Gaming Center QML nativo")
-    return changed
-
-
-def _wire_updater(texts: dict[str, str]) -> bool:
-    changed = False
-    changed |= replace_once(texts, "screen",
-        "    property bool gamingCenter\n    property bool dashboard",
-        "    property bool gamingCenter\n    property bool updaterCenter\n    property bool dashboard",
-        "property bool updaterCenter")
-    changed |= replace_once(texts, "shell",
-        "    GamingController {}\n    BatteryMonitor {}",
-        "    GamingController {}\n    UpdaterController {}\n    BatteryMonitor {}",
-        "UpdaterController {}")
-    changed |= replace_once(texts, "panels",
-        "import qs.modules.gaming as Gaming\nimport qs.modules.notifications as Notifications",
-        "import qs.modules.gaming as Gaming\nimport qs.modules.updater as Updater\nimport qs.modules.notifications as Notifications",
-        "import qs.modules.updater as Updater")
-    changed |= replace_once(texts, "panels",
-        "    readonly property alias gamingCenter: gamingCenter\n    readonly property alias dashboard: dashboard",
-        "    readonly property alias gamingCenter: gamingCenter\n    readonly property alias updaterCenter: updaterCenter\n    readonly property alias dashboard: dashboard",
-        "readonly property alias updaterCenter: updaterCenter")
-    changed |= insert_wrapper(texts, "updaterCenter",
-        "    Updater.Wrapper {\n        id: updaterCenter\n        screen: root.screen\n        screenState: root.screenState\n        anchors.fill: parent\n    }\n\n")
-    changed |= ensure_statement(texts, "content",
-        "        screenState.hardware = false;", "\n        panels.popouts.close();",
-        "        screenState.updaterCenter = false;")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware", " ? WlrLayer.Overlay",
-        "screenState.updaterCenter")
-    changed |= ensure_or_member(texts, "content",
-        "WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware", " || screenState.launcher",
-        "screenState.updaterCenter")
-    changed |= ensure_or_member(texts, "content",
-        "mask: screenState.overview || screenState.clipboard || screenState.hardware", " ? null",
-        "screenState.updaterCenter")
-    changed |= ensure_or_member(texts, "content",
-        "if (s.overview || s.clipboard || s.hardware", ")\n                return true;",
-        "s.updaterCenter")
-    changed |= ensure_statement(texts, "content",
-        "            root.screenState.hardware = false;", "\n            panels.popouts.hasCurrent = false;",
-        "            root.screenState.updaterCenter = false;")
-    changed |= insert_bind(texts,
-        'hl.bind(\n    "SUPER + SHIFT + U",\n    hl.dsp.global("caelestia:updatercenter")\n)',
-        'hl.bind(\n    "SUPER + SHIFT + G",\n    hl.dsp.global("caelestia:gamingcenter")\n)',
-        "CaeRice Updater QML nativo")
-    return changed
-
-
-# Order matters: each feature's anchors are the previous feature's freshly
-# wired text, chained exactly like running the standalone installers in
-# sequence would produce.
-FEATURES = {"display": _wire_display, "gaming": _wire_gaming, "updater": _wire_updater}
-ORDER = ("display", "gaming", "updater")
+FEATURES = {"display": _wire_display}
+ORDER = ("display",)
 
 
 def load_texts(live: Path, usercfg: Path) -> dict[str, str]:
@@ -271,15 +252,19 @@ def load_texts(live: Path, usercfg: Path) -> dict[str, str]:
         "content": live / "modules/drawers/ContentWindow.qml",
         "user": usercfg,
     }
-    missing = [str(p) for p in paths.values() if not p.is_file()]
+    missing = [str(path) for path in paths.values() if not path.is_file()]
     if missing:
         raise WiringError("missing live file(s): " + ", ".join(missing))
-    return {k: p.read_text(encoding="utf-8") for k, p in paths.items()}
+    return {key: path.read_text(encoding="utf-8") for key, path in paths.items()}
 
 
-def wire_all(live: Path, usercfg: Path, features: tuple[str, ...] = ORDER) -> tuple[dict[str, str], dict[str, bool]]:
+def wire_all(
+    live: Path,
+    usercfg: Path,
+    features: tuple[str, ...] = ORDER,
+) -> tuple[dict[str, str], dict[str, bool]]:
     texts = load_texts(live, usercfg)
-    changed: dict[str, bool] = {}
+    changed: dict[str, bool] = {"retired": retire_removed_centers(texts)}
     for name in ORDER:
         if name in features:
             changed[name] = FEATURES[name](texts)
@@ -302,13 +287,23 @@ def write_staged(texts: dict[str, str], stage: Path) -> dict[str, Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--live", default=os.environ.get("CAERICE_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"))
-    parser.add_argument("--usercfg", default=str(Path.home() / ".config/caelestia/hypr-user.lua"))
-    parser.add_argument("--stage", required=True, help="directory to write the staged, patched files into")
-    parser.add_argument("--features", default=",".join(ORDER), help="comma-separated subset of: " + ",".join(ORDER))
+    parser.add_argument(
+        "--live",
+        default=os.environ.get("CAERICE_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"),
+    )
+    parser.add_argument(
+        "--usercfg",
+        default=str(Path.home() / ".config/caelestia/hypr-user.lua"),
+    )
+    parser.add_argument("--stage", required=True)
+    parser.add_argument(
+        "--features",
+        default=",".join(ORDER),
+        help="comma-separated subset of: " + ",".join(ORDER),
+    )
     args = parser.parse_args()
-    features = tuple(f for f in args.features.split(",") if f)
-    unknown = [f for f in features if f not in FEATURES]
+    features = tuple(item for item in args.features.split(",") if item)
+    unknown = [item for item in features if item not in FEATURES]
     if unknown:
         parser.error("unknown feature(s): " + ", ".join(unknown))
     try:

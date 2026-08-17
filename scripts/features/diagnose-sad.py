@@ -1,139 +1,276 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, os, re, subprocess
+
+import hashlib
+import json
+import os
+import re
+import subprocess
 from pathlib import Path
 
-REPO=Path(__file__).resolve().parents[2]
-LIVE=Path(os.environ.get('CAERICE_LIVE_ROOT','/etc/xdg/quickshell/caelestia'))
-UID=os.getuid()
-errors=[]; warnings=[]; rows=[]
+REPO = Path(__file__).resolve().parents[2]
+LIVE = Path(os.environ.get("CAERICE_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"))
+UID = os.getuid()
+errors: list[str] = []
+warnings: list[str] = []
+rows: list[dict] = []
 
-# feature -> (Controller instantiated in shell.qml, ScreenState.qml flag,
-# Panels.qml Wrapper id). All four SAD centers are meant to be persistently
-# mounted at shell.qml top level (not lazily created), so if any of these
-# three integration points is missing the feature is completely unreachable
-# even though its module files are byte-identical to source (see MATCH rows
-# above) and validate-sad.py / the module file drift check both report OK.
-WIRING={
- 'hardware':{'controller':'HardwareController','flag':'hardware'},
- 'display':{'controller':'DisplayController','flag':'displayManager'},
- 'gaming':{'controller':'GamingController','flag':'gamingCenter'},
- 'updater':{'controller':'UpdaterController','flag':'updaterCenter'},
+WIRING = {
+    "hardware": {"controller": "HardwareController", "flag": "hardware"},
+    "display": {"controller": "DisplayController", "flag": "displayManager"},
 }
 
-def read(rel):
- p=LIVE/rel
- try:return p.read_text(encoding='utf-8')
- except OSError:return None
-
-def check_wiring():
- shell=read('shell.qml'); screen=read('components/ScreenState.qml'); panels=read('modules/drawers/Panels.qml')
- wired={}
- for feature,spec in WIRING.items():
-  missing=[]
-  if shell is None or f"{spec['controller']} {{}}" not in shell: missing.append('shell.qml controller')
-  if screen is None or f"property bool {spec['flag']}" not in screen: missing.append('ScreenState.qml flag')
-  if panels is None or f"id: {spec['flag']}" not in panels: missing.append('Panels.qml Wrapper')
-  wired[feature]=not missing
-  if missing: errors.append(f'{feature}: not wired into live shell ({", ".join(missing)}) - feature is unreachable despite matching module files')
- return wired
-
-def sha(p):
- try:return hashlib.sha256(p.read_bytes()).hexdigest()
- except OSError:return ''
-def cmd(args,timeout=20):
- try:return subprocess.run(args,text=True,capture_output=True,timeout=timeout,check=False)
- except Exception:return None
-def check_file(rel):
- src=REPO/'caelestia/modules-owned'/rel; live=LIVE/rel
- same=src.is_file() and live.is_file() and sha(src)==sha(live)
- rows.append({'path':rel,'repo':src.is_file(),'live':live.is_file(),'match':same})
- if not same: warnings.append(f'live mismatch: {rel}')
-
-def json_helper(name,args=None):
- path=Path.home()/'.local/bin'/name
- if not path.is_file(): warnings.append(f'missing installed helper: {name}'); return
- cp=cmd([str(path)]+(args or []),25)
- if not cp or cp.returncode!=0: errors.append(f'{name}: failed'); return
- try: json.loads(cp.stdout)
- except Exception as e: errors.append(f'{name}: invalid JSON: {e}')
-
-def main():
- for rel in [
-  'modules/HardwareController.qml','modules/hardware/Wrapper.qml','modules/hardware/Content.qml',
-  'modules/DisplayController.qml','modules/display/Wrapper.qml','modules/display/Content.qml','modules/display/Editor.qml','modules/display/PreviewControls.qml','modules/display/DisplayPresets.qml','modules/display/DisplayCapabilities.qml','modules/display/DisplayOutputControls.qml',
-  'modules/GamingController.qml','modules/gaming/Wrapper.qml','modules/gaming/Content.qml','modules/gaming/AdvancedProfileControls.qml',
-  'modules/UpdaterController.qml','modules/updater/Wrapper.qml','modules/updater/Content.qml','modules/updater/CommitBaseControl.qml',
- ]: check_file(rel)
-
- json_helper('caerice-hardware-probe')
- json_helper('caerice-hardware-power')
- json_helper('caerice-display-probe')
- json_helper('caerice-display-transaction',['status'])
- json_helper('caerice-display-persist',['status'])
- json_helper('caerice-display-presets',['list'])
- json_helper('caerice-display-workspaces',['status'])
- json_helper('caerice-gaming-probe')
- json_helper('caerice-gaming-profile',['list'])
- json_helper('caerice-updater',['status'])
- json_helper('caerice-updater-commit-base',['status'])
-
- wired=check_wiring()
-
- ipc={}
- for target in ['hardware','display','gaming','updater']:
-  cp=cmd(['qs','-c','caelestia','ipc','call',target,'isOpen'],8)
-  out=(cp.stdout.strip() if cp else '')
-  # `qs ipc call` exits 0 even when the target doesn't exist - it just prints
-  # "Target not found." to stdout. A bare returncode check therefore reports
-  # a dead controller as healthy. Require a real boolean reply instead.
-  ok=bool(cp and cp.returncode==0 and out in ('true','false'))
-  ipc[target]={'ok':ok,'output':out}
-  if not ok:
-   if wired.get(target):
-    errors.append(f'IPC target wired but not responding: {target} -> {out!r}')
-   else:
-    warnings.append(f'IPC target unavailable: {target} (not wired, see wiring errors above)')
-
- auto={}
- for action in ['is-enabled','is-active']:
-  cp=cmd(['systemctl','--user',action,'caerice-power-auto.service'],8)
-  auto[action]=cp.stdout.strip() if cp else 'unknown'
-
- persistent=[]
- cp=cmd(['ps','-eo','pid=,args='],10)
- if cp:
-  for line in cp.stdout.splitlines():
-   if re.search(r'caerice-(hardware-(probe|power)|display-(probe|plan|persist|presets|workspaces)|gaming-(probe|profile)|updater($|\s))',line) and 'diagnose-sad.py' not in line:
-    persistent.append(line.strip())
- if persistent: warnings.extend([f'helper still running: {line}' for line in persistent[:12]])
-
- qml_errors=[]
- root=Path(f'/run/user/{UID}/quickshell/by-id')
- logs=sorted(root.glob('*/log.qslog'),key=lambda p:p.stat().st_mtime if p.exists() else 0,reverse=True) if root.exists() else []
- if logs:
-  cp=cmd(['strings',str(logs[0])],15)
-  if cp:
-   for line in cp.stdout.splitlines():
-    if re.search(r'@.*\.qml\[[0-9]+:-1\]: (ReferenceError|TypeError|Error:)',line) and not re.search(r'Received event|windowtitle|activewindow|got toplevel',line,re.I): qml_errors.append(line)
-    elif re.search(r'(Type .* unavailable|Binding loop detected|Cannot assign)',line) and ('@' in line or '.qml' in line): qml_errors.append(line)
- if qml_errors: errors.extend([f'QML: {x}' for x in qml_errors[:20]])
-
- print('===== SAD LIVE DIAGNOSTICS =====')
- for r in rows: print(('MATCH ' if r['match'] else 'MISS  ')+r['path'])
- print('\nWiring:',json.dumps(wired,ensure_ascii=False))
- print('IPC:',json.dumps(ipc,ensure_ascii=False))
- print('Power Auto:',json.dumps(auto,ensure_ascii=False))
- print('Unexpected persistent helpers:',len(persistent))
- print('QML log:',str(logs[0]) if logs else 'none')
- print('QML errors:',len(qml_errors))
- if warnings:
-  print('\nWARNINGS'); [print('-',x) for x in warnings]
- if errors:
-  print('\nERRORS'); [print('-',x) for x in errors]
-  print('\nSAD DIAGNOSTIC: FAIL'); raise SystemExit(1)
- print('\nSAD DIAGNOSTIC: OK' if not warnings else '\nSAD DIAGNOSTIC: OK_WITH_WARNINGS')
+RETIRED_LIVE = [
+    "modules/GamingController.qml",
+    "modules/gaming",
+    "modules/UpdaterController.qml",
+    "modules/updater",
+]
+RETIRED_HELPERS = [
+    "caerice-gaming-probe",
+    "caerice-gaming-profile",
+    "caerice-upstream-audit",
+    "caerice-updater",
+    "caerice-updater-commit-base",
+]
 
 
-if __name__ == '__main__':
- main()
+def read(rel: str) -> str | None:
+    path = LIVE / rel
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+
+def check_wiring() -> dict[str, bool]:
+    shell = read("shell.qml")
+    screen = read("components/ScreenState.qml")
+    panels = read("modules/drawers/Panels.qml")
+    wired: dict[str, bool] = {}
+    for feature, spec in WIRING.items():
+        missing = []
+        if shell is None or f"{spec['controller']} {{}}" not in shell:
+            missing.append("shell.qml controller")
+        if screen is None or f"property bool {spec['flag']}" not in screen:
+            missing.append("ScreenState.qml flag")
+        if panels is None or f"id: {spec['flag']}" not in panels:
+            missing.append("Panels.qml Wrapper")
+        wired[feature] = not missing
+        if missing:
+            errors.append(
+                f"{feature}: not wired into live shell ({', '.join(missing)})"
+            )
+    return wired
+
+
+def check_retired() -> None:
+    shell = read("shell.qml") or ""
+    screen = read("components/ScreenState.qml") or ""
+    panels = read("modules/drawers/Panels.qml") or ""
+    content = read("modules/drawers/ContentWindow.qml") or ""
+    usercfg = Path.home() / ".config/caelestia/hypr-user.lua"
+    try:
+        user = usercfg.read_text(encoding="utf-8")
+    except OSError:
+        user = ""
+
+    marker_sets = {
+        "shell.qml": ("GamingController", "UpdaterController"),
+        "ScreenState.qml": ("gamingCenter", "updaterCenter"),
+        "Panels.qml": (
+            "qs.modules.gaming", "qs.modules.updater", "gamingCenter", "updaterCenter"
+        ),
+        "ContentWindow.qml": ("gamingCenter", "updaterCenter"),
+        "hypr-user.lua": ("caelestia:gamingcenter", "caelestia:updatercenter"),
+    }
+    texts = {
+        "shell.qml": shell,
+        "ScreenState.qml": screen,
+        "Panels.qml": panels,
+        "ContentWindow.qml": content,
+        "hypr-user.lua": user,
+    }
+    for label, markers in marker_sets.items():
+        found = [marker for marker in markers if marker in texts[label]]
+        if found:
+            errors.append(
+                f"retired center wiring remains in {label}: {', '.join(found)}"
+            )
+
+    for rel in RETIRED_LIVE:
+        if (LIVE / rel).exists():
+            errors.append(f"retired live artifact remains: {LIVE / rel}")
+
+    for name in RETIRED_HELPERS:
+        path = Path.home() / ".local/bin" / name
+        if path.exists():
+            errors.append(f"retired helper remains: {path}")
+
+
+def sha(path: Path) -> str:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return ""
+
+
+def cmd(args: list[str], timeout: int = 20) -> subprocess.CompletedProcess[str] | None:
+    try:
+        return subprocess.run(
+            args, text=True, capture_output=True, timeout=timeout, check=False
+        )
+    except Exception:
+        return None
+
+
+def check_file(rel: str) -> None:
+    src = REPO / "caelestia/modules-owned" / rel
+    live = LIVE / rel
+    same = src.is_file() and live.is_file() and sha(src) == sha(live)
+    rows.append({"path": rel, "repo": src.is_file(), "live": live.is_file(), "match": same})
+    if not same:
+        warnings.append(f"live mismatch: {rel}")
+
+
+def json_helper(name: str, args: list[str] | None = None) -> None:
+    path = Path.home() / ".local/bin" / name
+    if not path.is_file():
+        warnings.append(f"missing installed helper: {name}")
+        return
+    cp = cmd([str(path)] + (args or []), 25)
+    if not cp or cp.returncode != 0:
+        errors.append(f"{name}: failed")
+        return
+    try:
+        json.loads(cp.stdout)
+    except Exception as exc:
+        errors.append(f"{name}: invalid JSON: {exc}")
+
+
+def main() -> None:
+    for rel in [
+        "modules/HardwareController.qml",
+        "modules/hardware/Wrapper.qml",
+        "modules/hardware/Content.qml",
+        "modules/DisplayController.qml",
+        "modules/display/Wrapper.qml",
+        "modules/display/Content.qml",
+        "modules/display/Editor.qml",
+        "modules/display/PreviewControls.qml",
+        "modules/display/DisplayPresets.qml",
+        "modules/display/DisplayCapabilities.qml",
+        "modules/display/DisplayOutputControls.qml",
+    ]:
+        check_file(rel)
+
+    json_helper("caerice-hardware-probe")
+    json_helper("caerice-hardware-power")
+    json_helper("caerice-display-probe")
+    json_helper("caerice-display-transaction", ["status"])
+    json_helper("caerice-display-persist", ["status"])
+    json_helper("caerice-display-presets", ["list"])
+    json_helper("caerice-display-workspaces", ["status"])
+
+    wired = check_wiring()
+    check_retired()
+
+    ipc: dict[str, dict] = {}
+    for target in ["hardware", "display"]:
+        cp = cmd(["qs", "-c", "caelestia", "ipc", "call", target, "isOpen"], 8)
+        out = cp.stdout.strip() if cp else ""
+        ok = bool(cp and cp.returncode == 0 and out in ("true", "false"))
+        ipc[target] = {"ok": ok, "output": out}
+        if not ok:
+            errors.append(f"IPC target not responding: {target} -> {out!r}")
+
+    retired_ipc: dict[str, str] = {}
+    for target in ["gaming", "updater"]:
+        cp = cmd(["qs", "-c", "caelestia", "ipc", "call", target, "isOpen"], 8)
+        out = cp.stdout.strip() if cp else ""
+        retired_ipc[target] = out
+        if out in ("true", "false"):
+            errors.append(f"retired IPC target still active: {target} -> {out!r}")
+
+    auto: dict[str, str] = {}
+    for action in ["is-enabled", "is-active"]:
+        cp = cmd(["systemctl", "--user", action, "caerice-power-auto.service"], 8)
+        auto[action] = cp.stdout.strip() if cp else "unknown"
+
+    persistent: list[str] = []
+    retired_processes: list[str] = []
+    cp = cmd(["ps", "-eo", "pid=,args="], 10)
+    if cp:
+        for line in cp.stdout.splitlines():
+            if re.search(
+                r"caerice-(hardware-(probe|power)|display-(probe|plan|persist|presets|workspaces))",
+                line,
+            ) and "diagnose-sad.py" not in line:
+                persistent.append(line.strip())
+            if re.search(
+                r"caerice-(gaming-(probe|profile)|upstream-audit|updater(?:-commit-base)?)",
+                line,
+            ) and "diagnose-sad.py" not in line:
+                retired_processes.append(line.strip())
+
+    if persistent:
+        warnings.extend([f"helper still running: {line}" for line in persistent[:12]])
+    if retired_processes:
+        errors.extend([f"retired helper still running: {line}" for line in retired_processes[:12]])
+
+    qml_errors: list[str] = []
+    root = Path(f"/run/user/{UID}/quickshell/by-id")
+    logs = (
+        sorted(
+            root.glob("*/log.qslog"),
+            key=lambda path: path.stat().st_mtime if path.exists() else 0,
+            reverse=True,
+        )
+        if root.exists()
+        else []
+    )
+    if logs:
+        cp = cmd(["strings", str(logs[0])], 15)
+        if cp:
+            for line in cp.stdout.splitlines():
+                if re.search(
+                    r"@.*\.qml\[[0-9]+:-1\]: (ReferenceError|TypeError|Error:)", line
+                ) and not re.search(
+                    r"Received event|windowtitle|activewindow|got toplevel", line, re.I
+                ):
+                    qml_errors.append(line)
+                elif re.search(
+                    r"(Type .* unavailable|Binding loop detected|Cannot assign)", line
+                ) and ("@" in line or ".qml" in line):
+                    qml_errors.append(line)
+    if qml_errors:
+        errors.extend([f"QML: {item}" for item in qml_errors[:20]])
+
+    print("===== SAD LIVE DIAGNOSTICS =====")
+    for row in rows:
+        print(("MATCH " if row["match"] else "MISS  ") + row["path"])
+    print("\nWiring:", json.dumps(wired, ensure_ascii=False))
+    print("IPC:", json.dumps(ipc, ensure_ascii=False))
+    print("Retired IPC:", json.dumps(retired_ipc, ensure_ascii=False))
+    print("Power Auto:", json.dumps(auto, ensure_ascii=False))
+    print("Unexpected persistent helpers:", len(persistent))
+    print("Retired helper processes:", len(retired_processes))
+    print("QML log:", str(logs[0]) if logs else "none")
+    print("QML errors:", len(qml_errors))
+
+    if warnings:
+        print("\nWARNINGS")
+        for item in warnings:
+            print("-", item)
+    if errors:
+        print("\nERRORS")
+        for item in errors:
+            print("-", item)
+        print("\nSAD DIAGNOSTIC: FAIL")
+        raise SystemExit(1)
+
+    print("\nSAD DIAGNOSTIC: OK" if not warnings else "\nSAD DIAGNOSTIC: OK_WITH_WARNINGS")
+
+
+if __name__ == "__main__":
+    main()
