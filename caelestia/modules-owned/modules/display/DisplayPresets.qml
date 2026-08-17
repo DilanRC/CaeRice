@@ -68,7 +68,15 @@ StyledRect {
                 StyledText { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; visible: nameInput.text.length===0; text: qsTr("name this layout"); color: Colours.palette.m3outline; font: Tokens.font.label.small }
                 TextInput { id:nameInput; anchors.fill: parent; anchors.leftMargin:10; anchors.rightMargin:10; verticalAlignment:TextInput.AlignVCenter; text:root.presetName; onTextChanged:root.presetName=text; color:Colours.palette.m3onSurface; selectionColor:Colours.palette.m3primary }
             }
-            StyledRect { width:76; height:38; radius:Tokens.rounding.medium; color:Colours.palette.m3primaryContainer; enabled:!worker.running; StateLayer { radius:parent.radius; onClicked:root.save() }; StyledText { anchors.centerIn:parent; text:qsTr("Save"); color:Colours.palette.m3onPrimaryContainer; font:Tokens.font.label.small } }
+            StyledRect {
+                width: 76
+                height: 38
+                radius: Tokens.rounding.medium
+                color: Colours.palette.m3primaryContainer
+                enabled: !worker.running
+                StateLayer { radius: parent.radius; onClicked: root.save() }
+                StyledText { anchors.centerIn: parent; text: qsTr("Save"); color: Colours.palette.m3onPrimaryContainer; font: Tokens.font.label.small }
+            }
         }
         Row {
             width: parent.width; height: 38; spacing: 5
