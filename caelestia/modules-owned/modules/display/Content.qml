@@ -26,8 +26,8 @@ FocusScope {
     PreviewControls {
         id: previewControls
         z: 20
-        width: Math.min(350, Math.max(280, parent.width * 0.25))
-        height: 126
+        width: Math.min(390, Math.max(330, parent.width * 0.28))
+        height: 144
         x: Math.round((parent.width + Math.min(1260, parent.width - 96)) / 2 - 22 - width - 14)
         y: Math.round((parent.height + Math.min(900, parent.height - 64)) / 2 - 22 - height - 14)
         candidateOutputs: editor.candidateOutputs
