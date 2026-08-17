@@ -11,6 +11,7 @@ UID = os.getuid()
 RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{UID}"))
 CONFIG_PATH = Path.home() / ".config/caerice/power-auto.json"
 STATE_PATH = RUNTIME / "caerice-power-auto-state.json"
+EVENTS_PATH = Path.home() / ".local/state/caerice/power-auto-events.jsonl"
 SERVICE = "caerice-power-auto.service"
 VALID_PROFILES = {"power-saver", "balanced", "performance"}
 DEFAULTS = {
@@ -32,14 +33,31 @@ def load_json(path: Path, default):
         return default
 
 
-def load_config() -> dict:
+def normalize_config(parsed: dict) -> dict:
     cfg = dict(DEFAULTS)
-    parsed = load_json(CONFIG_PATH, {})
-    cfg.update(parsed)
+    cfg.update(parsed if isinstance(parsed, dict) else {})
+    cfg["enabled"] = bool(cfg.get("enabled", False))
+    cfg["low_battery_enabled"] = bool(cfg.get("low_battery_enabled", True))
+    for key in ("ac_profile", "battery_profile", "low_battery_profile"):
+        if cfg.get(key) not in VALID_PROFILES:
+            cfg[key] = DEFAULTS[key]
+    try:
+        cfg["low_battery_threshold"] = max(5, min(80, int(cfg.get("low_battery_threshold", 25))))
+    except (TypeError, ValueError):
+        cfg["low_battery_threshold"] = 25
+    try:
+        cfg["poll_seconds"] = max(2, min(30, int(cfg.get("poll_seconds", 4))))
+    except (TypeError, ValueError):
+        cfg["poll_seconds"] = 4
     return cfg
 
 
+def load_config() -> dict:
+    return normalize_config(load_json(CONFIG_PATH, {}))
+
+
 def save_config(cfg: dict) -> None:
+    cfg = normalize_config(cfg)
     CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
     tmp = CONFIG_PATH.with_suffix(".tmp")
     tmp.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
@@ -65,15 +83,39 @@ def bool_arg(value: str) -> bool:
     raise ValueError("expected true/false")
 
 
+def recent_events(limit: int = 12) -> list[dict]:
+    if not EVENTS_PATH.exists():
+        return []
+    out = []
+    try:
+        for line in EVENTS_PATH.read_text(encoding="utf-8", errors="replace").splitlines()[-limit:]:
+            try:
+                event = json.loads(line)
+                if isinstance(event, dict):
+                    out.append(event)
+            except json.JSONDecodeError:
+                pass
+    except OSError:
+        return []
+    return list(reversed(out))
+
+
 def status() -> dict:
     cfg = load_config()
-    active = systemctl("is-active", SERVICE).returncode == 0
-    enabled = systemctl("is-enabled", SERVICE).returncode == 0
+    active_cp = systemctl("is-active", SERVICE)
+    enabled_cp = systemctl("is-enabled", SERVICE)
     state = load_json(STATE_PATH, {})
     return {
         "config": cfg,
-        "service": {"active": active, "enabled": enabled, "name": SERVICE},
+        "service": {
+            "active": active_cp.returncode == 0,
+            "enabled": enabled_cp.returncode == 0,
+            "active_state": active_cp.stdout.strip() or "inactive",
+            "enable_state": enabled_cp.stdout.strip() or "disabled",
+            "name": SERVICE,
+        },
         "last": state,
+        "events": recent_events(),
     }
 
 
@@ -87,6 +129,19 @@ def refresh_service(cfg: dict) -> None:
         systemctl("try-restart", SERVICE)
 
 
+def set_enabled(cfg: dict, enabled: bool) -> tuple[dict, int]:
+    previous = bool(cfg.get("enabled", False))
+    cfg["enabled"] = enabled
+    save_config(cfg)
+    systemctl("daemon-reload")
+    cp = systemctl("enable", "--now", SERVICE) if enabled else systemctl("disable", "--now", SERVICE)
+    if cp.returncode != 0:
+        cfg["enabled"] = previous
+        save_config(cfg)
+        return {"ok": False, "error": (cp.stderr or cp.stdout).strip(), **status()}, cp.returncode or 2
+    return {"ok": True, **status()}, 0
+
+
 def main() -> int:
     cfg = load_config()
     if len(sys.argv) == 1 or sys.argv[1] == "status":
@@ -96,14 +151,8 @@ def main() -> int:
     cmd = sys.argv[1]
     try:
         if cmd == "set-enabled" and len(sys.argv) >= 3:
-            enabled = bool_arg(sys.argv[2])
-            cfg["enabled"] = enabled
-            save_config(cfg)
-            systemctl("daemon-reload")
-            cp = systemctl("enable", "--now", SERVICE) if enabled else systemctl("disable", "--now", SERVICE)
-            if cp.returncode != 0:
-                return emit({"ok": False, "error": (cp.stderr or cp.stdout).strip(), **status()}, cp.returncode or 2)
-            return emit({"ok": True, **status()})
+            payload, code = set_enabled(cfg, bool_arg(sys.argv[2]))
+            return emit(payload, code)
 
         if cmd == "set-profile" and len(sys.argv) >= 4:
             slot, profile = sys.argv[2], sys.argv[3]
@@ -122,8 +171,13 @@ def main() -> int:
             return emit({"ok": True, **status()})
 
         if cmd == "set-threshold" and len(sys.argv) >= 3:
-            threshold = max(5, min(80, int(sys.argv[2])))
-            cfg["low_battery_threshold"] = threshold
+            cfg["low_battery_threshold"] = max(5, min(80, int(sys.argv[2])))
+            save_config(cfg)
+            refresh_service(cfg)
+            return emit({"ok": True, **status()})
+
+        if cmd == "set-poll" and len(sys.argv) >= 3:
+            cfg["poll_seconds"] = max(2, min(30, int(sys.argv[2])))
             save_config(cfg)
             refresh_service(cfg)
             return emit({"ok": True, **status()})
@@ -131,11 +185,33 @@ def main() -> int:
         if cmd == "apply-now":
             watcher = Path.home() / ".local/bin/caerice-power-auto"
             cp = subprocess.run([str(watcher), "--once"], text=True, capture_output=True, timeout=10, check=False)
-            return emit({"ok": cp.returncode == 0, "watcher_stdout": cp.stdout.strip(), "watcher_stderr": cp.stderr.strip(), **status()}, cp.returncode)
-    except (ValueError, OSError, subprocess.SubprocessError) as exc:
-        return emit({"ok": False, "error": str(exc)}, 2)
+            payload = {
+                "ok": cp.returncode == 0,
+                "watcher_stdout": cp.stdout.strip(),
+                "watcher_stderr": cp.stderr.strip(),
+                **status(),
+            }
+            return emit(payload, cp.returncode)
 
-    return emit({"ok": False, "error": "unknown command"}, 2)
+        if cmd == "clear-events":
+            try:
+                EVENTS_PATH.unlink(missing_ok=True)
+            except OSError as exc:
+                return emit({"ok": False, "error": str(exc), **status()}, 2)
+            return emit({"ok": True, **status()})
+
+        if cmd == "reset-defaults":
+            was_enabled = bool(cfg.get("enabled", False))
+            new_cfg = dict(DEFAULTS)
+            new_cfg["enabled"] = was_enabled
+            save_config(new_cfg)
+            refresh_service(new_cfg)
+            return emit({"ok": True, **status()})
+
+    except (ValueError, OSError, subprocess.SubprocessError) as exc:
+        return emit({"ok": False, "error": str(exc), **status()}, 2)
+
+    return emit({"ok": False, "error": "unknown command", **status()}, 2)
 
 
 if __name__ == "__main__":
