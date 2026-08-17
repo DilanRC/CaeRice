@@ -77,9 +77,9 @@ def install_hook() -> None:
     if not isinstance(theme, dict):
         raise SystemExit("ERROR: theme en cli.json no es un objeto")
     theme["postHook"] = str(TARGET_HOOK)
-    # Upstream's Chromium bridge only knows the `brave` executable.  Keep it
-    # disabled here and let this adapter handle Brave Origin explicitly.
-    theme["enableChromium"] = False
+    # Do not force enableChromium on or off. If the user later installs a
+    # browser handled natively by Caelestia, its existing setting keeps
+    # working; Brave Origin is handled independently by this adapter.
     write_json(CLI_JSON, cfg)
     print("postHook CaeRice:", TARGET_HOOK)
 
@@ -122,7 +122,7 @@ def provision_policy() -> None:
         tmp.write(initial_policy())
         tmp_path = Path(tmp.name)
     try:
-        # Only this one policy file is writable by the desktop user.  The
+        # Only this one policy file is writable by the desktop user. The
         # surrounding managed-policy directory remains owned by root.
         run(
             "sudo",
