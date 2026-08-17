@@ -5,6 +5,7 @@ from pathlib import Path
 REPO=Path(__file__).resolve().parents[2]
 scripts=[
  'scripts/features/audit-theme-colours.py',
+ 'scripts/features/validate-clipboard-qml.py',
  'scripts/features/validate-hardware-center.py',
  'scripts/features/validate-display-manager.py',
  'scripts/features/validate-gaming-center.py',
