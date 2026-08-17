@@ -25,6 +25,8 @@ spec = importlib.util.spec_from_loader(loader.name, loader)
 updater = importlib.util.module_from_spec(spec)
 loader.exec_module(updater)
 
+# Option-injection payloads (the original finding: these grant RCE via
+# `--upload-pack`/`--exec`-style git options if they ever reach argv).
 malicious = [
     "--upload-pack=/tmp/evil.sh",
     "--upload-pack=touch /tmp/pwned",
@@ -32,14 +34,30 @@ malicious = [
     "--exec=whoami",
     "-",
 ]
-for ref in malicious:
+# Grammatically-unsafe refspecs: not option injection, but not a plain
+# single ref/tag/commit either - "src:dst" can repoint a *local* ref in the
+# throwaway candidate clone, and the rest are git refname syntax with
+# special meaning (parent walks, reflog lookups) rather than a literal name.
+malformed = [
+    "main:refs/heads/main",       # explicit refspec destination
+    "HEAD:refs/heads/main",
+    "refs/heads/../../etc/passwd",
+    "foo..bar",                    # range syntax, not a single ref
+    "foo~1",                       # parent-walk syntax
+    "foo@{upstream}",              # reflog/upstream syntax
+    "foo bar",                     # embedded whitespace
+    "foo\nbar",                    # embedded newline
+]
+for ref in malicious + malformed:
     assert not updater.is_git_safe_ref(ref), f"should reject: {ref!r}"
+for ref in malicious:
     result, code = updater.fetch(ref)
     assert result["ok"] is False and code == 4, f"fetch() must refuse {ref!r} before touching git, got {result}"
 
-legit = ["main", "v2.4.1", "refs/heads/feature/x", "a1b2c3d4", "release-2026.08"]
+legit = ["main", "v2.4.1", "refs/heads/feature/x", "a1b2c3d4", "release-2026.08", "HEAD"]
 for ref in legit:
     assert updater.is_git_safe_ref(ref), f"should accept legitimate ref: {ref!r}"
 
 print("test-updater-ref-injection: OK "
-      f"({len(malicious)} payloads rejected, {len(legit)} legitimate refs accepted)")
+      f"({len(malicious)} injection payloads + {len(malformed)} malformed refspecs rejected, "
+      f"{len(legit)} legitimate refs accepted)")

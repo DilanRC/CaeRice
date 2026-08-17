@@ -90,12 +90,36 @@ def safe_ref(ref: str) -> str:
 def is_git_safe_ref(ref: str) -> bool:
     # `ref` comes straight from the Updater UI's free-text field and is
     # passed as a positional argv element to `git fetch ... origin <ref>`.
-    # git treats a leading "-" as an option, not a refname, so a value like
-    # "--upload-pack=/tmp/x" reaching that argv turns a ref fetch into
-    # arbitrary command execution as the invoking user (verified locally
-    # against an isolated bare repo). No legitimate branch/tag/commit ever
-    # starts with "-", so reject it outright rather than trying to escape it.
-    return bool(ref) and not ref.startswith("-")
+    #
+    # Two independent gates, not one regex:
+    #
+    # 1. git treats a leading "-" as an option, not a refname, so a value
+    #    like "--upload-pack=/tmp/x" reaching that argv turns a ref fetch
+    #    into arbitrary command execution as the invoking user (verified
+    #    locally against an isolated bare repo). No legitimate
+    #    branch/tag/commit ever starts with "-", so reject it outright
+    #    before git ever sees it - this also makes gate 2 itself safe to
+    #    call, since `ref` can no longer be mistaken for an option there
+    #    either.
+    # 2. Beyond "not an option", the field is conceptually a single ref/tag/
+    #    commit, not an arbitrary refspec. Defer to `git check-ref-format
+    #    --allow-onelevel`, the same grammar git itself uses to accept a
+    #    refname, instead of hand-rolling a regex: it already rejects
+    #    "src:dst" refspecs (which could repoint a *local* ref in the
+    #    throwaway candidate clone), "..", "~", "@{...}", embedded
+    #    whitespace/control characters and other refname syntax that isn't
+    #    a plain single ref/tag/commit - while still accepting ordinary
+    #    branch names, tags and (abbreviated or full) commit SHAs.
+    if not ref or ref.startswith("-"):
+        return False
+    try:
+        cp = subprocess.run(
+            ["git", "check-ref-format", "--allow-onelevel", ref],
+            capture_output=True, timeout=5, check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return cp.returncode == 0
 
 
 def upstream_repo() -> str:
