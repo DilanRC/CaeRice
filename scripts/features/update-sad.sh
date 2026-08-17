@@ -9,7 +9,7 @@ python3 "$REPO/scripts/features/validate-sad.py"
 sudo install -m 0644 "$REPO/caelestia/modules-owned/modules/DisplayController.qml" "$LIVE/modules/DisplayController.qml"
 sudo mkdir -p "$LIVE/modules/display"
 for qml in "$REPO/caelestia/modules-owned/modules/display/"*.qml; do sudo install -m 0644 "$qml" "$LIVE/modules/display/$(basename "$qml")"; done
-for helper in caerice-display-probe caerice-display-plan caerice-display-transaction caerice-display-persist caerice-display-presets; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
+for helper in caerice-display-probe caerice-display-plan caerice-display-transaction caerice-display-persist caerice-display-presets caerice-display-workspaces; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
 
 # Gaming Center
 sudo install -m 0644 "$REPO/caelestia/modules-owned/modules/GamingController.qml" "$LIVE/modules/GamingController.qml"
