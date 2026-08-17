@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import subprocess
+from pathlib import Path
+
+
+def read_text(path: Path, default: str = "") -> str:
+    try:
+        return path.read_text(encoding="utf-8", errors="replace").strip()
+    except OSError:
+        return default
+
+
+def hypr_monitors() -> list[dict]:
+    try:
+        cp = subprocess.run(
+            ["hyprctl", "-j", "monitors", "all"],
+            text=True,
+            capture_output=True,
+            timeout=3,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return []
+    if cp.returncode != 0:
+        return []
+    try:
+        raw = json.loads(cp.stdout)
+    except json.JSONDecodeError:
+        return []
+    out = []
+    for m in raw if isinstance(raw, list) else []:
+        out.append({
+            "id": m.get("id"),
+            "name": m.get("name", ""),
+            "description": m.get("description", ""),
+            "make": m.get("make", ""),
+            "model": m.get("model", ""),
+            "serial": m.get("serial", ""),
+            "width": m.get("width"),
+            "height": m.get("height"),
+            "refresh_hz": m.get("refreshRate"),
+            "x": m.get("x"),
+            "y": m.get("y"),
+            "scale": m.get("scale"),
+            "transform": m.get("transform"),
+            "focused": m.get("focused", False),
+            "disabled": m.get("disabled", False),
+            "dpms": m.get("dpmsStatus"),
+            "available_modes": m.get("availableModes", []),
+            "workspace": m.get("activeWorkspace", {}),
+        })
+    return out
+
+
+def gpu_vendor(card: Path) -> str:
+    vendor = read_text(card / "device/vendor").lower()
+    return {
+        "0x1002": "AMD",
+        "0x10de": "NVIDIA",
+        "0x8086": "Intel",
+    }.get(vendor, vendor or "unknown")
+
+
+def drm_connectors() -> list[dict]:
+    out = []
+    drm = Path("/sys/class/drm")
+    for connector in sorted(drm.glob("card[0-9]-*")):
+        status_path = connector / "status"
+        if not status_path.exists():
+            continue
+        card_name = connector.name.split("-", 1)[0]
+        card = drm / card_name
+        modes = read_text(connector / "modes").splitlines()
+        out.append({
+            "connector": connector.name,
+            "card": card_name,
+            "gpu_vendor": gpu_vendor(card),
+            "status": read_text(status_path, "unknown"),
+            "enabled": read_text(connector / "enabled", "unknown"),
+            "modes": modes,
+        })
+    return out
+
+
+def main() -> None:
+    payload = {
+        "hyprland": hypr_monitors(),
+        "drm": drm_connectors(),
+        "write_capability": False,
+        "safety": "read-only skeleton; no monitor commands are applied",
+    }
+    print(json.dumps(payload, separators=(",", ":")))
+
+
+if __name__ == "__main__":
+    main()
