@@ -969,6 +969,50 @@ Scope {
                                     mipmap: true
                                 }
 
+                                Item {
+                                    id: dockPinButton
+
+                                    visible: appItem.modelData.pinned || mouse.containsMouse || pinMouse.containsMouse
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
+                                    anchors.topMargin: 1
+                                    anchors.rightMargin: 1
+                                    width: 20
+                                    height: 20
+                                    z: 4
+
+                                    StyledRect {
+                                        anchors.fill: parent
+                                        radius: Tokens.rounding.full
+                                        color: pinMouse.containsMouse
+                                            ? Colours.palette.m3secondaryContainer
+                                            : appItem.modelData.pinned
+                                                ? Colours.palette.m3surfaceContainerHighest
+                                                : Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.78)
+                                    }
+
+                                    MaterialIcon {
+                                        anchors.centerIn: parent
+                                        text: "push_pin"
+                                        fill: appItem.modelData.pinned ? 1 : 0
+                                        color: appItem.modelData.pinned || pinMouse.containsMouse
+                                            ? Colours.palette.m3primary
+                                            : Colours.palette.m3onSurfaceVariant
+                                        fontStyle: Tokens.font.icon.small
+                                    }
+
+                                    MouseArea {
+                                        id: pinMouse
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: event => {
+                                            win.togglePinned(appItem.modelData);
+                                            event.accepted = true;
+                                        }
+                                    }
+                                }
+
                                 Row {
                                     anchors.horizontalCenter:
                                         parent.horizontalCenter
