@@ -5,15 +5,15 @@
      }
  
 +    /*
-+     * IMPORTANTE PARA EL DOCK:
-+     * upstream usa `root.win.height - height` porque el launcher toca
-+     * el borde inferior. Ahora Wrapper.qml lo desplaza 70px hacia arriba,
-+     * así que la región de input debe seguir la posición REAL del panel.
++     * The launcher is lifted above CustomDock by Wrapper.dockOffset.
++     * Preserve upstream's window-coordinate region formula and subtract the
++     * same offset. Using panel.y here mixes coordinate spaces and leaves the
++     * visible launcher outside the Wayland input region.
 +     */
      R {
          panel: root.panels.launcher
 -        y: root.win.height - height
-+        y: panel.y + root.borderThickness
++        y: root.win.height - height - panel.dockOffset
          height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
      }
  
