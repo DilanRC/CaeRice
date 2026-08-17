@@ -23,7 +23,7 @@ uses the same native surface as Launcher, Overview and Clipboard.
 
 1. **Overview** — CPU, RAM, root storage, AMD/NVIDIA GPUs, battery/network and cooling. CPU can switch `% / GHz`; memory defaults to GiB and can switch `GiB / %`.
 2. **Performance** — rolling CPU/RAM/network/NVMe/GPU graphs with visible scales and min/average/max. CPU cycles Total → Core 0 → Core 1…; RAM toggles cache/swap history.
-3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, `123 / %`, list freeze, detail view and Pause/Resume, Interrupt, Terminate and Force kill controls.
+3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, `123 / %`, list freeze, detail view and Pause/Resume, Interrupt, Terminate and Force kill controls. Search operates on every readable process from `/proc`, including sleeping/low-CPU processes rather than only the most active rows.
 4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fan RPM and battery sensor data.
 5. **I/O** — root filesystem and physical block-device throughput, IOPS and totals plus network rates/totals, IPv4, MAC and Wi-Fi metadata.
 6. **Power** — manual Power Profiles switching plus CPU driver/governor/EPP/platform profile, AC/battery state, AMD runtime power state and NVIDIA P-state/clocks/power.
@@ -48,7 +48,7 @@ not close it; only clicking outside the panel, `Esc`, the close button or
 - Battery percentage/status/power.
 - Active network interface, RX/TX rates/totals, IPv4/MAC and Wi-Fi SSID/signal/link bitrate when available.
 - Exposed fan RPM values.
-- Up to 80 processes with instantaneous CPU deltas, RAM, user, state, threads, parent PID, elapsed time and command line.
+- All readable `/proc` processes with instantaneous CPU deltas, RAM, user, state, threads, parent PID, elapsed time and command line. The UI performs filtering/sorting locally so PID/name/command searches can find idle processes too.
 - Host, kernel, uptime and load average.
 
 `~/.local/bin/caerice-hardware-power` provides:
