@@ -99,7 +99,9 @@ def verify_runtime(candidate):
   name=str(item.get('name','')); m=by.get(name)
   if not m:return False,f'{name} missing after output-policy reload'
   if int(item.get('bitdepth',8))==10 and '2101010' not in str(m.get('current_format','')).upper(): return False,f'{name} did not enter a 10-bit format'
-  if int(item.get('vrr',0))>0 and not bool(m.get('vrr',False)): return False,f'{name} VRR did not become active'
+  # Only always-on VRR can be verified immediately. Conditional modes can
+  # legitimately report idle until a fullscreen/game surface exists.
+  if int(item.get('vrr',0))==1 and not bool(m.get('vrr',False)): return False,f'{name} always-on VRR did not become active'
  return True,''
 
 def sync(candidate):
