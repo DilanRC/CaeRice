@@ -18,6 +18,7 @@ scripts = [
     "scripts/features/test-diagnose-sad-wiring.py",
     "scripts/features/test-wire-sad-shell.py",
     "scripts/features/test-updater-ref-injection.py",
+    "scripts/features/test-gaming-appid.py",
 ]
 failed: list[str] = []
 

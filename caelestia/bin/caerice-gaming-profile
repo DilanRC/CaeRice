@@ -23,6 +23,26 @@ def emit(payload: dict, code: int = 0) -> int:
     return code
 
 
+def canonical_appid(value: str) -> str:
+    # Steam AppIDs are the profile key, the persisted state, and the literal
+    # `steam -applaunch <appid>` argument. `str.isdigit()`/`str.isnumeric()`
+    # accept Unicode digit classes (e.g. full-width "１２３") that `int()`
+    # happily parses too - not what "Steam AppID" means here, and a gap that
+    # would let the same game exist as two unrelated profiles depending on
+    # which digit variant was typed. `isdecimal()` restricts to values whose
+    # digits form a normal base-10 number, and `isascii()` additionally
+    # excludes non-ASCII decimal digit scripts entirely. Canonicalizing
+    # leading zeros (int() round-trip) closes the "123" vs "00123" duplicate-
+    # profile gap called out in the same finding.
+    text = str(value)
+    if not text or not text.isascii() or not text.isdecimal():
+        raise ValueError("appid must contain ASCII decimal digits only")
+    number = int(text, 10)
+    if number < 1 or number > 0xFFFFFFFF:
+        raise ValueError("appid must be a positive 32-bit Steam AppID")
+    return str(number)
+
+
 def load() -> dict:
     try:
         data = json.loads(CONFIG.read_text(encoding="utf-8"))
@@ -232,6 +252,8 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
+        if args.command != "list":
+            args.appid = canonical_appid(args.appid)
         data = load()
         profiles = data.setdefault("profiles", {})
         if args.command == "list":

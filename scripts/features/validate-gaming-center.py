@@ -91,6 +91,17 @@ for needle in [
 req("localconfig.vdf" not in profile_text, "gaming profile unexpectedly references Steam localconfig.vdf")
 req("compatibilitytool.vdf" not in profile_text, "gaming profile unexpectedly references compatibilitytool.vdf")
 
+# appid must be validated/canonicalized exactly once, centrally, before any
+# subcommand branch touches it - not re-implemented per get/set/delete/
+# command/copy/open (see scripts/features/test-gaming-appid.py for the real
+# execution coverage: "00123" vs "123" duplicate-profile prevention,
+# rejection of Unicode digits/signs/whitespace, uint32 bounds).
+req("def canonical_appid" in profile_text, "gaming profile missing canonical_appid()")
+req("args.appid = canonical_appid(args.appid)" in profile_text,
+    "gaming profile does not canonicalize args.appid centrally before dispatch")
+req(profile_text.count("canonical_appid(args.appid)") == 1,
+    "gaming profile calls canonical_appid(args.appid) more than once - validation should not be duplicated per subcommand")
+
 probe = run_json([sys.executable, str(BIN / "caerice-gaming-probe")], "gaming-probe") if not errors else {}
 if probe:
     req(isinstance(probe.get("installed_games"), list), "gaming-probe installed_games not list")
