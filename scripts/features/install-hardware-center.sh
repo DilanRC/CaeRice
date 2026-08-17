@@ -1,0 +1,322 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "$REPO" ]]; then
+    echo "ERROR: ejecuta este script dentro del clon de CaeRice." >&2
+    exit 1
+fi
+
+LIVE="/etc/xdg/quickshell/caelestia"
+USERCFG="$HOME/.config/caelestia/hypr-user.lua"
+STAMP="$(date +%Y%m%d-%H%M%S)"
+BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/hardware-center-$STAMP"
+STAGE="$BACKUP/stage"
+SRC="$REPO/caelestia/modules-owned/modules"
+PROBE_SRC="$REPO/caelestia/bin/caerice-hardware-probe"
+PROBE_DST="$HOME/.local/bin/caerice-hardware-probe"
+
+for f in \
+    "$LIVE/shell.qml" \
+    "$LIVE/components/ScreenState.qml" \
+    "$LIVE/modules/drawers/ContentWindow.qml" \
+    "$LIVE/modules/drawers/Panels.qml" \
+    "$USERCFG"; do
+    [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
+done
+
+for f in \
+    "$SRC/HardwareController.qml" \
+    "$SRC/hardware/Wrapper.qml" \
+    "$SRC/hardware/Content.qml" \
+    "$SRC/hardware/MetricCard.qml" \
+    "$PROBE_SRC"; do
+    [[ -f "$f" ]] || { echo "ERROR: falta $f en el repo" >&2; exit 3; }
+done
+
+echo "==> Probe preflight"
+python3 "$PROBE_SRC" | python3 -m json.tool >/dev/null
+echo "probe: OK"
+
+mkdir -p \
+    "$BACKUP/components" \
+    "$BACKUP/modules/drawers" \
+    "$BACKUP/user-config" \
+    "$STAGE/components" \
+    "$STAGE/modules/drawers" \
+    "$STAGE/user-config"
+
+sudo cp "$LIVE/shell.qml" "$BACKUP/shell.qml"
+sudo cp "$LIVE/components/ScreenState.qml" "$BACKUP/components/ScreenState.qml"
+sudo cp "$LIVE/modules/drawers/ContentWindow.qml" "$BACKUP/modules/drawers/ContentWindow.qml"
+sudo cp "$LIVE/modules/drawers/Panels.qml" "$BACKUP/modules/drawers/Panels.qml"
+cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
+sudo chown -R "$USER:$(id -gn)" "$BACKUP"
+
+export LIVE USERCFG STAGE
+python3 <<'PY'
+from pathlib import Path
+import os
+
+live = Path(os.environ["LIVE"])
+usercfg = Path(os.environ["USERCFG"])
+stage = Path(os.environ["STAGE"])
+
+targets = {
+    "screen": live / "components/ScreenState.qml",
+    "shell": live / "shell.qml",
+    "panels": live / "modules/drawers/Panels.qml",
+    "content": live / "modules/drawers/ContentWindow.qml",
+    "user": usercfg,
+}
+texts = {k: p.read_text(encoding="utf-8") for k, p in targets.items()}
+
+
+def replace_first(key: str, candidates: list[tuple[str, str]], marker: str) -> None:
+    if marker in texts[key]:
+        return
+    for old, new in candidates:
+        if old in texts[key]:
+            texts[key] = texts[key].replace(old, new, 1)
+            return
+    raise SystemExit(f"PREFLIGHT ERROR [{key}]: no encontré contexto para {marker}")
+
+
+replace_first(
+    "screen",
+    [
+        (
+            "    property bool clipboard\n    property bool dashboard",
+            "    property bool clipboard\n    property bool hardware\n    property bool dashboard",
+        ),
+        (
+            "    property bool overview\n    property bool dashboard",
+            "    property bool overview\n    property bool hardware\n    property bool dashboard",
+        ),
+    ],
+    "property bool hardware",
+)
+
+replace_first(
+    "shell",
+    [
+        (
+            "    ClipboardController {}\n    BatteryMonitor {}",
+            "    ClipboardController {}\n    HardwareController {}\n    BatteryMonitor {}",
+        ),
+        (
+            "    OverviewController {}\n    BatteryMonitor {}",
+            "    OverviewController {}\n    HardwareController {}\n    BatteryMonitor {}",
+        ),
+    ],
+    "HardwareController {}",
+)
+
+replace_first(
+    "panels",
+    [
+        (
+            "import qs.modules.clipboard as Clipboard\nimport qs.modules.notifications as Notifications",
+            "import qs.modules.clipboard as Clipboard\nimport qs.modules.hardware as Hardware\nimport qs.modules.notifications as Notifications",
+        ),
+        (
+            "import qs.modules.overview as Overview\nimport qs.modules.notifications as Notifications",
+            "import qs.modules.overview as Overview\nimport qs.modules.hardware as Hardware\nimport qs.modules.notifications as Notifications",
+        ),
+    ],
+    "import qs.modules.hardware as Hardware",
+)
+
+replace_first(
+    "panels",
+    [
+        (
+            "    readonly property alias clipboard: clipboard\n    readonly property alias dashboard: dashboard",
+            "    readonly property alias clipboard: clipboard\n    readonly property alias hardware: hardware\n    readonly property alias dashboard: dashboard",
+        ),
+        (
+            "    readonly property alias overview: overview\n    readonly property alias dashboard: dashboard",
+            "    readonly property alias overview: overview\n    readonly property alias hardware: hardware\n    readonly property alias dashboard: dashboard",
+        ),
+    ],
+    "readonly property alias hardware: hardware",
+)
+
+hardware_wrapper = '''    Hardware.Wrapper {
+        id: hardware
+
+        screen: root.screen
+        screenState: root.screenState
+
+        anchors.fill: parent
+    }
+
+'''
+if "id: hardware" not in texts["panels"]:
+    if "    Dashboard.Wrapper {" not in texts["panels"]:
+        raise SystemExit("PREFLIGHT ERROR [panels]: falta Dashboard.Wrapper")
+    texts["panels"] = texts["panels"].replace(
+        "    Dashboard.Wrapper {",
+        hardware_wrapper + "    Dashboard.Wrapper {",
+        1,
+    )
+
+replace_first(
+    "content",
+    [
+        (
+            "        screenState.clipboard = false;\n        panels.popouts.close();",
+            "        screenState.clipboard = false;\n        screenState.hardware = false;\n        panels.popouts.close();",
+        ),
+        (
+            "        screenState.overview = false;\n        panels.popouts.close();",
+            "        screenState.overview = false;\n        screenState.hardware = false;\n        panels.popouts.close();",
+        ),
+    ],
+    "screenState.hardware = false;\n        panels.popouts.close();",
+)
+
+replace_first(
+    "content",
+    [
+        (
+            "screenState.overview || screenState.clipboard ? WlrLayer.Overlay",
+            "screenState.overview || screenState.clipboard || screenState.hardware ? WlrLayer.Overlay",
+        ),
+        (
+            "screenState.overview ? WlrLayer.Overlay",
+            "screenState.overview || screenState.hardware ? WlrLayer.Overlay",
+        ),
+    ],
+    "screenState.hardware ? WlrLayer.Overlay",
+)
+
+replace_first(
+    "content",
+    [
+        (
+            "screenState.overview || screenState.clipboard || screenState.launcher",
+            "screenState.overview || screenState.clipboard || screenState.hardware || screenState.launcher",
+        ),
+        (
+            "screenState.overview || screenState.launcher",
+            "screenState.overview || screenState.hardware || screenState.launcher",
+        ),
+    ],
+    "screenState.hardware || screenState.launcher",
+)
+
+replace_first(
+    "content",
+    [
+        (
+            "mask: screenState.overview || screenState.clipboard ? null",
+            "mask: screenState.overview || screenState.clipboard || screenState.hardware ? null",
+        ),
+        (
+            "mask: screenState.overview ? null",
+            "mask: screenState.overview || screenState.hardware ? null",
+        ),
+    ],
+    "screenState.hardware ? null",
+)
+
+replace_first(
+    "content",
+    [
+        (
+            "if (s.overview || s.clipboard)\n                return true;",
+            "if (s.overview || s.clipboard || s.hardware)\n                return true;",
+        ),
+        (
+            "if (s.overview)\n                return true;",
+            "if (s.overview || s.hardware)\n                return true;",
+        ),
+    ],
+    "s.hardware",
+)
+
+replace_first(
+    "content",
+    [
+        (
+            "            root.screenState.clipboard = false;\n            panels.popouts.hasCurrent = false;",
+            "            root.screenState.clipboard = false;\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;",
+        ),
+        (
+            "            root.screenState.overview = false;\n            panels.popouts.hasCurrent = false;",
+            "            root.screenState.overview = false;\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;",
+        ),
+    ],
+    "root.screenState.hardware = false;",
+)
+
+hardware_bind = '''hl.bind(
+    "SUPER + H",
+    hl.dsp.global("caelestia:hardware")
+)'''
+if hardware_bind not in texts["user"]:
+    anchors = [
+        '''hl.bind(
+    "SUPER + V",
+    hl.dsp.global("caelestia:clipboard")
+)''',
+        '''hl.bind(
+    "SUPER + I",
+    hl.dsp.global("caelestia:nexus")
+)''',
+    ]
+    for anchor in anchors:
+        if anchor in texts["user"]:
+            texts["user"] = texts["user"].replace(
+                anchor,
+                anchor + "\n\n-- Hardware Center QML nativo\n" + hardware_bind,
+                1,
+            )
+            break
+    else:
+        raise SystemExit("PREFLIGHT ERROR [user]: no encontré ancla para SUPER+H")
+
+out = {
+    "screen": stage / "components/ScreenState.qml",
+    "shell": stage / "shell.qml",
+    "panels": stage / "modules/drawers/Panels.qml",
+    "content": stage / "modules/drawers/ContentWindow.qml",
+    "user": stage / "user-config/hypr-user.lua",
+}
+for key, path in out.items():
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(texts[key], encoding="utf-8")
+
+print("Native Hardware Center integration staged successfully")
+PY
+
+sudo install -m 0644 "$STAGE/shell.qml" "$LIVE/shell.qml"
+sudo install -m 0644 "$STAGE/components/ScreenState.qml" "$LIVE/components/ScreenState.qml"
+sudo install -m 0644 "$STAGE/modules/drawers/Panels.qml" "$LIVE/modules/drawers/Panels.qml"
+sudo install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/ContentWindow.qml"
+install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
+
+sudo install -m 0644 "$SRC/HardwareController.qml" "$LIVE/modules/HardwareController.qml"
+sudo mkdir -p "$LIVE/modules/hardware"
+sudo install -m 0644 "$SRC/hardware/Wrapper.qml" "$LIVE/modules/hardware/Wrapper.qml"
+sudo install -m 0644 "$SRC/hardware/Content.qml" "$LIVE/modules/hardware/Content.qml"
+sudo install -m 0644 "$SRC/hardware/MetricCard.qml" "$LIVE/modules/hardware/MetricCard.qml"
+
+mkdir -p "$HOME/.local/bin"
+install -m 0755 "$PROBE_SRC" "$PROBE_DST"
+
+hyprctl reload >/dev/null
+
+echo
+echo "Hardware Center instalado."
+echo "Backup: $BACKUP"
+echo "Probe: $PROBE_DST"
+echo
+echo "Reinicia Caelestia:"
+echo "  pkill -TERM -x qs"
+echo "  sleep 1"
+echo "  caelestia shell -d"
+echo
+echo "Después prueba Super+H o:"
+echo "  qs -c caelestia ipc call hardware open"
