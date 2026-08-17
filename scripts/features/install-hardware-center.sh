@@ -15,6 +15,15 @@ STAGE="$BACKUP/stage"
 SRC="$REPO/caelestia/modules-owned/modules"
 PROBE_SRC="$REPO/caelestia/bin/caerice-hardware-probe"
 PROBE_DST="$HOME/.local/bin/caerice-hardware-probe"
+POWER_SRC="$REPO/caelestia/bin/caerice-hardware-power"
+POWER_DST="$HOME/.local/bin/caerice-hardware-power"
+AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
+AUTO_DST="$HOME/.local/bin/caerice-power-auto"
+AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
+AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
+UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
+UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
+VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
 
 for f in \
     "$LIVE/shell.qml" \
@@ -25,8 +34,16 @@ for f in \
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 2; }
 done
 
-[[ -f "$SRC/HardwareController.qml" ]] || { echo "ERROR: falta HardwareController.qml" >&2; exit 3; }
-[[ -f "$PROBE_SRC" ]] || { echo "ERROR: falta caerice-hardware-probe" >&2; exit 3; }
+for f in \
+    "$SRC/HardwareController.qml" \
+    "$PROBE_SRC" \
+    "$POWER_SRC" \
+    "$AUTO_SRC" \
+    "$AUTO_CTL_SRC" \
+    "$UNIT_SRC" \
+    "$VALIDATOR"; do
+    [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
+done
 
 for f in \
     Wrapper.qml \
@@ -36,15 +53,21 @@ for f in \
     OverviewPage.qml \
     PerformancePage.qml \
     ProcessesPage.qml \
-    SensorsPage.qml; do
+    SensorsPage.qml \
+    IOPage.qml \
+    PowerPage.qml \
+    PowerAutomationPage.qml \
+    EnergyPage.qml; do
     [[ -f "$SRC/hardware/$f" ]] || { echo "ERROR: falta hardware/$f" >&2; exit 3; }
 done
 
-echo "==> Probe preflight"
+echo "==> Hardware Center preflight"
 python3 "$PROBE_SRC" | python3 -m json.tool >/dev/null
 sleep 0.2
 python3 "$PROBE_SRC" | python3 -m json.tool >/dev/null
-echo "probe: OK"
+python3 "$POWER_SRC" | python3 -m json.tool >/dev/null
+python3 "$AUTO_CTL_SRC" status | python3 -m json.tool >/dev/null
+echo "telemetry: OK"
 
 mkdir -p \
     "$BACKUP/components" \
@@ -311,16 +334,30 @@ for qml in "$SRC/hardware/"*.qml; do
     sudo install -m 0644 "$qml" "$LIVE/modules/hardware/$(basename "$qml")"
 done
 
-mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user"
 install -m 0755 "$PROBE_SRC" "$PROBE_DST"
+install -m 0755 "$POWER_SRC" "$POWER_DST"
+install -m 0755 "$AUTO_SRC" "$AUTO_DST"
+install -m 0755 "$AUTO_CTL_SRC" "$AUTO_CTL_DST"
+install -m 0644 "$UNIT_SRC" "$UNIT_DST"
+systemctl --user daemon-reload
+
+# Preserve the user's opt-in state. Installation never enables Auto by itself.
+if systemctl --user is-enabled --quiet caerice-power-auto.service 2>/dev/null; then
+    systemctl --user try-restart caerice-power-auto.service >/dev/null 2>&1 || true
+fi
 
 hyprctl reload >/dev/null
+
+python3 "$VALIDATOR"
 
 echo
 echo "Hardware Center instalado."
 echo "Backup: $BACKUP"
 echo "Probe: $PROBE_DST"
-echo "Pages: Overview · Performance · Processes · Sensors"
+echo "Power: $POWER_DST"
+echo "Pages: Overview · Performance · Processes · Sensors · I/O · Power · Auto · Energy"
+echo "Auto service: instalado, no se habilita automáticamente."
 echo
 echo "Reinicia Caelestia:"
 echo "  pkill -TERM -x qs"
