@@ -17,9 +17,10 @@ uses the same window that already hosts Launcher, Overview and Clipboard.
 - While open, telemetry refreshes every 1500 ms.
 - `caerice-hardware-probe` is a one-shot Python process; there is no extra
   permanent monitor daemon.
-- The Power page uses a second one-shot helper, `caerice-hardware-power`, only
-  while that page is loaded.
 - Closing Hardware Center destroys the polling/UI tree.
+- Automatic AC/battery switching is separate and **disabled by default**. It
+  only starts the tiny `caerice-power-auto.service` user service when the user
+  explicitly enables automation on page 7.
 
 ## Pages
 
@@ -28,13 +29,14 @@ uses the same window that already hosts Launcher, Overview and Clipboard.
 3. **Processes** — live table, multi-term filtering, CPU/RAM/PID sorting, display mode `123 / %`, list freeze, process detail, Pause/Resume, Interrupt, Terminate and Force kill actions.
 4. **Sensors** — per-core CPU load, CPU/GPU thermals and power, fans and battery data.
 5. **I/O** — detailed root storage/NVMe throughput, IOPS and totals plus network rate/totals, IPv4, MAC and Wi-Fi metadata when exposed.
-6. **Power** — AC/battery state, battery health, CPU driver/governor/EPP/platform profile, AMD/NVIDIA power state and safe power-profile switching.
+6. **Power** — manual Power Profiles selection plus CPU policy, AC/battery, AMD runtime power state and NVIDIA P-state/clocks/power telemetry.
+7. **Auto** — optional AC/battery profile rules. Defaults: AC=performance, battery=balanced, low battery (<=25%)=power-saver. The watcher is disabled until explicitly enabled.
 
-Keyboard: `1`–`6` switches pages, `R` refreshes the main telemetry, `Esc` closes.
+Keyboard: `1`–`7` switches pages, `R` refreshes, `Esc` closes.
 
 ## Telemetry
 
-`~/.local/bin/caerice-hardware-probe` returns the main compact JSON snapshot with:
+`~/.local/bin/caerice-hardware-probe` returns one compact JSON snapshot with:
 
 - CPU total/per-core usage, average frequency, package temperature and governor.
 - RAM used/available/cache/buffers plus swap usage.
@@ -49,24 +51,27 @@ Keyboard: `1`–`6` switches pages, `R` refreshes the main telemetry, `Esc` clos
   parent PID, elapsed time and command line.
 - Host, kernel, uptime and load average.
 
-`~/.local/bin/caerice-hardware-power` provides the Power page with:
+`~/.local/bin/caerice-hardware-power` is a separate on-demand reader/controller
+for `powerprofilesctl`, cpufreq/amd-pstate policy, AC/battery health and GPU power
+state. Manual profile changes are restricted to `power-saver`, `balanced` and
+`performance`.
 
-- AC source detection from kernel `power_supply`.
-- Battery capacity, draw and health when energy/design values are exposed.
-- CPU scaling driver, governor, EPP, frequency range and ACPI platform profile.
-- AMD runtime/performance level from sysfs.
-- NVIDIA P-state, clocks, draw and power limit from `nvidia-smi`.
-- Power Profiles daemon state through `powerprofilesctl`, when installed.
+## Automatic power rules
 
-Both helpers degrade gracefully when a metric is not available.
+Automation uses three user-owned pieces:
 
-## Safe power controls
+- `~/.local/bin/caerice-power-auto`
+- `~/.local/bin/caerice-power-auto-control`
+- `~/.config/systemd/user/caerice-power-auto.service`
 
-Hardware Center deliberately does **not** write raw governor/EPP/GPU sysfs
-controls and does not apply overclocking or power-limit changes. Profile buttons
-only invoke the session's `powerprofilesctl set power-saver|balanced|performance`
-backend when those profiles are reported as available. If no compatible backend
-is installed, the Power page stays read-only.
+Configuration is stored at `~/.config/caerice/power-auto.json`. Enabling the
+feature starts the user service; disabling it stops and disables the service,
+so there is no background watcher when automation is off.
+
+The watcher polls power-source state every four seconds by default and only
+calls `powerprofilesctl set` when the desired profile differs from the current
+profile. It does not write governors, EPP, platform profiles, GPU clocks,
+voltages or power limits directly.
 
 ## btop relationship
 
@@ -104,7 +109,6 @@ git pull --ff-only
 bash scripts/features/update-hardware-center.sh
 ```
 
-The fast updater synchronizes every QML page plus both helper scripts and
-restarts Caelestia. The full installer creates a snapshot under
-`~/.local/share/caelestia-custom-system/snapshots/hardware-center-*` before
-changing native integration files.
+The fast updater synchronizes every QML page, telemetry helpers and the optional
+systemd user unit, then restarts Caelestia. It never enables automatic power
+switching on its own.
