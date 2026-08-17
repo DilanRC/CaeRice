@@ -38,7 +38,12 @@ def run_json(command: list[str], label: str, allowed_codes=(0,)) -> dict:
 
 
 qml_required = ["Wrapper.qml", "Content.qml", "Editor.qml", "PreviewControls.qml"]
-helpers = ["caerice-display-probe", "caerice-display-plan", "caerice-display-transaction"]
+helpers = [
+    "caerice-display-probe",
+    "caerice-display-plan",
+    "caerice-display-transaction",
+    "caerice-display-persist",
+]
 
 require((MODULES / "DisplayController.qml").is_file(), "falta DisplayController.qml")
 for name in qml_required:
@@ -73,14 +78,21 @@ for needle in ["outsidePanel", "Dry run candidate", "caerice-display-plan", "clo
 content = (DISPLAY / "Content.qml").read_text(encoding="utf-8") if (DISPLAY / "Content.qml").exists() else ""
 require("PreviewControls" in content and "Editor" in content, "Content.qml: wrapper Editor/PreviewControls incompleto")
 preview_qml = (DISPLAY / "PreviewControls.qml").read_text(encoding="utf-8") if (DISPLAY / "PreviewControls.qml").exists() else ""
-for needle in ["Preview 15s", "Keep", "Revert", "caerice-display-transaction"]:
+for needle in ["Preview", "Keep", "Save", "Revert", "caerice-display-transaction", "caerice-display-persist", "confirmedCandidateJson"]:
     require(needle in preview_qml, f"PreviewControls.qml: falta {needle}")
+require("confirmedCandidateJson === root.currentCandidateJson" in preview_qml,
+        "PreviewControls.qml: Save no exige el candidato exacto confirmado")
 
 probe = {}
 if not errors:
     probe = run_json([sys.executable, str(BIN / "caerice-display-probe")], "display-probe")
     monitors = probe.get("hyprland", []) if probe else []
+    drm = probe.get("drm", []) if probe else []
     require(isinstance(monitors, list), "display-probe: hyprland no es array")
+    require(isinstance(drm, list), "display-probe: drm no es array")
+    if isinstance(drm, list):
+        require(not any(str(item.get("output_name", "")).startswith("Writeback-") for item in drm if isinstance(item, dict)),
+                "display-probe: expone pseudo-output DRM Writeback")
     if isinstance(monitors, list) and monitors:
         outputs = []
         for monitor in monitors:
@@ -123,12 +135,16 @@ if not errors:
 if not errors:
     tx = run_json([sys.executable, str(BIN / "caerice-display-transaction"), "status"], "display-transaction status")
     require("active" in tx, "display-transaction: status sin active")
+    persist = run_json([sys.executable, str(BIN / "caerice-display-persist"), "status"], "display-persist status")
+    for key in ["available", "managed", "config"]:
+        require(key in persist, f"display-persist: status sin {key}")
 
 install = (REPO / "scripts/features/install-display-manager.sh").read_text(encoding="utf-8") if (REPO / "scripts/features/install-display-manager.sh").exists() else ""
 update = (REPO / "scripts/features/update-display-manager.sh").read_text(encoding="utf-8") if (REPO / "scripts/features/update-display-manager.sh").exists() else ""
 for needle in ["caerice-display-probe", "caerice-display-plan", "caerice-display-transaction", "DisplayController.qml"]:
     require(needle in install, f"install-display-manager.sh no instala {needle}")
     require(needle in update, f"update-display-manager.sh no sincroniza {needle}")
+require("caerice-display-persist" in update, "update-display-manager.sh no sincroniza caerice-display-persist")
 
 print("===== DISPLAY MANAGER VALIDATION =====")
 if errors:
@@ -139,4 +155,4 @@ if errors:
 print("status: OK")
 print("dry run: validated")
 print("timed preview backend: present; auto-revert watchdog available")
-print("persistence: intentionally not enabled yet")
+print("persistence helper: present; Save requires the exact candidate confirmed by Keep")
