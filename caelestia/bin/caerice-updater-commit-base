@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+import argparse, json, subprocess
+from pathlib import Path
+
+REPO=Path.home()/"CaeRice"
+STATE=Path.home()/".local/state/caerice/updater-state.json"
+BASE=REPO/"caelestia/PATCH_BASE_INFO.txt"
+
+def emit(p,c=0): print(json.dumps(p,separators=(',',':'),ensure_ascii=False)); return c
+def run(args): return subprocess.run(args,cwd=REPO,text=True,capture_output=True,timeout=30,check=False)
+def state():
+ try:
+  x=json.loads(STATE.read_text(encoding='utf-8')); return x if isinstance(x,dict) else {}
+ except Exception:return {}
+def status():
+ st=state(); cp=run(['git','status','--porcelain']); lines=cp.stdout.splitlines() if cp.returncode==0 else []
+ base_lines=[x for x in lines if x[3:]=='caelestia/PATCH_BASE_INFO.txt']
+ other=[x for x in lines if x[3:]!='caelestia/PATCH_BASE_INFO.txt']
+ return {'ok':True,'last_apply':st.get('last_apply'),'applied_ref':st.get('applied_ref',''),'applied_commit':st.get('applied_commit',''),'base_dirty':bool(base_lines),'other_dirty':other,'ready':bool(st.get('last_apply')) and bool(base_lines) and not other}
+def commit(confirm):
+ s=status()
+ if confirm!='COMMIT': return {'ok':False,'error':'explicit --confirm COMMIT is required','status':s},2
+ if not s['last_apply']: return {'ok':False,'error':'no verified updater apply is recorded'},3
+ if s['other_dirty']: return {'ok':False,'error':'repository has unrelated changes; refusing automatic commit','dirty':s['other_dirty']},4
+ if not s['base_dirty']: return {'ok':True,'committed':False,'reason':'PATCH_BASE_INFO.txt has no uncommitted change'},0
+ cp=run(['git','add','--','caelestia/PATCH_BASE_INFO.txt'])
+ if cp.returncode!=0:return {'ok':False,'error':(cp.stderr or cp.stdout).strip()},5
+ ref=s['applied_ref'] or s['applied_commit'][:12]
+ cp=run(['git','commit','-m',f'chore(updater): advance Caelestia patch base to {ref}'])
+ if cp.returncode!=0:return {'ok':False,'error':(cp.stderr or cp.stdout).strip()},6
+ head=run(['git','rev-parse','HEAD']).stdout.strip()
+ return {'ok':True,'committed':True,'head':head,'ref':ref,'push_performed':False},0
+
+def main():
+ p=argparse.ArgumentParser(); sub=p.add_subparsers(dest='cmd',required=True); sub.add_parser('status'); c=sub.add_parser('commit'); c.add_argument('--confirm',default=''); a=p.parse_args()
+ try:return emit(status()) if a.cmd=='status' else emit(*commit(a.confirm))
+ except Exception as e:return emit({'ok':False,'error':str(e)},2)
+if __name__=='__main__': raise SystemExit(main())
