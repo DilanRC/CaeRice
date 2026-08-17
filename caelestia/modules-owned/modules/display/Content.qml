@@ -44,12 +44,13 @@ FocusScope {
         }
     }
 
-    DisplayCapabilities {
+    DisplayOutputControls {
         z: 20
-        width: Math.min(330, Math.max(290, parent.width * 0.235))
+        width: Math.min(340, Math.max(300, parent.width * 0.245))
         height: 144
         x: Math.round(root.panelLeft + (root.panelWidth - width) / 2)
         y: root.panelTop + root.panelHeight - height - 36
+        editorItem: editor
         monitor: editor.selectedLive
     }
 
