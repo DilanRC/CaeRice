@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONITORES
--- HDMI externo a la izquierda, portátil a la derecha
+-- Portátil como salida primaria estable; HDMI externo a la izquierda si existe.
 -- ============================================================
 
 -- "preferred" toma el modo nativo que cada pantalla anuncia en su propia
@@ -11,7 +11,7 @@
 hl.monitor({
     output = "HDMI-A-1",
     mode = "1920x1080@60",
-    position = "0x0",
+    position = "auto-left",
     scale = 1,
     bitdepth = 8,
     cm = "srgb",
@@ -23,8 +23,8 @@ hl.monitor({
 hl.monitor({
     output = "eDP-1",
     mode = "1920x1080@144",
-    -- Queda en 0x0 cuando está solo y a la derecha cuando existe HDMI-A-1.
-    position = "auto-right",
+    -- Mantiene la pantalla interna como origen del layout para evitar arranques negros.
+    position = "0x0",
     scale = 1,
     cm = "srgb",
     sdr_eotf = "gamma22",
@@ -276,4 +276,3 @@ hl.bind(
     "SUPER + TAB",
     hl.dsp.global("caelestia:overview")
 )
-
