@@ -18,11 +18,13 @@ SYSTEM_FILES=(
   "services/Hypr.qml"
   "utils/NetworkConnection.qml"
   "modules/Shortcuts.qml"
-  "modules/CustomDock.qml"
+  "modules/BottomHub.qml"
+  "modules/HubButton.qml"
   "modules/OverviewController.qml"
   "modules/overview/Wrapper.qml"
   "modules/overview/Content.qml"
   "modules/overview/WindowCard.qml"
+  "modules/sidebar/Wrapper.qml"
   "modules/launcher/AppList.qml"
   "modules/launcher/Content.qml"
   "modules/launcher/ContentList.qml"
@@ -75,7 +77,7 @@ cp -a "$BASE/files/." "$SNAP/"
 ) > "$BASE/MANIFEST.sha256"
 
 cat > "$BASE/SOURCE_INFO.txt" <<EOF
-captured_at=$(date --iso-8601=seconds)
+generated_at=$(date --iso-8601=seconds)
 hostname=$(hostname)
 kernel=$(uname -r)
 caelestia_package=$(pacman -Q caelestia-shell 2>/dev/null || true)
