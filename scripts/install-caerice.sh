@@ -9,8 +9,9 @@ if [[ ! -d /etc/xdg/quickshell/caelestia ]]; then
     exit 1
 fi
 
-echo "==> 0/9 Regresión de integración Bottom Hub"
+echo "==> 0/9 Regresiones de integración Bottom Hub"
 python3 "$REPO/scripts/features/test-bottom-hub-target.py"
+python3 "$REPO/scripts/features/test-retained-overlay-wiring.py"
 
 mkdir -p "$BASE"
 rm -rf "$BASE/patches" "$BASE/modules-owned"
