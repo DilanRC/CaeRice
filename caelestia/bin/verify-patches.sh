@@ -5,6 +5,14 @@ BASE="${HOME}/.local/share/caelestia-custom-system"
 LIVE="/etc/xdg/quickshell/caelestia"
 PATCHES="$BASE/patches"
 OWNED="$BASE/modules-owned"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET_CHECKER="$SCRIPT_DIR/check-bottom-hub-target.py"
+
+semantic_target() {
+    local rel="$1"
+    [[ -f "$TARGET_CHECKER" ]] || return 1
+    python3 "$TARGET_CHECKER" "$LIVE" "$rel" >/dev/null 2>&1
+}
 
 echo "===== PATCHES ====="
 while IFS=$'\t' read -r patchname rel; do
@@ -15,6 +23,8 @@ while IFS=$'\t' read -r patchname rel; do
         printf 'APPLIED   %s\n' "$rel"
     elif sudo patch --dry-run -p1 -d "$LIVE" < "$p" >/dev/null 2>&1; then
         printf 'MISSING   %s\n' "$rel"
+    elif semantic_target "$rel"; then
+        printf 'TARGET    %s\n' "$rel"
     else
         printf 'CONFLICT  %s\n' "$rel"
     fi
