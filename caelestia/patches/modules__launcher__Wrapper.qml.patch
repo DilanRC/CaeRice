@@ -5,8 +5,8 @@
      readonly property bool shouldBeActive: screenState.launcher && Config.launcher.enabled
  
 +    /*
-+     * 62px dock + 2px bottom margin + 8px breathing room.
-+     * This is the gap that keeps the native launcher above CustomDock.
++     * 64px Bottom Hub + 2px bottom margin + 6px breathing room.
++     * This keeps the native launcher visually attached above BottomHub.
 +     */
 +    readonly property real dockOffset: 72
 +
@@ -21,7 +21,7 @@
  
      visible: offsetScale < 1
 -    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
-+    // Open: sits above the dock. Closed: slides completely below it.
++    // Open: sits above BottomHub. Closed: slides completely below it.
 +    anchors.bottomMargin:
 +        dockOffset +
 +        (-implicitHeight - 5 - dockOffset) * offsetScale
