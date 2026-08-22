@@ -27,6 +27,8 @@ El Bottom Hub usa un `PanelWindow` propio únicamente para la barra inferior: bo
 
 Los overlays interactivos que necesitan scroll complejo, foco, teclado o una máscara de input coordinada deben permanecer en el árbol nativo de `modules/drawers/ContentWindow.qml`. Por eso la nueva sidebar inferior reutiliza `modules/sidebar/NotifDock.qml` y solo modifica su `Wrapper.qml`, `Panels.qml` y `Regions.qml`; no se dibuja una segunda sidebar dentro del `PanelWindow` del hub.
 
+`ContentWindow.qml` es una superficie de integración compartida, no un archivo exclusivo del patch de Overview. Clipboard, Hardware Center y Display Manager extienden las mismas cadenas de layer, keyboard focus, input mask, focus grab y cierre. El preflight de Bottom Hub debe preservar esos miembros y validar el estado semántico compuesto; no debe exigir que el archivo vuelva a ser byte por byte el resultado del patch base.
+
 El launcher también continúa siendo el launcher nativo de Caelestia y se desplaza 72 px para aparecer visualmente unido al Bottom Hub.
 
 ## Actualizaciones
@@ -37,11 +39,12 @@ Después de actualizar Caelestia:
 bash ~/.local/share/caelestia-custom-system/bin/verify-patches.sh
 ```
 
-- `APPLIED`: modificación presente.
+- `APPLIED`: el patch literal está presente.
+- `TARGET`: el archivo contiene el estado funcional objetivo, pero fue extendido por otras integraciones CaeRice y ya no coincide byte por byte con el patch base.
 - `MISSING`: patch compatible pero no aplicado.
-- `CONFLICT`: upstream cambió; adaptar el patch antes de tocar el runtime.
+- `CONFLICT`: upstream o una integración cambió de forma que no satisface ni el patch ni las invariantes semánticas; adaptar antes de tocar el runtime.
 
-`install-patches.sh` hace preflight y aborta antes de modificar nada si hay un conflicto.
+`install-patches.sh` hace preflight y aborta antes de modificar nada si hay un conflicto. Para Bottom Hub, el instalador ejecuta además `test-bottom-hub-target.py` antes de iniciar la instalación, de modo que el propio checker semántico se valide antes de usarse sobre `/etc/xdg`.
 
 ## Git
 
