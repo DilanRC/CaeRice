@@ -8,12 +8,16 @@ if [[ ! -d /etc/xdg/quickshell/caelestia ]]; then
     echo "ERROR: no existe /etc/xdg/quickshell/caelestia" >&2
     exit 1
 fi
+
+echo "==> 0/9 Regresión de integración Bottom Hub"
+python3 "$REPO/scripts/features/test-bottom-hub-target.py"
+
 mkdir -p "$BASE"
 rm -rf "$BASE/patches" "$BASE/modules-owned"
 cp -a "$REPO/caelestia/patches" "$BASE/patches"
 cp -a "$REPO/caelestia/modules-owned" "$BASE/modules-owned"
 
-echo "==> 1/9 Patches nativos + módulos propios"; bash "$REPO/caelestia/bin/install-patches.sh"
+echo; echo "==> 1/9 Patches nativos + módulos propios"; bash "$REPO/caelestia/bin/install-patches.sh"
 echo; echo "==> 2/9 hypr-user.lua"
 if [[ -f "$REPO/caelestia/user-config/.config/caelestia/hypr-user.lua" ]]; then
     mkdir -p "$HOME/.config/caelestia"
