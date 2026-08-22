@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import subprocess
-import sys
+import importlib.util
 import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-CHECKER = REPO / "caelestia/bin/check-bottom-hub-target.py"
+CHECKER_PATH = REPO / "caelestia/bin/check-bottom-hub-target.py"
 REL = "modules/drawers/ContentWindow.qml"
+
+spec = importlib.util.spec_from_file_location("bottom_hub_target_checker", CHECKER_PATH)
+if spec is None or spec.loader is None:
+    raise SystemExit(f"No pude cargar {CHECKER_PATH}")
+checker = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(checker)
 
 
 def screen_state(flags: tuple[str, ...]) -> str:
@@ -87,26 +92,16 @@ def run_case(
         (root / "components/ScreenState.qml").write_text(
             screen_state(flags), encoding="utf-8"
         )
-        (root / REL).write_text(
-            content_window(
-                flags,
-                omit_from=omit_from,
-                clipboard_scrim=clipboard_scrim,
-            ),
-            encoding="utf-8",
+        text = content_window(
+            flags,
+            omit_from=omit_from,
+            clipboard_scrim=clipboard_scrim,
         )
-        cp = subprocess.run(
-            [sys.executable, str(CHECKER), str(root), REL],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
-        )
-        actual = cp.returncode == 0
+        (root / REL).write_text(text, encoding="utf-8")
+        actual = checker.check_content_window(root, text)
         if actual != expected:
             raise SystemExit(
-                f"FAIL {name}: expected={expected} actual={actual} "
-                f"rc={cp.returncode} stderr={cp.stderr.strip()}"
+                f"FAIL {name}: expected={expected} actual={actual}"
             )
         print(f"PASS {name}")
 
