@@ -14,6 +14,14 @@ def replace_required(text: str, old: str, new: str, label: str) -> tuple[str, bo
     return text.replace(old, new, 1), True
 
 
+def replace_if_present(text: str, old: str, new: str) -> tuple[str, bool]:
+    if new in text:
+        return text, False
+    if old not in text:
+        return text, False
+    return text.replace(old, new, 1), True
+
+
 def write_if_changed(path: Path, text: str, changed: bool) -> bool:
     if changed:
         path.write_text(text, encoding="utf-8")
@@ -28,7 +36,7 @@ def migrate_shell(root: Path) -> bool:
     if "    BottomHub {}\n" in text:
         return False
     if "    CustomDock {}\n" not in text:
-        return False  # upstream limpio u otro estado: lo resolverá el patch final
+        return False
     text, changed = replace_required(
         text,
         "    CustomDock {}\n",
@@ -44,8 +52,8 @@ def migrate_panels(root: Path) -> bool:
         return False
     text = path.read_text(encoding="utf-8")
 
-    # Solo migrar el estado CaeRice main. Upstream limpio comparte varias
-    # líneas con este archivo y no debe quedar parcialmente modificado.
+    # Firma del CaeRice anterior: Overview ya estaba integrado. Un upstream
+    # limpio no debe pasar por esta migración.
     if "import qs.modules.overview as Overview" not in text or "    Overview.Wrapper {\n" not in text:
         return False
 
@@ -91,32 +99,54 @@ def migrate_regions(root: Path) -> bool:
         return False
     text = path.read_text(encoding="utf-8")
 
-    # Firma inequívoca del patch de Dock anterior.
-    if "The launcher is lifted above CustomDock by Wrapper.dockOffset." not in text:
+    # El comentario del patch histórico cambió entre iteraciones, por eso no
+    # se usa como firma. La geometría del launcher desplazado + el ancho de
+    # sesión que suma sidebarRegion sí identifican el estado CaeRice anterior.
+    legacy_signature = (
+        "y: root.win.height - height - panel.dockOffset" in text
+        and "+ sidebarRegion.width" in text
+    )
+    target_signature = (
+        "y: root.win.height - height - panel.dockOffset" in text
+        and "+ sidebarRegion.width" not in text
+        and "height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness" in text
+    )
+    if not legacy_signature and not target_signature:
         return False
 
     changed = False
-    replacements = [
-        (
-            "    /*\n     * The launcher is lifted above CustomDock by Wrapper.dockOffset.\n     * Preserve upstream's window-coordinate region formula and subtract the\n     * same offset. Using panel.y here mixes coordinate spaces and leaves the\n     * visible launcher outside the Wayland input region.\n     */\n",
-            "    /*\n     * The launcher is lifted above BottomHub by Wrapper.dockOffset.\n     * Preserve upstream's window-coordinate region formula and subtract the\n     * same offset so the visible launcher remains inside the Wayland input mask.\n     */\n",
-            "Regions launcher comment",
-        ),
-        (
-            "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width\n",
-            "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness\n",
-            "Regions session width",
-        ),
-        (
-            "        x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
-            "        width: panel.width\n        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
-            "Regions sidebar bottom geometry",
-        ),
-    ]
 
-    for old, new, label in replacements:
-        text, did = replace_required(text, old, new, label)
-        changed = changed or did
+    old_comment = (
+        "    /*\n"
+        "     * The launcher is lifted above CustomDock by Wrapper.dockOffset.\n"
+        "     * Preserve upstream's window-coordinate region formula and subtract the\n"
+        "     * same offset. Using panel.y here mixes coordinate spaces and leaves the\n"
+        "     * visible launcher outside the Wayland input region.\n"
+        "     */\n"
+    )
+    new_comment = (
+        "    /*\n"
+        "     * The launcher is lifted above BottomHub by Wrapper.dockOffset.\n"
+        "     * Preserve upstream's window-coordinate region formula and subtract the\n"
+        "     * same offset so the visible launcher remains inside the Wayland input mask.\n"
+        "     */\n"
+    )
+    text, did = replace_if_present(text, old_comment, new_comment)
+    changed = changed or did
+
+    text, did = replace_if_present(
+        text,
+        "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width\n",
+        "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness\n",
+    )
+    changed = changed or did
+
+    text, did = replace_if_present(
+        text,
+        "        x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
+        "        width: panel.width\n        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
+    )
+    changed = changed or did
 
     return write_if_changed(path, text, changed)
 
