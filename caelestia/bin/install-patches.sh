@@ -7,6 +7,7 @@ PATCHES="$BASE/patches"
 OWNED="$BASE/modules-owned"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MIGRATOR="$SCRIPT_DIR/migrate-bottom-hub-from-main.py"
+TARGET_CHECKER="$SCRIPT_DIR/check-bottom-hub-target.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$BASE/reinstall-backups/patch-install-$STAMP"
 TMP="$(mktemp -d -t caerice-preflight.XXXXXX)"
@@ -16,12 +17,22 @@ mkdir -p "$BACKUP"
 
 declare -A INITIAL_STATE
 
+semantic_target() {
+    local root="$1"
+    local rel="$2"
+    [[ -f "$TARGET_CHECKER" ]] || return 1
+    python3 "$TARGET_CHECKER" "$root" "$rel" >/dev/null 2>&1
+}
+
 patch_state_live() {
     local patch_file="$1"
+    local rel="$2"
     if sudo patch --dry-run -R -p1 -d "$LIVE" < "$patch_file" >/dev/null 2>&1; then
         printf 'ALREADY'
     elif sudo patch --dry-run -p1 -d "$LIVE" < "$patch_file" >/dev/null 2>&1; then
         printf 'READY'
+    elif semantic_target "$LIVE" "$rel"; then
+        printf 'TARGET'
     else
         printf 'CONFLICT'
     fi
@@ -29,10 +40,13 @@ patch_state_live() {
 
 patch_state_temp() {
     local patch_file="$1"
+    local rel="$2"
     if patch --dry-run -R -p1 -d "$TMP" < "$patch_file" >/dev/null 2>&1; then
         printf 'ALREADY'
     elif patch --dry-run -p1 -d "$TMP" < "$patch_file" >/dev/null 2>&1; then
         printf 'READY'
+    elif semantic_target "$TMP" "$rel"; then
+        printf 'TARGET'
     else
         printf 'CONFLICT'
     fi
@@ -42,7 +56,7 @@ echo "==> PREFLIGHT: ESTADO ACTUAL"
 while IFS=$'\t' read -r patchname rel; do
     [[ "$patchname" == "patch" ]] && continue
     p="$PATCHES/$patchname"
-    state="$(patch_state_live "$p")"
+    state="$(patch_state_live "$p" "$rel")"
     INITIAL_STATE["$rel"]="$state"
     printf '%-9s %s\n' "$state" "$rel"
 
@@ -68,9 +82,9 @@ preflight_failed=0
 while IFS=$'\t' read -r patchname rel; do
     [[ "$patchname" == "patch" ]] && continue
     p="$PATCHES/$patchname"
-    state="$(patch_state_temp "$p")"
+    state="$(patch_state_temp "$p" "$rel")"
 
-    if [[ "${INITIAL_STATE[$rel]:-CONFLICT}" == "CONFLICT" && "$state" == "ALREADY" ]]; then
+    if [[ "${INITIAL_STATE[$rel]:-CONFLICT}" == "CONFLICT" && "$state" == "TARGET" ]]; then
         printf '%-9s %s\n' "MIGRATE" "$rel"
     else
         printf '%-9s %s\n' "$state" "$rel"
@@ -120,7 +134,7 @@ echo "Backup: $BACKUP"
 
 if [[ -f "$MIGRATOR" ]]; then
     echo
-echo "==> MIGRACIÓN DE RUNTIME CaeRice main -> BottomHub"
+    echo "==> MIGRACIÓN DE RUNTIME CaeRice main -> BottomHub"
     sudo python3 "$MIGRATOR" "$LIVE"
 fi
 
@@ -134,6 +148,8 @@ while IFS=$'\t' read -r patchname rel; do
         echo "SKIP ya aplicado: $rel"
     elif sudo patch --dry-run -p1 -d "$LIVE" < "$p" >/dev/null 2>&1; then
         sudo patch -p1 -d "$LIVE" < "$p"
+    elif semantic_target "$LIVE" "$rel"; then
+        echo "SKIP estado objetivo validado: $rel"
     else
         echo "ERROR: $rel cambió después del preflight; no continúo." >&2
         echo "Backup disponible en: $BACKUP" >&2
