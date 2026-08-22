@@ -1,6 +1,6 @@
 --- a/modules/sidebar/Wrapper.qml
 +++ b/modules/sidebar/Wrapper.qml
-@@ -14,9 +14,16 @@
+@@ -15,8 +15,14 @@
      property real offsetScale: shouldBeActive ? 0 : 1
  
      visible: offsetScale < 1
@@ -17,7 +17,7 @@
      opacity: 1 - offsetScale
  
      Behavior on offsetScale {
-@@ -27,19 +34,13 @@
+@@ -26,17 +32,12 @@
      Loader {
          id: content
  
@@ -37,5 +37,3 @@
              props: root.props
              screenState: root.screenState
          }
-     }
- }
