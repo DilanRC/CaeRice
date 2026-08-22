@@ -15,59 +15,84 @@ def screen_state(flags: tuple[str, ...]) -> str:
     return "Item {\n" + "".join(f"    property bool {flag}\n" for flag in flags) + "}\n"
 
 
-def content_window(flags: tuple[str, ...], *, omit_from: str | None = None, clipboard_scrim: bool = True) -> str:
+def content_window(
+    flags: tuple[str, ...],
+    *,
+    omit_from: str | None = None,
+    clipboard_scrim: bool = True,
+) -> str:
     screen_flags = [f"screenState.{flag}" for flag in flags]
     s_flags = [f"s.{flag}" for flag in flags]
 
     def members(values: list[str], context: str) -> str:
-        filtered = values
-        if omit_from == context:
-            filtered = values[:-1]
+        filtered = values[:-1] if omit_from == context else values
         return " || ".join(filtered)
 
-    fullscreen_flags = flags if omit_from != "fullscreen" else flags[:-1]
-    cleared_flags = flags if omit_from != "cleared" else flags[:-1]
+    fullscreen_flags = flags[:-1] if omit_from == "fullscreen" else flags
+    cleared_flags = flags[:-1] if omit_from == "cleared" else flags
+    fullscreen_lines = "".join(
+        f"        screenState.{flag} = false;\n" for flag in fullscreen_flags
+    )
+    cleared_lines = "".join(
+        f"            root.screenState.{flag} = false;\n" for flag in cleared_flags
+    )
 
     opacity = "opacity: root.screenState.overview ? 0.58 : 0"
     if "clipboard" in flags and clipboard_scrim:
-        opacity = "opacity: root.screenState.overview ? 0.58 : (root.screenState.clipboard ? 0.48 : 0)"
+        opacity = (
+            "opacity: root.screenState.overview ? 0.58 : "
+            "(root.screenState.clipboard ? 0.48 : 0)"
+        )
 
-    return f'''StyledWindow {{
-    onHasFullscreenChanged: {{
-{''.join(f'        screenState.{flag} = false;\n' for flag in fullscreen_flags)}        panels.popouts.close();
-    }}
+    return (
+        "StyledWindow {\n"
+        "    onHasFullscreenChanged: {\n"
+        f"{fullscreen_lines}"
+        "        panels.popouts.close();\n"
+        "    }\n\n"
+        f"    WlrLayershell.layer: {members(screen_flags, 'layer')} ? WlrLayer.Overlay : WlrLayer.Top\n"
+        f"    WlrLayershell.keyboardFocus: {members(screen_flags, 'keyboard')} || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None\n"
+        f"    mask: {members(screen_flags, 'mask')} ? null : (hasFullscreen ? emptyRegion : regions)\n\n"
+        "    HyprlandFocusGrab {\n"
+        "        active: {\n"
+        f"            if ({members(s_flags, 'active')})\n"
+        "                return true;\n"
+        "            return false;\n"
+        "        }\n"
+        "        windows: [root]\n"
+        "        onCleared: {\n"
+        f"{cleared_lines}"
+        "            panels.popouts.hasCurrent = false;\n"
+        "        }\n"
+        "    }\n\n"
+        "    StyledRect {\n"
+        f"        {opacity}\n"
+        "    }\n"
+        "}\n"
+    )
 
-    WlrLayershell.layer: {members(screen_flags, "layer")} ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: {members(screen_flags, "keyboard")} || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    mask: {members(screen_flags, "mask")} ? null : (hasFullscreen ? emptyRegion : regions)
 
-    HyprlandFocusGrab {{
-        active: {{
-            if ({members(s_flags, "active")})
-                return true;
-            return false;
-        }}
-        windows: [root]
-        onCleared: {{
-{''.join(f'            root.screenState.{flag} = false;\n' for flag in cleared_flags)}            panels.popouts.hasCurrent = false;
-        }}
-    }}
-
-    StyledRect {{
-        {opacity}
-    }}
-}}
-'''
-
-
-def run_case(name: str, flags: tuple[str, ...], *, expected: bool, omit_from: str | None = None, clipboard_scrim: bool = True) -> None:
+def run_case(
+    name: str,
+    flags: tuple[str, ...],
+    *,
+    expected: bool,
+    omit_from: str | None = None,
+    clipboard_scrim: bool = True,
+) -> None:
     with tempfile.TemporaryDirectory(prefix="bottom-hub-target-") as td:
         root = Path(td)
         (root / "components").mkdir(parents=True)
         (root / "modules/drawers").mkdir(parents=True)
-        (root / "components/ScreenState.qml").write_text(screen_state(flags), encoding="utf-8")
+        (root / "components/ScreenState.qml").write_text(
+            screen_state(flags), encoding="utf-8"
+        )
         (root / REL).write_text(
-            content_window(flags, omit_from=omit_from, clipboard_scrim=clipboard_scrim),
+            content_window(
+                flags,
+                omit_from=omit_from,
+                clipboard_scrim=clipboard_scrim,
+            ),
             encoding="utf-8",
         )
         cp = subprocess.run(
@@ -80,7 +105,8 @@ def run_case(name: str, flags: tuple[str, ...], *, expected: bool, omit_from: st
         actual = cp.returncode == 0
         if actual != expected:
             raise SystemExit(
-                f"FAIL {name}: expected={expected} actual={actual} rc={cp.returncode} stderr={cp.stderr.strip()}"
+                f"FAIL {name}: expected={expected} actual={actual} "
+                f"rc={cp.returncode} stderr={cp.stderr.strip()}"
             )
         print(f"PASS {name}")
 
