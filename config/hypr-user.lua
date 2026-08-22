@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONITORES
--- Portátil como salida primaria estable; HDMI externo a la izquierda si existe.
+-- HDMI externo a la izquierda, portátil a la derecha
 -- ============================================================
 
 -- "preferred" toma el modo nativo que cada pantalla anuncia en su propia
@@ -11,7 +11,7 @@
 hl.monitor({
     output = "HDMI-A-1",
     mode = "1920x1080@60",
-    position = "auto-left",
+    position = "0x0",
     scale = 1,
     bitdepth = 8,
     cm = "srgb",
@@ -23,8 +23,8 @@ hl.monitor({
 hl.monitor({
     output = "eDP-1",
     mode = "1920x1080@144",
-    -- Mantiene la pantalla interna como origen del layout para evitar arranques negros.
-    position = "0x0",
+    -- Queda en 0x0 cuando está solo y a la derecha cuando existe HDMI-A-1.
+    position = "auto-right",
     scale = 1,
     cm = "srgb",
     sdr_eotf = "gamma22",
@@ -87,6 +87,24 @@ hl.bind(
 hl.bind(
     "SUPER + I",
     hl.dsp.global("caelestia:nexus")
+)
+
+-- Clipboard QML nativo
+hl.bind(
+    "SUPER + V",
+    hl.dsp.global("caelestia:clipboard")
+)
+
+-- Hardware Center QML nativo
+hl.bind(
+    "SUPER + H",
+    hl.dsp.global("caelestia:hardware")
+)
+
+-- Display Manager QML nativo
+hl.bind(
+    "SUPER + SHIFT + O",
+    hl.dsp.global("caelestia:displaymanager")
 )
 
 
@@ -276,3 +294,4 @@ hl.bind(
     "SUPER + TAB",
     hl.dsp.global("caelestia:overview")
 )
+

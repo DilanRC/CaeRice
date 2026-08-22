@@ -1,14 +1,13 @@
 --- a/modules/drawers/Regions.qml
 +++ b/modules/drawers/Regions.qml
-@@ -27,9 +27,15 @@
+@@ -27,9 +27,14 @@
          height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
      }
  
 +    /*
-+     * The launcher is lifted above CustomDock by Wrapper.dockOffset.
++     * The launcher is lifted above BottomHub by Wrapper.dockOffset.
 +     * Preserve upstream's window-coordinate region formula and subtract the
-+     * same offset. Using panel.y here mixes coordinate spaces and leaves the
-+     * visible launcher outside the Wayland input region.
++     * same offset so the visible launcher remains inside the Wayland input mask.
 +     */
      R {
          panel: root.panels.launcher
@@ -17,7 +16,26 @@
          height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
      }
  
-@@ -79,6 +85,7 @@
+@@ -38,15 +43,15 @@
+ 
+         panel: root.panels.sessionWrapper
+         x: root.win.width - width
+-        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width
++        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness
+     }
+ 
+     R {
+         id: sidebarRegion
+ 
+         panel: root.panels.sidebar
+-        x: root.win.width - width
+-        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
++        width: panel.width
++        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
+     }
+ 
+     R {
+@@ -79,6 +84,7 @@
          y: panel.y + root.borderThickness
          width: panel.width
          height: panel.height
