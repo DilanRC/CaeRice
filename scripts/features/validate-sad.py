@@ -16,6 +16,7 @@ scripts = [
     "scripts/features/validate-display-manager.py",
     "scripts/features/test-diagnose-sad-wiring.py",
     "scripts/features/test-wire-sad-shell.py",
+    "scripts/features/test-bottom-hub-target.py",
 ]
 
 retired_paths = [
