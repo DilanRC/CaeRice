@@ -17,6 +17,7 @@ scripts = [
     "scripts/features/test-diagnose-sad-wiring.py",
     "scripts/features/test-wire-sad-shell.py",
     "scripts/features/test-bottom-hub-target.py",
+    "scripts/features/test-retained-overlay-wiring.py",
 ]
 
 retired_paths = [
