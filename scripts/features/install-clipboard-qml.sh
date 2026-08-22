@@ -42,14 +42,19 @@ cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
 sudo chown -R "$USER:$(id -gn)" "$BACKUP"
 mkdir -p "$STAGE/components" "$STAGE/modules/drawers" "$STAGE/user-config"
 
-export LIVE USERCFG STAGE
+export REPO LIVE USERCFG STAGE
 python3 <<'PY'
 from pathlib import Path
 import os
+import sys
 
+repo = Path(os.environ["REPO"])
 live = Path(os.environ["LIVE"])
 usercfg = Path(os.environ["USERCFG"])
 stage = Path(os.environ["STAGE"])
+sys.path.insert(0, str(repo / "scripts/features"))
+
+from wire_sad_shell import WiringError, ensure_or_member, ensure_statement
 
 targets = {
     "screen": live / "components/ScreenState.qml",
@@ -60,6 +65,7 @@ targets = {
 }
 texts = {k: p.read_text(encoding="utf-8") for k, p in targets.items()}
 
+
 def plan(key, old, new, marker):
     text = texts[key]
     if marker in text:
@@ -67,6 +73,7 @@ def plan(key, old, new, marker):
     if old not in text:
         raise SystemExit(f"PREFLIGHT ERROR [{key}]: no encontré el contexto esperado para {marker}")
     texts[key] = text.replace(old, new, 1)
+
 
 plan(
     "screen",
@@ -101,42 +108,56 @@ plan(
     "id: clipboard",
 )
 
-plan(
-    "content",
-    "        screenState.overview = false;\n        panels.popouts.close();",
-    "        screenState.overview = false;\n        screenState.clipboard = false;\n        panels.popouts.close();",
-    "screenState.clipboard = false;\n        panels.popouts.close();",
-)
-plan(
-    "content",
-    "    WlrLayershell.layer: screenState.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)",
-    "    WlrLayershell.layer: screenState.overview || screenState.clipboard ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)",
-    "screenState.overview || screenState.clipboard ? WlrLayer.Overlay",
-)
-plan(
-    "content",
-    "    WlrLayershell.keyboardFocus: screenState.overview || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None",
-    "    WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None",
-    "screenState.overview || screenState.clipboard || screenState.launcher",
-)
-plan(
-    "content",
-    "    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)",
-    "    mask: screenState.overview || screenState.clipboard ? null : (hasFullscreen ? emptyRegion : regions)",
-    "mask: screenState.overview || screenState.clipboard",
-)
-plan(
-    "content",
-    "            if (s.overview)\n                return true;",
-    "            if (s.overview || s.clipboard)\n                return true;",
-    "if (s.overview || s.clipboard)",
-)
-plan(
-    "content",
-    "            root.screenState.overview = false;\n            panels.popouts.hasCurrent = false;",
-    "            root.screenState.overview = false;\n            root.screenState.clipboard = false;\n            panels.popouts.hasCurrent = false;",
-    "root.screenState.clipboard = false;\n            panels.popouts.hasCurrent",
-)
+# ContentWindow is a shared integration surface. Clipboard may be followed by
+# Hardware/Display members, so never require adjacency to panels.popouts or
+# launcher. Ensure Clipboard is a member of each native interaction span while
+# preserving every retained overlay already present.
+try:
+    ensure_statement(
+        texts,
+        "content",
+        "    onHasFullscreenChanged: {",
+        "\n        panels.popouts.close();",
+        "        screenState.clipboard = false;",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "WlrLayershell.layer: screenState.overview",
+        " ? WlrLayer.Overlay",
+        "screenState.clipboard",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "WlrLayershell.keyboardFocus: screenState.overview",
+        " || screenState.launcher",
+        "screenState.clipboard",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "mask: screenState.overview",
+        " ? null",
+        "screenState.clipboard",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "if (s.overview",
+        ")\n                return true;",
+        "s.clipboard",
+    )
+    ensure_statement(
+        texts,
+        "content",
+        "        onCleared: {",
+        "\n            panels.popouts.hasCurrent = false;",
+        "            root.screenState.clipboard = false;",
+    )
+except WiringError as exc:
+    raise SystemExit(str(exc))
+
 plan(
     "content",
     "        opacity: root.screenState.overview ? 0.58 : ((root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== \"\" ? 0.5 : 0)",
@@ -144,9 +165,15 @@ plan(
     "root.screenState.clipboard ? 0.48",
 )
 
-clipboard_bind = '''hl.bind(\n    "SUPER + V",\n    hl.dsp.global("caelestia:clipboard")\n)'''
+clipboard_bind = '''hl.bind(
+    "SUPER + V",
+    hl.dsp.global("caelestia:clipboard")
+)'''
 if clipboard_bind not in texts["user"]:
-    anchor = '''hl.bind(\n    "SUPER + I",\n    hl.dsp.global("caelestia:nexus")\n)'''
+    anchor = '''hl.bind(
+    "SUPER + I",
+    hl.dsp.global("caelestia:nexus")
+)'''
     if anchor not in texts["user"]:
         raise SystemExit("PREFLIGHT ERROR [user]: no encontré el bind de SUPER+I")
     texts["user"] = texts["user"].replace(
@@ -168,7 +195,7 @@ for key, path in out.items():
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(texts[key], encoding="utf-8")
 
-print("Native integration staged successfully")
+print("Native Clipboard integration staged successfully")
 PY
 
 # Solo después de que TODO el preflight y staging terminó correctamente,
