@@ -4,7 +4,7 @@
 
 CaeRice no debe reemplazar archivos completos de una versión nueva de Caelestia con copias viejas. Las modificaciones se dividen en dos categorías:
 
-1. **Módulos propios**: archivos completos que pertenecen a CaeRice, por ejemplo `CustomDock.qml`, `OverviewController.qml` y `modules/overview/*`.
+1. **Módulos propios**: archivos completos que pertenecen a CaeRice, por ejemplo `BottomHub.qml`, `HubButton.qml`, `OverviewController.qml` y `modules/overview/*`.
 2. **Integraciones sobre upstream**: cambios mínimos sobre archivos nativos de Caelestia, almacenados como patches.
 
 ## Base upstream actual
@@ -21,9 +21,13 @@ El shell real continúa instalado bajo:
 
 CaeRice es la fuente versionada. El runtime se valida/aplica mediante los scripts guardados en `caelestia/bin` después de sincronizar el estado real.
 
-## Overlays interactivos
+## Superficies e input
 
-Dock, Overview y futuros overlays interactivos deben integrarse en el árbol nativo de `modules/drawers/ContentWindow.qml` cuando necesitan foco/teclado/input mask. No se deben crear `PanelWindow` independientes para estos overlays: esa arquitectura produjo fallos de interacción con touchpad.
+El Bottom Hub usa un `PanelWindow` propio únicamente para la barra inferior: botones, iconos de aplicaciones, rueda, clics y acciones simples.
+
+Los overlays interactivos que necesitan scroll complejo, foco, teclado o una máscara de input coordinada deben permanecer en el árbol nativo de `modules/drawers/ContentWindow.qml`. Por eso la nueva sidebar inferior reutiliza `modules/sidebar/NotifDock.qml` y solo modifica su `Wrapper.qml`, `Panels.qml` y `Regions.qml`; no se dibuja una segunda sidebar dentro del `PanelWindow` del hub.
+
+El launcher también continúa siendo el launcher nativo de Caelestia y se desplaza 72 px para aparecer visualmente unido al Bottom Hub.
 
 ## Actualizaciones
 
@@ -42,3 +46,5 @@ bash ~/.local/share/caelestia-custom-system/bin/verify-patches.sh
 ## Git
 
 `main` representa el estado estable probado. Cada módulo nuevo debe desarrollarse en una rama `feature/*` y fusionarse solo cuando funcione en el shell real.
+
+El desarrollo de la interfaz inferior vive en `feature/bottom-hub` hasta completar las pruebas descritas en `docs/BOTTOM-HUB.md`.
