@@ -13,7 +13,7 @@
      ServiceLoader {}
  
      Background {}
-+    CustomDock {}
++    BottomHub {}
      Drawers {}
      AreaPicker {}
      Lock {
