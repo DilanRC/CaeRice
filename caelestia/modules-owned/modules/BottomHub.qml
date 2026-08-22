@@ -1,0 +1,591 @@
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Io
+import Caelestia.Config
+import qs.components
+import qs.services
+import qs.utils
+import qs.modules.sidebar as Sidebar
+import qs.modules.launcher.services
+
+Scope {
+    id: hubRoot
+
+    property bool shown: true
+    property int notificationsMonitorId: -1
+
+    function closeAllLaunchers(): void {
+        for (const screen of Screens.screens) {
+            const state = ShellState.forScreen(screen);
+            if (state)
+                state.launcher = false;
+        }
+    }
+
+    function setShown(value): void {
+        shown = value;
+        if (!shown) {
+            closeAllLaunchers();
+            notificationsMonitorId = -1;
+        }
+    }
+
+    function toggle(): void {
+        setShown(!shown);
+    }
+
+    function toggleLauncherFor(screen): void {
+        const state = ShellState.forScreen(screen);
+        if (!state)
+            return;
+
+        const wasOpen = state.launcher;
+        closeAllLaunchers();
+        notificationsMonitorId = -1;
+        state.launcher = !wasOpen;
+        shown = true;
+    }
+
+    function toggleOverviewFor(screen): void {
+        const state = ShellState.forScreen(screen);
+        if (!state)
+            return;
+
+        closeAllLaunchers();
+        notificationsMonitorId = -1;
+        state.overview = !state.overview;
+        shown = true;
+    }
+
+    function toggleNotifications(monitorId): void {
+        closeAllLaunchers();
+        notificationsMonitorId = notificationsMonitorId === monitorId ? -1 : monitorId;
+        shown = true;
+    }
+
+    IpcHandler {
+        target: "bottomHub"
+
+        function toggle(): void { hubRoot.toggle(); }
+        function show(): void { hubRoot.setShown(true); }
+        function hide(): void { hubRoot.setShown(false); }
+        function launcher(): void {
+            const state = ShellState.forActive();
+            if (!state)
+                return;
+            hubRoot.closeAllLaunchers();
+            hubRoot.notificationsMonitorId = -1;
+            state.launcher = true;
+            hubRoot.shown = true;
+        }
+    }
+
+    // Compatibility with existing keybinds/scripts while CustomDock is retired.
+    IpcHandler {
+        target: "customDock"
+
+        function toggle(): void { hubRoot.toggle(); }
+        function show(): void { hubRoot.setShown(true); }
+        function hide(): void { hubRoot.setShown(false); }
+        function launcher(): void {
+            const state = ShellState.forActive();
+            if (!state)
+                return;
+            hubRoot.closeAllLaunchers();
+            hubRoot.notificationsMonitorId = -1;
+            state.launcher = true;
+            hubRoot.shown = true;
+        }
+    }
+
+    Variants {
+        model: Screens.screens
+
+        PanelWindow {
+            id: win
+
+            required property ShellScreen modelData
+
+            readonly property var monitor: Hypr.monitorFor(modelData)
+            readonly property int monitorId: monitor?.id ?? -1
+            readonly property var screenState: ShellState.forScreen(modelData)
+            readonly property bool notificationsOpen:
+                hubRoot.notificationsMonitorId === monitorId
+            readonly property string activeAddress:
+                Hypr.activeToplevel?.lastIpcObject?.address ?? ""
+
+            property date now: new Date()
+            property var pendingFocusClient: null
+
+            readonly property var dockItems: {
+                const clients = Hypr.toplevels.values.filter(client => {
+                    if (!Hypr.isTaskbarToplevel(client))
+                        return false;
+
+                    const clientMonitor = client.lastIpcObject?.monitor;
+                    return win.monitor && clientMonitor === win.monitor.id;
+                });
+
+                const groups = new Map();
+
+                for (const client of clients) {
+                    const cls = client.lastIpcObject?.class ?? "";
+                    const entry = DesktopEntries.heuristicLookup(cls);
+                    const key = entry?.id ?? cls.toLowerCase();
+
+                    if (!groups.has(key)) {
+                        groups.set(key, {
+                            key: key,
+                            entry: entry,
+                            className: cls,
+                            pinned: false,
+                            windows: []
+                        });
+                    }
+
+                    groups.get(key).windows.push(client);
+                }
+
+                const result = [];
+                const pinnedEntries = DesktopEntries.applications.values.filter(entry =>
+                    Strings.testRegexList(GlobalConfig.launcher.favouriteApps, entry.id)
+                );
+
+                for (const entry of pinnedEntries) {
+                    const existing = groups.get(entry.id);
+                    if (existing) {
+                        existing.pinned = true;
+                        result.push(existing);
+                        groups.delete(entry.id);
+                    } else {
+                        result.push({
+                            key: entry.id,
+                            entry: entry,
+                            className: entry.startupClass ?? entry.id,
+                            pinned: true,
+                            windows: []
+                        });
+                    }
+                }
+
+                for (const group of groups.values())
+                    result.push(group);
+
+                return result;
+            }
+
+            function togglePinned(item): void {
+                const entry = item?.entry;
+                if (!entry)
+                    return;
+
+                const id = entry.id;
+                const apps = GlobalConfig.launcher.favouriteApps;
+
+                if (apps.includes(id)) {
+                    GlobalConfig.launcher.favouriteApps = apps.filter(app => app !== id);
+                } else if (!Strings.testRegexList(apps, id)) {
+                    GlobalConfig.launcher.favouriteApps = [...apps, id];
+                }
+            }
+
+            function focusWindowNow(client): void {
+                if (!client)
+                    return;
+
+                const address = client.lastIpcObject?.address;
+                if (!address)
+                    return;
+
+                const selector = `address:${address}`;
+                Hypr.dispatch(
+                    Hypr.usingLua
+                        ? `hl.dsp.focus({ window = \"${selector}\" })`
+                        : `focuswindow ${selector}`
+                );
+            }
+
+            function focusWindow(client): void {
+                if (!client)
+                    return;
+
+                pendingFocusClient = client;
+                cursorPosProcess.exec(["hyprctl", "cursorpos"]);
+            }
+
+            function closeWindow(client): void {
+                if (!client)
+                    return;
+
+                const address = client.lastIpcObject?.address;
+                if (!address)
+                    return;
+
+                const selector = `address:${address}`;
+                Hypr.dispatch(
+                    Hypr.usingLua
+                        ? `hl.dsp.window.close({ window = \"${selector}\" })`
+                        : `closewindow ${selector}`
+                );
+            }
+
+            function activeWindowFor(item): var {
+                for (const client of item.windows) {
+                    if (client.lastIpcObject?.address === activeAddress)
+                        return client;
+                }
+                return null;
+            }
+
+            function activateItem(item): void {
+                if (!item.windows.length) {
+                    if (item.entry)
+                        Apps.launch(item.entry);
+                    return;
+                }
+
+                const active = activeWindowFor(item);
+                if (!active) {
+                    focusWindow(item.windows[0]);
+                    return;
+                }
+
+                if (item.windows.length === 1) {
+                    focusWindow(active);
+                    return;
+                }
+
+                const index = item.windows.indexOf(active);
+                focusWindow(item.windows[(index + 1) % item.windows.length]);
+            }
+
+            function cycleItem(item, direction): void {
+                if (!item.windows.length)
+                    return;
+
+                const active = activeWindowFor(item);
+                if (!active) {
+                    focusWindow(item.windows[0]);
+                    return;
+                }
+
+                const index = item.windows.indexOf(active);
+                const count = item.windows.length;
+                focusWindow(item.windows[(index + direction + count) % count]);
+            }
+
+            Process {
+                id: cursorPosProcess
+
+                stdout: StdioCollector {
+                    onStreamFinished: {
+                        const client = win.pendingFocusClient;
+                        win.pendingFocusClient = null;
+                        if (!client)
+                            return;
+
+                        const parts = this.text.trim().split(",");
+                        let restoreX = NaN;
+                        let restoreY = NaN;
+
+                        if (parts.length >= 2) {
+                            restoreX = Number(parts[0].trim());
+                            restoreY = Number(parts[1].trim());
+                        }
+
+                        win.focusWindowNow(client);
+
+                        if (Number.isFinite(restoreX) && Number.isFinite(restoreY)) {
+                            restoreCursorTimer.restoreX = Math.round(restoreX);
+                            restoreCursorTimer.restoreY = Math.round(restoreY);
+                            restoreCursorTimer.restart();
+                        }
+                    }
+                }
+            }
+
+            Timer {
+                id: restoreCursorTimer
+                interval: 12
+                repeat: false
+                property int restoreX: 0
+                property int restoreY: 0
+
+                onTriggered: {
+                    if (Hypr.usingLua)
+                        Hypr.dispatch(`hl.dsp.cursor.move({ x = ${restoreX}, y = ${restoreY} })`);
+                    else
+                        Hypr.dispatch(`movecursor ${restoreX} ${restoreY}`);
+                }
+            }
+
+            Timer {
+                interval: 1000
+                repeat: true
+                running: true
+                onTriggered: win.now = new Date()
+            }
+
+            screen: modelData
+            visible: hubRoot.shown
+            color: "transparent"
+
+            anchors.bottom: true
+            margins.bottom: 2
+
+            WlrLayershell.layer: WlrLayer.Top
+            WlrLayershell.exclusionMode: ExclusionMode.Ignore
+
+            implicitWidth: Math.min(
+                Math.max(hubSurface.implicitWidth + 8, notificationPanel.implicitWidth + 8),
+                modelData.width - 8
+            )
+            implicitHeight: contentColumn.implicitHeight + 4
+
+            Column {
+                id: contentColumn
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                spacing: 8
+
+                StyledRect {
+                    id: notificationPanel
+
+                    visible: win.notificationsOpen
+                    implicitWidth: Math.min(520, win.modelData.width - 16)
+                    implicitHeight: Math.min(430, win.modelData.height * 0.55)
+                    radius: Tokens.rounding.extraLarge
+                    color: Colours.tPalette.m3surfaceContainerHigh
+                    border.width: 1
+                    border.color: Colours.palette.m3outlineVariant
+
+                    Sidebar.Props { id: sidebarProps }
+
+                    Sidebar.NotifDock {
+                        props: sidebarProps
+                        screenState: win.screenState
+                    }
+                }
+
+                StyledRect {
+                    id: hubSurface
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    implicitWidth: hubRow.implicitWidth + Tokens.padding.large * 2
+                    implicitHeight: 64
+                    radius: Tokens.rounding.extraLarge
+                    color: Colours.tPalette.m3surfaceContainerHigh
+                    border.width: 1
+                    border.color: Colours.palette.m3outlineVariant
+
+                    Row {
+                        id: hubRow
+                        anchors.centerIn: parent
+                        spacing: Tokens.spacing.small
+
+                        HubButton {
+                            icon: "apps"
+                            active: win.screenState?.launcher ?? false
+                            tooltip: qsTr("Applications")
+                            onClicked: hubRoot.toggleLauncherFor(win.modelData)
+                        }
+
+                        HubButton {
+                            icon: "view_quilt"
+                            active: win.screenState?.overview ?? false
+                            tooltip: qsTr("Overview")
+                            onClicked: hubRoot.toggleOverviewFor(win.modelData)
+                        }
+
+                        Rectangle {
+                            width: 1
+                            height: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Colours.palette.m3outlineVariant
+                            opacity: 0.65
+                        }
+
+                        Repeater {
+                            model: win.dockItems
+
+                            Item {
+                                id: appItem
+                                required property var modelData
+
+                                readonly property bool running: modelData.windows.length > 0
+                                readonly property bool active: modelData.windows.some(
+                                    client => client.lastIpcObject?.address === win.activeAddress
+                                )
+                                readonly property string iconSource: {
+                                    if (modelData.entry?.icon)
+                                        return Quickshell.iconPath(modelData.entry.icon, "image-missing");
+                                    return Icons.getAppIcon(modelData.className, "image-missing");
+                                }
+
+                                implicitWidth: 48
+                                implicitHeight: 50
+                                scale: appMouse.containsMouse ? 1.10 : 1
+
+                                Behavior on scale {
+                                    NumberAnimation { duration: 110; easing.type: Easing.OutCubic }
+                                }
+
+                                StyledRect {
+                                    anchors.fill: parent
+                                    radius: Tokens.rounding.large
+                                    color: appItem.active
+                                        ? Colours.palette.m3secondaryContainer
+                                        : appMouse.containsMouse
+                                            ? Colours.palette.m3surfaceContainerHighest
+                                            : "transparent"
+                                    Behavior on color { ColorAnimation { duration: 110 } }
+                                }
+
+                                Image {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 5
+                                    width: 34
+                                    height: 34
+                                    source: appItem.iconSource
+                                    fillMode: Image.PreserveAspectFit
+                                    smooth: true
+                                    mipmap: true
+                                }
+
+                                Row {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 3
+                                    spacing: 3
+                                    visible: appItem.running
+
+                                    Repeater {
+                                        model: Math.min(appItem.modelData.windows.length, 3)
+                                        Rectangle {
+                                            required property int index
+                                            width: appItem.active ? 6 : 5
+                                            height: width
+                                            radius: width / 2
+                                            color: appItem.active
+                                                ? Colours.palette.m3primary
+                                                : Colours.palette.m3onSurfaceVariant
+                                        }
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: appMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: event => {
+                                        if (event.button === Qt.RightButton) {
+                                            win.togglePinned(appItem.modelData);
+                                            return;
+                                        }
+
+                                        if (event.button === Qt.MiddleButton) {
+                                            const activeWindow = win.activeWindowFor(appItem.modelData);
+                                            win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);
+                                            return;
+                                        }
+
+                                        win.activateItem(appItem.modelData);
+                                    }
+
+                                    onWheel: wheel => {
+                                        if (wheel.angleDelta.y > 0)
+                                            win.cycleItem(appItem.modelData, -1);
+                                        else if (wheel.angleDelta.y < 0)
+                                            win.cycleItem(appItem.modelData, 1);
+                                        wheel.accepted = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 1
+                            height: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Colours.palette.m3outlineVariant
+                            opacity: 0.65
+                        }
+
+                        Item {
+                            implicitWidth: 48
+                            implicitHeight: 50
+
+                            HubButton {
+                                anchors.fill: parent
+                                icon: "notifications"
+                                active: win.notificationsOpen
+                                tooltip: qsTr("Notifications")
+                                onClicked: hubRoot.toggleNotifications(win.monitorId)
+                            }
+
+                            Rectangle {
+                                visible: Notifs.notClosed.length > 0
+                                anchors.top: parent.top
+                                anchors.right: parent.right
+                                anchors.topMargin: 2
+                                anchors.rightMargin: 1
+                                width: 18
+                                height: 18
+                                radius: 9
+                                color: Colours.palette.m3primary
+
+                                StyledText {
+                                    anchors.centerIn: parent
+                                    text: Math.min(Notifs.notClosed.length, 9)
+                                    color: Colours.palette.m3onPrimary
+                                    font: Tokens.font.label.small
+                                }
+                            }
+                        }
+
+                        Item {
+                            implicitWidth: 72
+                            implicitHeight: 50
+
+                            Column {
+                                anchors.centerIn: parent
+                                spacing: -2
+
+                                StyledText {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: Qt.formatDateTime(win.now, "HH:mm")
+                                    color: Colours.palette.m3onSurface
+                                    font: Tokens.font.label.large
+                                }
+
+                                StyledText {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: Qt.formatDateTime(win.now, "ddd d")
+                                    color: Colours.palette.m3onSurfaceVariant
+                                    font: Tokens.font.label.small
+                                }
+                            }
+                        }
+
+                        HubButton {
+                            icon: "power_settings_new"
+                            active: win.screenState?.session ?? false
+                            tooltip: qsTr("Session")
+                            onClicked: {
+                                if (win.screenState)
+                                    win.screenState.session = !win.screenState.session;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
