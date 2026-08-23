@@ -15,6 +15,7 @@ Item {
     property color activeColor: Colours.palette.m3secondaryContainer
     property color hoverColor: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
     property color iconColor: active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3secondary
+    readonly property bool hovered: mouse.containsMouse
 
     signal clicked()
     signal wheel(real delta)

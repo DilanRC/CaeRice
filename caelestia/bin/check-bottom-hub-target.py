@@ -117,13 +117,14 @@ def check_panels(root: Path, text: str) -> bool:
     return has_all(text, (
         "import qs.modules.overview as Overview",
         "readonly property alias overview: overview",
-        "clip: session.visible",
-        "sidebarOrSessionVisible: session.visible",
-        "anchors.rightMargin: 0\n        clip: false",
+        "clip: sidebar.visible || session.visible",
+        "sidebarOrSessionVisible: sidebar.visible || session.visible",
+        "anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)\n        clip: sidebar.visible",
         "Overview.Wrapper {",
-        "anchors.bottom: sidebar.visible ? sidebar.top : utilities.top",
-        "anchors.right: parent.right",
-        "anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom",
+        "sidebar: sidebar",
+        "anchors.bottom: sidebar.visible ? parent.bottom : utilities.top",
+        "anchors.right: sidebar.left",
+        "anchors.top: notifications.bottom\n        anchors.bottom: utilities.top\n        anchors.right: parent.right",
     ))
 
 
@@ -131,10 +132,61 @@ def check_regions(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
         "y: root.win.height - height - panel.dockOffset",
-        "width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness",
+        "width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width",
         "panel: root.panels.sidebar",
-        "width: panel.width\n        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness",
-    )) and "+ sidebarRegion.width" not in text
+        "x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness",
+    ))
+
+
+def check_sidebar(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        'objectName: "caericeNativeSidebar"',
+        "anchors.rightMargin: (-implicitWidth - 5) * offsetScale",
+        "implicitWidth: Tokens.sizes.sidebar.width",
+        "anchors.top: parent.top",
+        "anchors.bottom: parent.bottom",
+        "anchors.left: parent.left",
+    )) and "(-implicitHeight - 5 - 72) * offsetScale" not in text
+
+
+def check_popout_wrapper(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        "property bool bottomAttached",
+        "property real bottomOffset: 54",
+        "property real bottomRightMargin: 4",
+        "bottomAttached = false;",
+        "onHasCurrentChanged:",
+    ))
+
+
+def check_popout_clip(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        "content.bottomAttached",
+        "parent.width - content.nonAnimWidth - content.bottomRightMargin",
+        "parent.height - content.nonAnimHeight - content.bottomOffset",
+    ))
+
+
+def check_interactions(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        "function insidePanel(panel: Item, x: real, y: real): bool",
+        "popouts.bottomAttached",
+        "insidePanel(panels.popoutsWrapper, x, y)",
+    )) and "const showUtilities =" not in text
+
+
+def check_utilities(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        "required property Sidebar.Wrapper sidebar",
+        "property real horizontalStretch",
+        "when: root.screenState.sidebar",
+        "anchors.bottomMargin: 54 + (-implicitHeight - 5 - 54) * offsetScale",
+    ))
 
 
 CHECKS = {
@@ -143,6 +195,11 @@ CHECKS = {
     "modules/drawers/ContentWindow.qml": check_content_window,
     "modules/drawers/Panels.qml": check_panels,
     "modules/drawers/Regions.qml": check_regions,
+    "modules/sidebar/Wrapper.qml": check_sidebar,
+    "modules/bar/popouts/Wrapper.qml": check_popout_wrapper,
+    "modules/bar/popouts/ClipWrapper.qml": check_popout_clip,
+    "modules/drawers/Interactions.qml": check_interactions,
+    "modules/utilities/Wrapper.qml": check_utilities,
 }
 
 

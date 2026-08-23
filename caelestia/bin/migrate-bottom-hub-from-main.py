@@ -60,18 +60,18 @@ def migrate_panels(root: Path) -> bool:
     changed = False
     required_replacements = [
         (
-            "        clip: sidebar.visible || session.visible\n",
             "        clip: session.visible\n",
+            "        clip: sidebar.visible || session.visible\n",
             "Panels OSD clip",
         ),
         (
-            "            sidebarOrSessionVisible: sidebar.visible || session.visible\n",
             "            sidebarOrSessionVisible: session.visible\n",
+            "            sidebarOrSessionVisible: sidebar.visible || session.visible\n",
             "Panels OSD visibility",
         ),
         (
-            "        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)\n        clip: sidebar.visible\n",
             "        anchors.rightMargin: 0\n        clip: false\n",
+            "        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)\n        clip: sidebar.visible\n",
             "Panels session geometry",
         ),
     ]
@@ -82,16 +82,20 @@ def migrate_panels(root: Path) -> bool:
 
     tolerant_replacements = [
         (
-            "        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top\n        anchors.right: sidebar.left\n",
             "        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top\n        anchors.right: parent.right\n",
+            "        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top\n        anchors.right: sidebar.left\n",
         ),
         (
             "        anchors.bottom: utilities.top\n        anchors.right: parent.right\n",
-            "        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top\n        anchors.right: parent.right\n",
+            "        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top\n        anchors.right: sidebar.left\n",
         ),
         (
-            "        anchors.top: notifications.bottom\n        anchors.bottom: utilities.top\n        anchors.right: parent.right\n        anchors.topMargin: -notifications.anchors.topMargin\n",
             "        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n",
+            "        anchors.top: notifications.bottom\n        anchors.bottom: utilities.top\n        anchors.right: parent.right\n        anchors.topMargin: -notifications.anchors.topMargin\n",
+        ),
+        (
+            "        screenState: root.screenState\n        popouts: popoutsWrapper.content\n",
+            "        screenState: root.screenState\n        sidebar: sidebar\n        popouts: popoutsWrapper.content\n",
         ),
     ]
 
@@ -113,12 +117,13 @@ def migrate_regions(root: Path) -> bool:
     # sesión que suma sidebarRegion sí identifican el estado CaeRice anterior.
     legacy_signature = (
         "y: root.win.height - height - panel.dockOffset" in text
-        and "+ sidebarRegion.width" in text
+        and "+ sidebarRegion.width" not in text
+        and "height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness" in text
     )
     target_signature = (
         "y: root.win.height - height - panel.dockOffset" in text
-        and "+ sidebarRegion.width" not in text
-        and "height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness" in text
+        and "+ sidebarRegion.width" in text
+        and "x: root.win.width - width" in text
     )
     if not legacy_signature and not target_signature:
         return False
@@ -145,19 +150,130 @@ def migrate_regions(root: Path) -> bool:
 
     text, did = replace_if_present(
         text,
-        "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width\n",
         "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness\n",
+        "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width\n",
     )
     changed = changed or did
 
     text, did = replace_if_present(
         text,
-        "        x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
         "        width: panel.width\n        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
+        "        x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n",
     )
     changed = changed or did
 
     return write_if_changed(path, text, changed)
+
+
+def migrate_sidebar(root: Path) -> bool:
+    path = root / "modules/sidebar/Wrapper.qml"
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    changed = False
+
+    text, did = replace_if_present(
+        text,
+        "    // Bottom Hub: open above the 64px bar + 2px margin + 6px breathing room.\n"
+        "    // Closed state slides the complete panel below the screen edge.\n"
+        "    anchors.bottomMargin:\n"
+        "        72 +\n"
+        "        (-implicitHeight - 5 - 72) * offsetScale\n\n"
+        "    implicitWidth: Math.min(520, parent.width - 16)\n"
+        "    implicitHeight: Math.min(430, parent.height * 0.55)\n",
+        "    anchors.rightMargin: (-implicitWidth - 5) * offsetScale\n"
+        "    implicitWidth: Tokens.sizes.sidebar.width\n",
+    )
+    changed = changed or did
+
+    text, did = replace_if_present(
+        text,
+        "        anchors.fill: parent\n",
+        "        anchors.top: parent.top\n"
+        "        anchors.bottom: parent.bottom\n"
+        "        anchors.left: parent.left\n"
+        "        anchors.leftMargin: Tokens.padding.large\n"
+        "        anchors.margins: CUtils.clamp(anchors.leftMargin - Config.border.thickness, 0, anchors.leftMargin)\n"
+        "        anchors.bottomMargin: 0\n",
+    )
+    changed = changed or did
+
+    text, did = replace_if_present(
+        text,
+        "            implicitWidth: root.implicitWidth\n",
+        "            implicitWidth: Tokens.sizes.sidebar.width - content.anchors.leftMargin - content.anchors.margins\n",
+    )
+    changed = changed or did
+    return write_if_changed(path, text, changed)
+
+
+def migrate_utilities(root: Path) -> bool:
+    path = root / "modules/utilities/Wrapper.qml"
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    if "// Bottom Hub: independent popover" not in text:
+        return False
+
+    text = text.replace(
+        "import qs.components\nimport qs.modules.bar.popouts as BarPopouts\n",
+        "import qs.components\nimport qs.modules.sidebar as Sidebar\nimport qs.modules.bar.popouts as BarPopouts\n",
+        1,
+    )
+    text = text.replace(
+        "    required property ScreenState screenState\n    required property BarPopouts.Wrapper popouts\n",
+        "    required property ScreenState screenState\n    required property Sidebar.Wrapper sidebar\n    required property BarPopouts.Wrapper popouts\n    property real horizontalStretch\n",
+        1,
+    )
+    text = text.replace(
+        "    readonly property bool shouldBeActive: screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled)\n",
+        "    readonly property bool shouldBeActive: screenState.sidebar || (screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled))\n",
+        1,
+    )
+    text = text.replace(
+        "    property real offsetScale: shouldBeActive ? 0 : 1\n",
+        "    property real offsetScale: shouldBeActive ? 0 : 1\n    property real sidebarLerp\n",
+        1,
+    )
+    start = text.index("    // Bottom Hub: independent popover")
+    end = text.index("    opacity: 1 - offsetScale", start)
+    text = (
+        text[:start]
+        + "    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale\n"
+        + "    implicitHeight: content.implicitHeight + totalPadding\n"
+        + "    implicitWidth: sidebar.width * (1 - sidebar.offsetScale) * horizontalStretch * sidebarLerp + Tokens.sizes.utilities.width * (1 - sidebarLerp)\n"
+        + text[end:]
+    )
+    behavior = "    Behavior on offsetScale {\n"
+    states = (
+        "    states: State {\n"
+        "        name: \"attachedToSidebar\"\n"
+        "        when: root.screenState.sidebar\n\n"
+        "        PropertyChanges {\n"
+        "            root.sidebarLerp: 1\n"
+        "        }\n"
+        "    }\n\n"
+        "    transitions: [\n"
+        "        Transition {\n"
+        "            from: \"\"\n\n"
+        "            Anim {\n"
+        "                property: \"sidebarLerp\"\n"
+        "                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2\n"
+        "                easing: Tokens.anim.standardAccel\n"
+        "            }\n"
+        "        },\n"
+        "        Transition {\n"
+        "            to: \"\"\n\n"
+        "            Anim {\n"
+        "                property: \"sidebarLerp\"\n"
+        "                duration: Tokens.anim.durations.expressiveDefaultSpatial / 2\n"
+        "                easing: Tokens.anim.standardDecel\n"
+        "            }\n"
+        "        }\n"
+        "    ]\n\n"
+    )
+    text = text.replace(behavior, states + behavior, 1)
+    return write_if_changed(path, text, True)
 
 
 def main() -> None:
@@ -169,6 +285,8 @@ def main() -> None:
     changed = []
     for name, fn in (
         ("shell.qml", migrate_shell),
+        ("modules/sidebar/Wrapper.qml", migrate_sidebar),
+        ("modules/utilities/Wrapper.qml", migrate_utilities),
         ("modules/drawers/Panels.qml", migrate_panels),
         ("modules/drawers/Regions.qml", migrate_regions),
     ):

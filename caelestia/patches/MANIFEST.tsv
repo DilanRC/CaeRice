@@ -9,6 +9,10 @@ modules__launcher__Content.qml.patch	modules/launcher/Content.qml
 modules__launcher__ContentList.qml.patch	modules/launcher/ContentList.qml
 modules__launcher__Wrapper.qml.patch	modules/launcher/Wrapper.qml
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
+modules__bar__popouts__Wrapper.qml.patch	modules/bar/popouts/Wrapper.qml
+modules__bar__popouts__ClipWrapper.qml.patch	modules/bar/popouts/ClipWrapper.qml
+modules__drawers__Interactions.qml.patch	modules/drawers/Interactions.qml
+modules__utilities__Wrapper.qml.patch	modules/utilities/Wrapper.qml
 modules__drawers__Regions.qml.patch	modules/drawers/Regions.qml
 modules__drawers__Panels.qml.patch	modules/drawers/Panels.qml
 modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml

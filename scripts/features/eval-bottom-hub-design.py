@@ -14,11 +14,19 @@ criteria = {
     "Bluetooth con estado": '"bluetooth_connected"',
     "bateria Caelestia": "Icons.getBatteryIcon(",
     "iconos de sistema compactos": "iconFontStyle: Tokens.font.icon.medium",
+    "tray del sistema": "values: SystemTray.items.values.filter(",
+    "menus tray por hover": "`traymenu${trayItem.index}`",
+    "centro adaptativo": "implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)",
+    "centro geometrico": "anchors.horizontalCenter: parent.horizontalCenter",
+    "hover nativo unido": "showAttachedControlFor(win.modelData",
+    "quick toggles por fecha": "win.screenState.utilities = !win.screenState.utilities",
 }
 
 passed = [name for name, needle in criteria.items() if needle in hub]
 if "toggleOverviewFor" in hub or 'icon: "view_quilt"' in hub:
     raise SystemExit("FAIL: BottomHub conserva el control Overview retirado")
+if "Layout.fillWidth: true" in hub:
+    raise SystemExit("FAIL: el rail central conserva ancho fijo")
 
 score = len(passed) / len(criteria)
 print(f"BottomHub design eval: {len(passed)}/{len(criteria)} ({score:.0%})")

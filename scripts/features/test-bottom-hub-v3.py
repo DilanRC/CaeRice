@@ -68,8 +68,11 @@ def main() -> None:
     require(bottom, "readonly property int appRailMaxWidth:", "bounded app rail width")
     require(bottom, "implicitWidth: modelData.width - hubMargin * 2", "monitor-width bar")
     require(bottom, 'color: "transparent"\n                border.width: 0', "transparent outer surface")
-    require(bottom, "RowLayout {", "full-width bar layout")
-    require(bottom, "Layout.fillWidth: true", "stretching app rail")
+    require(bottom, "id: leftSegment", "anchored left segment")
+    require(bottom, "anchors.horizontalCenter: parent.horizontalCenter", "centered app segment")
+    require(bottom, "implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)", "content-sized app rail")
+    if "Layout.fillWidth: true" in bottom:
+        raise SystemExit("FAIL: app rail must size to content instead of filling the bar")
     require(bottom, "Flickable {", "scrollable app rail")
     require(bottom, "interactive: contentWidth > width", "rail overflow interaction")
     require(bottom, "visible: appItem.modelData.pinned && !appItem.running", "pinned dormant badge")
@@ -81,12 +84,20 @@ def main() -> None:
     require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "Caelestia network icon")
     require(bottom, '"bluetooth_connected"', "Caelestia bluetooth state icon")
     require(bottom, "Icons.getBatteryIcon(", "Caelestia battery icon")
+    require(bottom, "values: SystemTray.items.values.filter(", "system tray items")
+    require(bottom, "layer.enabled: Config.bar.tray.recolour", "native tray recolouring")
+    require(bottom, "`traymenu${trayItem.index}`", "native tray hover menu")
     require(bottom, "Colours.tPalette.m3surfaceContainer", "scheme-aware translucent surfaces")
     require(bottom, "activeColor: Colours.palette.m3errorContainer", "session danger active state")
     require(bottom, "onClicked: hubRoot.toggleLauncherFor(win.modelData)", "launcher action")
     if "toggleOverviewFor" in bottom or 'icon: "view_quilt"' in bottom:
         raise SystemExit("FAIL: overview control must not be present in BottomHub")
     require(bottom, "onClicked: hubRoot.toggleSidebarFor(win.modelData)", "sidebar action")
+    require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "audio")', "attached audio hover")
+    require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "network")', "attached network hover")
+    require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "bluetooth")', "attached bluetooth hover")
+    require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "battery")', "attached battery hover")
+    require(bottom, "win.screenState.utilities = !win.screenState.utilities", "clock-click utilities")
     require(bottom, "win.togglePinned(appItem.modelData);", "right-click pin action")
     require(bottom, "win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);", "middle-click close action")
     require(bottom, "win.cycleItem(appItem.modelData, -1);", "wheel previous action")
@@ -95,9 +106,9 @@ def main() -> None:
     require_order(
         bottom,
         [
-            ("id: modeRow", "left mode segment"),
-            ("id: appRail", "center app rail"),
-            ("id: statusRow", "right status segment"),
+            ("id: leftSegment", "left mode segment"),
+            ("id: appSegment", "center app segment"),
+            ("id: statusSegment", "right status segment"),
         ],
     )
 
@@ -107,6 +118,7 @@ def main() -> None:
     require(button, "signal wheel(real delta)", "wheel interaction support")
     require(button, "property color activeColor:", "button active color parameter")
     require(button, "property color iconColor:", "button icon color parameter")
+    require(button, "readonly property bool hovered: mouse.containsMouse", "hover state exposure")
     require(button, "implicitWidth: buttonSize", "button width binding")
     require(button, "implicitHeight: buttonSize", "button height binding")
 

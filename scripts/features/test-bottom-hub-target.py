@@ -121,6 +121,7 @@ def run_panels_tolerant_migration() -> None:
         panels.write_text(
             "import qs.modules.overview as Overview\n"
             "Item {\n"
+            "    id: root\n"
             "    readonly property alias overview: overview\n"
             "    Item {\n"
             "        id: osdWrapper\n"
@@ -141,6 +142,10 @@ def run_panels_tolerant_migration() -> None:
             "        anchors.bottom: utilities.top\n"
             "        anchors.right: parent.right\n"
             "    }\n"
+            "    Utilities.Wrapper {\n"
+            "        screenState: root.screenState\n"
+            "        popouts: popoutsWrapper.content\n"
+            "    }\n"
             "    Sidebar.Wrapper {\n"
             "        anchors.horizontalCenter: parent.horizontalCenter\n"
             "        anchors.bottom: parent.bottom\n"
@@ -153,6 +158,65 @@ def run_panels_tolerant_migration() -> None:
         if not checker.check_panels(root, text):
             raise SystemExit("FAIL panels-tolerant-migration")
         print("PASS panels-tolerant-migration")
+
+
+def run_sidebar_migration() -> None:
+    with tempfile.TemporaryDirectory(prefix="bottom-hub-sidebar-") as td:
+        root = Path(td)
+        sidebar = root / "modules/sidebar/Wrapper.qml"
+        sidebar.parent.mkdir(parents=True)
+        sidebar.write_text(
+            "Item {\n"
+            "    id: root\n"
+            "    // Bottom Hub: open above the 64px bar + 2px margin + 6px breathing room.\n"
+            "    // Closed state slides the complete panel below the screen edge.\n"
+            "    anchors.bottomMargin:\n"
+            "        72 +\n"
+            "        (-implicitHeight - 5 - 72) * offsetScale\n\n"
+            "    implicitWidth: Math.min(520, parent.width - 16)\n"
+            "    implicitHeight: Math.min(430, parent.height * 0.55)\n"
+            "    Item {\n"
+            "        anchors.fill: parent\n"
+            "        Loader {\n"
+            "            implicitWidth: root.implicitWidth\n"
+            "        }\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        assert migrator.migrate_sidebar(root) is True
+        text = sidebar.read_text(encoding="utf-8")
+        text = text.replace('    id: root\n', '    id: root\n    objectName: "caericeNativeSidebar"\n')
+        sidebar.write_text(text, encoding="utf-8")
+        if not checker.check_sidebar(root, text):
+            raise SystemExit("FAIL sidebar-native-migration")
+        print("PASS sidebar-native-migration")
+
+
+def run_regions_migration() -> None:
+    with tempfile.TemporaryDirectory(prefix="bottom-hub-regions-") as td:
+        root = Path(td)
+        regions = root / "modules/drawers/Regions.qml"
+        regions.parent.mkdir(parents=True)
+        regions.write_text(
+            "Item {\n"
+            "    R {\n"
+            "        y: root.win.height - height - panel.dockOffset\n"
+            "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness\n"
+            "    }\n"
+            "    R {\n"
+            "        panel: root.panels.sidebar\n"
+            "        width: panel.width\n"
+            "        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        assert migrator.migrate_regions(root) is True
+        text = regions.read_text(encoding="utf-8")
+        if not checker.check_regions(root, text):
+            raise SystemExit("FAIL regions-native-migration")
+        print("PASS regions-native-migration")
 
 
 def main() -> None:
@@ -181,6 +245,8 @@ def main() -> None:
         clipboard_scrim=False,
     )
     run_panels_tolerant_migration()
+    run_sidebar_migration()
+    run_regions_migration()
     print("BottomHub semantic target tests: OK")
 
 

@@ -7,8 +7,10 @@ import Quickshell.Wayland
 import Quickshell.Io
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
+import Quickshell.Services.SystemTray
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.services
 import qs.utils
 import qs.modules.launcher.services
@@ -85,18 +87,13 @@ Scope {
         shown = true;
     }
 
-    function toggleBatteryFor(screen, center): void {
+    function showAttachedControlFor(screen, mode): void {
         const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
         if (!popouts)
             return;
 
-        if (popouts.hasCurrent && popouts.currentName === "battery") {
-            popouts.close();
-            return;
-        }
-
-        popouts.currentName = "battery";
-        popouts.currentCenter = center;
+        popouts.bottomAttached = true;
+        popouts.currentName = mode;
         popouts.hasCurrent = true;
         shown = true;
     }
@@ -154,7 +151,10 @@ Scope {
                 || (screenState?.sidebar ?? false)
                 || (screenState?.session ?? false)
             readonly property int hubMargin: 8
-            readonly property int appRailMaxWidth: Math.max(320, modelData.width - 700)
+            readonly property int appRailMaxWidth: Math.max(
+                180,
+                modelData.width - Math.max(leftSegment.width, statusSegment.width) * 2 - 48
+            )
             readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
             readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
             readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
@@ -399,18 +399,16 @@ Scope {
                 color: "transparent"
                 border.width: 0
 
-                RowLayout {
+                Item {
                     id: hubRow
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: 2
-                    anchors.rightMargin: 2
-                    spacing: 8
+                    anchors.fill: parent
 
                     StyledRect {
-                        Layout.preferredWidth: modeRow.implicitWidth + 12
-                        Layout.preferredHeight: 52
+                        id: leftSegment
+
+                        anchors.left: parent.left
+                        anchors.leftMargin: 2
+                        anchors.verticalCenter: parent.verticalCenter
                         implicitWidth: modeRow.implicitWidth + 12
                         implicitHeight: 52
                         radius: Tokens.rounding.full
@@ -495,10 +493,10 @@ Scope {
                     }
 
                     StyledRect {
-                        Layout.fillWidth: true
-                        Layout.minimumWidth: 180
-                        Layout.maximumWidth: win.appRailMaxWidth
-                        Layout.preferredHeight: 52
+                        id: appSegment
+
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
                         implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)
                         implicitHeight: 52
                         radius: Tokens.rounding.full
@@ -652,8 +650,11 @@ Scope {
                     }
 
                     StyledRect {
-                        Layout.preferredWidth: statusRow.implicitWidth + 8
-                        Layout.preferredHeight: 52
+                        id: statusSegment
+
+                        anchors.right: parent.right
+                        anchors.rightMargin: 2
+                        anchors.verticalCenter: parent.verticalCenter
                         implicitWidth: statusRow.implicitWidth + 8
                         implicitHeight: 52
                         radius: Tokens.rounding.full
@@ -664,11 +665,58 @@ Scope {
                             anchors.centerIn: parent
                             spacing: 2
 
+                            Repeater {
+                                model: ScriptModel {
+                                    values: SystemTray.items.values.filter(
+                                        item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id)
+                                    )
+                                }
+
+                                Item {
+                                    id: trayItem
+                                    required property int index
+                                    required property SystemTrayItem modelData
+
+                                    implicitWidth: 32
+                                    implicitHeight: 40
+
+                                    ColouredIcon {
+                                        anchors.centerIn: parent
+                                        implicitWidth: 22
+                                        implicitHeight: 22
+                                        source: Icons.getTrayIcon(trayItem.modelData.id, trayItem.modelData.icon)
+                                        colour: Colours.palette.m3secondary
+                                        layer.enabled: Config.bar.tray.recolour
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                        cursorShape: Qt.PointingHandCursor
+                                        onEntered: hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            `traymenu${trayItem.index}`
+                                        )
+                                        onClicked: event => {
+                                            if (event.button === Qt.LeftButton)
+                                                trayItem.modelData.activate();
+                                            else
+                                                trayItem.modelData.secondaryActivate();
+                                        }
+                                    }
+                                }
+                            }
+
                             HubButton {
                                 buttonSize: 40
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
                                 tooltip: Audio.muted ? qsTr("Unmute") : qsTr("Mute")
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        hubRoot.showAttachedControlFor(win.modelData, "audio");
+                                }
                                 onClicked: {
                                     if (Audio.sink?.audio)
                                         Audio.sink.audio.muted = !Audio.sink.audio.muted;
@@ -686,6 +734,10 @@ Scope {
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: "speaker_group"
                                 tooltip: qsTr("Audio output")
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        hubRoot.showAttachedControlFor(win.modelData, "audio");
+                                }
                                 onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "audio")
                             }
 
@@ -699,6 +751,10 @@ Scope {
                                         : "wifi_off"
                                 active: Nmcli.activeEthernet || !!Nmcli.active
                                 tooltip: qsTr("Network")
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        hubRoot.showAttachedControlFor(win.modelData, "network");
+                                }
                                 onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "network")
                             }
 
@@ -712,6 +768,10 @@ Scope {
                                         : "bluetooth"
                                 active: Bluetooth.devices.values.some(device => device.connected)
                                 tooltip: qsTr("Bluetooth")
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        hubRoot.showAttachedControlFor(win.modelData, "bluetooth");
+                                }
                                 onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "bluetooth")
                             }
 
@@ -730,7 +790,11 @@ Scope {
                                 tooltip: UPower.displayDevice.isLaptopBattery
                                     ? qsTr("Battery %1%").arg(Math.round(UPower.displayDevice.percentage * 100))
                                     : qsTr("Power profile")
-                                onClicked: hubRoot.toggleBatteryFor(win.modelData, win.modelData.height - 92)
+                                onHoveredChanged: {
+                                    if (hovered)
+                                        hubRoot.showAttachedControlFor(win.modelData, "battery");
+                                }
+                                onClicked: hubRoot.showAttachedControlFor(win.modelData, "battery")
                             }
 
                             Item {
@@ -787,6 +851,16 @@ Scope {
                                         text: Qt.formatDateTime(win.now, "ddd d")
                                         color: Colours.palette.m3onSurfaceVariant
                                         font: Tokens.font.label.small
+                                    }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (win.screenState)
+                                            win.screenState.utilities = !win.screenState.utilities;
                                     }
                                 }
                             }

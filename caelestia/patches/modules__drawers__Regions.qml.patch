@@ -3,7 +3,6 @@
 @@ -27,9 +27,14 @@
          height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
      }
- 
 +    /*
 +     * The launcher is lifted above BottomHub by Wrapper.dockOffset.
 +     * Preserve upstream's window-coordinate region formula and subtract the
@@ -15,31 +14,3 @@
 +        y: root.win.height - height - panel.dockOffset
          height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
      }
- 
-@@ -38,15 +43,15 @@
- 
-         panel: root.panels.sessionWrapper
-         x: root.win.width - width
--        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width
-+        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness
-     }
- 
-     R {
-         id: sidebarRegion
- 
-         panel: root.panels.sidebar
--        x: root.win.width - width
--        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
-+        width: panel.width
-+        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness
-     }
- 
-     R {
-@@ -79,6 +84,7 @@
-         y: panel.y + root.borderThickness
-         width: panel.width
-         height: panel.height
-+
-         intersection: Intersection.Subtract
-     }
- }

@@ -25,7 +25,7 @@ CaeRice es la fuente versionada. El runtime se valida/aplica mediante los script
 
 El Bottom Hub usa un `PanelWindow` propio únicamente para la barra inferior: botones, iconos de aplicaciones, rueda, clics y acciones simples.
 
-Los overlays interactivos que necesitan scroll complejo, foco, teclado o una máscara de input coordinada deben permanecer en el árbol nativo de `modules/drawers/ContentWindow.qml`. Por eso la nueva sidebar inferior reutiliza `modules/sidebar/NotifDock.qml` y solo modifica su `Wrapper.qml`, `Panels.qml` y `Regions.qml`; no se dibuja una segunda sidebar dentro del `PanelWindow` del hub.
+Los overlays interactivos que necesitan scroll complejo, foco, teclado o una máscara de input coordinada deben permanecer en el árbol nativo de `modules/drawers/ContentWindow.qml`. Bottom Hub conserva la sidebar derecha y los popouts de Caelestia en ese árbol; la barra solo activa esos componentes y define su anclaje inferior cuando corresponde.
 
 `ContentWindow.qml` es una superficie de integración compartida, no un archivo exclusivo del patch de Overview. Clipboard, Hardware Center y Display Manager extienden las mismas cadenas de layer, keyboard focus, input mask, focus grab y cierre. El preflight de Bottom Hub debe preservar esos miembros y validar el estado semántico compuesto; no debe exigir que el archivo vuelva a ser byte por byte el resultado del patch base.
 
