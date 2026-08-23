@@ -8,11 +8,15 @@ Item {
     property string icon: "circle"
     property bool active: false
     property string tooltip: ""
+    property int buttonSize: 48
+    property color activeColor: Colours.palette.m3secondaryContainer
+    property color hoverColor: Colours.palette.m3surfaceContainerHighest
+    property color iconColor: active ? Colours.palette.m3primary : Colours.palette.m3onSurface
 
     signal clicked()
 
-    implicitWidth: 48
-    implicitHeight: 50
+    implicitWidth: buttonSize
+    implicitHeight: buttonSize
     scale: mouse.containsMouse ? 1.10 : 1
 
     Behavior on scale {
@@ -26,9 +30,9 @@ Item {
         anchors.fill: parent
         radius: Tokens.rounding.large
         color: root.active
-            ? Colours.palette.m3secondaryContainer
+            ? root.activeColor
             : mouse.containsMouse
-                ? Colours.palette.m3surfaceContainerHighest
+                ? root.hoverColor
                 : "transparent"
 
         Behavior on color {
@@ -39,9 +43,7 @@ Item {
     MaterialIcon {
         anchors.centerIn: parent
         text: root.icon
-        color: root.active
-            ? Colours.palette.m3primary
-            : Colours.palette.m3onSurface
+        color: root.iconColor
         fontStyle: Tokens.font.icon.extraLarge
     }
 

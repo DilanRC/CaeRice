@@ -126,6 +126,12 @@ Scope {
             readonly property var screenState: ShellState.forScreen(modelData)
             readonly property string activeAddress:
                 Hypr.activeToplevel?.lastIpcObject?.address ?? ""
+            readonly property bool panelActive:
+                (screenState?.launcher ?? false)
+                || (screenState?.overview ?? false)
+                || (screenState?.sidebar ?? false)
+                || (screenState?.session ?? false)
+            readonly property int appRailMaxWidth: Math.max(232, Math.min(620, modelData.width - 330))
 
             property date now: new Date()
             property var pendingFocusClient: null
@@ -354,228 +360,322 @@ Scope {
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
             implicitWidth: Math.min(hubSurface.implicitWidth + 8, modelData.width - 8)
-            implicitHeight: hubSurface.implicitHeight + 4
+            implicitHeight: hubSurface.implicitHeight + 6
 
             StyledRect {
                 id: hubSurface
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                implicitWidth: hubRow.implicitWidth + Tokens.padding.large * 2
-                implicitHeight: 64
+                implicitWidth: Math.min(hubRow.implicitWidth + 18, win.modelData.width - 8)
+                implicitHeight: 68
                 radius: Tokens.rounding.extraLarge
-                color: Colours.tPalette.m3surfaceContainerHigh
+                color: win.panelActive
+                    ? Colours.palette.m3surfaceContainerHighest
+                    : Colours.tPalette.m3surfaceContainerHigh
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: win.panelActive
+                    ? Colours.palette.m3primary
+                    : Colours.palette.m3outlineVariant
+
+                Behavior on color {
+                    ColorAnimation { duration: 140 }
+                }
+
+                Behavior on border.color {
+                    ColorAnimation { duration: 140 }
+                }
+
+                StyledRect {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: 18
+                    anchors.rightMargin: 18
+                    height: 2
+                    radius: 1
+                    color: Colours.palette.m3primary
+                    opacity: win.panelActive ? 0.72 : 0.22
+
+                    Behavior on opacity {
+                        NumberAnimation { duration: 140 }
+                    }
+                }
 
                 Row {
                     id: hubRow
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.small
+                    spacing: 8
 
-                    HubButton {
-                        icon: "apps"
-                        active: win.screenState?.launcher ?? false
-                        tooltip: qsTr("Applications")
-                        onClicked: hubRoot.toggleLauncherFor(win.modelData)
+                    StyledRect {
+                        implicitWidth: modeRow.implicitWidth + 8
+                        implicitHeight: 52
+                        radius: Tokens.rounding.extraLarge
+                        color: Colours.palette.m3surfaceContainer
+                        border.width: 1
+                        border.color: Colours.palette.m3outlineVariant
+
+                        Row {
+                            id: modeRow
+                            anchors.centerIn: parent
+                            spacing: 2
+
+                            HubButton {
+                                buttonSize: 44
+                                icon: "apps"
+                                active: win.screenState?.launcher ?? false
+                                tooltip: qsTr("Applications")
+                                onClicked: hubRoot.toggleLauncherFor(win.modelData)
+                            }
+
+                            HubButton {
+                                buttonSize: 44
+                                icon: "view_quilt"
+                                active: win.screenState?.overview ?? false
+                                tooltip: qsTr("Overview")
+                                onClicked: hubRoot.toggleOverviewFor(win.modelData)
+                            }
+                        }
                     }
 
-                    HubButton {
-                        icon: "view_quilt"
-                        active: win.screenState?.overview ?? false
-                        tooltip: qsTr("Overview")
-                        onClicked: hubRoot.toggleOverviewFor(win.modelData)
-                    }
+                    StyledRect {
+                        implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)
+                        implicitHeight: 52
+                        radius: Tokens.rounding.extraLarge
+                        color: Colours.palette.m3surfaceContainerLowest
+                        border.width: 1
+                        border.color: Colours.palette.m3outlineVariant
+                        clip: true
 
-                    Rectangle {
-                        width: 1
-                        height: 30
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: Colours.palette.m3outlineVariant
-                        opacity: 0.65
-                    }
-
-                    Repeater {
-                        model: win.dockItems
-
-                        Item {
-                            id: appItem
-                            required property var modelData
-
-                            readonly property bool running: modelData.windows.length > 0
-                            readonly property bool active: modelData.windows.some(
-                                client => client.lastIpcObject?.address === win.activeAddress
-                            )
-                            readonly property string iconSource: {
-                                if (modelData.entry?.icon)
-                                    return Quickshell.iconPath(modelData.entry.icon, "image-missing");
-                                return Icons.getAppIcon(modelData.className, "image-missing");
-                            }
-
-                            implicitWidth: 48
-                            implicitHeight: 50
-                            scale: appMouse.containsMouse ? 1.10 : 1
-
-                            Behavior on scale {
-                                NumberAnimation {
-                                    duration: 110
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-
-                            StyledRect {
-                                anchors.fill: parent
-                                radius: Tokens.rounding.large
-                                color: appItem.active
-                                    ? Colours.palette.m3secondaryContainer
-                                    : appMouse.containsMouse
-                                        ? Colours.palette.m3surfaceContainerHighest
-                                        : "transparent"
-
-                                Behavior on color {
-                                    ColorAnimation { duration: 110 }
-                                }
-                            }
-
-                            Image {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.top: parent.top
-                                anchors.topMargin: 5
-                                width: 34
-                                height: 34
-                                source: appItem.iconSource
-                                fillMode: Image.PreserveAspectFit
-                                smooth: true
-                                mipmap: true
-                            }
+                        Flickable {
+                            id: appRail
+                            anchors.fill: parent
+                            anchors.leftMargin: 7
+                            anchors.rightMargin: 7
+                            contentWidth: appRailContent.implicitWidth
+                            contentHeight: height
+                            boundsBehavior: Flickable.StopAtBounds
+                            interactive: contentWidth > width
+                            clip: true
 
                             Row {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.bottom: parent.bottom
-                                anchors.bottomMargin: 3
-                                spacing: 3
-                                visible: appItem.running
+                                id: appRailContent
+                                height: parent.height
+                                spacing: 4
 
                                 Repeater {
-                                    model: Math.min(appItem.modelData.windows.length, 3)
+                                    model: win.dockItems
 
-                                    Rectangle {
-                                        required property int index
-                                        width: appItem.active ? 6 : 5
-                                        height: width
-                                        radius: width / 2
-                                        color: appItem.active
-                                            ? Colours.palette.m3primary
-                                            : Colours.palette.m3onSurfaceVariant
+                                    Item {
+                                        id: appItem
+                                        required property var modelData
+
+                                        readonly property bool running: modelData.windows.length > 0
+                                        readonly property bool active: modelData.windows.some(
+                                            client => client.lastIpcObject?.address === win.activeAddress
+                                        )
+                                        readonly property string iconSource: {
+                                            if (modelData.entry?.icon)
+                                                return Quickshell.iconPath(modelData.entry.icon, "image-missing");
+                                            return Icons.getAppIcon(modelData.className, "image-missing");
+                                        }
+
+                                        implicitWidth: 46
+                                        implicitHeight: 52
+                                        scale: appMouse.containsMouse ? 1.10 : 1
+
+                                        Behavior on scale {
+                                            NumberAnimation {
+                                                duration: 110
+                                                easing.type: Easing.OutCubic
+                                            }
+                                        }
+
+                                        StyledRect {
+                                            anchors.fill: parent
+                                            anchors.topMargin: 2
+                                            anchors.bottomMargin: 2
+                                            radius: Tokens.rounding.large
+                                            color: appItem.active
+                                                ? Colours.palette.m3secondaryContainer
+                                                : appMouse.containsMouse
+                                                    ? Colours.palette.m3surfaceContainerHighest
+                                                    : "transparent"
+                                            border.width: appItem.active ? 1 : 0
+                                            border.color: Colours.palette.m3primary
+
+                                            Behavior on color {
+                                                ColorAnimation { duration: 110 }
+                                            }
+                                        }
+
+                                        Image {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 6
+                                            width: 32
+                                            height: 32
+                                            source: appItem.iconSource
+                                            fillMode: Image.PreserveAspectFit
+                                            smooth: true
+                                            mipmap: true
+                                            opacity: appItem.running ? 1 : 0.62
+                                        }
+
+                                        StyledRect {
+                                            visible: appItem.modelData.pinned && !appItem.running
+                                            anchors.top: parent.top
+                                            anchors.right: parent.right
+                                            anchors.topMargin: 6
+                                            anchors.rightMargin: 5
+                                            width: 7
+                                            height: 7
+                                            radius: 4
+                                            color: Colours.palette.m3tertiary
+                                        }
+
+                                        Row {
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.bottom: parent.bottom
+                                            anchors.bottomMargin: 4
+                                            spacing: 3
+                                            visible: appItem.running
+
+                                            Repeater {
+                                                model: Math.min(appItem.modelData.windows.length, 4)
+
+                                                Rectangle {
+                                                    required property int index
+                                                    width: appItem.active ? 12 : 5
+                                                    height: 5
+                                                    radius: 3
+                                                    color: appItem.active
+                                                        ? Colours.palette.m3primary
+                                                        : Colours.palette.m3onSurfaceVariant
+                                                    opacity: index < 3 ? 1 : 0.55
+                                                }
+                                            }
+                                        }
+
+                                        MouseArea {
+                                            id: appMouse
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                                            cursorShape: Qt.PointingHandCursor
+
+                                            onClicked: event => {
+                                                if (event.button === Qt.RightButton) {
+                                                    win.togglePinned(appItem.modelData);
+                                                    return;
+                                                }
+
+                                                if (event.button === Qt.MiddleButton) {
+                                                    const activeWindow = win.activeWindowFor(appItem.modelData);
+                                                    win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);
+                                                    return;
+                                                }
+
+                                                win.activateItem(appItem.modelData);
+                                            }
+
+                                            onWheel: wheel => {
+                                                if (wheel.angleDelta.y > 0)
+                                                    win.cycleItem(appItem.modelData, -1);
+                                                else if (wheel.angleDelta.y < 0)
+                                                    win.cycleItem(appItem.modelData, 1);
+
+                                                wheel.accepted = true;
+                                            }
+                                        }
                                     }
-                                }
-                            }
-
-                            MouseArea {
-                                id: appMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                                cursorShape: Qt.PointingHandCursor
-
-                                onClicked: event => {
-                                    if (event.button === Qt.RightButton) {
-                                        win.togglePinned(appItem.modelData);
-                                        return;
-                                    }
-
-                                    if (event.button === Qt.MiddleButton) {
-                                        const activeWindow = win.activeWindowFor(appItem.modelData);
-                                        win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);
-                                        return;
-                                    }
-
-                                    win.activateItem(appItem.modelData);
-                                }
-
-                                onWheel: wheel => {
-                                    if (wheel.angleDelta.y > 0)
-                                        win.cycleItem(appItem.modelData, -1);
-                                    else if (wheel.angleDelta.y < 0)
-                                        win.cycleItem(appItem.modelData, 1);
-
-                                    wheel.accepted = true;
                                 }
                             }
                         }
                     }
 
-                    Rectangle {
-                        width: 1
-                        height: 30
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: Colours.palette.m3outlineVariant
-                        opacity: 0.65
-                    }
+                    StyledRect {
+                        implicitWidth: statusRow.implicitWidth + 8
+                        implicitHeight: 52
+                        radius: Tokens.rounding.extraLarge
+                        color: Colours.palette.m3surfaceContainer
+                        border.width: 1
+                        border.color: Colours.palette.m3outlineVariant
 
-                    Item {
-                        implicitWidth: 48
-                        implicitHeight: 50
-
-                        HubButton {
-                            anchors.fill: parent
-                            icon: "notifications"
-                            active: win.screenState?.sidebar ?? false
-                            tooltip: qsTr("Notifications")
-                            onClicked: hubRoot.toggleSidebarFor(win.modelData)
-                        }
-
-                        Rectangle {
-                            visible: Notifs.notClosed.length > 0
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.topMargin: 2
-                            anchors.rightMargin: 1
-                            width: 18
-                            height: 18
-                            radius: 9
-                            color: Colours.palette.m3primary
-
-                            StyledText {
-                                anchors.centerIn: parent
-                                text: Math.min(Notifs.notClosed.length, 9)
-                                color: Colours.palette.m3onPrimary
-                                font: Tokens.font.label.small
-                            }
-                        }
-                    }
-
-                    Item {
-                        implicitWidth: 72
-                        implicitHeight: 50
-
-                        Column {
+                        Row {
+                            id: statusRow
                             anchors.centerIn: parent
-                            spacing: -2
+                            spacing: 2
 
-                            StyledText {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: Qt.formatDateTime(win.now, "HH:mm")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.label.large
+                            Item {
+                                implicitWidth: 44
+                                implicitHeight: 44
+
+                                HubButton {
+                                    anchors.fill: parent
+                                    buttonSize: 44
+                                    icon: "notifications"
+                                    active: win.screenState?.sidebar ?? false
+                                    tooltip: qsTr("Notifications")
+                                    onClicked: hubRoot.toggleSidebarFor(win.modelData)
+                                }
+
+                                Rectangle {
+                                    visible: Notifs.notClosed.length > 0
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
+                                    anchors.topMargin: 0
+                                    anchors.rightMargin: 0
+                                    width: 18
+                                    height: 18
+                                    radius: 9
+                                    color: Colours.palette.m3primary
+
+                                    StyledText {
+                                        anchors.centerIn: parent
+                                        text: Math.min(Notifs.notClosed.length, 9)
+                                        color: Colours.palette.m3onPrimary
+                                        font: Tokens.font.label.small
+                                    }
+                                }
                             }
 
-                            StyledText {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: Qt.formatDateTime(win.now, "ddd d")
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
-                            }
-                        }
-                    }
+                            Item {
+                                implicitWidth: 74
+                                implicitHeight: 44
 
-                    HubButton {
-                        icon: "power_settings_new"
-                        active: win.screenState?.session ?? false
-                        tooltip: qsTr("Session")
-                        onClicked: {
-                            if (win.screenState)
-                                win.screenState.session = !win.screenState.session;
+                                Column {
+                                    anchors.centerIn: parent
+                                    spacing: -2
+
+                                    StyledText {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        text: Qt.formatDateTime(win.now, "HH:mm")
+                                        color: Colours.palette.m3onSurface
+                                        font: Tokens.font.label.large
+                                    }
+
+                                    StyledText {
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        text: Qt.formatDateTime(win.now, "ddd d")
+                                        color: Colours.palette.m3onSurfaceVariant
+                                        font: Tokens.font.label.small
+                                    }
+                                }
+                            }
+
+                            HubButton {
+                                buttonSize: 44
+                                icon: "power_settings_new"
+                                active: win.screenState?.session ?? false
+                                tooltip: qsTr("Session")
+                                activeColor: Colours.palette.m3errorContainer
+                                iconColor: active ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
+                                onClicked: {
+                                    if (win.screenState)
+                                        win.screenState.session = !win.screenState.session;
+                                }
+                            }
                         }
                     }
                 }
