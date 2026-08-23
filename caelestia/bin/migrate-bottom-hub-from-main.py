@@ -43,6 +43,23 @@ def migrate_shell(root: Path) -> bool:
     return write_if_changed(path, before, after)
 
 
+def migrate_shortcuts(root: Path) -> bool:
+    path = root / "modules/Shortcuts.qml"
+    if not path.is_file():
+        return False
+    before = path.read_text(encoding="utf-8")
+    after = before.replace(
+        "            const screenState = ShellState.forActive();\n"
+        "            screenState.sidebar = !screenState.sidebar;\n",
+        "            const screenState = ShellState.forActive();\n"
+        "            const open = !(screenState.sidebar || screenState.utilities);\n"
+        "            screenState.sidebar = open;\n"
+        "            screenState.utilities = open;\n",
+        1,
+    )
+    return write_if_changed(path, before, after)
+
+
 def migrate_panels(root: Path) -> bool:
     path = root / "modules/drawers/Panels.qml"
     if not path.is_file():
@@ -197,7 +214,17 @@ def migrate_popout_clip(root: Path) -> bool:
     if not path.is_file():
         return False
     before = path.read_text(encoding="utf-8")
-    after = before
+    after = before.replace(
+        "        : content.bottomAttached\n"
+        "            ? parent.width - content.nonAnimWidth - content.bottomRightMargin\n"
+        "            : 0",
+        "        : content.bottomAttached\n"
+        "            ? content.bottomAnchorCenter >= 0\n"
+        "                ? Math.max(8, Math.min(parent.width - content.nonAnimWidth - 8, content.bottomAnchorCenter - content.nonAnimWidth / 2))\n"
+        "                : parent.width - content.nonAnimWidth - content.bottomRightMargin\n"
+        "            : 0",
+        1,
+    )
     for marker in ("    Behavior on x {\n", "    Behavior on y {\n"):
         start = after.find(marker)
         if start < 0:
@@ -215,6 +242,52 @@ def migrate_popout_clip(root: Path) -> bool:
                         end += 1
                     after = after[:start] + after[end:]
                     break
+    return write_if_changed(path, before, after)
+
+
+def migrate_popout_wrapper(root: Path) -> bool:
+    path = root / "modules/bar/popouts/Wrapper.qml"
+    if not path.is_file():
+        return False
+    before = path.read_text(encoding="utf-8")
+    after = before
+    if "property real bottomAnchorCenter:" not in after:
+        after = after.replace(
+            "    property real bottomRightMargin: 4\n",
+            "    property real bottomRightMargin: 4\n"
+            "    property real bottomAnchorCenter: -1\n",
+            1,
+        )
+    after = after.replace(
+        "    function detach(mode: string): void {\n"
+        "        bottomAttached = false;\n"
+        "        setAnims(true);",
+        "    function detach(mode: string): void {\n"
+        "        bottomAttached = false;\n"
+        "        bottomAnchorCenter = -1;\n"
+        "        setAnims(true);",
+        1,
+    )
+    after = after.replace(
+        "        detachedMode = \"\";\n"
+        "        bottomAttached = false;\n"
+        "    }\n\n"
+        "    onHasCurrentChanged: {\n"
+        "        if (!hasCurrent)\n"
+        "            bottomAttached = false;\n"
+        "    }",
+        "        detachedMode = \"\";\n"
+        "        bottomAttached = false;\n"
+        "        bottomAnchorCenter = -1;\n"
+        "    }\n\n"
+        "    onHasCurrentChanged: {\n"
+        "        if (!hasCurrent) {\n"
+        "            bottomAttached = false;\n"
+        "            bottomAnchorCenter = -1;\n"
+        "        }\n"
+        "    }",
+        1,
+    )
     return write_if_changed(path, before, after)
 
 
@@ -248,10 +321,12 @@ def main() -> None:
     changed = []
     for name, fn in (
         ("shell.qml", migrate_shell),
+        ("modules/Shortcuts.qml", migrate_shortcuts),
         ("modules/drawers/Panels.qml", migrate_panels),
         ("modules/sidebar/Wrapper.qml", migrate_sidebar),
         ("modules/utilities/Wrapper.qml", migrate_utilities),
         ("modules/bar/BarWrapper.qml", migrate_bar),
+        ("modules/bar/popouts/Wrapper.qml", migrate_popout_wrapper),
         ("modules/bar/popouts/ClipWrapper.qml", migrate_popout_clip),
         ("modules/drawers/Interactions.qml", migrate_interactions),
     ):

@@ -83,6 +83,16 @@ def check_screen_state(root: Path, text: str) -> bool:
     return "property bool overview" in text
 
 
+def check_shortcuts(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        '"customDock", "launcher"',
+        "const open = !(screenState.sidebar || screenState.utilities);",
+        "screenState.sidebar = open;",
+        "screenState.utilities = open;",
+    ))
+
+
 def check_content_window(root: Path, text: str) -> bool:
     flags = retained_overlay_flags(root)
 
@@ -235,6 +245,7 @@ def check_bar(root: Path, text: str) -> bool:
 CHECKS = {
     "shell.qml": check_shell,
     "components/ScreenState.qml": check_screen_state,
+    "modules/Shortcuts.qml": check_shortcuts,
     "modules/drawers/ContentWindow.qml": check_content_window,
     "modules/drawers/Panels.qml": check_panels,
     "modules/drawers/Regions.qml": check_regions,

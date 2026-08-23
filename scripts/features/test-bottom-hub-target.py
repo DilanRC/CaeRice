@@ -247,6 +247,80 @@ def run_motion_and_bar_migration() -> None:
         print("PASS visual-bar-and-popup-motion-removal")
 
 
+def run_incremental_bottom_hub_upgrade() -> None:
+    with tempfile.TemporaryDirectory(prefix="bottom-hub-incremental-") as td:
+        root = Path(td)
+        shortcuts = root / "modules/Shortcuts.qml"
+        wrapper = root / "modules/bar/popouts/Wrapper.qml"
+        clip = root / "modules/bar/popouts/ClipWrapper.qml"
+        wrapper.parent.mkdir(parents=True)
+        shortcuts.parent.mkdir(parents=True, exist_ok=True)
+
+        shortcuts.write_text(
+            "Item {\n"
+            "    CustomShortcut {\n"
+            "        name: \"launcher\"\n"
+            "        Quickshell.execDetached([\"qs\", \"-c\", \"caelestia\", \"ipc\", \"call\", \"customDock\", \"launcher\"]);\n"
+            "    }\n"
+            "    CustomShortcut {\n"
+            "        name: \"sidebar\"\n"
+            "        onPressed: {\n"
+            "            const screenState = ShellState.forActive();\n"
+            "            screenState.sidebar = !screenState.sidebar;\n"
+            "        }\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        wrapper.write_text(
+            "Item {\n"
+            "    property bool bottomAttached\n"
+            "    property real bottomOffset: 54\n"
+            "    property real bottomRightMargin: 4\n"
+            "    function detach(mode: string): void {\n"
+            "        bottomAttached = false;\n"
+            "        setAnims(true);\n"
+            "    }\n"
+            "    function close(): void {\n"
+            "        hasCurrent = false;\n"
+            "        detachedMode = \"\";\n"
+            "        bottomAttached = false;\n"
+            "    }\n\n"
+            "    onHasCurrentChanged: {\n"
+            "        if (!hasCurrent)\n"
+            "            bottomAttached = false;\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        clip.write_text(
+            "Item {\n"
+            "    x: content.isDetached\n"
+            "        ? (parent.width - content.nonAnimWidth) / 2\n"
+            "        : content.bottomAttached\n"
+            "            ? parent.width - content.nonAnimWidth - content.bottomRightMargin\n"
+            "            : 0\n"
+            "    content.bottomAttached\n"
+            "    parent.height - content.nonAnimHeight - content.bottomOffset\n"
+            "    Behavior on y {\n"
+            "        Anim {}\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+
+        assert migrator.migrate_shortcuts(root) is True
+        assert migrator.migrate_popout_wrapper(root) is True
+        assert migrator.migrate_popout_clip(root) is True
+        assert checker.check_shortcuts(root, shortcuts.read_text(encoding="utf-8"))
+        assert checker.check_popout_wrapper(root, wrapper.read_text(encoding="utf-8"))
+        assert checker.check_popout_clip(root, clip.read_text(encoding="utf-8"))
+        assert migrator.migrate_shortcuts(root) is False
+        assert migrator.migrate_popout_wrapper(root) is False
+        assert migrator.migrate_popout_clip(root) is False
+        print("PASS incremental-bottom-hub-upgrade")
+
+
 def main() -> None:
     run_case("overview-base", ("overview",), expected=True)
     run_case(
@@ -275,6 +349,7 @@ def main() -> None:
     run_corrupt_runtime_migration()
     run_sidebar_migration()
     run_motion_and_bar_migration()
+    run_incremental_bottom_hub_upgrade()
     print("BottomHub semantic target tests: OK")
 
 
