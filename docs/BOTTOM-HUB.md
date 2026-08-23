@@ -4,13 +4,13 @@
 
 Reemplazar la sidebar lateral y el dock independiente por una interfaz inferior coherente para Caelestia/CaeRice.
 
-La barra inferior vive en `modules/BottomHub.qml`. Conserva la lógica útil del antiguo `CustomDock.qml`: favoritas, agrupación por aplicación, ventanas por monitor, clic para lanzar/enfocar, rueda para recorrer ventanas, clic central para cerrar y clic derecho para fijar/quitar favoritas.
+La barra inferior vive en `modules/BottomHub.qml`. Usa superficies translúcidas de `Colours.tPalette`, iconos Material y estados de los servicios nativos de Caelestia. Conserva la lógica útil del antiguo `CustomDock.qml`: favoritas, agrupación por aplicación, ventanas por monitor, clic para lanzar/enfocar, rueda para recorrer ventanas, clic central para cerrar y clic derecho para fijar/quitar favoritas.
 
 La sidebar nativa de Caelestia **no se reimplementa**. `modules/sidebar/Wrapper.qml` se parchea para abrir desde abajo, encima del Bottom Hub. Así `NotifDock`, acciones, scroll y demás interacción permanecen dentro del `drawers/ContentWindow` nativo y de su máscara Wayland.
 
 ## Geometría
 
-- Bottom Hub: 64 px.
+- Bottom Hub: superficie de 60 px con segmentos funcionales de 52 px.
 - margen inferior: 2 px.
 - separación de launcher/sidebar: hasta 72 px desde el borde inferior.
 - sidebar inferior: ancho máximo 520 px y alto máximo 430 px o 55 % de la pantalla.
@@ -63,18 +63,21 @@ caelestia shell -d
 
 1. Bottom Hub visible en la parte inferior de cada monitor.
 2. `SUPER+D` oculta/muestra el hub.
-3. Botón Apps abre el launcher nativo encima del hub.
-4. Botón Overview abre/cierra Overview.
+3. El logo CachyOS abre el launcher nativo encima del hub.
+4. Las esferas cambian al workspace seleccionado y permiten cambiar con clic.
 5. Favoritas y aplicaciones abiertas aparecen en el centro.
 6. Clic en app: lanza o enfoca.
 7. Rueda sobre una app con varias ventanas: recorre ventanas.
 8. Clic central: cierra la ventana activa de esa app.
 9. Clic derecho: fija/quita de favoritas.
-10. Botón de notificaciones abre la antigua sidebar como panel inferior.
-11. El panel de notificaciones acepta scroll del touchpad y acciones.
-12. El launcher y la sidebar no quedan abiertos simultáneamente.
-13. En dos monitores, cada dock muestra solo las ventanas de su monitor.
-14. OSD, sesión y toasts no se desplazan lateralmente al abrir notificaciones.
+10. Volumen refleja mute/nivel, clic alterna mute y la rueda ajusta el nivel.
+11. Output abre el selector nativo de salidas de audio.
+12. Wifi y Bluetooth abren sus páginas nativas de Caelestia.
+13. Batería muestra el estado real y abre su popout.
+14. El botón de notificaciones abre la antigua sidebar como panel inferior.
+15. El launcher y la sidebar no quedan abiertos simultáneamente.
+16. En dos monitores, cada barra muestra solo las ventanas de su monitor.
+17. OSD, sesión y toasts no se desplazan lateralmente al abrir notificaciones.
 
 ## Diagnóstico
 

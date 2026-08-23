@@ -5,6 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
+import Quickshell.Bluetooth
+import Quickshell.Services.UPower
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -57,17 +59,6 @@ Scope {
         shown = true;
     }
 
-    function toggleOverviewFor(screen): void {
-        const state = ShellState.forScreen(screen);
-        if (!state)
-            return;
-
-        closeAllLaunchers();
-        closeAllSidebars();
-        state.overview = !state.overview;
-        shown = true;
-    }
-
     function toggleSidebarFor(screen): void {
         const state = ShellState.forScreen(screen);
         if (!state)
@@ -77,6 +68,36 @@ Scope {
         closeAllLaunchers();
         closeAllSidebars();
         state.sidebar = !wasOpen;
+        shown = true;
+    }
+
+    function toggleDetachedControlFor(screen, mode): void {
+        const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
+        if (!popouts)
+            return;
+
+        if (popouts.isDetached && popouts.queuedMode === mode) {
+            popouts.close();
+            return;
+        }
+
+        popouts.detach(mode);
+        shown = true;
+    }
+
+    function toggleBatteryFor(screen, center): void {
+        const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
+        if (!popouts)
+            return;
+
+        if (popouts.hasCurrent && popouts.currentName === "battery") {
+            popouts.close();
+            return;
+        }
+
+        popouts.currentName = "battery";
+        popouts.currentCenter = center;
+        popouts.hasCurrent = true;
         shown = true;
     }
 
@@ -133,7 +154,10 @@ Scope {
                 || (screenState?.sidebar ?? false)
                 || (screenState?.session ?? false)
             readonly property int hubMargin: 8
-            readonly property int appRailMaxWidth: Math.max(320, modelData.width - 360)
+            readonly property int appRailMaxWidth: Math.max(320, modelData.width - 700)
+            readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
+            readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
+            readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
 
             property date now: new Date()
             property var pendingFocusClient: null
@@ -370,58 +394,27 @@ Scope {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                implicitHeight: 68
-                radius: Tokens.rounding.extraLarge
-                color: win.panelActive
-                    ? Colours.palette.m3surfaceContainerHighest
-                    : Colours.tPalette.m3surfaceContainerHigh
-                border.width: 1
-                border.color: win.panelActive
-                    ? Colours.palette.m3primary
-                    : Colours.palette.m3outlineVariant
-
-                Behavior on color {
-                    ColorAnimation { duration: 140 }
-                }
-
-                Behavior on border.color {
-                    ColorAnimation { duration: 140 }
-                }
-
-                StyledRect {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.leftMargin: 18
-                    anchors.rightMargin: 18
-                    height: 2
-                    radius: 1
-                    color: Colours.palette.m3primary
-                    opacity: win.panelActive ? 0.72 : 0.22
-
-                    Behavior on opacity {
-                        NumberAnimation { duration: 140 }
-                    }
-                }
+                implicitHeight: 60
+                radius: 0
+                color: "transparent"
+                border.width: 0
 
                 RowLayout {
                     id: hubRow
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: 9
-                    anchors.rightMargin: 9
+                    anchors.leftMargin: 2
+                    anchors.rightMargin: 2
                     spacing: 8
 
                     StyledRect {
-                        Layout.preferredWidth: modeRow.implicitWidth + 8
+                        Layout.preferredWidth: modeRow.implicitWidth + 12
                         Layout.preferredHeight: 52
-                        implicitWidth: modeRow.implicitWidth + 8
+                        implicitWidth: modeRow.implicitWidth + 12
                         implicitHeight: 52
-                        radius: Tokens.rounding.extraLarge
-                        color: Colours.palette.m3surfaceContainer
-                        border.width: 1
-                        border.color: Colours.palette.m3outlineVariant
+                        radius: Tokens.rounding.full
+                        color: Colours.tPalette.m3surfaceContainer
 
                         Row {
                             id: modeRow
@@ -430,18 +423,73 @@ Scope {
 
                             HubButton {
                                 buttonSize: 44
-                                icon: "apps"
+                                imageSource: "file:///usr/share/icons/cachyos.svg"
                                 active: win.screenState?.launcher ?? false
                                 tooltip: qsTr("Applications")
                                 onClicked: hubRoot.toggleLauncherFor(win.modelData)
                             }
 
-                            HubButton {
-                                buttonSize: 44
-                                icon: "view_quilt"
-                                active: win.screenState?.overview ?? false
-                                tooltip: qsTr("Overview")
-                                onClicked: hubRoot.toggleOverviewFor(win.modelData)
+                            Row {
+                                id: workspaceDots
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 5
+
+                                Item {
+                                    width: 3
+                                    height: 1
+                                }
+
+                                Repeater {
+                                    model: win.workspaceCount
+
+                                    Item {
+                                        id: workspaceDot
+                                        required property int index
+                                        readonly property int wsId: win.workspaceOffset + index + 1
+                                        readonly property bool active: wsId === win.activeWsId
+                                        readonly property bool occupied: Hypr.workspaces.values.some(
+                                            ws => ws.id === wsId && ws.lastIpcObject?.windows > 0
+                                        )
+
+                                        width: active ? 18 : 8
+                                        height: 28
+
+                                        Behavior on width {
+                                            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                                        }
+
+                                        StyledRect {
+                                            anchors.centerIn: parent
+                                            width: workspaceDot.active ? 18 : 8
+                                            height: 8
+                                            radius: Tokens.rounding.full
+                                            color: workspaceDot.active
+                                                ? Colours.palette.m3primary
+                                                : workspaceDot.occupied
+                                                    ? Colours.palette.m3secondary
+                                                    : Colours.palette.m3outlineVariant
+
+                                            Behavior on width {
+                                                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                                            }
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: Hypr.dispatch(
+                                                Hypr.usingLua
+                                                    ? `hl.dsp.focus({ workspace = "${workspaceDot.wsId}" })`
+                                                    : `workspace ${workspaceDot.wsId}`
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Item {
+                                    width: 7
+                                    height: 1
+                                }
                             }
                         }
                     }
@@ -453,10 +501,8 @@ Scope {
                         Layout.preferredHeight: 52
                         implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)
                         implicitHeight: 52
-                        radius: Tokens.rounding.extraLarge
-                        color: Colours.palette.m3surfaceContainerLowest
-                        border.width: 1
-                        border.color: Colours.palette.m3outlineVariant
+                        radius: Tokens.rounding.full
+                        color: Colours.tPalette.m3surfaceContainer
                         clip: true
 
                         Flickable {
@@ -513,8 +559,7 @@ Scope {
                                                 : appMouse.containsMouse
                                                     ? Colours.palette.m3surfaceContainerHighest
                                                     : "transparent"
-                                            border.width: appItem.active ? 1 : 0
-                                            border.color: Colours.palette.m3primary
+                                            border.width: 0
 
                                             Behavior on color {
                                                 ColorAnimation { duration: 110 }
@@ -611,15 +656,82 @@ Scope {
                         Layout.preferredHeight: 52
                         implicitWidth: statusRow.implicitWidth + 8
                         implicitHeight: 52
-                        radius: Tokens.rounding.extraLarge
-                        color: Colours.palette.m3surfaceContainer
-                        border.width: 1
-                        border.color: Colours.palette.m3outlineVariant
+                        radius: Tokens.rounding.full
+                        color: Colours.tPalette.m3surfaceContainer
 
                         Row {
                             id: statusRow
                             anchors.centerIn: parent
                             spacing: 2
+
+                            HubButton {
+                                buttonSize: 40
+                                iconFontStyle: Tokens.font.icon.medium
+                                icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
+                                tooltip: Audio.muted ? qsTr("Unmute") : qsTr("Mute")
+                                onClicked: {
+                                    if (Audio.sink?.audio)
+                                        Audio.sink.audio.muted = !Audio.sink.audio.muted;
+                                }
+                                onWheel: delta => {
+                                    if (delta > 0)
+                                        Audio.incrementVolume();
+                                    else if (delta < 0)
+                                        Audio.decrementVolume();
+                                }
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                iconFontStyle: Tokens.font.icon.medium
+                                icon: "speaker_group"
+                                tooltip: qsTr("Audio output")
+                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "audio")
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                iconFontStyle: Tokens.font.icon.medium
+                                icon: Nmcli.activeEthernet
+                                    ? "cable"
+                                    : Nmcli.active
+                                        ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0)
+                                        : "wifi_off"
+                                active: Nmcli.activeEthernet || !!Nmcli.active
+                                tooltip: qsTr("Network")
+                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "network")
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                iconFontStyle: Tokens.font.icon.medium
+                                icon: !Bluetooth.defaultAdapter?.enabled
+                                    ? "bluetooth_disabled"
+                                    : Bluetooth.devices.values.some(device => device.connected)
+                                        ? "bluetooth_connected"
+                                        : "bluetooth"
+                                active: Bluetooth.devices.values.some(device => device.connected)
+                                tooltip: qsTr("Bluetooth")
+                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "bluetooth")
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                iconFontStyle: Tokens.font.icon.medium
+                                icon: UPower.displayDevice.isLaptopBattery
+                                    ? Icons.getBatteryIcon(
+                                        UPower.displayDevice.percentage,
+                                        [UPowerDeviceState.Charging, UPowerDeviceState.FullyCharged, UPowerDeviceState.PendingCharge].includes(UPower.displayDevice.state)
+                                    )
+                                    : "balance"
+                                iconColor: UPower.onBattery && UPower.displayDevice.percentage <= 0.2
+                                    ? Colours.palette.m3error
+                                    : Colours.palette.m3secondary
+                                tooltip: UPower.displayDevice.isLaptopBattery
+                                    ? qsTr("Battery %1%").arg(Math.round(UPower.displayDevice.percentage * 100))
+                                    : qsTr("Power profile")
+                                onClicked: hubRoot.toggleBatteryFor(win.modelData, win.modelData.height - 92)
+                            }
 
                             Item {
                                 implicitWidth: 44
@@ -628,6 +740,7 @@ Scope {
                                 HubButton {
                                     anchors.fill: parent
                                     buttonSize: 44
+                                    iconFontStyle: Tokens.font.icon.medium
                                     icon: "notifications"
                                     active: win.screenState?.sidebar ?? false
                                     tooltip: qsTr("Notifications")
@@ -680,6 +793,7 @@ Scope {
 
                             HubButton {
                                 buttonSize: 44
+                                iconFontStyle: Tokens.font.icon.medium
                                 icon: "power_settings_new"
                                 active: win.screenState?.session ?? false
                                 tooltip: qsTr("Session")
