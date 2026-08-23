@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -131,7 +132,8 @@ Scope {
                 || (screenState?.overview ?? false)
                 || (screenState?.sidebar ?? false)
                 || (screenState?.session ?? false)
-            readonly property int appRailMaxWidth: Math.max(232, Math.min(620, modelData.width - 330))
+            readonly property int hubMargin: 8
+            readonly property int appRailMaxWidth: Math.max(320, modelData.width - 360)
 
             property date now: new Date()
             property var pendingFocusClient: null
@@ -359,15 +361,15 @@ Scope {
             WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
-            implicitWidth: Math.min(hubSurface.implicitWidth + 8, modelData.width - 8)
+            implicitWidth: modelData.width - hubMargin * 2
             implicitHeight: hubSurface.implicitHeight + 6
 
             StyledRect {
                 id: hubSurface
 
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                implicitWidth: Math.min(hubRow.implicitWidth + 18, win.modelData.width - 8)
                 implicitHeight: 68
                 radius: Tokens.rounding.extraLarge
                 color: win.panelActive
@@ -402,12 +404,18 @@ Scope {
                     }
                 }
 
-                Row {
+                RowLayout {
                     id: hubRow
-                    anchors.centerIn: parent
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 9
+                    anchors.rightMargin: 9
                     spacing: 8
 
                     StyledRect {
+                        Layout.preferredWidth: modeRow.implicitWidth + 8
+                        Layout.preferredHeight: 52
                         implicitWidth: modeRow.implicitWidth + 8
                         implicitHeight: 52
                         radius: Tokens.rounding.extraLarge
@@ -439,6 +447,10 @@ Scope {
                     }
 
                     StyledRect {
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 180
+                        Layout.maximumWidth: win.appRailMaxWidth
+                        Layout.preferredHeight: 52
                         implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)
                         implicitHeight: 52
                         radius: Tokens.rounding.extraLarge
@@ -595,6 +607,8 @@ Scope {
                     }
 
                     StyledRect {
+                        Layout.preferredWidth: statusRow.implicitWidth + 8
+                        Layout.preferredHeight: 52
                         implicitWidth: statusRow.implicitWidth + 8
                         implicitHeight: 52
                         radius: Tokens.rounding.extraLarge

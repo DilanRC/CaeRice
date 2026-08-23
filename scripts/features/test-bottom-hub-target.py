@@ -7,6 +7,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 CHECKER_PATH = REPO / "caelestia/bin/check-bottom-hub-target.py"
+MIGRATOR_PATH = REPO / "caelestia/bin/migrate-bottom-hub-from-main.py"
 REL = "modules/drawers/ContentWindow.qml"
 
 spec = importlib.util.spec_from_file_location("bottom_hub_target_checker", CHECKER_PATH)
@@ -14,6 +15,12 @@ if spec is None or spec.loader is None:
     raise SystemExit(f"No pude cargar {CHECKER_PATH}")
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
+
+migrator_spec = importlib.util.spec_from_file_location("bottom_hub_migrator", MIGRATOR_PATH)
+if migrator_spec is None or migrator_spec.loader is None:
+    raise SystemExit(f"No pude cargar {MIGRATOR_PATH}")
+migrator = importlib.util.module_from_spec(migrator_spec)
+migrator_spec.loader.exec_module(migrator)
 
 
 def screen_state(flags: tuple[str, ...]) -> str:
@@ -106,6 +113,48 @@ def run_case(
         print(f"PASS {name}")
 
 
+def run_panels_tolerant_migration() -> None:
+    with tempfile.TemporaryDirectory(prefix="bottom-hub-panels-") as td:
+        root = Path(td)
+        panels = root / "modules/drawers/Panels.qml"
+        panels.parent.mkdir(parents=True)
+        panels.write_text(
+            "import qs.modules.overview as Overview\n"
+            "Item {\n"
+            "    readonly property alias overview: overview\n"
+            "    Item {\n"
+            "        id: osdWrapper\n"
+            "        clip: sidebar.visible || session.visible\n"
+            "        Osd.Wrapper {\n"
+            "            sidebarOrSessionVisible: sidebar.visible || session.visible\n"
+            "        }\n"
+            "    }\n"
+            "    Item {\n"
+            "        id: sessionWrapper\n"
+            "        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)\n"
+            "        clip: sidebar.visible\n"
+            "    }\n"
+            "    Overview.Wrapper {\n"
+            "        id: overview\n"
+            "    }\n"
+            "    Toasts.Toasts {\n"
+            "        anchors.bottom: utilities.top\n"
+            "        anchors.right: parent.right\n"
+            "    }\n"
+            "    Sidebar.Wrapper {\n"
+            "        anchors.horizontalCenter: parent.horizontalCenter\n"
+            "        anchors.bottom: parent.bottom\n"
+            "    }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        assert migrator.migrate_panels(root) is True
+        text = panels.read_text(encoding="utf-8")
+        if not checker.check_panels(root, text):
+            raise SystemExit("FAIL panels-tolerant-migration")
+        print("PASS panels-tolerant-migration")
+
+
 def main() -> None:
     run_case("overview-base", ("overview",), expected=True)
     run_case(
@@ -131,6 +180,7 @@ def main() -> None:
         expected=False,
         clipboard_scrim=False,
     )
+    run_panels_tolerant_migration()
     print("BottomHub semantic target tests: OK")
 
 

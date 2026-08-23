@@ -64,7 +64,12 @@ def main() -> None:
     require_balanced_qml(button, HUB_BUTTON)
 
     require(bottom, "readonly property bool panelActive:", "panel activity state")
+    require(bottom, "readonly property int hubMargin: 8", "full-width hub margin")
     require(bottom, "readonly property int appRailMaxWidth:", "bounded app rail width")
+    require(bottom, "implicitWidth: modelData.width - hubMargin * 2", "monitor-width bar")
+    require(bottom, "anchors.left: parent.left\n                anchors.right: parent.right", "full-width surface")
+    require(bottom, "RowLayout {", "full-width bar layout")
+    require(bottom, "Layout.fillWidth: true", "stretching app rail")
     require(bottom, "Flickable {", "scrollable app rail")
     require(bottom, "interactive: contentWidth > width", "rail overflow interaction")
     require(bottom, "visible: appItem.modelData.pinned && !appItem.running", "pinned dormant badge")

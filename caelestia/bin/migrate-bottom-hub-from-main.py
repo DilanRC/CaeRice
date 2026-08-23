@@ -58,7 +58,7 @@ def migrate_panels(root: Path) -> bool:
         return False
 
     changed = False
-    replacements = [
+    required_replacements = [
         (
             "        clip: sidebar.visible || session.visible\n",
             "        clip: session.visible\n",
@@ -74,20 +74,29 @@ def migrate_panels(root: Path) -> bool:
             "        anchors.rightMargin: 0\n        clip: false\n",
             "Panels session geometry",
         ),
+    ]
+
+    for old, new, label in required_replacements:
+        text, did = replace_required(text, old, new, label)
+        changed = changed or did
+
+    tolerant_replacements = [
         (
             "        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top\n        anchors.right: sidebar.left\n",
             "        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top\n        anchors.right: parent.right\n",
-            "Panels toast geometry",
+        ),
+        (
+            "        anchors.bottom: utilities.top\n        anchors.right: parent.right\n",
+            "        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top\n        anchors.right: parent.right\n",
         ),
         (
             "        anchors.top: notifications.bottom\n        anchors.bottom: utilities.top\n        anchors.right: parent.right\n        anchors.topMargin: -notifications.anchors.topMargin\n",
             "        anchors.horizontalCenter: parent.horizontalCenter\n        anchors.bottom: parent.bottom\n",
-            "Panels sidebar bottom anchor",
         ),
     ]
 
-    for old, new, label in replacements:
-        text, did = replace_required(text, old, new, label)
+    for old, new in tolerant_replacements:
+        text, did = replace_if_present(text, old, new)
         changed = changed or did
 
     return write_if_changed(path, text, changed)
