@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+"""Read and safely edit the Caelestia Lua keybind configuration."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+from datetime import datetime
+from pathlib import Path
+
+HOME = Path.home()
+DEFAULTS = HOME / ".config/hypr/variables.lua"
+OVERRIDES = HOME / ".config/caelestia/hypr-vars.lua"
+USER = HOME / ".config/caelestia/hypr-user.lua"
+SNAPSHOTS = HOME / ".local/share/caelestia-custom-system/snapshots/keybinds"
+
+ENTRY_RE = re.compile(r"(?m)^(\s*)(kb[A-Za-z0-9_]+)(\s*=\s*)(\{[^\n]*\}|\"(?:\\.|[^\"])*\")(,?)")
+BIND_RE = re.compile(r"hl\.bind\(\s*\"((?:\\.|[^\"])*)\"\s*,(.*?)(?:\n\s*\)|\)\s*$)", re.M | re.S)
+STRING_RE = re.compile(r'\"((?:\\.|[^\"])*)\"')
+MOD_BITS = {"SHIFT": 1, "CAPS": 2, "CTRL": 4, "ALT": 8, "MOD2": 16, "MOD3": 32, "SUPER": 64, "MOD5": 128}
+
+
+class KeybindError(RuntimeError):
+    pass
+
+
+def lua_unescape(value: str) -> str:
+    return bytes(value, "utf-8").decode("unicode_escape")
+
+
+def lua_quote(value: str) -> str:
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def values(rhs: str) -> list[str]:
+    return [lua_unescape(item) for item in STRING_RE.findall(rhs)]
+
+
+def entries(path: Path) -> dict[str, list[str]]:
+    text = path.read_text(encoding="utf-8")
+    return {match.group(2): values(match.group(4)) for match in ENTRY_RE.finditer(text)}
+
+
+def title(name: str) -> str:
+    words = re.sub(r"([a-z])([A-Z])", r"\1 \2", name.removeprefix("kb"))
+    return words.replace("Ws", "workspace").strip().title()
+
+
+def bind_id(chord: str, body: str) -> str:
+    digest = hashlib.sha256(f"{chord}\0{body}".encode()).hexdigest()[:16]
+    return f"user:{digest}"
+
+
+def user_bindings() -> list[dict]:
+    text = USER.read_text(encoding="utf-8")
+    result = []
+    for match in BIND_RE.finditer(text):
+        chord = lua_unescape(match.group(1))
+        body = match.group(2).strip()
+        global_match = re.search(r'hl\.dsp\.global\(\"([^\"]+)', body)
+        command_match = re.search(r'hl\.dsp\.exec_cmd\((?:\[\[(.*?)\]\]|\"((?:\\.|[^\"])*)\")', body, re.S)
+        detail = "Custom action"
+        if global_match:
+            detail = global_match.group(1).replace("caelestia:", "Caelestia · ")
+        elif command_match:
+            detail = command_match.group(1) or lua_unescape(command_match.group(2) or "")
+        result.append({
+            "id": bind_id(chord, body),
+            "label": detail,
+            "chord": chord,
+            "group": "Custom",
+            "editable": True,
+        })
+    return result
+
+
+def list_bindings() -> list[dict]:
+    defaults = entries(DEFAULTS)
+    overrides = entries(OVERRIDES)
+    result = []
+    for name, default_values in defaults.items():
+        current = overrides.get(name, default_values)
+        for index, chord in enumerate(current):
+            result.append({
+                "id": f"var:{name}:{index}",
+                "label": title(name),
+                "chord": chord,
+                "group": "Caelestia",
+                "editable": True,
+            })
+    result.extend(user_bindings())
+    return sorted(result, key=lambda item: (item["group"], item["label"], item["chord"]))
+
+
+def normalise(chord: str) -> str:
+    return "+".join(part.strip().upper() for part in chord.split("+") if part.strip())
+
+
+def ensure_free(new_chord: str, old_chord: str = "") -> None:
+    wanted = normalise(new_chord)
+    for item in list_bindings():
+        if normalise(item["chord"]) == wanted and normalise(item["chord"]) != normalise(old_chord):
+            raise KeybindError(f"{new_chord} is already assigned to {item['label']}")
+    if wanted == normalise(old_chord):
+        return
+    try:
+        active_cp = subprocess.run(["hyprctl", "binds", "-j"], text=True, capture_output=True, timeout=10)
+        expected_mask, expected_key = chord_parts(new_chord)
+        active = json.loads(active_cp.stdout) if active_cp.returncode == 0 else []
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
+        active = []
+    if any(item.get("modmask") == expected_mask and str(item.get("key", "")).upper() == expected_key for item in active):
+        raise KeybindError(f"{new_chord} is already assigned to an active Hyprland action")
+
+
+def backup() -> Path:
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    target = SNAPSHOTS / stamp
+    target.mkdir(parents=True, exist_ok=False)
+    shutil.copy2(OVERRIDES, target / OVERRIDES.name)
+    shutil.copy2(USER, target / USER.name)
+    return target
+
+
+def atomic_write(path: Path, text: str) -> None:
+    fd, temp_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temp_name, path)
+    finally:
+        if os.path.exists(temp_name):
+            os.unlink(temp_name)
+
+
+def update_override(name: str, index: int, chord: str) -> None:
+    defaults = entries(DEFAULTS)
+    overrides = entries(OVERRIDES)
+    current = list(overrides.get(name, defaults.get(name, [])))
+    if index < 0 or index >= len(current):
+        raise KeybindError("The selected keybind no longer exists")
+    old = current[index]
+    ensure_free(chord, old)
+    current[index] = chord
+    rhs = lua_quote(current[0]) if len(current) == 1 else "{ " + ", ".join(lua_quote(value) for value in current) + " }"
+    text = OVERRIDES.read_text(encoding="utf-8")
+    found = False
+
+    def replace(match: re.Match) -> str:
+        nonlocal found
+        if match.group(2) != name:
+            return match.group(0)
+        found = True
+        return f"{match.group(1)}{name}{match.group(3)}{rhs}{match.group(5)}"
+
+    text = ENTRY_RE.sub(replace, text)
+    if not found:
+        pos = text.rfind("}")
+        if pos < 0:
+            raise KeybindError("hypr-vars.lua has no return table")
+        text = text[:pos] + f"    {name} = {rhs},\n" + text[pos:]
+    atomic_write(OVERRIDES, text)
+
+
+def update_user(identifier: str, chord: str) -> None:
+    text = USER.read_text(encoding="utf-8")
+    replacement = None
+    old = ""
+    for match in BIND_RE.finditer(text):
+        candidate = lua_unescape(match.group(1))
+        if bind_id(candidate, match.group(2).strip()) == identifier:
+            old = candidate
+            ensure_free(chord, old)
+            replacement = text[:match.start(1)] + chord.replace("\\", "\\\\").replace('"', '\\"') + text[match.end(1):]
+            break
+    if replacement is None:
+        raise KeybindError("The selected custom keybind no longer exists")
+    atomic_write(USER, replacement)
+
+
+def chord_parts(chord: str) -> tuple[int, str]:
+    parts = [part.strip() for part in chord.split("+") if part.strip()]
+    if not parts:
+        return 0, ""
+    modmask = 0
+    for modifier in parts[:-1]:
+        modmask |= MOD_BITS.get(modifier.upper(), 0)
+    return modmask, parts[-1].upper()
+
+
+def reload_and_verify(chord: str, snapshot: Path) -> None:
+    reload_cp = subprocess.run(["hyprctl", "reload"], text=True, capture_output=True, timeout=15)
+    if reload_cp.returncode == 0:
+        binds_cp = subprocess.run(["hyprctl", "binds", "-j"], text=True, capture_output=True, timeout=15)
+        if binds_cp.returncode == 0:
+            expected_mask, expected_key = chord_parts(chord)
+            active = json.loads(binds_cp.stdout)
+            if any(item.get("modmask") == expected_mask and str(item.get("key", "")).upper() == expected_key for item in active):
+                return
+    shutil.copy2(snapshot / OVERRIDES.name, OVERRIDES)
+    shutil.copy2(snapshot / USER.name, USER)
+    subprocess.run(["hyprctl", "reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    raise KeybindError("Hyprland rejected the keybind; the previous configuration was restored")
+
+
+def set_binding(identifier: str, chord: str) -> dict:
+    if not chord.strip():
+        raise KeybindError("A key combination is required")
+    snapshot = backup()
+    if identifier.startswith("var:"):
+        _, name, raw_index = identifier.split(":", 2)
+        update_override(name, int(raw_index), chord)
+    elif identifier.startswith("user:"):
+        update_user(identifier, chord)
+    else:
+        raise KeybindError("Unknown keybind")
+    reload_and_verify(chord, snapshot)
+    return {"ok": True, "snapshot": str(snapshot), "chord": chord}
+
+
+def add_app(app_id: str, name: str, command: str, chord: str) -> dict:
+    if not app_id or not name or not command:
+        raise KeybindError("The selected application has incomplete launcher data")
+    command = re.sub(r"\s+%[fFuUdDnNickvm]", "", command).replace("%%", "%").strip()
+    if "]]" in command or "\n" in command:
+        raise KeybindError("The application command cannot be stored safely")
+    ensure_free(chord)
+    snapshot = backup()
+    text = USER.read_text(encoding="utf-8").rstrip() + "\n\n"
+    text += f"-- CaeRice app shortcut: {name} ({app_id})\n"
+    text += f"hl.bind(\n    {lua_quote(chord)},\n    hl.dsp.exec_cmd([[{command}]])\n)\n"
+    atomic_write(USER, text)
+    reload_and_verify(chord, snapshot)
+    return {"ok": True, "snapshot": str(snapshot), "chord": chord}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("list")
+    setter = sub.add_parser("set")
+    setter.add_argument("identifier")
+    setter.add_argument("chord")
+    app = sub.add_parser("add-app")
+    app.add_argument("app_id")
+    app.add_argument("name")
+    app.add_argument("command")
+    app.add_argument("chord")
+    args = parser.parse_args()
+    try:
+        if args.command == "list":
+            result = {"ok": True, "bindings": list_bindings()}
+        elif args.command == "set":
+            result = set_binding(args.identifier, args.chord)
+        else:
+            result = add_app(args.app_id, args.name, args.command, args.chord)
+    except (KeybindError, OSError, ValueError, subprocess.SubprocessError, json.JSONDecodeError) as error:
+        result = {"ok": False, "error": str(error)}
+    print(json.dumps(result, ensure_ascii=False))
+    return 0 if result["ok"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

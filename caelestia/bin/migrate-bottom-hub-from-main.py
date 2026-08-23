@@ -77,7 +77,8 @@ def migrate_panels(root: Path) -> bool:
     ]
     sidebar_lines[-1:-1] = [
         "        anchors.bottom: parent.bottom",
-        "        anchors.right: parent.right",
+        "        anchors.right: root.screenState.utilities ? utilities.left : parent.right",
+        "        anchors.rightMargin: root.screenState.utilities ? Tokens.padding.medium : 0",
     ]
     after = after[:sidebar_start] + "\n".join(sidebar_lines) + after[sidebar_end:]
 
@@ -197,11 +198,23 @@ def migrate_popout_clip(root: Path) -> bool:
         return False
     before = path.read_text(encoding="utf-8")
     after = before
-    marker = "    Behavior on x {\n"
-    if marker in after:
-        start = after.index(marker)
-        end = after.index("    Behavior on y {", start)
-        after = after[:start] + after[end:]
+    for marker in ("    Behavior on x {\n", "    Behavior on y {\n"):
+        start = after.find(marker)
+        if start < 0:
+            continue
+        brace = after.index("{", start)
+        depth = 0
+        for index in range(brace, len(after)):
+            if after[index] == "{":
+                depth += 1
+            elif after[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    end = index + 1
+                    if end < len(after) and after[end] == "\n":
+                        end += 1
+                    after = after[:start] + after[end:]
+                    break
     return write_if_changed(path, before, after)
 
 

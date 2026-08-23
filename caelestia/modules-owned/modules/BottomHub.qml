@@ -69,10 +69,11 @@ Scope {
         if (!state)
             return;
 
-        const wasOpen = state.sidebar;
+        const wasOpen = state.sidebar || state.utilities;
         closeAllLaunchers();
         closeAllPanels();
         state.sidebar = !wasOpen;
+        state.utilities = !wasOpen;
         shown = true;
     }
 
@@ -105,13 +106,14 @@ Scope {
         shown = true;
     }
 
-    function showAttachedControlFor(screen, mode): void {
+    function showAttachedControlFor(screen, mode, anchorCenter = -1): void {
         const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
         if (!popouts)
             return;
 
         closeAllLaunchers();
         closeAllPanels();
+        popouts.bottomAnchorCenter = anchorCenter;
         popouts.bottomAttached = true;
         popouts.currentName = mode;
         popouts.hasCurrent = true;
@@ -128,10 +130,7 @@ Scope {
             const state = ShellState.forActive();
             if (!state)
                 return;
-            hubRoot.closeAllLaunchers();
-            hubRoot.closeAllPanels();
-            state.launcher = true;
-            hubRoot.shown = true;
+            hubRoot.toggleLauncherFor(state.modelData);
         }
         function notifications(): void {
             hubRoot.toggleSidebarFor(ShellState.forActive()?.modelData);
@@ -152,10 +151,7 @@ Scope {
             const state = ShellState.forActive();
             if (!state)
                 return;
-            hubRoot.closeAllLaunchers();
-            hubRoot.closeAllPanels();
-            state.launcher = true;
-            hubRoot.shown = true;
+            hubRoot.toggleLauncherFor(state.modelData);
         }
     }
 
@@ -189,6 +185,10 @@ Scope {
 
             property date now: new Date()
             property var pendingFocusClient: null
+
+            function popoutAnchorCenter(item): real {
+                return hubMargin + item.mapToItem(hubRow, item.width / 2, 0).x;
+            }
 
             readonly property var dockItems: {
                 const clients = Hypr.toplevels.values.filter(client => {
@@ -727,7 +727,8 @@ Scope {
                                         cursorShape: Qt.PointingHandCursor
                                         onEntered: hubRoot.showAttachedControlFor(
                                             win.modelData,
-                                            `traymenu${trayItem.sourceIndex}`
+                                            `traymenu${trayItem.sourceIndex}`,
+                                            win.popoutAnchorCenter(trayItem)
                                         )
                                         onClicked: event => {
                                             if (event.button === Qt.LeftButton)
@@ -758,13 +759,18 @@ Scope {
                             spacing: 2
 
                             HubButton {
+                                id: volumeButton
                                 buttonSize: 40
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
                                 tooltip: Audio.muted ? qsTr("Unmute") : qsTr("Mute")
                                 onHoveredChanged: {
                                     if (hovered)
-                                        hubRoot.showAttachedControlFor(win.modelData, "audio");
+                                        hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            "audio",
+                                            win.popoutAnchorCenter(volumeButton)
+                                        );
                                 }
                                 onClicked: {
                                     if (Audio.sink?.audio)
@@ -779,18 +785,7 @@ Scope {
                             }
 
                             HubButton {
-                                buttonSize: 40
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: "speaker_group"
-                                tooltip: qsTr("Audio output")
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        hubRoot.showAttachedControlFor(win.modelData, "audio");
-                                }
-                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "audio")
-                            }
-
-                            HubButton {
+                                id: networkButton
                                 buttonSize: 40
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: Nmcli.activeEthernet
@@ -802,12 +797,17 @@ Scope {
                                 tooltip: qsTr("Network")
                                 onHoveredChanged: {
                                     if (hovered)
-                                        hubRoot.showAttachedControlFor(win.modelData, "network");
+                                        hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            "network",
+                                            win.popoutAnchorCenter(networkButton)
+                                        );
                                 }
                                 onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "network")
                             }
 
                             HubButton {
+                                id: bluetoothButton
                                 buttonSize: 40
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: !Bluetooth.defaultAdapter?.enabled
@@ -819,12 +819,17 @@ Scope {
                                 tooltip: qsTr("Bluetooth")
                                 onHoveredChanged: {
                                     if (hovered)
-                                        hubRoot.showAttachedControlFor(win.modelData, "bluetooth");
+                                        hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            "bluetooth",
+                                            win.popoutAnchorCenter(bluetoothButton)
+                                        );
                                 }
                                 onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "bluetooth")
                             }
 
                             HubButton {
+                                id: batteryButton
                                 buttonSize: 40
                                 iconFontStyle: Tokens.font.icon.medium
                                 icon: UPower.displayDevice.isLaptopBattery
@@ -841,9 +846,17 @@ Scope {
                                     : qsTr("Power profile")
                                 onHoveredChanged: {
                                     if (hovered)
-                                        hubRoot.showAttachedControlFor(win.modelData, "battery");
+                                        hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            "battery",
+                                            win.popoutAnchorCenter(batteryButton)
+                                        );
                                 }
-                                onClicked: hubRoot.showAttachedControlFor(win.modelData, "battery")
+                                onClicked: hubRoot.showAttachedControlFor(
+                                    win.modelData,
+                                    "battery",
+                                    win.popoutAnchorCenter(batteryButton)
+                                )
                             }
 
                             Item {

@@ -1,33 +1,38 @@
 --- a/modules/bar/popouts/Wrapper.qml
 +++ b/modules/bar/popouts/Wrapper.qml
-@@ -31,6 +31,9 @@
+@@ -31,6 +31,10 @@
 
      property string detachedMode
      property string queuedMode
 +    property bool bottomAttached
 +    property real bottomOffset: 54
 +    property real bottomRightMargin: 4
++    property real bottomAnchorCenter: -1
 
      // Dummy object so Tokens attached prop resolves to global config
      // Anim configs are not per-monitor
-@@ -45,6 +48,7 @@
+@@ -45,6 +49,8 @@
      }
 
      function detach(mode: string): void {
 +        bottomAttached = false;
++        bottomAnchorCenter = -1;
          setAnims(true);
          if (mode === "winfo") {
              detachedMode = mode;
-@@ -59,6 +63,12 @@
+@@ -59,6 +65,15 @@
      function close(): void {
          hasCurrent = false;
          detachedMode = "";
 +        bottomAttached = false;
++        bottomAnchorCenter = -1;
 +    }
 +
 +    onHasCurrentChanged: {
-+        if (!hasCurrent)
++        if (!hasCurrent) {
 +            bottomAttached = false;
++            bottomAnchorCenter = -1;
++        }
      }
 
      implicitWidth: nonAnimWidth

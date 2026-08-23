@@ -150,7 +150,8 @@ def check_panels(root: Path, text: str) -> bool:
         and "sidebar: sidebar" not in utilities \
         and has_all(sidebar, (
             "anchors.bottom: parent.bottom",
-            "anchors.right: parent.right",
+            "anchors.right: root.screenState.utilities ? utilities.left : parent.right",
+            "anchors.rightMargin: root.screenState.utilities ? Tokens.padding.medium : 0",
         )) \
         and "sidebar.width" not in session
 
@@ -182,6 +183,7 @@ def check_popout_wrapper(root: Path, text: str) -> bool:
         "property bool bottomAttached",
         "property real bottomOffset: 54",
         "property real bottomRightMargin: 4",
+        "property real bottomAnchorCenter: -1",
         "bottomAttached = false;",
         "onHasCurrentChanged:",
     ))
@@ -191,9 +193,11 @@ def check_popout_clip(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
         "content.bottomAttached",
+        "content.bottomAnchorCenter >= 0",
+        "content.bottomAnchorCenter - content.nonAnimWidth / 2",
         "parent.width - content.nonAnimWidth - content.bottomRightMargin",
         "parent.height - content.nonAnimHeight - content.bottomOffset",
-    )) and "Behavior on x" not in text
+    )) and "Behavior on x" not in text and "Behavior on y" not in text
 
 
 def check_interactions(root: Path, text: str) -> bool:

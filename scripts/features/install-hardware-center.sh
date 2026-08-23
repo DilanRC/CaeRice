@@ -21,6 +21,8 @@ AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
 AUTO_DST="$HOME/.local/bin/caerice-power-auto"
 AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
 AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
+KEYBINDS_SRC="$REPO/caelestia/bin/caerice-keybinds"
+KEYBINDS_DST="$HOME/.local/bin/caerice-keybinds"
 UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
 UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
 VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
@@ -40,6 +42,7 @@ for f in \
     "$POWER_SRC" \
     "$AUTO_SRC" \
     "$AUTO_CTL_SRC" \
+    "$KEYBINDS_SRC" \
     "$UNIT_SRC" \
     "$VALIDATOR"; do
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
@@ -57,7 +60,8 @@ for f in \
     IOPage.qml \
     PowerPage.qml \
     PowerAutomationPage.qml \
-    EnergyPage.qml; do
+    EnergyPage.qml \
+    KeybindsPage.qml; do
     [[ -f "$SRC/hardware/$f" ]] || { echo "ERROR: falta hardware/$f" >&2; exit 3; }
 done
 
@@ -304,6 +308,7 @@ install -m 0755 "$PROBE_SRC" "$PROBE_DST"
 install -m 0755 "$POWER_SRC" "$POWER_DST"
 install -m 0755 "$AUTO_SRC" "$AUTO_DST"
 install -m 0755 "$AUTO_CTL_SRC" "$AUTO_CTL_DST"
+install -m 0755 "$KEYBINDS_SRC" "$KEYBINDS_DST"
 install -m 0644 "$UNIT_SRC" "$UNIT_DST"
 systemctl --user daemon-reload
 
@@ -321,7 +326,7 @@ echo "Hardware Center instalado."
 echo "Backup: $BACKUP"
 echo "Probe: $PROBE_DST"
 echo "Power: $POWER_DST"
-echo "Pages: Overview · Performance · Processes · Sensors · I/O · Power · Auto · Energy"
+echo "Pages: Overview · Performance · Processes · Sensors · I/O · Power · Auto · Energy · Keybinds"
 echo "Auto service: instalado, no se habilita automáticamente."
 echo
 echo "Reinicia Caelestia:"

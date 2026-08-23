@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+from pathlib import Path
+
+repo = Path(__file__).resolve().parents[2]
+page = (repo / "caelestia/modules-owned/modules/hardware/KeybindsPage.qml").read_text(encoding="utf-8")
+helper = (repo / "caelestia/bin/caerice-keybinds").read_text(encoding="utf-8")
+
+criteria = {
+    "native app catalogue": "DesktopEntries.applications.values",
+    "app metadata": "selectedApp.execString",
+    "keyboard capture": "Keys.onPressed: event =>",
+    "click-to-rebind": "root.beginCapture",
+    "duplicate rejection": "is already assigned to",
+    "atomic writes": "os.replace(temp_name, path)",
+    "snapshot before edit": "snapshot = backup()",
+    "reload verification": '["hyprctl", "binds", "-j"]',
+    "automatic rollback": "shutil.copy2(snapshot / OVERRIDES.name, OVERRIDES)",
+}
+
+joined = page + "\n" + helper
+missing = [name for name, needle in criteria.items() if needle not in joined]
+score = (len(criteria) - len(missing)) / len(criteria)
+print(f"Keybind editor eval: {len(criteria) - len(missing)}/{len(criteria)} ({score:.0%})")
+if missing:
+    raise SystemExit("FAIL: " + ", ".join(missing))

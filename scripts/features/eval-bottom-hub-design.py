@@ -9,7 +9,7 @@ criteria = {
     "launcher CachyOS": 'imageSource: "file:///usr/share/icons/cachyos.svg"',
     "esferas de workspace": "id: workspaceDots",
     "volumen Caelestia": "Icons.getVolumeIcon(Audio.volume, Audio.muted)",
-    "selector de output": 'icon: "speaker_group"',
+    "audio único": 'id: volumeButton',
     "wifi Caelestia": "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)",
     "Bluetooth con estado": '"bluetooth_connected"',
     "bateria Caelestia": "Icons.getBatteryIcon(",
@@ -19,13 +19,15 @@ criteria = {
     "menus tray conservan indice SNI": "`traymenu${trayItem.sourceIndex}`",
     "centro adaptativo": "implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)",
     "centro geometrico": "anchors.horizontalCenter: parent.horizontalCenter",
-    "hover nativo unido": "showAttachedControlFor(win.modelData",
+    "hover nativo anclado": "win.popoutAnchorCenter(",
     "quick toggles por fecha": "onClicked: hubRoot.toggleUtilitiesFor(win.modelData)",
 }
 
 passed = [name for name, needle in criteria.items() if needle in hub]
 if "toggleOverviewFor" in hub or 'icon: "view_quilt"' in hub:
     raise SystemExit("FAIL: BottomHub conserva el control Overview retirado")
+if 'icon: "speaker_group"' in hub:
+    raise SystemExit("FAIL: BottomHub conserva el segundo control de audio duplicado")
 if "Layout.fillWidth: true" in hub:
     raise SystemExit("FAIL: el rail central conserva ancho fijo")
 if "Icons.getTrayIcon(trayItem.modelData.id, trayItem.modelData.icon)" in hub:

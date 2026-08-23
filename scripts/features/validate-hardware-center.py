@@ -25,12 +25,14 @@ QML_REQUIRED = [
     "PowerPage.qml",
     "PowerAutomationPage.qml",
     "EnergyPage.qml",
+    "KeybindsPage.qml",
 ]
 HELPERS = [
     "caerice-hardware-probe",
     "caerice-hardware-power",
     "caerice-power-auto",
     "caerice-power-auto-control",
+    "caerice-keybinds",
 ]
 
 errors: list[str] = []
@@ -80,10 +82,11 @@ for path in [HARDWARE / name for name in QML_REQUIRED if (HARDWARE / name).exist
         errors.append(f"{path.name}: colores hex hardcodeados: {', '.join(sorted(set(hardcoded)))}")
 
 content = (HARDWARE / "Content.qml").read_text(encoding="utf-8") if (HARDWARE / "Content.qml").exists() else ""
-for label in ["Overview", "Performance", "Processes", "Sensors", "I/O", "Power", "Auto", "Energy"]:
+for label in ["Overview", "Performance", "Processes", "Sensors", "I/O", "Power", "Auto", "Energy", "Keybinds"]:
     require(f'qsTr("{label}")' in content, f"Content.qml: falta pestaña {label}")
-require("Qt.Key_8" in content, "Content.qml: navegación 1-8 incompleta")
+require("Qt.Key_9" in content, "Content.qml: navegación 1-9 incompleta")
 require("EnergyPage {}" in content, "Content.qml: EnergyPage no está conectada")
+require("KeybindsPage {}" in content, "Content.qml: KeybindsPage no está conectada")
 require("outsidePanel" in content and "root.closeHardware()" in content, "Content.qml: cierre exterior seguro ausente")
 
 wrapper = (HARDWARE / "Wrapper.qml").read_text(encoding="utf-8") if (HARDWARE / "Wrapper.qml").exists() else ""
@@ -125,7 +128,7 @@ if not errors:
 
 install = (REPO / "scripts/features/install-hardware-center.sh").read_text(encoding="utf-8")
 update = (REPO / "scripts/features/update-hardware-center.sh").read_text(encoding="utf-8")
-for needle in ["caerice-hardware-power", "caerice-power-auto", "caerice-power-auto-control", "caerice-power-auto.service"]:
+for needle in ["caerice-hardware-power", "caerice-power-auto", "caerice-power-auto-control", "caerice-keybinds", "caerice-power-auto.service"]:
     if needle not in install:
         errors.append(f"install-hardware-center.sh no instala {needle}")
     if needle not in update:

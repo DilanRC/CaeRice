@@ -7,6 +7,9 @@ MIGRATOR = (ROOT / "caelestia/bin/migrate-bottom-hub-from-main.py").read_text()
 CHECKER = (ROOT / "caelestia/bin/check-bottom-hub-target.py").read_text()
 HYPR = (ROOT / "caelestia/user-config/.config/caelestia/hypr-user.lua").read_text()
 MANIFEST = (ROOT / "caelestia/patches/MANIFEST.tsv").read_text()
+SHORTCUTS = (ROOT / "caelestia/patches/modules__Shortcuts.qml.patch").read_text()
+PANELS = (ROOT / "caelestia/patches/modules__drawers__Panels.qml.patch").read_text()
+POPOUT = (ROOT / "caelestia/patches/modules__bar__popouts__ClipWrapper.qml.patch").read_text()
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -36,7 +39,13 @@ def main() -> None:
     forbid(MIGRATOR, '"anchors.horizontalCenter: parent.horizontalCenter\\n        anchors.bottom: parent.bottom\\n",', "reemplazo global ambiguo")
     require(CHECKER, 'qml_block(text, "Launcher.Wrapper", "launcher")', "validación scoped del launcher")
     require(MANIFEST, "modules__bar__BarWrapper.qml.patch", "retiro de barra nativa")
-    require(HYPR, '"SUPER + I",\n    hl.dsp.global("caelestia:utilities")', "SUPER+I a Quick Settings")
+    require(HYPR, '"SUPER + I",\n    hl.dsp.global("caelestia:nexus")', "SUPER+I a Nexus")
+    require(HYPR, '"SUPER + H",\n    hl.dsp.global("caelestia:hardware")', "SUPER+H a Hardware Center")
+    require(HUB, "hubRoot.toggleLauncherFor(state.modelData);", "SUPER alterna el launcher")
+    require(SHORTCUTS, "const open = !(screenState.sidebar || screenState.utilities);", "SUPER+N abre ambos centros")
+    require(PANELS, "anchors.right: root.screenState.utilities ? utilities.left : parent.right", "centros adyacentes")
+    require(POPOUT, "content.bottomAnchorCenter - content.nonAnimWidth / 2", "popup centrado en su icono")
+    forbid(POPOUT, "\n+    Behavior on y", "viaje vertical de popup")
 
     print("BottomHub v4 architecture tests: OK")
 

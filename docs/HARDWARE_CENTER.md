@@ -29,11 +29,17 @@ uses the same native surface as Launcher, Overview and Clipboard.
 6. **Power** — manual Power Profiles switching plus CPU driver/governor/EPP/platform profile, AC/battery state, AMD runtime power state and NVIDIA P-state/clocks/power.
 7. **Auto** — optional AC/battery/low-battery profile rules with verified actions and a small persistent event history. Automation remains disabled until explicitly enabled.
 8. **Energy** — rolling battery/CPU/AMD/NVIDIA power histories, battery energy/health and estimated remaining/charge time when the kernel exposes enough data.
+9. **Keybinds** — installed-app search, automatic launcher metadata and direct reassignment by clicking a shortcut and pressing the replacement combination.
 
-Keyboard: `1`–`8` switches pages, `R` refreshes main telemetry and `Esc` closes.
+Keyboard: `1`–`9` switches pages, `R` refreshes main telemetry and `Esc` closes.
 There is also an explicit close button. Clicking empty space inside the panel does
 not close it; only clicking outside the panel, `Esc`, the close button or
 `Super+H` closes/toggles it.
+
+Keybind changes are written only to the user's Caelestia files. Every change
+creates a snapshot under `~/.local/share/caelestia-custom-system/snapshots/keybinds/`.
+If Hyprland rejects the reload or the new combination is missing, the helper
+restores the previous files automatically.
 
 ## Telemetry
 

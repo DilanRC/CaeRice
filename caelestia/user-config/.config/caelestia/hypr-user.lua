@@ -86,7 +86,12 @@ hl.bind(
 
 hl.bind(
     "SUPER + I",
-    hl.dsp.global("caelestia:utilities")
+    hl.dsp.global("caelestia:nexus")
+)
+
+hl.bind(
+    "SUPER + H",
+    hl.dsp.global("caelestia:hardware")
 )
 
 

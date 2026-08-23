@@ -224,6 +224,8 @@ def run_motion_and_bar_migration() -> None:
         clip.write_text(
             "Item {\n"
             "    content.bottomAttached\n"
+            "    content.bottomAnchorCenter >= 0\n"
+            "    content.bottomAnchorCenter - content.nonAnimWidth / 2\n"
             "    parent.width - content.nonAnimWidth - content.bottomRightMargin\n"
             "    parent.height - content.nonAnimHeight - content.bottomOffset\n"
             "    Behavior on x {\n"
@@ -232,6 +234,7 @@ def run_motion_and_bar_migration() -> None:
             "    Behavior on y {\n"
             "        Anim {}\n"
             "    }\n"
+            "    Wrapper {}\n"
             "}\n",
             encoding="utf-8",
         )
@@ -241,7 +244,7 @@ def run_motion_and_bar_migration() -> None:
             raise SystemExit("FAIL visual-bar-removal")
         if not checker.check_popout_clip(root, clip.read_text(encoding="utf-8")):
             raise SystemExit("FAIL horizontal-motion-removal")
-        print("PASS visual-bar-and-horizontal-motion-removal")
+        print("PASS visual-bar-and-popup-motion-removal")
 
 
 def main() -> None:

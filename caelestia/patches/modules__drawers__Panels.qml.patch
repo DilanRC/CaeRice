@@ -32,9 +32,11 @@
 -        anchors.right: sidebar.left
 +        anchors.bottom: utilities.top
 +        anchors.right: parent.right
-@@ -150,2 +160 @@
+@@ -188,4 +196,3 @@
 -        anchors.top: notifications.bottom
 -        anchors.bottom: utilities.top
-+        anchors.bottom: parent.bottom
-@@ -153 +161,0 @@
+-        anchors.right: parent.right
 -        anchors.topMargin: -notifications.anchors.topMargin
++        anchors.bottom: parent.bottom
++        anchors.right: root.screenState.utilities ? utilities.left : parent.right
++        anchors.rightMargin: root.screenState.utilities ? Tokens.padding.medium : 0

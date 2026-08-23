@@ -14,6 +14,8 @@ AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
 AUTO_DST="$HOME/.local/bin/caerice-power-auto"
 AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
 AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
+KEYBINDS_SRC="$REPO/caelestia/bin/caerice-keybinds"
+KEYBINDS_DST="$HOME/.local/bin/caerice-keybinds"
 UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
 UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
 VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
@@ -23,7 +25,7 @@ VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
     exit 2
 }
 
-for file in "$PROBE_SRC" "$POWER_SRC" "$AUTO_SRC" "$AUTO_CTL_SRC" "$UNIT_SRC" "$VALIDATOR"; do
+for file in "$PROBE_SRC" "$POWER_SRC" "$AUTO_SRC" "$AUTO_CTL_SRC" "$KEYBINDS_SRC" "$UNIT_SRC" "$VALIDATOR"; do
     [[ -f "$file" ]] || { echo "ERROR: falta $file" >&2; exit 3; }
 done
 
@@ -43,6 +45,7 @@ install -m 0755 "$PROBE_SRC" "$PROBE_DST"
 install -m 0755 "$POWER_SRC" "$POWER_DST"
 install -m 0755 "$AUTO_SRC" "$AUTO_DST"
 install -m 0755 "$AUTO_CTL_SRC" "$AUTO_CTL_DST"
+install -m 0755 "$KEYBINDS_SRC" "$KEYBINDS_DST"
 install -m 0644 "$UNIT_SRC" "$UNIT_DST"
 systemctl --user daemon-reload
 
@@ -65,5 +68,5 @@ caelestia shell -d
 
 echo
 echo "Hardware Center actualizado y validado. Prueba Super+H."
-echo "Pages: 1 Overview · 2 Performance · 3 Processes · 4 Sensors · 5 I/O · 6 Power · 7 Auto · 8 Energy"
+echo "Pages: 1 Overview · 2 Performance · 3 Processes · 4 Sensors · 5 I/O · 6 Power · 7 Auto · 8 Energy · 9 Keybinds"
 echo "Power automation: preserva tu elección; nunca se activa sola."
