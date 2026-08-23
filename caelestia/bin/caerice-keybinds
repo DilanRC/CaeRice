@@ -13,6 +13,7 @@ import subprocess
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from typing import NamedTuple
 
 HOME = Path.home()
 DEFAULTS = HOME / ".config/hypr/variables.lua"
@@ -21,7 +22,6 @@ USER = HOME / ".config/caelestia/hypr-user.lua"
 SNAPSHOTS = HOME / ".local/share/caelestia-custom-system/snapshots/keybinds"
 
 ENTRY_RE = re.compile(r"(?m)^(\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(\{[^\n]*\}|\"(?:\\.|[^\"])*\")(,?)")
-BIND_RE = re.compile(r"hl\.bind\(\s*\"((?:\\.|[^\"])*)\"\s*,(.*?)(?:\n\s*\)|\)\s*$)", re.M | re.S)
 STRING_RE = re.compile(r'\"((?:\\.|[^\"])*)\"')
 APP_COMMENT_RE = re.compile(r"(?m)^-- CaeRice app shortcut: (.*?) \((.*?)\)\s*$")
 MOD_BITS = {"SHIFT": 1, "CAPS": 2, "CTRL": 4, "ALT": 8, "MOD2": 16, "MOD3": 32, "SUPER": 64, "MOD5": 128}
@@ -37,6 +37,108 @@ APP_QUERIES = {"kbTerminal": "kitty"}
 
 class KeybindError(RuntimeError):
     pass
+
+
+class BindBlock(NamedTuple):
+    start: int
+    end: int
+    chord_start: int
+    chord_end: int
+    chord: str
+    body: str
+
+
+def binding_blocks(text: str) -> list[BindBlock]:
+    blocks = []
+    cursor = 0
+    marker = "hl.bind("
+    while (start := text.find(marker, cursor)) >= 0:
+        index = start + len(marker)
+        depth = 1
+        quote = ""
+        long_close = ""
+        line_comment = False
+        close = -1
+        while index < len(text):
+            char = text[index]
+            if line_comment:
+                line_comment = char != "\n"
+                index += 1
+                continue
+            if long_close:
+                if text.startswith(long_close, index):
+                    index += len(long_close)
+                    long_close = ""
+                else:
+                    index += 1
+                continue
+            if quote:
+                if char == "\\":
+                    index += 2
+                    continue
+                if char == quote:
+                    quote = ""
+                index += 1
+                continue
+            if text.startswith("--", index):
+                long_match = re.match(r"--\[(=*)\[", text[index:])
+                if long_match:
+                    long_close = "]" + long_match.group(1) + "]"
+                    index += long_match.end()
+                else:
+                    line_comment = True
+                    index += 2
+                continue
+            long_match = re.match(r"\[(=*)\[", text[index:])
+            if long_match:
+                long_close = "]" + long_match.group(1) + "]"
+                index += long_match.end()
+                continue
+            if char in "\"'":
+                quote = char
+            elif char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    close = index
+                    break
+            index += 1
+        if close < 0:
+            cursor = start + len(marker)
+            continue
+
+        chord_quote = start + len(marker)
+        while chord_quote < close and text[chord_quote].isspace():
+            chord_quote += 1
+        if chord_quote >= close or text[chord_quote] != '"':
+            cursor = close + 1
+            continue
+        chord_end = chord_quote + 1
+        while chord_end < close:
+            if text[chord_end] == "\\":
+                chord_end += 2
+                continue
+            if text[chord_end] == '"':
+                break
+            chord_end += 1
+        comma = chord_end + 1
+        while comma < close and text[comma].isspace():
+            comma += 1
+        if chord_end >= close or comma >= close or text[comma] != ",":
+            cursor = close + 1
+            continue
+        raw_chord = text[chord_quote + 1:chord_end]
+        blocks.append(BindBlock(
+            start=start,
+            end=close + 1,
+            chord_start=chord_quote + 1,
+            chord_end=chord_end,
+            chord=lua_unescape(raw_chord),
+            body=text[comma + 1:close].strip(),
+        ))
+        cursor = close + 1
+    return blocks
 
 
 def lua_unescape(value: str) -> str:
@@ -79,9 +181,9 @@ def generated_app(text: str, bind_start: int) -> tuple[str, str, int] | None:
 def user_bindings() -> list[dict]:
     text = USER.read_text(encoding="utf-8")
     result = []
-    for match in BIND_RE.finditer(text):
-        chord = lua_unescape(match.group(1))
-        body = match.group(2).strip()
+    for block in binding_blocks(text):
+        chord = block.chord
+        body = block.body
         global_match = re.search(r'hl\.dsp\.global\(\"([^\"]+)', body)
         command_match = re.search(r'hl\.dsp\.exec_cmd\((?:\[\[(.*?)\]\]|\"((?:\\.|[^\"])*)\")', body, re.S)
         detail = "Custom action"
@@ -93,7 +195,7 @@ def user_bindings() -> list[dict]:
         elif command_match:
             command = command_match.group(1) or lua_unescape(command_match.group(2) or "")
             detail = command
-        app = generated_app(text, match.start())
+        app = generated_app(text, block.start)
         item = {
             "id": bind_id(chord, body),
             "label": detail,
@@ -231,12 +333,12 @@ def update_user(identifier: str, chord: str) -> None:
     text = USER.read_text(encoding="utf-8")
     replacement = None
     old = ""
-    for match in BIND_RE.finditer(text):
-        candidate = lua_unescape(match.group(1))
-        if bind_id(candidate, match.group(2).strip()) == identifier:
+    for block in binding_blocks(text):
+        candidate = block.chord
+        if bind_id(candidate, block.body) == identifier:
             old = candidate
             ensure_free(chord, old)
-            replacement = text[:match.start(1)] + chord.replace("\\", "\\\\").replace('"', '\\"') + text[match.end(1):]
+            replacement = text[:block.chord_start] + chord.replace("\\", "\\\\").replace('"', '\\"') + text[block.chord_end:]
             break
     if replacement is None:
         raise KeybindError("The selected custom keybind no longer exists")
@@ -245,15 +347,18 @@ def update_user(identifier: str, chord: str) -> None:
 
 def delete_user(identifier: str) -> None:
     text = USER.read_text(encoding="utf-8")
-    for match in BIND_RE.finditer(text):
-        if bind_id(lua_unescape(match.group(1)), match.group(2).strip()) != identifier:
+    for block in binding_blocks(text):
+        if bind_id(block.chord, block.body) != identifier:
             continue
-        app = generated_app(text, match.start())
-        start = app[2] if app else match.start()
-        end = match.end()
+        app = generated_app(text, block.start)
+        start = app[2] if app else block.start
+        end = block.end
         while end < len(text) and text[end] == "\n":
             end += 1
-        atomic_write(USER, text[:start].rstrip() + "\n" + text[end:].lstrip("\n"))
+        before = text[:start].rstrip()
+        after = text[end:].lstrip("\n")
+        separator = "\n\n" if before and after else "\n"
+        atomic_write(USER, before + separator + after)
         return
     raise KeybindError("The selected custom keybind no longer exists")
 

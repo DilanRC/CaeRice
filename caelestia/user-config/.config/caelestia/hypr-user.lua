@@ -54,11 +54,6 @@ hl.bind(
 )
 
 hl.bind(
-    "SUPER + O",
-    hl.dsp.exec_cmd("spotify")
-)
-
-hl.bind(
     "SUPER + A",
     hl.dsp.exec_cmd("claude-desktop")
 )

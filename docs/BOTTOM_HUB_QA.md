@@ -45,6 +45,9 @@ La prueba usa la configuración y servicios reales del usuario sin escribir en
    usuario, con snapshot y restauración automática.
 4. Overview usaba `Icons.getAppIcon` sin importar `qs.utils`. El import faltante
    quedó añadido y cubierto por gate.
+5. El borrado de un `hl.bind` personalizado terminaba en el paréntesis interno
+   de `exec_cmd(...)` y dejaba el cierre externo suelto. El lector ahora recorre
+   bloques Lua balanceados y la regresión borra un bind intermedio completo.
 
 ## Observación del equipo
 

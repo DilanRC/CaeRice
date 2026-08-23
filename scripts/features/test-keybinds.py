@@ -35,6 +35,12 @@ def main() -> None:
             'hl.bind(\n    "SUPER + G",\n    hl.dsp.exec_cmd("github-desktop")\n)\n',
             encoding="utf-8",
         )
+        module.USER.write_text(
+            module.USER.read_text(encoding="utf-8")
+            + '\nhl.bind(\n    "SUPER + O",\n    hl.dsp.exec_cmd("spotify")\n)\n'
+            + '\nhl.bind(\n    "SUPER + A",\n    hl.dsp.exec_cmd("claude-desktop")\n)\n',
+            encoding="utf-8",
+        )
         real_reload_and_verify = module.reload_and_verify
         module.reload_and_verify = lambda chord, snapshot: None
 
@@ -45,7 +51,14 @@ def main() -> None:
         assert browser["description"] == "firefox"
         assert browser["appQuery"] == "firefox"
         assert any(item["id"] == "var:kbNextWs:1" and item["chord"] == "SUPER + Page_Down" for item in bindings)
-        custom = next(item for item in bindings if item["group"] == "Custom")
+        custom = next(item for item in bindings if item["chord"] == "SUPER + G")
+        duplicate = next(item for item in bindings if item["chord"] == "SUPER + O")
+
+        module.delete_binding(duplicate["id"])
+        user = module.USER.read_text(encoding="utf-8")
+        assert '"SUPER + O"' not in user
+        assert 'hl.dsp.exec_cmd("github-desktop")\n)\n\nhl.bind(\n    "SUPER + A"' in user
+        assert len(module.binding_blocks(user)) == 2
 
         module.set_binding("var:kbNextWs:1", "CTRL + SUPER + Right")
         assert 'kbNextWs = { "SUPER + Right", "CTRL + SUPER + Right" },' in module.OVERRIDES.read_text(encoding="utf-8")

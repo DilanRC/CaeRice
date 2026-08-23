@@ -21,6 +21,7 @@ criteria = {
     "desktop id fallback": "id.endsWith(`.${query}`)",
     "real application icon": "bindingRow.appEntry.icon",
     "application metadata": '"appId": app[1]',
+    "balanced Lua parser": "def binding_blocks(text: str)",
 }
 
 joined = page + "\n" + helper
