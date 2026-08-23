@@ -10,6 +10,7 @@ MANIFEST = (ROOT / "caelestia/patches/MANIFEST.tsv").read_text()
 SHORTCUTS = (ROOT / "caelestia/patches/modules__Shortcuts.qml.patch").read_text()
 PANELS = (ROOT / "caelestia/patches/modules__drawers__Panels.qml.patch").read_text()
 POPOUT = (ROOT / "caelestia/patches/modules__bar__popouts__ClipWrapper.qml.patch").read_text()
+WINDOW_CARD = (ROOT / "caelestia/modules-owned/modules/overview/WindowCard.qml").read_text()
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -45,6 +46,7 @@ def main() -> None:
     require(SHORTCUTS, "const open = !(screenState.sidebar || screenState.utilities);", "SUPER+N abre ambos centros")
     require(PANELS, "anchors.right: root.screenState.utilities ? utilities.left : parent.right", "centros adyacentes")
     require(POPOUT, "content.bottomAnchorCenter - content.nonAnimWidth / 2", "popup centrado en su icono")
+    require(WINDOW_CARD, "import qs.utils", "Overview resuelve Icons sin ReferenceError")
     forbid(POPOUT, "\n+    Behavior on y", "viaje vertical de popup")
 
     print("BottomHub v4 architecture tests: OK")

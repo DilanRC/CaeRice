@@ -2,6 +2,9 @@
 +++ b/modules/sidebar/Wrapper.qml
 @@ -9,0 +10 @@
 +    objectName: "caericeBottomNotificationCenter"
+@@ -13 +14 @@
+-    readonly property bool shouldBeActive: screenState.sidebar && Config.sidebar.enabled
++    readonly property bool shouldBeActive: screenState.sidebar
 @@ -18,2 +19,4 @@
 -    anchors.rightMargin: (-implicitWidth - 5) * offsetScale
 -    implicitWidth: Tokens.sizes.sidebar.width

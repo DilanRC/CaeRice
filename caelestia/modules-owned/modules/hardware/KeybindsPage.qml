@@ -19,6 +19,7 @@ FocusScope {
     property var selectedApp: null
     property string captureId: ""
     property bool captureNewApp: false
+    property string pendingDeleteId: ""
     property string statusText: qsTr("Loading shortcuts…")
     property bool busy: false
 
@@ -27,7 +28,10 @@ FocusScope {
         "/.local/bin/caerice-keybinds"
     readonly property var filteredBindings: bindings.filter(item => {
         const query = bindingFilter.trim().toLowerCase();
-        return !query || item.label.toLowerCase().includes(query) || item.chord.toLowerCase().includes(query);
+        return !query
+            || item.label.toLowerCase().includes(query)
+            || item.chord.toLowerCase().includes(query)
+            || (item.description ?? "").toLowerCase().includes(query);
     })
     readonly property var filteredApps: {
         const query = appFilter.trim().toLowerCase();
@@ -42,6 +46,40 @@ FocusScope {
     function refresh(): void {
         if (!listProcess.running)
             listProcess.running = true;
+    }
+
+    function appForBinding(binding): var {
+        const apps = [...DesktopEntries.applications.values];
+        const wantedId = (binding.appId ?? "").replace(/\.desktop$/, "").toLowerCase();
+        if (wantedId) {
+            const exact = apps.find(app => app.id.replace(/\.desktop$/, "").toLowerCase() === wantedId);
+            if (exact)
+                return exact;
+        }
+        const command = binding.command ?? "";
+        if (!command)
+            return null;
+        const executable = binding.appQuery ?? command.trim().split(/\s+/)[0].split("/").pop();
+        const query = executable.toLowerCase();
+        const byId = apps.find(app => {
+            const id = app.id.replace(/\.desktop$/, "").toLowerCase();
+            return id === query || id.endsWith(`.${query}`);
+        });
+        return byId ?? DesktopEntries.heuristicLookup(executable) ?? DesktopEntries.heuristicLookup(command);
+    }
+
+    function requestDelete(identifier): void {
+        if (pendingDeleteId !== identifier) {
+            pendingDeleteId = identifier;
+            statusText = qsTr("Press delete again to confirm");
+            deleteReset.restart();
+            return;
+        }
+        deleteReset.stop();
+        pendingDeleteId = "";
+        busy = true;
+        deleteProcess.command = [helperPath, "delete", identifier];
+        deleteProcess.running = true;
     }
 
     function beginCapture(identifier, isNewApp): void {
@@ -171,6 +209,32 @@ FocusScope {
                 }
             }
         }
+    }
+
+    Process {
+        id: deleteProcess
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.busy = false;
+                try {
+                    const result = JSON.parse(text.trim());
+                    root.statusText = result.ok
+                        ? qsTr("Deleted · %1").arg(result.deleted)
+                        : result.error;
+                    if (result.ok)
+                        root.refresh();
+                } catch (error) {
+                    root.statusText = qsTr("The shortcut could not be deleted");
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: deleteReset
+        interval: 4000
+        onTriggered: root.pendingDeleteId = ""
     }
 
     RowLayout {
@@ -422,7 +486,9 @@ FocusScope {
                     clip: true
 
                     delegate: StyledRect {
+                        id: bindingRow
                         required property var modelData
+                        readonly property var appEntry: root.appForBinding(modelData)
                         width: bindingList.width
                         height: 48
                         radius: Tokens.rounding.medium
@@ -434,8 +500,17 @@ FocusScope {
                             anchors.rightMargin: 8
                             spacing: 10
 
+                            IconImage {
+                                visible: bindingRow.appEntry !== null
+                                implicitSize: 26
+                                source: visible
+                                    ? Quickshell.iconPath(bindingRow.appEntry.icon, "image-missing")
+                                    : ""
+                            }
+
                             MaterialIcon {
-                                text: modelData.group === "Custom" ? "terminal" : "keyboard"
+                                visible: bindingRow.appEntry === null
+                                text: modelData.command ? "terminal" : "keyboard"
                                 color: Colours.palette.m3secondary
                                 fontStyle: Tokens.font.icon.medium
                             }
@@ -446,16 +521,17 @@ FocusScope {
 
                                 StyledText {
                                     Layout.fillWidth: true
-                                    text: modelData.label
+                                    text: bindingRow.appEntry?.name ?? modelData.appName ?? modelData.label
                                     color: Colours.palette.m3onSurface
                                     font: Tokens.font.body.medium
                                     elide: Text.ElideRight
                                 }
 
                                 StyledText {
-                                    text: modelData.group
+                                    text: modelData.description
                                     color: Colours.palette.m3outline
                                     font: Tokens.font.label.small
+                                    elide: Text.ElideMiddle
                                 }
                             }
 
@@ -479,6 +555,30 @@ FocusScope {
                                     text: root.captureId === modelData.id ? qsTr("Press keys…") : modelData.chord
                                     color: Colours.palette.m3onSecondaryContainer
                                     font: Tokens.font.label.medium
+                                }
+                            }
+
+                            StyledRect {
+                                Layout.preferredWidth: 34
+                                Layout.preferredHeight: 34
+                                radius: Tokens.rounding.medium
+                                color: root.pendingDeleteId === modelData.id
+                                    ? Colours.palette.m3errorContainer
+                                    : "transparent"
+
+                                StateLayer {
+                                    radius: parent.radius
+                                    enabled: !root.busy
+                                    onClicked: root.requestDelete(bindingRow.modelData.id)
+                                }
+
+                                MaterialIcon {
+                                    anchors.centerIn: parent
+                                    text: "delete"
+                                    color: root.pendingDeleteId === bindingRow.modelData.id
+                                        ? Colours.palette.m3onErrorContainer
+                                        : Colours.palette.m3onSurfaceVariant
+                                    fontStyle: Tokens.font.icon.medium
                                 }
                             }
                         }

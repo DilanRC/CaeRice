@@ -180,11 +180,12 @@ def check_sidebar(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
         'objectName: "caericeBottomNotificationCenter"',
+        "readonly property bool shouldBeActive: screenState.sidebar",
         "anchors.bottomMargin: 66 + (-implicitHeight - 5 - 66) * offsetScale",
         "implicitWidth: Math.min(520, parent.width - 16)",
         "implicitHeight: Math.min(430, parent.height * 0.55)",
         "anchors.fill: parent",
-    )) and "anchors.rightMargin:" not in text
+    )) and "anchors.rightMargin:" not in text and "screenState.sidebar && Config.sidebar.enabled" not in text
 
 
 def check_popout_wrapper(root: Path, text: str) -> bool:

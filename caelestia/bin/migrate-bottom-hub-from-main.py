@@ -135,6 +135,17 @@ def migrate_sidebar(root: Path) -> bool:
     after = before.replace('objectName: "caericeNativeSidebar"', 'objectName: "caericeBottomNotificationCenter"')
     if "objectName:" not in after:
         after = after.replace("    id: root\n", '    id: root\n    objectName: "caericeBottomNotificationCenter"\n', 1)
+    after = after.replace(
+        "readonly property bool shouldBeActive: screenState.sidebar && Config.sidebar.enabled",
+        "readonly property bool shouldBeActive: screenState.sidebar",
+    )
+    if "readonly property bool shouldBeActive:" not in after:
+        after = after.replace(
+            '    objectName: "caericeBottomNotificationCenter"\n',
+            '    objectName: "caericeBottomNotificationCenter"\n\n'
+            '    readonly property bool shouldBeActive: screenState.sidebar\n',
+            1,
+        )
 
     start = after.index("    visible: offsetScale < 1")
     end = after.index("    opacity: 1 - offsetScale", start)

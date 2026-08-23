@@ -15,6 +15,12 @@ criteria = {
     "snapshot before edit": "snapshot = backup()",
     "reload verification": '["hyprctl", "binds", "-j"]',
     "automatic rollback": "shutil.copy2(snapshot / OVERRIDES.name, OVERRIDES)",
+    "delete with confirmation": "Press delete again to confirm",
+    "delete backend": 'sub.add_parser("delete")',
+    "desktop entry resolution": "DesktopEntries.heuristicLookup(executable)",
+    "desktop id fallback": "id.endsWith(`.${query}`)",
+    "real application icon": "bindingRow.appEntry.icon",
+    "application metadata": '"appId": app[1]',
 }
 
 joined = page + "\n" + helper

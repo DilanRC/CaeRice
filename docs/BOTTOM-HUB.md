@@ -27,6 +27,7 @@ El contenido nativo de notificaciones, Utilities y los popouts se conserva, pero
 
 - `shell.qml.patch`: carga `BottomHub` en vez de `CustomDock`.
 - `modules__sidebar__Wrapper.qml.patch`: convierte el contenido de notificaciones en un centro inferior acotado.
+- El centro inferior de notificaciones atiende `screenState.sidebar` aunque `Config.sidebar.enabled` esté desactivado; esa opción solo pertenecía a la barra lateral retirada.
 - `modules__bar__BarWrapper.qml.patch`: desactiva por completo la barra lateral visual nativa.
 - `modules__bar__popouts__*.qml.patch`: añade el modo inferior unido para los popouts nativos.
 - `modules__drawers__Interactions.qml.patch`: conserva el popup mientras el puntero pasa del icono al contenido y elimina el Quick Toggles por hover.

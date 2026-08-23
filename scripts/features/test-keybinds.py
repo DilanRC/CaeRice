@@ -26,7 +26,7 @@ def main() -> None:
         module.SNAPSHOTS = root / "snapshots"
         module.subprocess.run = lambda *args, **kwargs: SimpleNamespace(returncode=0, stdout="[]", stderr="")
         module.DEFAULTS.write_text(
-            'return {\n    kbBrowser = "SUPER + W",\n'
+            'return {\n    browser = "firefox",\n    kbBrowser = "SUPER + W",\n'
             '    kbNextWs = { "SUPER + Right", "SUPER + Page_Down" },\n}\n',
             encoding="utf-8",
         )
@@ -39,7 +39,11 @@ def main() -> None:
         module.reload_and_verify = lambda chord, snapshot: None
 
         bindings = module.list_bindings()
-        assert any(item["id"] == "var:kbBrowser:0" and item["chord"] == "SUPER + B" for item in bindings)
+        browser = next(item for item in bindings if item["id"] == "var:kbBrowser:0")
+        assert browser["chord"] == "SUPER + B"
+        assert browser["command"] == "firefox"
+        assert browser["description"] == "firefox"
+        assert browser["appQuery"] == "firefox"
         assert any(item["id"] == "var:kbNextWs:1" and item["chord"] == "SUPER + Page_Down" for item in bindings)
         custom = next(item for item in bindings if item["group"] == "Custom")
 
@@ -60,6 +64,29 @@ def main() -> None:
         user = module.USER.read_text(encoding="utf-8")
         assert "CaeRice app shortcut: Example" in user
         assert "hl.dsp.exec_cmd([[example --open]])" in user
+        generated = next(item for item in module.list_bindings() if item.get("appId") == "org.example.App")
+        assert generated["appName"] == "Example"
+        assert generated["command"] == "example --open"
+
+        module.delete_binding(generated["id"])
+        assert "CaeRice app shortcut: Example" not in module.USER.read_text(encoding="utf-8")
+
+        module.delete_binding("var:kbNextWs:0")
+        assert 'kbNextWs = "CTRL + SUPER + Right",' in module.OVERRIDES.read_text(encoding="utf-8")
+
+        module.delete_binding("var:kbNextWs:0")
+        assert "kbNextWs = {}," in module.OVERRIDES.read_text(encoding="utf-8")
+        assert not any(item["id"].startswith("var:kbNextWs:") for item in module.list_bindings())
+
+        before_delete = module.OVERRIDES.read_text(encoding="utf-8")
+        module.subprocess.run = lambda *args, **kwargs: SimpleNamespace(returncode=1, stdout="", stderr="rejected")
+        try:
+            module.delete_binding("var:kbBrowser:0")
+        except module.KeybindError:
+            pass
+        else:
+            raise AssertionError("failed delete was accepted")
+        assert module.OVERRIDES.read_text(encoding="utf-8") == before_delete
 
         before = module.OVERRIDES.read_text(encoding="utf-8")
         module.reload_and_verify = real_reload_and_verify
