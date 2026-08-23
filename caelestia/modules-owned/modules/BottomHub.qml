@@ -31,13 +31,25 @@ Scope {
         }
     }
 
+    function closeAllUtilities(): void {
+        for (const screen of Screens.screens) {
+            const state = ShellState.forScreen(screen);
+            if (state)
+                state.utilities = false;
+        }
+    }
+
+    function closeAllPopovers(): void {
+        closeAllLaunchers();
+        closeAllSidebars();
+        closeAllUtilities();
+    }
+
     function setShown(value): void {
         shown = value;
 
-        if (!shown) {
-            closeAllLaunchers();
-            closeAllSidebars();
-        }
+        if (!shown)
+            closeAllPopovers();
     }
 
     function toggle(): void {
@@ -50,8 +62,7 @@ Scope {
             return;
 
         const wasOpen = state.launcher;
-        closeAllLaunchers();
-        closeAllSidebars();
+        closeAllPopovers();
         state.launcher = !wasOpen;
         shown = true;
     }
@@ -61,8 +72,7 @@ Scope {
         if (!state)
             return;
 
-        closeAllLaunchers();
-        closeAllSidebars();
+        closeAllPopovers();
         state.overview = !state.overview;
         shown = true;
     }
@@ -73,9 +83,19 @@ Scope {
             return;
 
         const wasOpen = state.sidebar;
-        closeAllLaunchers();
-        closeAllSidebars();
+        closeAllPopovers();
         state.sidebar = !wasOpen;
+        shown = true;
+    }
+
+    function toggleUtilitiesFor(screen): void {
+        const state = ShellState.forScreen(screen);
+        if (!state)
+            return;
+
+        const wasOpen = state.utilities;
+        closeAllPopovers();
+        state.utilities = !wasOpen;
         shown = true;
     }
 
@@ -89,8 +109,7 @@ Scope {
             const state = ShellState.forActive();
             if (!state)
                 return;
-            hubRoot.closeAllLaunchers();
-            hubRoot.closeAllSidebars();
+            hubRoot.closeAllPopovers();
             state.launcher = true;
             hubRoot.shown = true;
         }
@@ -107,8 +126,7 @@ Scope {
             const state = ShellState.forActive();
             if (!state)
                 return;
-            hubRoot.closeAllLaunchers();
-            hubRoot.closeAllSidebars();
+            hubRoot.closeAllPopovers();
             state.launcher = true;
             hubRoot.shown = true;
         }
@@ -356,13 +374,17 @@ Scope {
             implicitWidth: Math.min(hubSurface.implicitWidth + 8, modelData.width - 8)
             implicitHeight: hubSurface.implicitHeight + 4
 
+            // Compact pill: 52px tall (was 64), tighter padding, smaller
+            // controls. The dock only grows sideways with app count -- it
+            // never grows taller, so keeping this shallow keeps the whole
+            // bar reading as one clean strip instead of a slab.
             StyledRect {
                 id: hubSurface
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                implicitWidth: hubRow.implicitWidth + Tokens.padding.large * 2
-                implicitHeight: 64
+                implicitWidth: hubRow.implicitWidth + Tokens.padding.medium * 2
+                implicitHeight: 52
                 radius: Tokens.rounding.extraLarge
                 color: Colours.tPalette.m3surfaceContainerHigh
                 border.width: 1
@@ -371,7 +393,7 @@ Scope {
                 Row {
                     id: hubRow
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.small
+                    spacing: Tokens.spacing.extraSmall
 
                     HubButton {
                         icon: "apps"
@@ -389,7 +411,7 @@ Scope {
 
                     Rectangle {
                         width: 1
-                        height: 30
+                        height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         color: Colours.palette.m3outlineVariant
                         opacity: 0.65
@@ -412,8 +434,8 @@ Scope {
                                 return Icons.getAppIcon(modelData.className, "image-missing");
                             }
 
-                            implicitWidth: 48
-                            implicitHeight: 50
+                            implicitWidth: 42
+                            implicitHeight: 44
                             scale: appMouse.containsMouse ? 1.10 : 1
 
                             Behavior on scale {
@@ -440,9 +462,9 @@ Scope {
                             Image {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: parent.top
-                                anchors.topMargin: 5
-                                width: 34
-                                height: 34
+                                anchors.topMargin: 4
+                                width: 28
+                                height: 28
                                 source: appItem.iconSource
                                 fillMode: Image.PreserveAspectFit
                                 smooth: true
@@ -452,7 +474,7 @@ Scope {
                             Row {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.bottom: parent.bottom
-                                anchors.bottomMargin: 3
+                                anchors.bottomMargin: 2
                                 spacing: 3
                                 visible: appItem.running
 
@@ -461,7 +483,7 @@ Scope {
 
                                     Rectangle {
                                         required property int index
-                                        width: appItem.active ? 6 : 5
+                                        width: appItem.active ? 5 : 4
                                         height: width
                                         radius: width / 2
                                         color: appItem.active
@@ -507,15 +529,22 @@ Scope {
 
                     Rectangle {
                         width: 1
-                        height: 30
+                        height: 22
                         anchors.verticalCenter: parent.verticalCenter
                         color: Colours.palette.m3outlineVariant
                         opacity: 0.65
                     }
 
+                    HubButton {
+                        icon: "tune"
+                        active: win.screenState?.utilities ?? false
+                        tooltip: qsTr("Quick Toggles")
+                        onClicked: hubRoot.toggleUtilitiesFor(win.modelData)
+                    }
+
                     Item {
-                        implicitWidth: 48
-                        implicitHeight: 50
+                        implicitWidth: 40
+                        implicitHeight: 44
 
                         HubButton {
                             anchors.fill: parent
@@ -529,11 +558,11 @@ Scope {
                             visible: Notifs.notClosed.length > 0
                             anchors.top: parent.top
                             anchors.right: parent.right
-                            anchors.topMargin: 2
-                            anchors.rightMargin: 1
-                            width: 18
-                            height: 18
-                            radius: 9
+                            anchors.topMargin: 1
+                            anchors.rightMargin: 0
+                            width: 16
+                            height: 16
+                            radius: 8
                             color: Colours.palette.m3primary
 
                             StyledText {
@@ -545,9 +574,17 @@ Scope {
                         }
                     }
 
+                    Rectangle {
+                        width: 1
+                        height: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Colours.palette.m3outlineVariant
+                        opacity: 0.65
+                    }
+
                     Item {
-                        implicitWidth: 72
-                        implicitHeight: 50
+                        implicitWidth: 64
+                        implicitHeight: 44
 
                         Column {
                             anchors.centerIn: parent

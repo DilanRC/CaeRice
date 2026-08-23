@@ -1,78 +1,30 @@
 --- a/modules/drawers/Panels.qml
 +++ b/modules/drawers/Panels.qml
-@@ -5,6 +5,7 @@
- import qs.modules.bar as Bar
- import qs.modules.dashboard as Dashboard
- import qs.modules.launcher as Launcher
-+import qs.modules.overview as Overview
- import qs.modules.notifications as Notifications
- import qs.modules.osd as Osd
- import qs.modules.session as Session
-@@ -27,6 +28,7 @@
-     readonly property alias session: session
-     readonly property alias sessionWrapper: sessionWrapper
-     readonly property alias launcher: launcher
-+    readonly property alias overview: overview
-     readonly property alias dashboard: dashboard
-     readonly property alias popouts: popoutsWrapper.content
-     readonly property alias popoutsWrapper: popoutsWrapper
-@@ -44,7 +46,7 @@
-         anchors.verticalCenter: parent.verticalCenter
-         anchors.right: parent.right
-         anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
--        clip: sidebar.visible || session.visible
-+        clip: session.visible
+@@ -171,7 +171,6 @@
+         id: utilities
  
-         implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
-         implicitHeight: osd.implicitHeight
-@@ -54,7 +56,7 @@
+         screenState: root.screenState
+-        sidebar: sidebar
+         popouts: popoutsWrapper.content
  
-             screen: root.screen
-             screenState: root.screenState
--            sidebarOrSessionVisible: sidebar.visible || session.visible
-+            sidebarOrSessionVisible: session.visible
- 
-             anchors.verticalCenter: parent.verticalCenter
-             anchors.right: parent.right
-@@ -79,8 +81,8 @@
- 
-         anchors.verticalCenter: parent.verticalCenter
-         anchors.right: parent.right
--        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
--        clip: sidebar.visible
-+        anchors.rightMargin: 0
-+        clip: false
- 
-         implicitWidth: session.implicitWidth * (1 - session.offsetScale)
-         implicitHeight: session.implicitHeight
-@@ -105,6 +107,15 @@
- 
-         anchors.horizontalCenter: parent.horizontalCenter
          anchors.bottom: parent.bottom
-+    }
-+
-+    Overview.Wrapper {
-+        id: overview
-+
-+        screen: root.screen
-+        screenState: root.screenState
-+
-+        anchors.fill: parent
-     }
- 
-     Dashboard.Wrapper {
-@@ -137,8 +148,8 @@
+@@ -181,19 +180,22 @@
      Toasts.Toasts {
          id: toasts
  
--        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
--        anchors.right: sidebar.left
-+        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top
-+        anchors.right: parent.right
+-        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top
++        anchors.bottom: utilities.top
+         anchors.right: parent.right
          anchors.margins: Tokens.padding.medium
      }
  
-@@ -147,9 +158,7 @@
++    // Bottom Hub: notifications open as an independent floating popover
++    // centered above the hub, not as a right-docked column. Both anchors.top
++    // (notifications) and anchors.right (old right-dock) are dropped so the
++    // Wrapper's own implicitWidth/implicitHeight and bottomMargin slide
++    // (see modules/sidebar/Wrapper.qml) fully control its box.
+     Sidebar.Wrapper {
+         id: sidebar
  
          screenState: root.screenState
  

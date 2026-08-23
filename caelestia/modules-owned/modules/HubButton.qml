@@ -11,8 +11,8 @@ Item {
 
     signal clicked()
 
-    implicitWidth: 48
-    implicitHeight: 50
+    implicitWidth: 40
+    implicitHeight: 44
     scale: mouse.containsMouse ? 1.10 : 1
 
     Behavior on scale {

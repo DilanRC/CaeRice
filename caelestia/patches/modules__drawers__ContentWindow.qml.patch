@@ -1,48 +1,56 @@
 --- a/modules/drawers/ContentWindow.qml
 +++ b/modules/drawers/ContentWindow.qml
-@@ -62,15 +62,16 @@
-         screenState.launcher = false;
-         screenState.session = false;
-         screenState.dashboard = false;
-+        screenState.overview = false;
-         panels.popouts.close();
-     }
- 
-     name: "drawers"
-     WlrLayershell.exclusionMode: ExclusionMode.Ignore
--    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
--    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-+    WlrLayershell.layer: screenState.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
-+    WlrLayershell.keyboardFocus: screenState.overview || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
- 
--    mask: hasFullscreen ? emptyRegion : regions
-+    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)
- 
-     anchors.top: true
-     anchors.bottom: true
-@@ -115,6 +116,8 @@
-         active: {
-             const s = root.screenState;
+@@ -121,7 +121,7 @@
              const conf = root.contentItem.Config;
-+            if (s.overview)
-+                return true;
-             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
+             if (s.overview || s.clipboard || s.hardware || s.displayManager)
+                 return true;
+-            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
++            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled) || (s.utilities && conf.utilities.enabled))
                  return true;
              if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
-@@ -129,6 +132,7 @@
+                 return true;
+@@ -134,6 +134,7 @@
+             root.screenState.launcher = false;
              root.screenState.session = false;
              root.screenState.sidebar = false;
++            root.screenState.utilities = false;
              root.screenState.dashboard = false;
-+            root.screenState.overview = false;
-             panels.popouts.hasCurrent = false;
-             bar.closeTray();
+             root.screenState.overview = false;
+             root.screenState.clipboard = false;
+@@ -210,11 +211,12 @@
+         PanelBg {
+             id: sidebarBg
+ 
++            // Bottom Hub: notifications is now an independent floating
++            // popover, no longer visually merged with utilities, so it
++            // needs no cross-exclude or shared corner radius.
+             panel: panels.sidebar
+             deformAmount: 0.03
+             implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
+-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
+-            bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
          }
-@@ -136,7 +140,7 @@
  
-     StyledRect {
-         anchors.fill: parent
--        opacity: (root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
-+        opacity: root.screenState.overview ? 0.58 : ((root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
-         color: Colours.palette.m3scrim
+         PanelBg {
+@@ -235,10 +237,10 @@
+         PanelBg {
+             id: utilsBg
  
-         Behavior on opacity {
++            // Bottom Hub: quick toggles is now an independent floating
++            // popover, decoupled from sidebar (see modules/utilities/Wrapper.qml).
+             panel: panels.utilities
+-            deformAmount: panels.sidebar.visible ? 0.1 : 0.15
+-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
+-            topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
++            deformAmount: 0.12
+         }
+ 
+         PanelBg {
+@@ -277,7 +279,6 @@
+             bar: bar
+             borderThickness: root.borderThickness
+ 
+-            utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
+             utilities.deformMatrix: utilsBg.rawDeformMatrix
+ 
+             dashboard.transform: Matrix4x4 {
