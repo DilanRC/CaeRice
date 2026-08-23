@@ -28,6 +28,27 @@ def block_between(text: str, start: str, end: str) -> str | None:
     return text[start_pos:end_pos]
 
 
+def qml_block(text: str, component: str, object_id: str) -> str:
+    start = text.find(f"    {component} {{")
+    while start >= 0:
+        brace = text.find("{", start)
+        depth = 0
+        for index in range(brace, len(text)):
+            if text[index] == "{":
+                depth += 1
+            elif text[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    block = text[start:index + 1]
+                    if f"id: {object_id}" in block:
+                        return block
+                    start = text.find(f"    {component} {{", index + 1)
+                    break
+        else:
+            break
+    return ""
+
+
 def retained_overlay_flags(root: Path) -> tuple[str, ...]:
     """Return retained CaeRice overlays that are actually wired in ScreenState.
 
@@ -114,18 +135,24 @@ def check_content_window(root: Path, text: str) -> bool:
 
 def check_panels(root: Path, text: str) -> bool:
     del root
+    launcher = qml_block(text, "Launcher.Wrapper", "launcher")
+    utilities = qml_block(text, "Utilities.Wrapper", "utilities")
+    sidebar = qml_block(text, "Sidebar.Wrapper", "sidebar")
+    session = qml_block(text, "Item", "sessionWrapper")
     return has_all(text, (
         "import qs.modules.overview as Overview",
         "readonly property alias overview: overview",
-        "clip: sidebar.visible || session.visible",
-        "sidebarOrSessionVisible: sidebar.visible || session.visible",
-        "anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)\n        clip: sidebar.visible",
         "Overview.Wrapper {",
-        "sidebar: sidebar",
-        "anchors.bottom: sidebar.visible ? parent.bottom : utilities.top",
-        "anchors.right: sidebar.left",
-        "anchors.top: notifications.bottom\n        anchors.bottom: utilities.top\n        anchors.right: parent.right",
-    ))
+    )) and has_all(launcher, (
+        "anchors.horizontalCenter: parent.horizontalCenter",
+        "anchors.bottom: parent.bottom",
+    )) and "anchors.top: notifications.bottom" not in launcher \
+        and "sidebar: sidebar" not in utilities \
+        and has_all(sidebar, (
+            "anchors.bottom: parent.bottom",
+            "anchors.right: parent.right",
+        )) \
+        and "sidebar.width" not in session
 
 
 def check_regions(root: Path, text: str) -> bool:
@@ -141,13 +168,12 @@ def check_regions(root: Path, text: str) -> bool:
 def check_sidebar(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
-        'objectName: "caericeNativeSidebar"',
-        "anchors.rightMargin: (-implicitWidth - 5) * offsetScale",
-        "implicitWidth: Tokens.sizes.sidebar.width",
-        "anchors.top: parent.top",
-        "anchors.bottom: parent.bottom",
-        "anchors.left: parent.left",
-    )) and "(-implicitHeight - 5 - 72) * offsetScale" not in text
+        'objectName: "caericeBottomNotificationCenter"',
+        "anchors.bottomMargin: 66 + (-implicitHeight - 5 - 66) * offsetScale",
+        "implicitWidth: Math.min(520, parent.width - 16)",
+        "implicitHeight: Math.min(430, parent.height * 0.55)",
+        "anchors.fill: parent",
+    )) and "anchors.rightMargin:" not in text
 
 
 def check_popout_wrapper(root: Path, text: str) -> bool:
@@ -167,7 +193,7 @@ def check_popout_clip(root: Path, text: str) -> bool:
         "content.bottomAttached",
         "parent.width - content.nonAnimWidth - content.bottomRightMargin",
         "parent.height - content.nonAnimHeight - content.bottomOffset",
-    ))
+    )) and "Behavior on x" not in text
 
 
 def check_interactions(root: Path, text: str) -> bool:
@@ -176,16 +202,29 @@ def check_interactions(root: Path, text: str) -> bool:
         "function insidePanel(panel: Item, x: real, y: real): bool",
         "popouts.bottomAttached",
         "insidePanel(panels.popoutsWrapper, x, y)",
+        "const showSidebar = false;",
+        "if (false && Config.sidebar.showOnHover)",
     )) and "const showUtilities =" not in text
 
 
 def check_utilities(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
-        "required property Sidebar.Wrapper sidebar",
-        "property real horizontalStretch",
-        "when: root.screenState.sidebar",
-        "anchors.bottomMargin: 54 + (-implicitHeight - 5 - 54) * offsetScale",
+        "readonly property bool shouldBeActive: screenState.utilities",
+        "anchors.bottomMargin: 66 + (-implicitHeight - 5 - 66) * offsetScale",
+        "implicitWidth: Math.min(Tokens.sizes.utilities.width, parent.width - 16)",
+    )) and "Sidebar.Wrapper" not in text and "screenState.sidebar" not in text
+
+
+def check_bar(root: Path, text: str) -> bool:
+    del root
+    return has_all(text, (
+        "readonly property bool disabled: true",
+        "readonly property int clampedWidth: 0",
+        "readonly property int exclusiveZone: 0",
+        "readonly property bool shouldBeVisible: false",
+        "visible: false",
+        "implicitWidth: 0",
     ))
 
 
@@ -196,6 +235,7 @@ CHECKS = {
     "modules/drawers/Panels.qml": check_panels,
     "modules/drawers/Regions.qml": check_regions,
     "modules/sidebar/Wrapper.qml": check_sidebar,
+    "modules/bar/BarWrapper.qml": check_bar,
     "modules/bar/popouts/Wrapper.qml": check_popout_wrapper,
     "modules/bar/popouts/ClipWrapper.qml": check_popout_clip,
     "modules/drawers/Interactions.qml": check_interactions,

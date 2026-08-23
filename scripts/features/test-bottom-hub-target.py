@@ -113,7 +113,7 @@ def run_case(
         print(f"PASS {name}")
 
 
-def run_panels_tolerant_migration() -> None:
+def run_corrupt_runtime_migration() -> None:
     with tempfile.TemporaryDirectory(prefix="bottom-hub-panels-") as td:
         root = Path(td)
         panels = root / "modules/drawers/Panels.qml"
@@ -138,15 +138,26 @@ def run_panels_tolerant_migration() -> None:
             "    Overview.Wrapper {\n"
             "        id: overview\n"
             "    }\n"
+            "    Launcher.Wrapper {\n"
+            "        id: launcher\n"
+            "        screen: root.screen\n"
+            "        anchors.top: notifications.bottom\n"
+            "        anchors.bottom: utilities.top\n"
+            "        anchors.right: parent.right\n"
+            "    }\n"
             "    Toasts.Toasts {\n"
+            "        id: toasts\n"
             "        anchors.bottom: utilities.top\n"
             "        anchors.right: parent.right\n"
             "    }\n"
             "    Utilities.Wrapper {\n"
+            "        id: utilities\n"
             "        screenState: root.screenState\n"
+            "        sidebar: sidebar\n"
             "        popouts: popoutsWrapper.content\n"
             "    }\n"
             "    Sidebar.Wrapper {\n"
+            "        id: sidebar\n"
             "        anchors.horizontalCenter: parent.horizontalCenter\n"
             "        anchors.bottom: parent.bottom\n"
             "    }\n"
@@ -157,7 +168,7 @@ def run_panels_tolerant_migration() -> None:
         text = panels.read_text(encoding="utf-8")
         if not checker.check_panels(root, text):
             raise SystemExit("FAIL panels-tolerant-migration")
-        print("PASS panels-tolerant-migration")
+        print("PASS corrupt-panels-scoped-migration")
 
 
 def run_sidebar_migration() -> None:
@@ -168,17 +179,19 @@ def run_sidebar_migration() -> None:
         sidebar.write_text(
             "Item {\n"
             "    id: root\n"
-            "    // Bottom Hub: open above the 64px bar + 2px margin + 6px breathing room.\n"
-            "    // Closed state slides the complete panel below the screen edge.\n"
-            "    anchors.bottomMargin:\n"
-            "        72 +\n"
-            "        (-implicitHeight - 5 - 72) * offsetScale\n\n"
-            "    implicitWidth: Math.min(520, parent.width - 16)\n"
-            "    implicitHeight: Math.min(430, parent.height * 0.55)\n"
-            "    Item {\n"
-            "        anchors.fill: parent\n"
-            "        Loader {\n"
-            "            implicitWidth: root.implicitWidth\n"
+            "    objectName: \"caericeNativeSidebar\"\n"
+            "    visible: offsetScale < 1\n"
+            "    anchors.rightMargin: (-implicitWidth - 5) * offsetScale\n"
+            "    implicitWidth: Tokens.sizes.sidebar.width\n"
+            "    opacity: 1 - offsetScale\n"
+            "    Loader {\n"
+            "        id: content\n"
+            "        anchors.top: parent.top\n"
+            "        anchors.bottom: parent.bottom\n"
+            "        anchors.left: parent.left\n"
+            "        active: root.visible\n"
+            "        sourceComponent: Content {\n"
+            "            implicitWidth: Tokens.sizes.sidebar.width - content.anchors.leftMargin - content.anchors.margins\n"
             "        }\n"
             "    }\n"
             "}\n",
@@ -186,37 +199,49 @@ def run_sidebar_migration() -> None:
         )
         assert migrator.migrate_sidebar(root) is True
         text = sidebar.read_text(encoding="utf-8")
-        text = text.replace('    id: root\n', '    id: root\n    objectName: "caericeNativeSidebar"\n')
-        sidebar.write_text(text, encoding="utf-8")
         if not checker.check_sidebar(root, text):
-            raise SystemExit("FAIL sidebar-native-migration")
-        print("PASS sidebar-native-migration")
+            raise SystemExit("FAIL bottom-notification-migration")
+        print("PASS bottom-notification-migration")
 
 
-def run_regions_migration() -> None:
-    with tempfile.TemporaryDirectory(prefix="bottom-hub-regions-") as td:
+def run_motion_and_bar_migration() -> None:
+    with tempfile.TemporaryDirectory(prefix="bottom-hub-motion-") as td:
         root = Path(td)
-        regions = root / "modules/drawers/Regions.qml"
-        regions.parent.mkdir(parents=True)
-        regions.write_text(
+        bar = root / "modules/bar/BarWrapper.qml"
+        clip = root / "modules/bar/popouts/ClipWrapper.qml"
+        clip.parent.mkdir(parents=True)
+        bar.write_text(
             "Item {\n"
-            "    R {\n"
-            "        y: root.win.height - height - panel.dockOffset\n"
-            "        width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness\n"
+            "    readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)\n"
+            "    readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)\n"
+            "    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || screenState.bar) ? contentWidth : Config.border.thickness\n"
+            "    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered)\n"
+            "    visible: width > Config.border.thickness\n"
+            "    implicitWidth: fullscreen ? 0 : Config.border.thickness\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        clip.write_text(
+            "Item {\n"
+            "    content.bottomAttached\n"
+            "    parent.width - content.nonAnimWidth - content.bottomRightMargin\n"
+            "    parent.height - content.nonAnimHeight - content.bottomOffset\n"
+            "    Behavior on x {\n"
+            "        Anim {}\n"
             "    }\n"
-            "    R {\n"
-            "        panel: root.panels.sidebar\n"
-            "        width: panel.width\n"
-            "        height: panel.height * (1 - root.panels.sidebar.offsetScale) + root.borderThickness\n"
+            "    Behavior on y {\n"
+            "        Anim {}\n"
             "    }\n"
             "}\n",
             encoding="utf-8",
         )
-        assert migrator.migrate_regions(root) is True
-        text = regions.read_text(encoding="utf-8")
-        if not checker.check_regions(root, text):
-            raise SystemExit("FAIL regions-native-migration")
-        print("PASS regions-native-migration")
+        assert migrator.migrate_bar(root) is True
+        assert migrator.migrate_popout_clip(root) is True
+        if not checker.check_bar(root, bar.read_text(encoding="utf-8")):
+            raise SystemExit("FAIL visual-bar-removal")
+        if not checker.check_popout_clip(root, clip.read_text(encoding="utf-8")):
+            raise SystemExit("FAIL horizontal-motion-removal")
+        print("PASS visual-bar-and-horizontal-motion-removal")
 
 
 def main() -> None:
@@ -244,9 +269,9 @@ def main() -> None:
         expected=False,
         clipboard_scrim=False,
     )
-    run_panels_tolerant_migration()
+    run_corrupt_runtime_migration()
     run_sidebar_migration()
-    run_regions_migration()
+    run_motion_and_bar_migration()
     print("BottomHub semantic target tests: OK")
 
 

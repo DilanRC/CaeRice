@@ -28,11 +28,14 @@ Scope {
         }
     }
 
-    function closeAllSidebars(): void {
+    function closeAllPanels(): void {
         for (const screen of Screens.screens) {
             const state = ShellState.forScreen(screen);
-            if (state)
+            if (state) {
                 state.sidebar = false;
+                state.utilities = false;
+                state.session = false;
+            }
         }
     }
 
@@ -41,7 +44,7 @@ Scope {
 
         if (!shown) {
             closeAllLaunchers();
-            closeAllSidebars();
+            closeAllPanels();
         }
     }
 
@@ -56,7 +59,7 @@ Scope {
 
         const wasOpen = state.launcher;
         closeAllLaunchers();
-        closeAllSidebars();
+        closeAllPanels();
         state.launcher = !wasOpen;
         shown = true;
     }
@@ -68,8 +71,20 @@ Scope {
 
         const wasOpen = state.sidebar;
         closeAllLaunchers();
-        closeAllSidebars();
+        closeAllPanels();
         state.sidebar = !wasOpen;
+        shown = true;
+    }
+
+    function toggleUtilitiesFor(screen): void {
+        const state = ShellState.forScreen(screen);
+        if (!state)
+            return;
+
+        const wasOpen = state.utilities;
+        closeAllLaunchers();
+        closeAllPanels();
+        state.utilities = !wasOpen;
         shown = true;
     }
 
@@ -77,6 +92,9 @@ Scope {
         const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
         if (!popouts)
             return;
+
+        closeAllLaunchers();
+        closeAllPanels();
 
         if (popouts.isDetached && popouts.queuedMode === mode) {
             popouts.close();
@@ -92,6 +110,8 @@ Scope {
         if (!popouts)
             return;
 
+        closeAllLaunchers();
+        closeAllPanels();
         popouts.bottomAttached = true;
         popouts.currentName = mode;
         popouts.hasCurrent = true;
@@ -109,9 +129,15 @@ Scope {
             if (!state)
                 return;
             hubRoot.closeAllLaunchers();
-            hubRoot.closeAllSidebars();
+            hubRoot.closeAllPanels();
             state.launcher = true;
             hubRoot.shown = true;
+        }
+        function notifications(): void {
+            hubRoot.toggleSidebarFor(ShellState.forActive()?.modelData);
+        }
+        function quickSettings(): void {
+            hubRoot.toggleUtilitiesFor(ShellState.forActive()?.modelData);
         }
     }
 
@@ -127,7 +153,7 @@ Scope {
             if (!state)
                 return;
             hubRoot.closeAllLaunchers();
-            hubRoot.closeAllSidebars();
+            hubRoot.closeAllPanels();
             state.launcher = true;
             hubRoot.shown = true;
         }
@@ -153,8 +179,10 @@ Scope {
             readonly property int hubMargin: 8
             readonly property int appRailMaxWidth: Math.max(
                 180,
-                modelData.width - Math.max(leftSegment.width, statusSegment.width) * 2 - 48
+                modelData.width - Math.max(leftSegment.width, rightOccupiedWidth) * 2 - 48
             )
+            readonly property int rightOccupiedWidth:
+                statusSegment.width + (traySegment.visible ? traySegment.width + 8 : 0)
             readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
             readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
             readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
@@ -650,6 +678,70 @@ Scope {
                     }
 
                     StyledRect {
+                        id: traySegment
+
+                        readonly property var trayItems: SystemTray.items.values.filter(
+                            item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id)
+                        )
+
+                        visible: trayItems.length > 0
+                        anchors.right: statusSegment.left
+                        anchors.rightMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
+                        implicitWidth: trayRow.implicitWidth + 12
+                        implicitHeight: 52
+                        radius: Tokens.rounding.full
+                        color: Colours.tPalette.m3surfaceContainer
+
+                        Row {
+                            id: trayRow
+                            anchors.centerIn: parent
+                            spacing: 2
+
+                            Repeater {
+                                model: traySegment.trayItems
+
+                                Item {
+                                    id: trayItem
+                                    required property SystemTrayItem modelData
+                                    readonly property int sourceIndex: SystemTray.items.values.indexOf(modelData)
+                                    readonly property string iconSource: modelData.icon
+                                        || Icons.getTrayIcon(modelData.id, modelData.icon)
+
+                                    implicitWidth: 34
+                                    implicitHeight: 40
+
+                                    ColouredIcon {
+                                        anchors.centerIn: parent
+                                        implicitWidth: 22
+                                        implicitHeight: 22
+                                        source: trayItem.iconSource
+                                        colour: Colours.palette.m3secondary
+                                        layer.enabled: Config.bar.tray.recolour
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                        cursorShape: Qt.PointingHandCursor
+                                        onEntered: hubRoot.showAttachedControlFor(
+                                            win.modelData,
+                                            `traymenu${trayItem.sourceIndex}`
+                                        )
+                                        onClicked: event => {
+                                            if (event.button === Qt.LeftButton)
+                                                trayItem.modelData.activate();
+                                            else
+                                                trayItem.modelData.secondaryActivate();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    StyledRect {
                         id: statusSegment
 
                         anchors.right: parent.right
@@ -664,49 +756,6 @@ Scope {
                             id: statusRow
                             anchors.centerIn: parent
                             spacing: 2
-
-                            Repeater {
-                                model: ScriptModel {
-                                    values: SystemTray.items.values.filter(
-                                        item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id)
-                                    )
-                                }
-
-                                Item {
-                                    id: trayItem
-                                    required property int index
-                                    required property SystemTrayItem modelData
-
-                                    implicitWidth: 32
-                                    implicitHeight: 40
-
-                                    ColouredIcon {
-                                        anchors.centerIn: parent
-                                        implicitWidth: 22
-                                        implicitHeight: 22
-                                        source: Icons.getTrayIcon(trayItem.modelData.id, trayItem.modelData.icon)
-                                        colour: Colours.palette.m3secondary
-                                        layer.enabled: Config.bar.tray.recolour
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                        cursorShape: Qt.PointingHandCursor
-                                        onEntered: hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            `traymenu${trayItem.index}`
-                                        )
-                                        onClicked: event => {
-                                            if (event.button === Qt.LeftButton)
-                                                trayItem.modelData.activate();
-                                            else
-                                                trayItem.modelData.secondaryActivate();
-                                        }
-                                    }
-                                }
-                            }
 
                             HubButton {
                                 buttonSize: 40
@@ -858,10 +907,7 @@ Scope {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        if (win.screenState)
-                                            win.screenState.utilities = !win.screenState.utilities;
-                                    }
+                                    onClicked: hubRoot.toggleUtilitiesFor(win.modelData)
                                 }
                             }
 
@@ -874,8 +920,11 @@ Scope {
                                 activeColor: Colours.palette.m3errorContainer
                                 iconColor: active ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
                                 onClicked: {
-                                    if (win.screenState)
+                                    if (win.screenState) {
+                                        hubRoot.closeAllLaunchers();
+                                        hubRoot.closeAllPanels();
                                         win.screenState.session = !win.screenState.session;
+                                    }
                                 }
                             }
                         }

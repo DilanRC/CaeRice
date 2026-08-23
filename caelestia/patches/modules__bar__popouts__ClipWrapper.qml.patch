@@ -1,20 +1,20 @@
 --- a/modules/bar/popouts/ClipWrapper.qml
 +++ b/modules/bar/popouts/ClipWrapper.qml
-@@ -20,10 +20,16 @@
-     implicitWidth: content.implicitWidth * (1 - offsetScale)
-     implicitHeight: content.implicitHeight
-
+@@ -23 +23,5 @@
 -    x: content.isDetached ? (parent.width - content.nonAnimWidth) / 2 : 0
 +    x: content.isDetached
 +        ? (parent.width - content.nonAnimWidth) / 2
 +        : content.bottomAttached
 +            ? parent.width - content.nonAnimWidth - content.bottomRightMargin
 +            : 0
-     y: {
-         if (content.isDetached)
-             return (parent.height - content.nonAnimHeight) / 2;
+@@ -26,0 +31,2 @@
 +        if (content.bottomAttached)
 +            return parent.height - content.nonAnimHeight - content.bottomOffset;
-
-         const off = content.currentCenter - borderThickness - content.nonAnimHeight / 2;
-         const diff = parent.height - Math.floor(off + content.nonAnimHeight);
+@@ -37,7 +42,0 @@
+-    }
+-
+-    Behavior on x {
+-        Anim {
+-            duration: content.animLength
+-            easing: content.animCurve
+-        }

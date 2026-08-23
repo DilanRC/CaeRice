@@ -1,27 +1,21 @@
 --- a/modules/drawers/Panels.qml
 +++ b/modules/drawers/Panels.qml
-@@ -5,6 +5,7 @@
- import qs.modules.bar as Bar
- import qs.modules.dashboard as Dashboard
- import qs.modules.launcher as Launcher
+@@ -7,0 +8 @@
 +import qs.modules.overview as Overview
- import qs.modules.notifications as Notifications
- import qs.modules.osd as Osd
- import qs.modules.session as Session
-@@ -27,6 +28,7 @@
-     readonly property alias session: session
-     readonly property alias sessionWrapper: sessionWrapper
-     readonly property alias launcher: launcher
+@@ -29,0 +31 @@
 +    readonly property alias overview: overview
-     readonly property alias dashboard: dashboard
-     readonly property alias popouts: popoutsWrapper.content
-     readonly property alias popoutsWrapper: popoutsWrapper
-@@ -105,6 +107,15 @@
- 
-         anchors.horizontalCenter: parent.horizontalCenter
-         anchors.bottom: parent.bottom
-+    }
-+
+@@ -47 +49 @@
+-        clip: sidebar.visible || session.visible
++        clip: session.visible
+@@ -57 +59 @@
+-            sidebarOrSessionVisible: sidebar.visible || session.visible
++            sidebarOrSessionVisible: session.visible
+@@ -82,2 +84,2 @@
+-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+-        clip: sidebar.visible
++        anchors.rightMargin: 0
++        clip: false
+@@ -109,0 +112,9 @@
 +    Overview.Wrapper {
 +        id: overview
 +
@@ -29,6 +23,18 @@
 +        screenState: root.screenState
 +
 +        anchors.fill: parent
-     }
- 
-     Dashboard.Wrapper {
++    }
++
+@@ -130 +140,0 @@
+-        sidebar: sidebar
+@@ -140,2 +150,2 @@
+-        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
+-        anchors.right: sidebar.left
++        anchors.bottom: utilities.top
++        anchors.right: parent.right
+@@ -150,2 +160 @@
+-        anchors.top: notifications.bottom
+-        anchors.bottom: utilities.top
++        anchors.bottom: parent.bottom
+@@ -153 +161,0 @@
+-        anchors.topMargin: -notifications.anchors.topMargin

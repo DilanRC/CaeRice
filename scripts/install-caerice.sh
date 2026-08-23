@@ -12,6 +12,7 @@ fi
 echo "==> 0/9 Regresiones de integración Bottom Hub"
 python3 "$REPO/scripts/features/test-bottom-hub-target.py"
 python3 "$REPO/scripts/features/test-bottom-hub-v3.py"
+python3 "$REPO/scripts/features/test-bottom-hub-v4.py"
 python3 "$REPO/scripts/features/test-retained-overlay-wiring.py"
 
 mkdir -p "$BASE"

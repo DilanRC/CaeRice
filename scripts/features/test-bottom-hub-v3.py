@@ -84,9 +84,9 @@ def main() -> None:
     require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "Caelestia network icon")
     require(bottom, '"bluetooth_connected"', "Caelestia bluetooth state icon")
     require(bottom, "Icons.getBatteryIcon(", "Caelestia battery icon")
-    require(bottom, "values: SystemTray.items.values.filter(", "system tray items")
+    require(bottom, "trayItems: SystemTray.items.values.filter(", "system tray items")
     require(bottom, "layer.enabled: Config.bar.tray.recolour", "native tray recolouring")
-    require(bottom, "`traymenu${trayItem.index}`", "native tray hover menu")
+    require(bottom, "`traymenu${trayItem.sourceIndex}`", "native tray hover menu")
     require(bottom, "Colours.tPalette.m3surfaceContainer", "scheme-aware translucent surfaces")
     require(bottom, "activeColor: Colours.palette.m3errorContainer", "session danger active state")
     require(bottom, "onClicked: hubRoot.toggleLauncherFor(win.modelData)", "launcher action")
@@ -97,7 +97,7 @@ def main() -> None:
     require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "network")', "attached network hover")
     require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "bluetooth")', "attached bluetooth hover")
     require(bottom, 'hubRoot.showAttachedControlFor(win.modelData, "battery")', "attached battery hover")
-    require(bottom, "win.screenState.utilities = !win.screenState.utilities", "clock-click utilities")
+    require(bottom, "onClicked: hubRoot.toggleUtilitiesFor(win.modelData)", "clock-click utilities")
     require(bottom, "win.togglePinned(appItem.modelData);", "right-click pin action")
     require(bottom, "win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);", "middle-click close action")
     require(bottom, "win.cycleItem(appItem.modelData, -1);", "wheel previous action")
@@ -108,6 +108,7 @@ def main() -> None:
         [
             ("id: leftSegment", "left mode segment"),
             ("id: appSegment", "center app segment"),
+            ("id: traySegment", "tray segment"),
             ("id: statusSegment", "right status segment"),
         ],
     )

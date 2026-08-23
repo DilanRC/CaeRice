@@ -86,7 +86,7 @@ hl.bind(
 
 hl.bind(
     "SUPER + I",
-    hl.dsp.global("caelestia:nexus")
+    hl.dsp.global("caelestia:utilities")
 )
 
 
@@ -276,4 +276,3 @@ hl.bind(
     "SUPER + TAB",
     hl.dsp.global("caelestia:overview")
 )
-

@@ -2,20 +2,21 @@
 
 ## Objetivo
 
-Reemplazar el dock independiente por una barra inferior completa y coherente para Caelestia/CaeRice, sin cambiar la ubicación original de la sidebar.
+Reemplazar el dock y la barra lateral por una barra inferior completa y coherente para Caelestia/CaeRice.
 
 La barra inferior vive en `modules/BottomHub.qml`. Usa superficies translúcidas de `Colours.tPalette`, iconos Material y estados de los servicios nativos de Caelestia. Conserva la lógica útil del antiguo `CustomDock.qml`: favoritas, agrupación por aplicación, ventanas por monitor, clic para lanzar/enfocar, rueda para recorrer ventanas, clic central para cerrar y clic derecho para fijar/quitar favoritas.
 
-La sidebar nativa de Caelestia **no se reimplementa ni se mueve**. `SUPER+N` continúa abriéndola desde la derecha con sus notificaciones, acciones y scroll originales. Los popouts de volumen, output, red, Bluetooth y batería también reutilizan el contenido nativo, pero quedan unidos al segmento derecho de la barra.
+El contenido nativo de notificaciones, Utilities y los popouts se conserva, pero sus wrappers laterales se retiran. `SUPER+N` abre el centro de notificaciones inferior y `SUPER+I` abre Quick Settings. No queda barra visual, hotspot ni activación por hover en el borde izquierdo o derecho.
 
 ## Geometría
 
 - Bottom Hub: superficie de 60 px con segmentos funcionales de 52 px.
 - margen inferior: 2 px.
-- popouts y Quick Toggles: borde inferior unido a la parte superior del hub; el offset interno de 54 px compensa el margen de 8 px de `ContentWindow`.
-- sidebar: geometría lateral derecha original de Caelestia.
+- popouts, notificaciones y Quick Settings: borde inferior unido a la parte superior del hub, alineados con el segmento de sistema.
+- barra nativa: adaptador no visual de ancho cero, sin loader, input ni zona exclusiva.
 - launcher nativo: `dockOffset = 72`.
 - segmento de aplicaciones: ancho según su contenido, limitado por el espacio simétrico disponible y centrado en la pantalla.
+- bandeja: isla adaptativa independiente entre aplicaciones y sistema.
 
 ## Archivos propios
 
@@ -25,11 +26,12 @@ La sidebar nativa de Caelestia **no se reimplementa ni se mueve**. `SUPER+N` con
 ## Patches nativos implicados
 
 - `shell.qml.patch`: carga `BottomHub` en vez de `CustomDock`.
-- `modules__sidebar__Wrapper.qml.patch`: marca y conserva la sidebar derecha nativa.
+- `modules__sidebar__Wrapper.qml.patch`: convierte el contenido de notificaciones en un centro inferior acotado.
+- `modules__bar__BarWrapper.qml.patch`: desactiva por completo la barra lateral visual nativa.
 - `modules__bar__popouts__*.qml.patch`: añade el modo inferior unido para los popouts nativos.
 - `modules__drawers__Interactions.qml.patch`: conserva el popup mientras el puntero pasa del icono al contenido y elimina el Quick Toggles por hover.
-- `modules__utilities__Wrapper.qml.patch`: coloca Quick Toggles encima del hub cuando se abre desde la fecha.
-- `modules__drawers__Panels.qml.patch`: integra Overview sin alterar los anclajes nativos de sidebar, OSD, sesión y toasts.
+- `modules__utilities__Wrapper.qml.patch`: desacopla Quick Settings del sidebar y lo coloca encima del hub.
+- `modules__drawers__Panels.qml.patch`: centra el launcher y ancla las superficies inferiores a la derecha.
 - `modules__drawers__Regions.qml.patch`: actualiza la máscara de input Wayland.
 - `modules__launcher__Wrapper.qml.patch`: mantiene el launcher encima del hub.
 
@@ -77,12 +79,12 @@ caelestia shell -d
 10. Hover sobre volumen, output, Wifi, Bluetooth o batería abre su popup unido a la barra y permite entrar en él sin que se cierre.
 11. Clic en volumen alterna mute y la rueda ajusta el nivel; output, Wifi y Bluetooth abren su configuración nativa.
 12. Batería muestra el estado real y abre su popup.
-13. La bandeja muestra los iconos que no estén ocultos en Caelestia y abre sus menús nativos por hover.
+13. La bandeja es una isla separada, prioriza el icono SNI real y abre sus menús nativos por hover.
 14. Clic en fecha/hora abre y cierra Quick Toggles; pasar el mouse por una zona vacía no lo activa.
-15. El botón de notificaciones y `SUPER+N` abren la sidebar original desde la derecha.
-16. El launcher y la sidebar no quedan abiertos simultáneamente.
+15. El botón de notificaciones y `SUPER+N` abren el nuevo centro inferior.
+16. La fecha y `SUPER+I` abren el mismo Quick Settings; launcher, notificaciones y ajustes son excluyentes.
 17. En dos monitores, cada barra muestra solo las ventanas de su monitor.
-18. OSD, sesión y toasts conservan la geometría nativa al abrir notificaciones.
+18. No existe barra vertical, hotspot lateral, fondo de media pantalla ni animación horizontal de popups.
 
 ## Diagnóstico
 
@@ -116,4 +118,4 @@ caelestia shell -d
 ~/.local/share/caelestia-custom-system/reinstall-backups/
 ```
 
-No fusionar `feature/bottom-hub` a `main` hasta comprobar interacción, multimonitor, launcher, sidebar y touchpad en el runtime real.
+No fusionar `feature/bottom-hub` a `main` hasta comprobar interacción, multimonitor, launcher, notificaciones y touchpad en el runtime real.
