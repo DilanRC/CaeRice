@@ -21,6 +21,8 @@ AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
 AUTO_DST="$HOME/.local/bin/caerice-power-auto"
 AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
 AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
+KEYBINDS_SRC="$REPO/caelestia/bin/caerice-keybinds"
+KEYBINDS_DST="$HOME/.local/bin/caerice-keybinds"
 UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
 UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
 VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
@@ -40,6 +42,7 @@ for f in \
     "$POWER_SRC" \
     "$AUTO_SRC" \
     "$AUTO_CTL_SRC" \
+    "$KEYBINDS_SRC" \
     "$UNIT_SRC" \
     "$VALIDATOR"; do
     [[ -f "$f" ]] || { echo "ERROR: falta $f" >&2; exit 3; }
@@ -57,7 +60,8 @@ for f in \
     IOPage.qml \
     PowerPage.qml \
     PowerAutomationPage.qml \
-    EnergyPage.qml; do
+    EnergyPage.qml \
+    KeybindsPage.qml; do
     [[ -f "$SRC/hardware/$f" ]] || { echo "ERROR: falta hardware/$f" >&2; exit 3; }
 done
 
@@ -84,14 +88,19 @@ sudo cp "$LIVE/modules/drawers/Panels.qml" "$BACKUP/modules/drawers/Panels.qml"
 cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
 sudo chown -R "$USER:$(id -gn)" "$BACKUP"
 
-export LIVE USERCFG STAGE
+export REPO LIVE USERCFG STAGE
 python3 <<'PY'
 from pathlib import Path
 import os
+import sys
 
+repo = Path(os.environ["REPO"])
 live = Path(os.environ["LIVE"])
 usercfg = Path(os.environ["USERCFG"])
 stage = Path(os.environ["STAGE"])
+sys.path.insert(0, str(repo / "scripts/features"))
+
+from wire_sad_shell import WiringError, ensure_or_member, ensure_statement
 
 targets = {
     "screen": live / "components/ScreenState.qml",
@@ -192,95 +201,55 @@ if "id: hardware" not in texts["panels"]:
         1,
     )
 
-replace_first(
-    "content",
-    [
-        (
-            "        screenState.clipboard = false;\n        panels.popouts.close();",
-            "        screenState.clipboard = false;\n        screenState.hardware = false;\n        panels.popouts.close();",
-        ),
-        (
-            "        screenState.overview = false;\n        panels.popouts.close();",
-            "        screenState.overview = false;\n        screenState.hardware = false;\n        panels.popouts.close();",
-        ),
-    ],
-    "screenState.hardware = false;\n        panels.popouts.close();",
-)
-
-replace_first(
-    "content",
-    [
-        (
-            "screenState.overview || screenState.clipboard ? WlrLayer.Overlay",
-            "screenState.overview || screenState.clipboard || screenState.hardware ? WlrLayer.Overlay",
-        ),
-        (
-            "screenState.overview ? WlrLayer.Overlay",
-            "screenState.overview || screenState.hardware ? WlrLayer.Overlay",
-        ),
-    ],
-    "screenState.hardware ? WlrLayer.Overlay",
-)
-
-replace_first(
-    "content",
-    [
-        (
-            "screenState.overview || screenState.clipboard || screenState.launcher",
-            "screenState.overview || screenState.clipboard || screenState.hardware || screenState.launcher",
-        ),
-        (
-            "screenState.overview || screenState.launcher",
-            "screenState.overview || screenState.hardware || screenState.launcher",
-        ),
-    ],
-    "screenState.hardware || screenState.launcher",
-)
-
-replace_first(
-    "content",
-    [
-        (
-            "mask: screenState.overview || screenState.clipboard ? null",
-            "mask: screenState.overview || screenState.clipboard || screenState.hardware ? null",
-        ),
-        (
-            "mask: screenState.overview ? null",
-            "mask: screenState.overview || screenState.hardware ? null",
-        ),
-    ],
-    "screenState.hardware ? null",
-)
-
-replace_first(
-    "content",
-    [
-        (
-            "if (s.overview || s.clipboard)\n                return true;",
-            "if (s.overview || s.clipboard || s.hardware)\n                return true;",
-        ),
-        (
-            "if (s.overview)\n                return true;",
-            "if (s.overview || s.hardware)\n                return true;",
-        ),
-    ],
-    "s.hardware",
-)
-
-replace_first(
-    "content",
-    [
-        (
-            "            root.screenState.clipboard = false;\n            panels.popouts.hasCurrent = false;",
-            "            root.screenState.clipboard = false;\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;",
-        ),
-        (
-            "            root.screenState.overview = false;\n            panels.popouts.hasCurrent = false;",
-            "            root.screenState.overview = false;\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;",
-        ),
-    ],
-    "root.screenState.hardware = false;",
-)
+# Hardware shares ContentWindow with Overview, Clipboard and Display Manager.
+# Ensure its membership in each native interaction span without requiring it
+# to be adjacent to Clipboard or to panels.popouts; later retained overlays
+# are preserved verbatim.
+try:
+    ensure_statement(
+        texts,
+        "content",
+        "    onHasFullscreenChanged: {",
+        "\n        panels.popouts.close();",
+        "        screenState.hardware = false;",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "WlrLayershell.layer: screenState.overview",
+        " ? WlrLayer.Overlay",
+        "screenState.hardware",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "WlrLayershell.keyboardFocus: screenState.overview",
+        " || screenState.launcher",
+        "screenState.hardware",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "mask: screenState.overview",
+        " ? null",
+        "screenState.hardware",
+    )
+    ensure_or_member(
+        texts,
+        "content",
+        "if (s.overview",
+        ")\n                return true;",
+        "s.hardware",
+    )
+    ensure_statement(
+        texts,
+        "content",
+        "        onCleared: {",
+        "\n            panels.popouts.hasCurrent = false;",
+        "            root.screenState.hardware = false;",
+    )
+except WiringError as exc:
+    raise SystemExit(str(exc))
 
 hardware_bind = '''hl.bind(
     "SUPER + H",
@@ -339,6 +308,7 @@ install -m 0755 "$PROBE_SRC" "$PROBE_DST"
 install -m 0755 "$POWER_SRC" "$POWER_DST"
 install -m 0755 "$AUTO_SRC" "$AUTO_DST"
 install -m 0755 "$AUTO_CTL_SRC" "$AUTO_CTL_DST"
+install -m 0755 "$KEYBINDS_SRC" "$KEYBINDS_DST"
 install -m 0644 "$UNIT_SRC" "$UNIT_DST"
 systemctl --user daemon-reload
 
@@ -356,7 +326,7 @@ echo "Hardware Center instalado."
 echo "Backup: $BACKUP"
 echo "Probe: $PROBE_DST"
 echo "Power: $POWER_DST"
-echo "Pages: Overview · Performance · Processes · Sensors · I/O · Power · Auto · Energy"
+echo "Pages: Overview · Performance · Processes · Sensors · I/O · Power · Auto · Energy · Keybinds"
 echo "Auto service: instalado, no se habilita automáticamente."
 echo
 echo "Reinicia Caelestia:"

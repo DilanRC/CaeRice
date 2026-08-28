@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import os
 import subprocess
 import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-DOCK_REPO = REPO / "caelestia/modules-owned/modules/CustomDock.qml"
-DOCK_LIVE = Path("/etc/xdg/quickshell/caelestia/modules/CustomDock.qml")
+DOCK_REPO = REPO / "caelestia/modules-owned/modules/BottomHub.qml"
+DOCK_LIVE = Path("/etc/xdg/quickshell/caelestia/modules/BottomHub.qml")
 LAUNCHER_LIVE = Path("/etc/xdg/quickshell/caelestia/modules/launcher/AppList.qml")
 
-# This block was introduced by the first theme-dock pass. It made every
-# favourite carry a purple push-pin badge over the application icon. The
-# favourite state is useful; the badge is not. Right-click already toggles
-# favouriteApps, so remove only the visual decoration.
+# Historical cleanup kept for idempotency. Older dock revisions rendered a
+# dedicated push-pin badge. BottomHub does not need it because right-click on
+# the whole icon already toggles favouriteApps.
 DOCK_PIN_BLOCK = '''                                Item {
                                     id: dockPinButton
 
@@ -61,9 +59,6 @@ DOCK_PIN_BLOCK = '''                                Item {
 
 '''
 
-# The custom native launcher also used a permanent pin glyph for favourites.
-# Keep the right-click action but remove this glyph so the Dock/Launcher stay
-# visually clean. The Dock itself is the indication that an app is pinned.
 LAUNCHER_PIN_BLOCK = '''            MaterialIcon {
                 visible: app.favourite
 
@@ -104,22 +99,21 @@ def patch_dock() -> bool:
     text = DOCK_REPO.read_text(encoding="utf-8")
     text, changed = patch_text(text, DOCK_PIN_BLOCK)
 
-    # Safety: pin/unpin must still be available from the whole icon.
     if "Qt.RightButton" not in text or "win.togglePinned(" not in text:
-        raise SystemExit("ERROR: CustomDock perdió la acción de clic derecho para fijar apps")
+        raise SystemExit("ERROR: BottomHub perdió la acción de clic derecho para fijar apps")
 
     if changed:
         DOCK_REPO.write_text(text, encoding="utf-8")
-        print("Dock repo: badges de pin eliminados")
+        print("BottomHub repo: badges de pin eliminados")
     else:
-        print("Dock repo: ya no tiene badges de pin")
+        print("BottomHub repo: ya no tiene badges de pin")
 
     if DOCK_LIVE.exists():
         subprocess.run(
             ["sudo", "install", "-m", "0644", str(DOCK_REPO), str(DOCK_LIVE)],
             check=True,
         )
-        print("Dock live: actualizado")
+        print("BottomHub live: actualizado")
 
     return changed
 
@@ -132,8 +126,6 @@ def patch_launcher_live() -> None:
     text = LAUNCHER_LIVE.read_text(encoding="utf-8")
     text, changed = patch_text(text, LAUNCHER_PIN_BLOCK)
 
-    # The right-click favourite action is part of the launcher patch. Do not
-    # silently remove the only interaction that edits favouriteApps.
     if "Qt.RightButton" not in text or "toggleFavourite(app.modelData)" not in text:
         raise SystemExit("ERROR: AppList.qml no conserva clic derecho para fijar apps")
 
@@ -168,7 +160,7 @@ def save_repo_change(changed: bool) -> None:
             str(REPO),
             "commit",
             "-m",
-            "fix(dock): hide favourite badges",
+            "fix(bottom-hub): hide favourite badges",
             "--",
             str(DOCK_REPO.relative_to(REPO)),
         ],
@@ -177,7 +169,7 @@ def save_repo_change(changed: bool) -> None:
         check=False,
     )
     if commit.returncode != 0:
-        print("WARN: no pude hacer commit automático del Dock:", commit.stderr.strip())
+        print("WARN: no pude hacer commit automático de BottomHub:", commit.stderr.strip())
         return
 
     push = subprocess.run(
@@ -186,7 +178,7 @@ def save_repo_change(changed: bool) -> None:
         capture_output=True,
         check=False,
     )
-    print("GitHub push Dock:", "OK" if push.returncode == 0 else "falló; ejecuta git push")
+    print("GitHub push BottomHub:", "OK" if push.returncode == 0 else "falló; ejecuta git push")
 
 
 def main() -> None:
@@ -194,7 +186,7 @@ def main() -> None:
     patch_launcher_live()
     save_repo_change(changed)
 
-    print("\nFavoritos: clic derecho sobre una app = fijar/quitar del Dock")
+    print("\nFavoritos: clic derecho sobre una app = fijar/quitar del Bottom Hub")
     print("No se muestran badges de pin sobre los iconos.")
 
 

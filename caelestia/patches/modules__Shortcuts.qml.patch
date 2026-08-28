@@ -14,3 +14,13 @@
              }
              root.launcherInterrupted = false;
          }
+@@ -93,6 +96,8 @@
+             if (root.hasFullscreen)
+                 return;
+             const screenState = ShellState.forActive();
+-            screenState.sidebar = !screenState.sidebar;
++            const open = !(screenState.sidebar || screenState.utilities);
++            screenState.sidebar = open;
++            screenState.utilities = open;
+         }
+     }

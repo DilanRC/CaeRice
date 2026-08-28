@@ -1,0 +1,18 @@
+--- a/modules/bar/BarWrapper.qml
++++ b/modules/bar/BarWrapper.qml
+@@ -18 +18 @@
+-    readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
++    readonly property bool disabled: true
+@@ -20 +20 @@
+-    readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
++    readonly property int clampedWidth: 0
+@@ -23,2 +23,2 @@
+-    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || screenState.bar) ? contentWidth : Config.border.thickness
+-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered)
++    readonly property int exclusiveZone: 0
++    readonly property bool shouldBeVisible: false
+@@ -40,2 +40,2 @@
+-    visible: width > Config.border.thickness
+-    implicitWidth: fullscreen ? 0 : Config.border.thickness
++    visible: false
++    implicitWidth: 0

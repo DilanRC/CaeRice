@@ -1,48 +1,24 @@
 --- a/modules/utilities/Wrapper.qml
 +++ b/modules/utilities/Wrapper.qml
-@@ -5,16 +5,13 @@
- import Caelestia
- import Caelestia.Config
- import qs.components
+@@ -8 +7,0 @@
 -import qs.modules.sidebar as Sidebar
- import qs.modules.bar.popouts as BarPopouts
- 
- Item {
-     id: root
- 
-     required property ScreenState screenState
+@@ -15 +13,0 @@
 -    required property Sidebar.Wrapper sidebar
-     required property BarPopouts.Wrapper popouts
+@@ -17 +14,0 @@
 -    property real horizontalStretch
-     property matrix4x4 deformMatrix
- 
-     readonly property PersistentProperties props: PersistentProperties {
-@@ -24,48 +21,24 @@
- 
-         reloadableId: "utilities"
-     }
+@@ -27 +24 @@
 -    readonly property bool shouldBeActive: screenState.sidebar || (screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled))
 +    readonly property bool shouldBeActive: screenState.utilities && Config.utilities.enabled && !(screenState.session && Config.session.enabled)
-     readonly property real totalPadding: content.anchors.margins + CUtils.clamp(content.anchors.margins - Config.border.thickness, 0, content.anchors.margins)
-     readonly property real nonAnimHeight: ((content.item as Content)?.nonAnimHeight ?? 0) + totalPadding
-     property real offsetScale: shouldBeActive ? 0 : 1
+@@ -31 +27,0 @@
 -    property real sidebarLerp
- 
-     visible: offsetScale < 1
+@@ -34 +30 @@
 -    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
-+    // Bottom Hub: independent popover, floats above the 64px bar + 2px
-+    // margin + 6px breathing room -- same clearance as sidebar's
-+    // notifications popover. Closed state slides the whole panel below
-+    // the screen edge (no more merging with sidebar's width/offsetScale).
-+    anchors.bottomMargin:
-+        72 +
-+        (-implicitHeight - 5 - 72) * offsetScale
-+
-     implicitHeight: content.implicitHeight + totalPadding
++    anchors.bottomMargin: 66 + (-implicitHeight - 5 - 66) * offsetScale
+@@ -36 +32 @@
 -    implicitWidth: sidebar.width * (1 - sidebar.offsetScale) * horizontalStretch * sidebarLerp + Tokens.sizes.utilities.width * (1 - sidebarLerp)
-+    implicitWidth: Math.min(360, parent.width - 16)
-     opacity: 1 - offsetScale
- 
++    implicitWidth: Math.min(Tokens.sizes.utilities.width, parent.width - 16)
+@@ -38,30 +33,0 @@
+-
 -    states: State {
 -        name: "attachedToSidebar"
 -        when: root.screenState.sidebar
@@ -72,7 +48,3 @@
 -            }
 -        }
 -    ]
--
-     Behavior on offsetScale {
-         Anim {}
-     }

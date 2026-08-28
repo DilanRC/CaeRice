@@ -1,38 +1,42 @@
 --- a/modules/drawers/Panels.qml
 +++ b/modules/drawers/Panels.qml
-@@ -171,7 +171,6 @@
-         id: utilities
- 
-         screenState: root.screenState
+@@ -7,0 +8 @@
++import qs.modules.overview as Overview
+@@ -29,0 +31 @@
++    readonly property alias overview: overview
+@@ -47 +49 @@
+-        clip: sidebar.visible || session.visible
++        clip: session.visible
+@@ -57 +59 @@
+-            sidebarOrSessionVisible: sidebar.visible || session.visible
++            sidebarOrSessionVisible: session.visible
+@@ -82,2 +84,2 @@
+-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+-        clip: sidebar.visible
++        anchors.rightMargin: 0
++        clip: false
+@@ -109,0 +112,9 @@
++    Overview.Wrapper {
++        id: overview
++
++        screen: root.screen
++        screenState: root.screenState
++
++        anchors.fill: parent
++    }
++
+@@ -130 +140,0 @@
 -        sidebar: sidebar
-         popouts: popoutsWrapper.content
- 
-         anchors.bottom: parent.bottom
-@@ -181,19 +180,22 @@
-     Toasts.Toasts {
-         id: toasts
- 
--        anchors.bottom: sidebar.visible ? sidebar.top : utilities.top
+@@ -140,2 +150,2 @@
+-        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
+-        anchors.right: sidebar.left
 +        anchors.bottom: utilities.top
-         anchors.right: parent.right
-         anchors.margins: Tokens.padding.medium
-     }
- 
-+    // Bottom Hub: notifications open as an independent floating popover
-+    // centered above the hub, not as a right-docked column. Both anchors.top
-+    // (notifications) and anchors.right (old right-dock) are dropped so the
-+    // Wrapper's own implicitWidth/implicitHeight and bottomMargin slide
-+    // (see modules/sidebar/Wrapper.qml) fully control its box.
-     Sidebar.Wrapper {
-         id: sidebar
- 
-         screenState: root.screenState
- 
++        anchors.right: parent.right
+@@ -188,4 +196,3 @@
 -        anchors.top: notifications.bottom
 -        anchors.bottom: utilities.top
 -        anchors.right: parent.right
 -        anchors.topMargin: -notifications.anchors.topMargin
-+        anchors.horizontalCenter: parent.horizontalCenter
 +        anchors.bottom: parent.bottom
-     }
- }
++        anchors.right: root.screenState.utilities ? utilities.left : parent.right
++        anchors.rightMargin: root.screenState.utilities ? Tokens.padding.medium : 0

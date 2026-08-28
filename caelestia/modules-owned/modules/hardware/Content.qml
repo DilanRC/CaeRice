@@ -109,7 +109,7 @@ FocusScope {
             event.accepted = true;
             return;
         }
-        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_8) {
+        if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9) {
             root.currentPage = event.key - Qt.Key_1;
             event.accepted = true;
         }
@@ -297,13 +297,14 @@ FocusScope {
                         { label: qsTr("I/O"), icon: "lan" },
                         { label: qsTr("Power"), icon: "bolt" },
                         { label: qsTr("Auto"), icon: "auto_mode" },
-                        { label: qsTr("Energy"), icon: "electric_bolt" }
+                        { label: qsTr("Energy"), icon: "electric_bolt" },
+                        { label: qsTr("Keybinds"), icon: "keyboard" }
                     ]
 
                     delegate: StyledRect {
                         required property var modelData
                         required property int index
-                        width: Math.min(145, (tabs.width - tabs.spacing * 7) / 8)
+                        width: Math.min(132, (tabs.width - tabs.spacing * 8) / 9)
                         height: 42
                         radius: Tokens.rounding.large
                         color: root.currentPage === index
@@ -359,7 +360,9 @@ FocusScope {
                                         ? powerComponent
                                         : root.currentPage === 6
                                             ? automationComponent
-                                            : energyComponent
+                                            : root.currentPage === 7
+                                                ? energyComponent
+                                                : keybindsComponent
             }
         }
     }
@@ -432,5 +435,11 @@ FocusScope {
         id: energyComponent
 
         EnergyPage {}
+    }
+
+    Component {
+        id: keybindsComponent
+
+        KeybindsPage {}
     }
 }
