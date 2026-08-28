@@ -84,9 +84,21 @@ hl.bind(
     hl.dsp.global("caelestia:nexus")
 )
 
+-- Clipboard QML nativo
+hl.bind(
+    "SUPER + V",
+    hl.dsp.global("caelestia:clipboard")
+)
+
 hl.bind(
     "SUPER + H",
     hl.dsp.global("caelestia:hardware")
+)
+
+-- Display Manager QML nativo
+hl.bind(
+    "SUPER + SHIFT + O",
+    hl.dsp.global("caelestia:displaymanager")
 )
 
 
@@ -123,6 +135,11 @@ hl.bind(
 )
 
 hl.bind(
+    "SUPER + SHIFT + Print",
+    hl.dsp.exec_cmd("/home/dilan/.local/bin/warframe-capture-inventory quick inventario")
+)
+
+hl.bind(
     "ALT + Print",
     hl.dsp.exec_cmd(
         [[sh -c 'mkdir -p "$HOME/Imagenes/Screenshots"; grimblast save active "$HOME/Imagenes/Screenshots/$(date +%Y%m%d-%H%M%S).png"']]
@@ -146,6 +163,32 @@ hl.bind(
     "SUPER + W",
     hl.dsp.exec_cmd(os.getenv("HOME") .. "/.local/bin/linux-wallpaper-engine-once")
 )
+
+-- Overwolf exposes its dock as a separate blank XWayland window. Keep the
+-- AlecaFrame and Warframe windows visible while parking only that dock.
+hl.window_rule({
+    name = "hide-overwolf-dock",
+    match = {
+        class = "^steam_app_230410$",
+        initial_class = "^steam_app_230410$",
+        title = "^$",
+        initial_title = "^$",
+        xwayland = true,
+    },
+    workspace = "special:overwolf-dock silent",
+    no_initial_focus = true,
+})
+
+hl.window_rule({
+    name = "hide-overwolf-exclusive-mode",
+    match = {
+        class = "^steam_app_230410$",
+        title = "^owingameosr_Exclusive mode - index$",
+        xwayland = true,
+    },
+    workspace = "special:overwolf-dock silent",
+    no_initial_focus = true,
+})
 
 -- ============================================================
 -- DWINDLE
@@ -275,4 +318,16 @@ end
 hl.bind(
     "SUPER + TAB",
     hl.dsp.global("caelestia:overview")
+)
+
+-- CaeRice app shortcut: The Witcher 3: Wild Hunt (The Witcher 3 Wild Hunt)
+hl.bind(
+    "CTRL + End",
+    hl.dsp.exec_cmd([[steam steam://rungameid/292030]])
+)
+
+-- CaeRice app shortcut: ChatGPT (chatgpt)
+hl.bind(
+    "CTRL + Down",
+    hl.dsp.exec_cmd([[chatgpt]])
 )
