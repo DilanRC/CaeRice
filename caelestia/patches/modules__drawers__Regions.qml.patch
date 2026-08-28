@@ -1,19 +1,16 @@
 --- a/modules/drawers/Regions.qml
 +++ b/modules/drawers/Regions.qml
-@@ -70,9 +70,15 @@
-         height: panel.height + root.borderThickness
+@@ -27,9 +27,14 @@
+         height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
      }
- 
 +    /*
-+     * Bottom Hub: utilities is now an independent bottom popover (see
-+     * modules/utilities/Wrapper.qml) that slides fully below the screen
-+     * edge on close, just like sidebar. Follow its real y (component
-+     * default) instead of pinning the input region to the visible bottom
-+     * edge, or a hairline strip stays clickable there while closed.
++     * The launcher is lifted above BottomHub by Wrapper.dockOffset.
++     * Preserve upstream's window-coordinate region formula and subtract the
++     * same offset so the visible launcher remains inside the Wayland input mask.
 +     */
      R {
-         panel: root.panels.utilities
+         panel: root.panels.launcher
 -        y: root.win.height - height
-         height: panel.height * (1 - root.panels.utilities.offsetScale) + root.borderThickness
++        y: root.win.height - height - panel.dockOffset
+         height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
      }
- 

@@ -54,11 +54,6 @@ hl.bind(
 )
 
 hl.bind(
-    "SUPER + O",
-    hl.dsp.exec_cmd("spotify")
-)
-
-hl.bind(
     "SUPER + A",
     hl.dsp.exec_cmd("claude-desktop")
 )
@@ -87,6 +82,11 @@ hl.bind(
 hl.bind(
     "SUPER + I",
     hl.dsp.global("caelestia:nexus")
+)
+
+hl.bind(
+    "SUPER + H",
+    hl.dsp.global("caelestia:hardware")
 )
 
 
@@ -276,4 +276,3 @@ hl.bind(
     "SUPER + TAB",
     hl.dsp.global("caelestia:overview")
 )
-
