@@ -27,6 +27,7 @@ Scope {
         state.dashboard = false;
         state.utilities = false;
         state.sidebar = false;
+        state.wallpaperManager = false;
     }
 
     function open(): void {

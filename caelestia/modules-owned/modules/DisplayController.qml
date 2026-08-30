@@ -36,6 +36,7 @@ Scope {
         state.utilities = false;
         state.sidebar = false;
         state.overview = false;
+        state.wallpaperManager = false;
         if (state.clipboard !== undefined)
             state.clipboard = false;
         if (state.hardware !== undefined)

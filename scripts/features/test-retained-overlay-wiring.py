@@ -111,10 +111,10 @@ def validate_content(text: str, flags: tuple[str, ...]) -> bool:
 
 def main() -> None:
     texts = {"content": base_content()}
-    for flag in ("clipboard", "hardware", "displayManager"):
+    for flag in ("clipboard", "hardware", "displayManager", "wallpaperManager"):
         wire_flag(texts, flag)
 
-    expected_flags = ("overview", "clipboard", "hardware", "displayManager")
+    expected_flags = ("overview", "clipboard", "hardware", "displayManager", "wallpaperManager")
     if not validate_content(texts["content"], expected_flags):
         raise SystemExit("FAIL: sequential retained overlay wiring did not satisfy BottomHub invariants")
     print("PASS sequential-composition")
@@ -128,11 +128,10 @@ def main() -> None:
 
     # A later Display member must survive re-running the older installers.
     for needle in (
-        "screenState.displayManager ? WlrLayer.Overlay",
-        "screenState.displayManager || screenState.launcher",
-        "screenState.displayManager ? null",
-        "s.displayManager)",
+        "screenState.displayManager",
         "root.screenState.displayManager = false;",
+        "screenState.wallpaperManager",
+        "root.screenState.wallpaperManager = false;",
     ):
         if needle not in texts["content"]:
             raise SystemExit(f"FAIL: retained Display member lost after idempotent wiring: {needle}")

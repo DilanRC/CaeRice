@@ -24,5 +24,5 @@ def field(block: str, name: str) -> str:
     return match.group(1)
 
 
-assert field(monitor_block("eDP-1"), "position") == "0x0"
-assert field(monitor_block("HDMI-A-1"), "position") == "auto-left"
+assert field(monitor_block("HDMI-A-1"), "position") == "0x0"
+assert field(monitor_block("eDP-1"), "position") == "auto-right"

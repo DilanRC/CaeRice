@@ -35,6 +35,7 @@ Scope {
                 state.sidebar = false;
                 state.utilities = false;
                 state.session = false;
+                state.wallpaperManager = false;
             }
         }
     }
@@ -60,6 +61,7 @@ Scope {
         const wasOpen = state.launcher;
         closeAllLaunchers();
         closeAllPanels();
+        state.wallpaperManager = false;
         state.launcher = !wasOpen;
         shown = true;
     }
@@ -72,6 +74,7 @@ Scope {
         const wasOpen = state.sidebar || state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        state.wallpaperManager = false;
         state.sidebar = !wasOpen;
         state.utilities = !wasOpen;
         shown = true;
@@ -85,7 +88,30 @@ Scope {
         const wasOpen = state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        state.wallpaperManager = false;
         state.utilities = !wasOpen;
+        shown = true;
+    }
+
+    function openWallpaperFor(screen): void {
+        for (const candidate of Screens.screens) {
+            const state = ShellState.forScreen(candidate);
+            if (!state)
+                continue;
+            state.launcher = false;
+            state.session = false;
+            state.dashboard = false;
+            state.utilities = false;
+            state.sidebar = false;
+            state.overview = false;
+            if (state.clipboard !== undefined)
+                state.clipboard = false;
+            if (state.hardware !== undefined)
+                state.hardware = false;
+            if (state.displayManager !== undefined)
+                state.displayManager = false;
+            state.wallpaperManager = candidate === screen;
+        }
         shown = true;
     }
 
@@ -453,6 +479,15 @@ Scope {
                                 active: win.screenState?.launcher ?? false
                                 tooltip: qsTr("Applications")
                                 onClicked: hubRoot.toggleLauncherFor(win.modelData)
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                cropImage: true
+                                imageSource: Wallpapers.actualCurrent
+                                active: win.screenState?.wallpaperManager ?? false
+                                tooltip: qsTr("Wallpaper manager")
+                                onClicked: hubRoot.openWallpaperFor(win.modelData)
                             }
 
                             Row {

@@ -20,7 +20,7 @@ cp "$LIVE/modules/drawers/ContentWindow.qml" "$BACKUP/modules/drawers/ContentWin
 cp "$LIVE/modules/drawers/Panels.qml" "$BACKUP/modules/drawers/Panels.qml"
 cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
 
-WIRE_JSON="$(python3 "$REPO/scripts/features/wire_sad_shell.py" --live "$LIVE" --usercfg "$USERCFG" --stage "$STAGE")"
+WIRE_JSON="$(python3 "$REPO/scripts/features/wire_sad_shell.py" --live "$LIVE" --usercfg "$USERCFG" --stage "$STAGE" --features display)"
 echo "Wiring: $WIRE_JSON"
 python3 -c 'import json,sys; d=json.loads(sys.argv[1]); sys.exit(0 if d.get("ok") else 1)' "$WIRE_JSON" || exit 2
 

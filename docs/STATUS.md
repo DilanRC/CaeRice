@@ -2,6 +2,8 @@
 
 ## Terminado
 
+- Wallpaper Manager orbital nativo: acceso `Super+Shift+W` y thumbnail del Bottom Hub; validado en runtime sobre eDP-1 y HDMI-A-1.
+
 - Dock personalizado: estable.
 - Launcher integrado al Dock: estable.
 - Overview `Super+Tab`: estable, con previews vivos y workspaces por monitor.

@@ -33,6 +33,12 @@ La migración de `Panels.qml` localiza cada componente por tipo e `id` y modific
 
 El launcher también continúa siendo el launcher nativo de Caelestia y se desplaza 72 px para aparecer visualmente unido al Bottom Hub.
 
+## Wallpaper Manager
+
+Wallpaper Manager sigue el límite `ScreenState -> WallpaperController -> ContentWindow -> Panels -> wallpaper/Wrapper -> Content`. `wallpaperManager` es un estado por pantalla y participa en layer overlay, foco OnDemand, máscara nula, focus grab, scrim y cierre en fullscreen. Los controladores Overview, Clipboard, Hardware y Display cierran el estado también, para exclusión simétrica.
+
+`OrbitModel.js` es la fuente determinística para filtros de categoría, wrap y ventana de satélites de 1–12 elementos. `Content.qml` sólo crea esas imágenes visibles. `services/Wallpapers.qml` continúa siendo el único backend: el patch de upstream añade generación/cola de preview para que A→B→cancel o A→apply no puedan cargar una paleta obsoleta.
+
 ## Actualizaciones
 
 Después de actualizar Caelestia:

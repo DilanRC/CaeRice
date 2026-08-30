@@ -38,6 +38,7 @@ Scope {
         state.utilities = false;
         state.sidebar = false;
         state.overview = false;
+        state.wallpaperManager = false;
     }
 
     function open(): void {

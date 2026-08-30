@@ -1,0 +1,90 @@
+--- a/services/Wallpapers.qml
++++ b/services/Wallpapers.qml
+@@ -21,6 +21,8 @@
+     property string actualCurrent
+     property bool previewColourLock
+     property bool pendingPreviewClear
++    property int previewGeneration: 0
++    property string queuedPreviewPath: ""
+
+     function getCategoryFor(w: FileSystemEntry): string {
+         let category = w.parentDir.slice(Paths.wallsdir.length + 1);
+@@ -30,23 +32,48 @@ Searcher {
+     }
+
+     function setRandom(): void {
++        previewGeneration += 1;
++        queuedPreviewPath = "";
++        getPreviewColoursProc.running = false;
+         Quickshell.execDetached(["caelestia", "wallpaper", "-r", ...smartArg]);
+     }
+
+     function setWallpaper(path: string): void {
++        previewGeneration += 1;
++        queuedPreviewPath = "";
++        getPreviewColoursProc.running = false;
+         actualCurrent = path;
+         Quickshell.execDetached(["caelestia", "wallpaper", "-f", path, ...smartArg]);
+     }
+
++    function startLatestPreviewColours(): void {
++        if (!queuedPreviewPath || Colours.scheme !== "dynamic")
++            return;
++        getPreviewColoursProc.requestPath = queuedPreviewPath;
++        getPreviewColoursProc.requestGeneration = previewGeneration;
++        getPreviewColoursProc.command = ["caelestia", "wallpaper", "-p", queuedPreviewPath, ...smartArg];
++        queuedPreviewPath = "";
++        getPreviewColoursProc.running = true;
++    }
++
+     function preview(path: string): void {
++        previewGeneration += 1;
+         previewPath = path;
+         showPreview = true;
+
+-        if (Colours.scheme === "dynamic")
+-            getPreviewColoursProc.running = true;
++        if (Colours.scheme !== "dynamic")
++            return;
++        queuedPreviewPath = path;
++        if (getPreviewColoursProc.running)
++            getPreviewColoursProc.running = false;
++        else
++            startLatestPreviewColours();
+     }
+
+     function stopPreview(): void {
++        previewGeneration += 1;
++        queuedPreviewPath = "";
++        getPreviewColoursProc.running = false;
+         showPreview = false;
+         if (previewColourLock)
+             pendingPreviewClear = true;
+@@ -114,12 +141,24 @@ Searcher {
+     Process {
+         id: getPreviewColoursProc
+
+-        command: ["caelestia", "wallpaper", "-p", root.previewPath, ...root.smartArg]
++        property int requestGeneration: -1
++        property string requestPath: ""
++        command: []
++
++        onRunningChanged: {
++            if (!running && root.queuedPreviewPath)
++                root.startLatestPreviewColours();
++        }
++
+         stdout: StdioCollector {
+             onStreamFinished: {
+-                Colours.load(text, true);
+-                Colours.showPreview = true;
++                if (getPreviewColoursProc.requestGeneration !== root.previewGeneration
++                    || getPreviewColoursProc.requestPath !== root.previewPath
++                    || !root.showPreview)
++                    return;
++                Colours.load(text, true);
++                Colours.showPreview = true;
+             }
+         }
+     }
+ }
