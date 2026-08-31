@@ -1,46 +1,93 @@
 #!/usr/bin/env python3
-"""Regression guards for manager contracts that do not require a running shell."""
+"""Deterministic V2 interaction regressions without a running shell."""
 from __future__ import annotations
 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-
-content = (ROOT / "caelestia/modules-owned/modules/wallpaper/Content.qml").read_text(encoding="utf-8")
-controller = (ROOT / "caelestia/modules-owned/modules/WallpaperController.qml").read_text(encoding="utf-8")
+MODULES = ROOT / "caelestia/modules-owned/modules"
+content = (MODULES / "wallpaper/Content.qml").read_text(encoding="utf-8")
+wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
+orbit = (MODULES / "wallpaper/OrbitModel.js").read_text(encoding="utf-8")
+policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
+wallpaper_controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
 patch = (ROOT / "caelestia/patches/services__Wallpapers.qml.patch").read_text(encoding="utf-8")
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
-hub = (ROOT / "caelestia/modules-owned/modules/BottomHub.qml").read_text(encoding="utf-8")
+hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")
 shortcuts_patch = (ROOT / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
 
-for other in ("launcher", "session", "dashboard", "utilities", "sidebar", "overview", "clipboard", "hardware", "displayManager"):
-    assert other in controller, f"controller does not exclude {other}"
+
+def body(name: str) -> str:
+    start = content.index(f"function {name}")
+    return content[start:content.find("\n    function ", start + 1)]
+
+
+# Neutral open: actualCurrent determines selection, then focus, with no preview path.
+open_body = body("openManager")
+resync_body = body("resync")
+assert "resync();" in open_body and "forceActiveFocus();" in open_body
+assert "Wallpapers.preview" not in open_body
+assert "Wallpapers.actualCurrent" in resync_body and "Orbit.resolveCurrentIndex" in resync_body
+assert "Orbit.resolveCurrentIndex" in body("selectCategory")
+assert "function resolveCurrentIndex" in orbit and "function basename" in orbit
+
+# A→B→C→D has one timer and the final stable candidate is the sole preview call.
+assert content.count("Timer {") == 1
+assert "interval: 220" in content
+timer_body = content[content.index("id: previewTimer"):content.index("NumberAnimation {", content.index("id: previewTimer"))]
+assert "Orbit.previewEligible" in timer_body
+assert "Wallpapers.preview(root.pendingPreviewPath)" in timer_body
+assert "previewTimer.restart()" in body("queuePreview")
+assert "cancelPreview();" in body("requestTarget")
+
+# Close, category/model reset, apply and random erase delayed work; active preview stops.
+cancel_body = body("cancelPreview")
+assert "previewTimer.stop();" in cancel_body and "Wallpapers.stopPreview();" in cancel_body
+assert "cancelPreview();" in body("selectCategory") and "Wallpapers.preview" not in body("selectCategory")
+assert "cancelPreview();" in resync_body
+assert "previewTimer.stop();" in body("apply") and "Wallpapers.previewColourLock = true;" in body("apply")
+assert "cancelPreview();" in body("random") and "Wallpapers.setRandom();" in body("random")
+assert "closeManager();" in wrapper and "Wallpapers.stopPreview();" in wrapper
+assert "globalOtherOverlayOpen" in wrapper and "onGlobalOtherOverlayOpenChanged" in wrapper
+assert "for (const candidate of Screens.screens)" in wrapper
+assert "OverlayPolicy.hasCompetingPanel" in wrapper and "closeCompetingPanels();" in wrapper
+
+# Wheel/trackpad input is thresholded by real MouseArea deltas and stays bounded.
+assert "event.angleDelta.y" in content and "event.pixelDelta.y" in content
+assert "Orbit.wheelIntent" in content and "function wheelIntent" in orbit
+assert "Math.sign(total)" in orbit and "direction: total > 0 ? -1 : 1" in orbit
+assert "Math.abs(total) % threshold" in orbit and "Math.sign(accumulator) !== Math.sign(delta)" in orbit
+assert "function previewEligible" in orbit
+assert "queuedDirection = replacementDirection;" in content
+
+# One policy covers both orders, including notification/sidebar and all retained overlays.
+for other in ("launcher", "session", "dashboard", "utilities", "sidebar", "overview", "clipboard", "hardware", "displayManager", "wallpaperManager"):
+    assert other in policy, f"policy does not exclude {other}"
 for controller_file in ("OverviewController.qml", "ClipboardController.qml", "HardwareController.qml", "DisplayController.qml"):
-    assert "state.wallpaperManager = false;" in (ROOT / "caelestia/modules-owned/modules" / controller_file).read_text(encoding="utf-8")
-assert "orbitPhase" in content and "orbitMotion.restart()" in content
-assert "Orbit.satelliteAngle(index, root.orbitEntries.length, root.orbitPhase)" in content
-assert "root.windowIndex = root.currentIndex;" in content
-assert "Orbit.shortestSteps" in content and "Orbit.satelliteTarget" in content
-assert "cache: false" in content and "StyledClippingRect" in content and "Mask { maskSource: octagonMask }" in content
-assert "layer.enabled: true" in content and "visible: true" in content and "required property int index" in content
-assert "headerHeight" in content and "footerHeight" in content and "orbitRegion.height / 2" in content
-assert "x: orbitRegion.width / 2 + Math.cos(angle) * radiusX - width / 2" in content
-assert "y: orbitRegion.height / 2 + Math.sin(angle) * radiusY - height / 2" in content
-assert "orbitRegion.x +" not in content and "orbitRegion.y +" not in content
-assert "onClicked: root.cancel()" in content and "contentWidth: categoryRow.width" in content
-assert "qsTr(\"%1 · %2 / %3\")" in content
-assert 'if (Colours.scheme === "dynamic") Wallpapers.previewColourLock = true;' in content
-assert "if (Wallpapers.actualCurrent !== currentPath) {\n            Wallpapers.previewColourLock" not in content
+    controller = (MODULES / controller_file).read_text(encoding="utf-8")
+    assert "OverlayPolicy.closeOtherPanels" in controller and "for (const screen of Screens.screens)" in controller
+assert "OverlayPolicy.closeForWallpaper" in wallpaper_controller and "for (const screen of Screens.screens)" in wallpaper_controller
+assert "OverlayPolicy.closeOtherPanels(state);" in hub
+assert "toggleSidebarFor" in hub and "state.sidebar = !wasOpen;" in hub
+assert "const state = ShellState.forActive();" in wallpaper_controller
+assert "ShellState.forActive()?.modelData" not in wallpaper_controller
+assert "closeOtherPanels();\n        state.wallpaperManager = true;" in wallpaper_controller
+
+# V2 visual and native-service contracts.
+for needle in ("Orbit.satellites", "Math.min(12", "Math.cos(angle)", "Math.sin(angle)", "depth", "scale:", "opacity:", "z:", "Mask { maskSource", "outgoingHeroPath", "heroCrossfade", "TextButton", "IconTextButton"):
+    assert needle in content, needle
+assert "source: satellite.modelData.entry.path" in content
+assert "root.selectSatellite(satellite.modelData.index)" in content
+if "Mask {" in content:
+    assert "import qs.components.effects" in content
+assert "Image {\n            anchors.fill: parent; anchors.margins" not in content
+assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content
 assert "--features display" in canonical
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr
-for path in ("toggleLauncherFor", "toggleSidebarFor", "toggleUtilitiesFor"):
-    start = hub.index(f"function {path}")
-    assert "wallpaperManager = false" in hub[start:start + 520], path
 assert "customDock\", \"launcher" in shortcuts_patch
-assert "screenState.wallpaperManager = false;" in shortcuts_patch
-assert "Wallpapers.stopPreview(); Wallpapers.setRandom()" in content
 for needle in ("previewGeneration += 1", "queuedPreviewPath", "requestGeneration !== root.previewGeneration", "requestPath !== root.previewPath", "!root.showPreview"):
     assert needle in patch, needle
-print("test-wallpaper-manager: OK (A→B→cancel and A→apply→close are generation-guarded)")
+
+print("test-wallpaper-manager: OK (neutral open, final-candidate debounce, cancellation, wheel reversal, and two-way overlay exclusion)")

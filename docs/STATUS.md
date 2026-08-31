@@ -1,8 +1,8 @@
-# Estado estable — 2026-08-16
+# Estado estable — 2026-08-30
 
 ## Terminado
 
-- Wallpaper Manager orbital nativo: acceso `Super+Shift+W` y thumbnail del Bottom Hub; validado en runtime sobre eDP-1 y HDMI-A-1.
+- Wallpaper Manager orbital V2: acceso `Super+Shift+W` y thumbnail del Bottom Hub; apertura neutral en `actualCurrent`, preview final con debounce de 220 ms, exclusión bidireccional de overlays y órbita octagonal responsive. Validado en runtime con dos monitores, rueda y teclado reales, Apply/Random/cancelación, 40 aperturas y logs QML limpios.
 
 - Dock personalizado: estable.
 - Launcher integrado al Dock: estable.

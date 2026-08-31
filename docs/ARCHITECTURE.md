@@ -35,9 +35,9 @@ El launcher también continúa siendo el launcher nativo de Caelestia y se despl
 
 ## Wallpaper Manager
 
-Wallpaper Manager sigue el límite `ScreenState -> WallpaperController -> ContentWindow -> Panels -> wallpaper/Wrapper -> Content`. `wallpaperManager` es un estado por pantalla y participa en layer overlay, foco OnDemand, máscara nula, focus grab, scrim y cierre en fullscreen. Los controladores Overview, Clipboard, Hardware y Display cierran el estado también, para exclusión simétrica.
+Wallpaper Manager sigue el límite `ScreenState -> WallpaperController -> ContentWindow -> Panels -> wallpaper/Wrapper -> Content`. `wallpaperManager` es un estado por pantalla y participa en layer overlay, foco OnDemand, máscara nula, focus grab, scrim y cierre en fullscreen. `OverlayPolicy.js` es la única lista de exclusión para launcher, sidebar/notificaciones, overview, clipboard, hardware, display, session, utilities y dashboard. Cada controlador la aplica en todas las pantallas. Además, cada `wallpaper/Wrapper` observa esos estados en todas las pantallas, por lo que un shortcut, drawer o gesto nativo que no pasa por un controlador también cierra Wallpaper Manager y ejecuta `stopPreview`.
 
-`OrbitModel.js` es la fuente determinística para filtros de categoría, wrap y ventana de satélites de 1–12 elementos. `Content.qml` sólo crea esas imágenes visibles. `services/Wallpapers.qml` continúa siendo el único backend: el patch de upstream añade generación/cola de preview para que A→B→cancel o A→apply no puedan cargar una paleta obsoleta.
+`OrbitModel.js` es la fuente determinística para filtros de categoría, resolución exacta/alias único de `actualCurrent`, wrap, intención de wheel y satélites. La órbita excluye el índice seleccionado y queda limitada a 11 thumbnails cuando el presupuesto total es 12. `Content.qml` sólo crea esas imágenes visibles y posee el único timer de preview de 220 ms. `services/Wallpapers.qml` continúa siendo el único backend: el patch de upstream añade generación/cola de preview para que A→B→cancel o A→apply no puedan cargar una paleta obsoleta.
 
 ## Actualizaciones
 

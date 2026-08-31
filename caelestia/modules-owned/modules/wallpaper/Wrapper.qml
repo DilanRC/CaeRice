@@ -2,14 +2,28 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Caelestia
 import qs.components
 import qs.services
+import "../OverlayPolicy.js" as OverlayPolicy
 
 Item {
     id: root
     required property ShellScreen screen
     required property ScreenState screenState
     readonly property bool shouldBeActive: screenState.wallpaperManager
+    readonly property bool globalOtherOverlayOpen: {
+        for (const candidate of Screens.screens) {
+            if (OverlayPolicy.hasCompetingPanel(ShellState.forScreen(candidate)))
+                return true;
+        }
+        return false;
+    }
+
+    function closeCompetingPanels(): void {
+        for (const candidate of Screens.screens)
+            OverlayPolicy.closeForWallpaper(ShellState.forScreen(candidate));
+    }
 
     visible: opacity > 0.001
     opacity: shouldBeActive ? 1 : 0
@@ -36,9 +50,19 @@ Item {
     }
 
     onShouldBeActiveChanged: {
-        if (shouldBeActive)
+        if (shouldBeActive) {
+            closeCompetingPanels();
             Qt.callLater(() => contentLoader.item?.openManager());
-        else
+        } else {
+            contentLoader.item?.closeManager();
             Wallpapers.stopPreview();
+        }
+    }
+
+    onGlobalOtherOverlayOpenChanged: {
+        if (shouldBeActive && globalOtherOverlayOpen) {
+            screenState.wallpaperManager = false;
+            Wallpapers.stopPreview();
+        }
     }
 }

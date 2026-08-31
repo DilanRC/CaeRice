@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+MODULES = REPO / "caelestia/modules-owned/modules"
 
 spec = importlib.util.spec_from_file_location(
     "bottom_hub_target",
@@ -136,6 +137,19 @@ def main() -> None:
         if needle not in texts["content"]:
             raise SystemExit(f"FAIL: retained Display member lost after idempotent wiring: {needle}")
     print("PASS later-overlay-preserved")
+
+    policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
+    wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
+    controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
+    for flag in ("launcher", "session", "dashboard", "utilities", "sidebar", "overview", "clipboard", "hardware", "displayManager"):
+        assert flag in policy, flag
+    assert "function closeForWallpaper" in policy and "function hasCompetingPanel" in policy
+    assert "globalOtherOverlayOpen" in wrapper
+    assert "for (const candidate of Screens.screens)" in wrapper
+    assert "onGlobalOtherOverlayOpenChanged" in wrapper
+    assert "closeCompetingPanels();" in wrapper
+    assert "CustomShortcut" in controller and "OverlayPolicy.closeForWallpaper" in controller
+    print("PASS direct-shortcut-and-two-monitor-exclusivity")
 
     print("Retained overlay wiring tests: OK")
 

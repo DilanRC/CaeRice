@@ -6,6 +6,7 @@ import Quickshell.Io
 import Caelestia
 import qs.components.misc
 import qs.services
+import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
     id: root
@@ -26,33 +27,20 @@ Scope {
         }
     }
 
-    function closeOtherPanels(state): void {
-        if (!state)
-            return;
-        state.launcher = false;
-        state.session = false;
-        state.dashboard = false;
-        state.utilities = false;
-        state.sidebar = false;
-        state.overview = false;
-        if (state.clipboard !== undefined)
-            state.clipboard = false;
-        if (state.hardware !== undefined)
-            state.hardware = false;
-        if (state.displayManager !== undefined)
-            state.displayManager = false;
+    function closeOtherPanels(): void {
+        for (const screen of Screens.screens)
+            OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen));
     }
 
-    function openFor(screen): void {
-        const state = ShellState.forScreen(screen);
+    function open(): void {
+        const state = ShellState.forActive();
         if (!state)
             return;
         closeAll();
-        closeOtherPanels(state);
+        closeOtherPanels();
         state.wallpaperManager = true;
     }
 
-    function open(): void { openFor(ShellState.forActive()?.modelData); }
     function close(): void { closeAll(); }
     function toggle(): void { anyOpen() ? closeAll() : open(); }
 

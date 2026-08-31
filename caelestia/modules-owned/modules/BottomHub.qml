@@ -14,6 +14,7 @@ import qs.components.effects
 import qs.services
 import qs.utils
 import qs.modules.launcher.services
+import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
     id: hubRoot
@@ -31,12 +32,7 @@ Scope {
     function closeAllPanels(): void {
         for (const screen of Screens.screens) {
             const state = ShellState.forScreen(screen);
-            if (state) {
-                state.sidebar = false;
-                state.utilities = false;
-                state.session = false;
-                state.wallpaperManager = false;
-            }
+            OverlayPolicy.closeOtherPanels(state);
         }
     }
 
@@ -61,7 +57,7 @@ Scope {
         const wasOpen = state.launcher;
         closeAllLaunchers();
         closeAllPanels();
-        state.wallpaperManager = false;
+        OverlayPolicy.closeOtherPanels(state);
         state.launcher = !wasOpen;
         shown = true;
     }
@@ -74,7 +70,7 @@ Scope {
         const wasOpen = state.sidebar || state.utilities;
         closeAllLaunchers();
         closeAllPanels();
-        state.wallpaperManager = false;
+        OverlayPolicy.closeOtherPanels(state);
         state.sidebar = !wasOpen;
         state.utilities = !wasOpen;
         shown = true;
@@ -88,7 +84,7 @@ Scope {
         const wasOpen = state.utilities;
         closeAllLaunchers();
         closeAllPanels();
-        state.wallpaperManager = false;
+        OverlayPolicy.closeOtherPanels(state);
         state.utilities = !wasOpen;
         shown = true;
     }
@@ -98,18 +94,7 @@ Scope {
             const state = ShellState.forScreen(candidate);
             if (!state)
                 continue;
-            state.launcher = false;
-            state.session = false;
-            state.dashboard = false;
-            state.utilities = false;
-            state.sidebar = false;
-            state.overview = false;
-            if (state.clipboard !== undefined)
-                state.clipboard = false;
-            if (state.hardware !== undefined)
-                state.hardware = false;
-            if (state.displayManager !== undefined)
-                state.displayManager = false;
+            OverlayPolicy.closeOtherPanels(state);
             state.wallpaperManager = candidate === screen;
         }
         shown = true;
@@ -969,9 +954,11 @@ Scope {
                                 iconColor: active ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
                                 onClicked: {
                                     if (win.screenState) {
+                                        const wasOpen = win.screenState.session;
                                         hubRoot.closeAllLaunchers();
                                         hubRoot.closeAllPanels();
-                                        win.screenState.session = !win.screenState.session;
+                                        OverlayPolicy.closeOtherPanels(win.screenState);
+                                        win.screenState.session = !wasOpen;
                                     }
                                 }
                             }
