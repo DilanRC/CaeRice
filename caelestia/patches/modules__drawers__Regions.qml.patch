@@ -1,16 +1,7 @@
 --- a/modules/drawers/Regions.qml
 +++ b/modules/drawers/Regions.qml
-@@ -27,9 +27,14 @@
-         height: panel.height * (1 - root.panels.dashboard.offsetScale) + root.borderThickness
-     }
-+    /*
-+     * The launcher is lifted above BottomHub by Wrapper.dockOffset.
-+     * Preserve upstream's window-coordinate region formula and subtract the
-+     * same offset so the visible launcher remains inside the Wayland input mask.
-+     */
-     R {
-         panel: root.panels.launcher
+@@ -31 +31 @@
 -        y: root.win.height - height
 +        y: root.win.height - height - panel.dockOffset
-         height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
-     }
+@@ -63 +62,0 @@
+-        y: root.win.height - height
