@@ -14,14 +14,23 @@ if spec is None or spec.loader is None:
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
-BASE = '''import "modules"\n\nShellRoot {\n    id: root\n\n    settings.watchFiles: {watch}\n\n    Background {{}}\n    Drawers {{}}\n\n    Shortcuts {{}}\n    BatteryMonitor {{}}\n}}\n'''
+# Do not use str.format() here: QML braces are literal syntax and must not be
+# interpreted as Python replacement fields. Only the explicit sentinel below
+# is substituted per test case.
+BASE = '''import "modules"\n\nShellRoot {\n    id: root\n\n    settings.watchFiles: __WATCH__\n\n    Background {}\n    Drawers {}\n\n    Shortcuts {}\n    BatteryMonitor {}\n}\n'''
+
+
+def shell_fixture(watch: str) -> str:
+    if watch not in {"true", "false"}:
+        raise ValueError(f"invalid watchFiles fixture value: {watch}")
+    return BASE.replace("__WATCH__", watch, 1)
 
 
 def case(name: str, watch: str, *, expect_change: bool = True) -> None:
     with tempfile.TemporaryDirectory(prefix="caerice-shell-normalizer-") as td:
         root = Path(td)
         path = root / "shell.qml"
-        path.write_text(BASE.format(watch=watch), encoding="utf-8")
+        path.write_text(shell_fixture(watch), encoding="utf-8")
         changed = mod.normalize(root)
         if changed != expect_change:
             raise SystemExit(f"FAIL {name}: changed={changed}")
@@ -43,7 +52,7 @@ def reject_legacy() -> None:
         root = Path(td)
         path = root / "shell.qml"
         path.write_text(
-            BASE.format(watch="false").replace(
+            shell_fixture("false").replace(
                 "    Shortcuts {}\n",
                 "    ConfigToasts {}\n    Shortcuts {}\n",
             ),
