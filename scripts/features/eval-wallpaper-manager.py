@@ -34,6 +34,7 @@ checks = {
     "uniform_satellite_geometry": "scale: 1" in content and "scale: (0.72 + depth * 0.38)" not in content,
     "hero_orbit_clearance": "readonly property real radiusX" in content and "readonly property real radiusY" in content and "Math.cos(angle) * radiusX" in content and "Math.sin(angle) * radiusY" in content,
     "footer_orbit_clearance": "anchors.bottomMargin: 70" in content,
+    "header_orbit_clearance": "anchors.topMargin: 0" in content and "anchors.topMargin: 56" in content and "anchors.bottomMargin: -4" in content,
 }
 assert all(checks.values()), checks
 print(json.dumps({"ok": True, "score": sum(checks.values()), "total": len(checks), "checks": checks}, ensure_ascii=False))

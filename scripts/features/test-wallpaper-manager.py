@@ -108,6 +108,9 @@ assert "readonly property real radiusX" in content
 assert "readonly property real radiusY" in content
 assert "Math.cos(angle) * radiusX" in content
 assert "Math.sin(angle) * radiusY" in content
+assert "anchors.topMargin: 0" in content
+assert "anchors.topMargin: 56" in content
+assert "anchors.bottomMargin: -4" in content
 assert "--features display" in canonical
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr

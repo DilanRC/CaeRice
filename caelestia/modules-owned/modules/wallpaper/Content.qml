@@ -277,7 +277,10 @@ FocusScope {
 
         Rectangle {
             anchors.fill: categoryStrip
-            anchors.margins: -8
+            anchors.leftMargin: -8
+            anchors.rightMargin: -8
+            anchors.topMargin: -8
+            anchors.bottomMargin: -4
             radius: Tokens.rounding.large
             color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.68)
             border.width: 1
@@ -287,7 +290,7 @@ FocusScope {
         Flickable {
             id: categoryStrip
             anchors.top: parent.top
-            anchors.topMargin: 18
+            anchors.topMargin: 0
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(categoryRow.width, parent.width - 40)
             height: 36
@@ -317,7 +320,7 @@ FocusScope {
         Item {
             id: orbitRegion
             anchors.top: categoryStrip.bottom
-            anchors.topMargin: 38
+            anchors.topMargin: 56
             anchors.bottom: footerSurface.top
             anchors.bottomMargin: 70
             anchors.left: parent.left
