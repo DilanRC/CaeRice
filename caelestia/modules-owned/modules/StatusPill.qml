@@ -188,6 +188,32 @@ Item {
             }
         }
 
+        ToolTip {
+            id: tooltipPopup
+
+            parent: item
+            visible: mouse.containsMouse
+            delay: Tokens.anim.durations.expressiveFastEffects
+            text: item.tooltip
+
+            background: StyledRect {
+                implicitWidth: tooltipContent.implicitWidth + Tokens.padding.medium * 2
+                implicitHeight: tooltipContent.implicitHeight + Tokens.padding.small * 2
+                radius: Tokens.rounding.medium
+                color: Colours.palette.m3inverseSurface
+                border.width: 1
+                border.color: Colours.palette.m3outlineVariant
+            }
+
+            contentItem: StyledText {
+                id: tooltipContent
+
+                text: tooltipPopup.text
+                color: Colours.palette.m3inverseOnSurface
+                font: Tokens.font.label.small
+            }
+        }
+
         MouseArea {
             id: mouse
 
@@ -195,9 +221,6 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: item.clicked()
-
-            ToolTip.visible: containsMouse
-            ToolTip.text: item.tooltip
         }
     }
 }

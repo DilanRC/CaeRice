@@ -18,6 +18,8 @@ done
 
 require "width: hasStatus ? pill.implicitWidth : 0" "$component"
 require "visible: hasStatus || width > 0" "$component"
+require "id: tooltipPopup" "$component"
+require "color: Colours.palette.m3inverseSurface" "$component"
 require "recordingActive: Recorder.running" "$hub"
 require "dndActive: Notifs.dnd" "$hub"
 require "idleInhibited: Services.IdleInhibitor.enabled" "$hub"
