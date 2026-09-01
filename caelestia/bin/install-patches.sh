@@ -9,6 +9,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MIGRATOR="$SCRIPT_DIR/migrate-bottom-hub-from-main.py"
 TARGET_CHECKER="$SCRIPT_DIR/check-bottom-hub-target.py"
 SHELL_NORMALIZER="$SCRIPT_DIR/normalize-shell-24.py"
+CONTENT_NORMALIZER="$SCRIPT_DIR/normalize-contentwindow-overview-24.py"
+CONTENT_REL="modules/drawers/ContentWindow.qml"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$BASE/reinstall-backups/patch-install-$STAMP"
 TMP="$(mktemp -d -t caerice-preflight.XXXXXX)"
@@ -20,6 +22,7 @@ declare -A INITIAL_STATE
 initial_conflicts=0
 needs_migration=0
 shell_normalized=0
+content_normalized=0
 
 semantic_target() {
     local root="$1"
@@ -87,6 +90,23 @@ if [[ "${INITIAL_STATE[shell.qml]:-}" == "CONFLICT" && -f "$SHELL_NORMALIZER" ]]
         echo "TARGET    shell.qml (normalización validada)"
     else
         echo "CONFLICT  shell.qml (normalización rechazada)"
+    fi
+fi
+
+# CaeRice antiguo podía tener los hunks de Bottom Hub ya aplicados sobre
+# ContentWindow sin que el patch versionado contuviera las invariantes base de
+# Overview. Ese estado parcial aparece tras una actualización limpia a 2.4 y
+# un intento de reinstalación. Reparamos solo Overview en staging y exigimos el
+# checker semántico completo antes de considerar resuelto el conflicto.
+if [[ "${INITIAL_STATE[$CONTENT_REL]:-}" == "CONFLICT" && -f "$CONTENT_NORMALIZER" ]]; then
+    echo
+    echo "==> PREFLIGHT: NORMALIZACIÓN ContentWindow Overview Caelestia 2.4"
+    if python3 "$CONTENT_NORMALIZER" "$TMP" && semantic_target "$TMP" "$CONTENT_REL"; then
+        content_normalized=1
+        initial_conflicts=$((initial_conflicts - 1))
+        echo "TARGET    $CONTENT_REL (normalización validada)"
+    else
+        echo "CONFLICT  $CONTENT_REL (normalización rechazada)"
     fi
 fi
 
@@ -169,6 +189,17 @@ if (( shell_normalized )); then
     sudo python3 "$SHELL_NORMALIZER" "$LIVE"
     if ! semantic_target "$LIVE" "shell.qml"; then
         echo "ERROR: shell.qml no alcanzó el estado validado después del backup." >&2
+        echo "Backup disponible en: $BACKUP" >&2
+        exit 21
+    fi
+fi
+
+if (( content_normalized )); then
+    echo
+    echo "==> NORMALIZACIÓN DE RUNTIME ContentWindow Overview"
+    sudo python3 "$CONTENT_NORMALIZER" "$LIVE"
+    if ! semantic_target "$LIVE" "$CONTENT_REL"; then
+        echo "ERROR: $CONTENT_REL no alcanzó el estado validado después del backup." >&2
         echo "Backup disponible en: $BACKUP" >&2
         exit 21
     fi
