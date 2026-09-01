@@ -8,7 +8,9 @@ LIVE="/etc/xdg/quickshell/caelestia"
 python3 "$REPO/scripts/features/validate-sad.py"
 bash "$REPO/scripts/features/apply-canonical-sad-wiring.sh"
 
-# Synchronize retained Display Manager QML and helpers.
+# Synchronize retained Display Manager QML and helpers. Wallpaper Manager QML
+# is owned by the base CaeRice module install; canonical wiring above connects
+# its ScreenState/controller/drawer surfaces together with Display.
 sudo install -m 0644 "$REPO/caelestia/modules-owned/modules/DisplayController.qml" "$LIVE/modules/DisplayController.qml"
 sudo mkdir -p "$LIVE/modules/display"
 for qml in "$REPO/caelestia/modules-owned/modules/display/"*.qml; do
@@ -31,4 +33,4 @@ if ! python3 "$REPO/scripts/features/diagnose-sad.py"; then
     exit 1
 fi
 
-echo "SAD synchronized: Hardware/Display retained; Gaming/Updater removed."
+echo "SAD synchronized: Hardware/Display/Wallpaper retained; Gaming/Updater removed."
