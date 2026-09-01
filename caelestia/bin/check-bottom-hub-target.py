@@ -106,8 +106,6 @@ def check_content_window(root: Path, text: str) -> bool:
     if not all((layer, keyboard, mask, focus_active, cleared, fullscreen)):
         return False
 
-    # BottomHub's base Overview integration must remain active even when later
-    # CaeRice modules extend these boolean chains.
     if "WlrLayer.Overlay" not in layer:
         return False
     if "WlrKeyboardFocus.OnDemand" not in keyboard:
@@ -133,8 +131,6 @@ def check_content_window(root: Path, text: str) -> bool:
         if f"root.screenState.{flag} = false;" not in cleared:
             return False
 
-    # The Overview scrim is owned by the base patch. Clipboard may nest its
-    # own 0.48 scrim after it; Hardware/Display do not replace this invariant.
     if "opacity: root.screenState.overview ? 0.58" not in text:
         return False
     if "clipboard" in flags and "root.screenState.clipboard ? 0.48" not in text:
@@ -168,12 +164,17 @@ def check_panels(root: Path, text: str) -> bool:
 
 def check_regions(root: Path, text: str) -> bool:
     del root
+    utilities = qml_block(text, "R", "utilitiesRegion")
+    # Older target files do not name the utilities R block. Keep a structural
+    # fallback: the upstream override pins it to the visible bottom edge and
+    # must be absent so component R follows panel.y instead.
+    utilities_follows_panel = "panel: root.panels.utilities\n        y: root.win.height - height" not in text
     return has_all(text, (
         "y: root.win.height - height - panel.dockOffset",
         "width: panel.width * (1 - root.panels.session.offsetScale) + root.borderThickness + sidebarRegion.width",
         "panel: root.panels.sidebar",
         "x: root.win.width - width\n        width: panel.width * (1 - root.panels.sidebar.offsetScale) + root.borderThickness",
-    ))
+    )) and utilities_follows_panel
 
 
 def check_sidebar(root: Path, text: str) -> bool:
