@@ -20,7 +20,11 @@ cp "$LIVE/modules/drawers/ContentWindow.qml" "$BACKUP/modules/drawers/ContentWin
 cp "$LIVE/modules/drawers/Panels.qml" "$BACKUP/modules/drawers/Panels.qml"
 cp "$USERCFG" "$BACKUP/user-config/hypr-user.lua"
 
-WIRE_JSON="$(python3 "$REPO/scripts/features/wire_sad_shell.py" --live "$LIVE" --usercfg "$USERCFG" --stage "$STAGE" --features display)"
+# Canonical retained wiring deliberately uses wire_sad_shell.py's default
+# feature set. Keeping a narrower --features subset here caused Wallpaper
+# Manager modules/policy to be installed without the ScreenState/controller/
+# drawer wiring they require.
+WIRE_JSON="$(python3 "$REPO/scripts/features/wire_sad_shell.py" --live "$LIVE" --usercfg "$USERCFG" --stage "$STAGE")"
 echo "Wiring: $WIRE_JSON"
 python3 -c 'import json,sys; d=json.loads(sys.argv[1]); sys.exit(0 if d.get("ok") else 1)' "$WIRE_JSON" || exit 2
 
@@ -30,5 +34,5 @@ sudo install -m 0644 "$STAGE/modules/drawers/Panels.qml" "$LIVE/modules/drawers/
 sudo install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/ContentWindow.qml"
 install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
 
-echo "Canonical Hardware/Display wiring applied."
+echo "Canonical Hardware/Display/Wallpaper wiring applied."
 echo "Backup: $BACKUP"
