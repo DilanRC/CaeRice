@@ -20,7 +20,7 @@ require "width: hasStatus ? pill.implicitWidth : 0" "$component"
 require "visible: hasStatus || width > 0" "$component"
 require "recordingActive: Recorder.running" "$hub"
 require "dndActive: Notifs.dnd" "$hub"
-require "idleInhibited: IdleInhibitor.enabled" "$hub"
+require "idleInhibited: Services.IdleInhibitor.enabled" "$hub"
 require "StatusPill {" "$hub"
 
 if rg -n 'Timer|Process|execDetached' "$component"; then

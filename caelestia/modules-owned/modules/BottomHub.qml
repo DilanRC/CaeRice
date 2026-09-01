@@ -12,6 +12,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
+import qs.services as Services
 import qs.utils
 import qs.modules.launcher.services
 
@@ -896,10 +897,10 @@ Scope {
                             StatusPill {
                                 recordingActive: Recorder.running
                                 dndActive: Notifs.dnd
-                                idleInhibited: IdleInhibitor.enabled
+                                idleInhibited: Services.IdleInhibitor.enabled
                                 onStopRecordingRequested: Recorder.stop()
                                 onToggleDndRequested: Notifs.dnd = !Notifs.dnd
-                                onToggleIdleInhibitorRequested: IdleInhibitor.enabled = !IdleInhibitor.enabled
+                                onToggleIdleInhibitorRequested: Services.IdleInhibitor.enabled = !Services.IdleInhibitor.enabled
                             }
 
                             Item {

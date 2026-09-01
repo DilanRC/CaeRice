@@ -27,5 +27,10 @@ rg -Fq "onStopRecordingRequested: Recorder.stop()" "$hub" || {
     exit 1
 }
 echo "PASS: recording click uses Caelestia's recorder service"
+rg -Fq "idleInhibited: Services.IdleInhibitor.enabled" "$hub" || {
+    echo "FAIL: idle state uses the Caelestia service singleton" >&2
+    exit 1
+}
+echo "PASS: idle state uses the Caelestia service singleton"
 
-echo "PASS: StatusPill eval, 7 acceptance conditions"
+echo "PASS: StatusPill eval, 8 acceptance conditions"
