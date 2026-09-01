@@ -893,6 +893,15 @@ Scope {
                                 }
                             }
 
+                            StatusPill {
+                                recordingActive: Recorder.running
+                                dndActive: Notifs.dnd
+                                idleInhibited: IdleInhibitor.enabled
+                                onStopRecordingRequested: Recorder.stop()
+                                onToggleDndRequested: Notifs.dnd = !Notifs.dnd
+                                onToggleIdleInhibitorRequested: IdleInhibitor.enabled = !IdleInhibitor.enabled
+                            }
+
                             Item {
                                 implicitWidth: 74
                                 implicitHeight: 44

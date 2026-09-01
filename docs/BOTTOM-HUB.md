@@ -22,6 +22,22 @@ El contenido nativo de notificaciones, Utilities y los popouts se conserva, pero
 
 - `caelestia/modules-owned/modules/BottomHub.qml`
 - `caelestia/modules-owned/modules/HubButton.qml`
+- `caelestia/modules-owned/modules/StatusPill.qml`
+
+## Status Pill transitorio
+
+La pastilla está entre los controles del sistema y el reloj. Solo ocupa ancho
+cuando hay un estado relevante. Su orden es fijo: `REC`, `DND`, `Awake`.
+
+- `REC` enlaza `Recorder.running` y detiene la grabación con `Recorder.stop()`.
+- `DND` enlaza `Notifs.dnd` y alterna el estado real del servidor de
+  notificaciones de Caelestia.
+- `Awake` enlaza `IdleInhibitor.enabled` y alterna el inhibidor Wayland de
+  Caelestia.
+
+El componente no crea servicios, procesos ni temporizadores. Las instancias del
+hub en cada monitor leen los mismos singletons de Caelestia. Al remover el último
+estado, su ancho y opacidad se animan a cero y no queda un hueco reservado.
 
 ## Patches nativos implicados
 

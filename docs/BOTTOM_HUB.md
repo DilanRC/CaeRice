@@ -58,6 +58,27 @@ visual incluso cerrado. Causa raíz, en orden de impacto:
   (`HyprlandFocusGrab` en `ContentWindow.qml` incluye `s.utilities`), igual
   que ya pasaba con notificaciones.
 
+## Status Pill transitorio (2026-08-31)
+
+`modules-owned/modules/StatusPill.qml` aparece entre los controles del sistema
+y el reloj, solo mientras existe alguno de estos estados compartidos:
+
+1. `Recorder.running` — `REC`, primero, y al hacer click llama `Recorder.stop()`.
+2. `Notifs.dnd` — `DND`, segundo, y al hacer click alterna el DND de Caelestia.
+3. `IdleInhibitor.enabled` — `Awake`, tercero, y al hacer click alterna el
+   inhibidor Wayland de Caelestia.
+
+No crea servicios, scripts ni timers. Cada instancia del Bottom Hub se enlaza
+a esos mismos singletons, por lo que los dos monitores muestran el mismo estado
+sin duplicar procesos. La anchura se anima a cero al desaparecer el último
+estado; no queda una región visual reservada.
+
+El instalador existente `scripts/install-caerice.sh` aplica los módulos propios
+con preflight y backup. Wallpaper Manager queda fuera de este cambio. Para
+revertir, restaura el backup que el instalador deja en
+`~/.local/share/caelestia-custom-system/reinstall-backups/` y reinicia
+Caelestia.
+
 ## Archivos tocados
 
 - `modules-owned/modules/BottomHub.qml` — rediseño + botón Quick Toggles.
