@@ -99,6 +99,11 @@ assert "shouldBeActive && presentationReady" in wrapper
 assert "m3scrim, 0.18" in wrapper
 assert "m3scrim, 0.44" not in wrapper
 assert 'color: "black"' not in content
+
+# V2.1.1 polish: orbital geometry stays uniform and clears the footer.
+assert "scale: 1" in content
+assert "scale: (0.72 + depth * 0.38)" not in content
+assert "anchors.bottomMargin: 50" in content
 assert "--features display" in canonical
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr

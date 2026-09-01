@@ -319,7 +319,7 @@ FocusScope {
             anchors.top: categoryStrip.bottom
             anchors.topMargin: 38
             anchors.bottom: footerSurface.top
-            anchors.bottomMargin: 18
+            anchors.bottomMargin: 50
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -431,7 +431,7 @@ FocusScope {
                     readonly property bool hovered: satelliteMouse.containsMouse
                     width: 78
                     height: 78
-                    scale: (0.72 + depth * 0.38) * (hovered ? 1.06 : 1)
+                    scale: 1
                     opacity: hovered ? 1 : 0.5 + depth * 0.5
                     z: 2 + Math.round(depth * 8)
                     x: orbitRegion.width / 2 + Math.cos(angle) * radius - width / 2

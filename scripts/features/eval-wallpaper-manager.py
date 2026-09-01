@@ -31,6 +31,8 @@ checks = {
     "ready_gated_entry": "property bool presentationReady: false" in content and "function updatePresentationReady" in content and content.count("onStatusChanged: root.updatePresentationReady()") >= 2 and "shouldBeActive && presentationReady" in wrapper,
     "floating_dynamic_surfaces": "Item {\n        id: panel" in content and "m3surfaceContainerHigh, 0.68" in content and "m3scrim, 0.18" in wrapper,
     "current_preview_state": 'qsTr("Current") : qsTr("Preview")' in content,
+    "uniform_satellite_geometry": "scale: 1" in content and "scale: (0.72 + depth * 0.38)" not in content,
+    "footer_orbit_clearance": "anchors.bottomMargin: 50" in content,
 }
 assert all(checks.values()), checks
 print(json.dumps({"ok": True, "score": sum(checks.values()), "total": len(checks), "checks": checks}, ensure_ascii=False))
