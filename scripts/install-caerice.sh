@@ -16,6 +16,7 @@ python3 "$REPO/scripts/features/test-bottom-hub-v4.py"
 python3 "$REPO/scripts/features/test-retained-overlay-wiring.py"
 python3 "$REPO/scripts/features/test-keybinds.py"
 python3 "$REPO/scripts/features/eval-keybind-editor.py"
+python3 "$REPO/scripts/features/test-shell-normalizer.py"
 
 mkdir -p "$BASE"
 rm -rf "$BASE/patches" "$BASE/modules-owned"
