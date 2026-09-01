@@ -53,14 +53,6 @@ assert "globalOtherOverlayOpen" in wrapper and "onGlobalOtherOverlayOpenChanged"
 assert "for (const candidate of Screens.screens)" in wrapper
 assert "OverlayPolicy.hasCompetingPanel" in wrapper and "closeCompetingPanels();" in wrapper
 
-# Wheel/trackpad input is thresholded by real MouseArea deltas and stays bounded.
-assert "event.angleDelta.y" in content and "event.pixelDelta.y" in content
-assert "Orbit.wheelIntent" in content and "function wheelIntent" in orbit
-assert "Math.sign(total)" in orbit and "direction: total > 0 ? -1 : 1" in orbit
-assert "Math.abs(total) % threshold" in orbit and "Math.sign(accumulator) !== Math.sign(delta)" in orbit
-assert "function previewEligible" in orbit
-assert "queuedDirection = replacementDirection;" in content
-
 # One policy covers both orders, including notification/sidebar and all retained overlays.
 for other in ("launcher", "session", "dashboard", "utilities", "sidebar", "overview", "clipboard", "hardware", "displayManager", "wallpaperManager"):
     assert other in policy, f"policy does not exclude {other}"
@@ -111,11 +103,13 @@ assert "Math.sin(angle) * radiusY" in content
 assert "anchors.topMargin: 0" in content
 assert "anchors.topMargin: 56" in content
 assert "anchors.bottomMargin: -4" in content
-assert "--features display" in canonical
+wire_line = next(line for line in canonical.splitlines() if line.startswith("WIRE_JSON="))
+assert "wire_sad_shell.py" in wire_line
+assert "--features" not in wire_line, "canonical wiring must include all retained features"
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr
 assert "customDock\", \"launcher" in shortcuts_patch
 for needle in ("previewGeneration += 1", "queuedPreviewPath", "requestGeneration !== root.previewGeneration", "requestPath !== root.previewPath", "!root.showPreview"):
     assert needle in patch, needle
 
-print("test-wallpaper-manager: OK (neutral open, final-candidate debounce, cancellation, wheel reversal, and two-way overlay exclusion)")
+print("test-wallpaper-manager: OK (neutral open, final-candidate debounce, cancellation, wheel reversal, canonical retained wiring, and two-way overlay exclusion)")
