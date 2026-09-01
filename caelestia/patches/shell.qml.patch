@@ -1,27 +1,9 @@
 --- a/shell.qml
 +++ b/shell.qml
-@@ -16,7 +16,7 @@
- ShellRoot {
-     id: root
- 
+@@ -19 +19 @@
 -    settings.watchFiles: true
 +    settings.watchFiles: false
- 
-     Binding {
-         target: ShellState
-@@ -28,6 +28,7 @@
-     ServiceLoader {}
- 
-     Background {}
+@@ -31,0 +32 @@
 +    BottomHub {}
-     Drawers {}
-     AreaPicker {}
-     Lock {
-@@ -36,6 +37,7 @@
-     }
- 
-     Shortcuts {}
+@@ -39,0 +41 @@
 +    OverviewController {}
-     BatteryMonitor {}
-     IdleMonitors {
-         lock: lock
