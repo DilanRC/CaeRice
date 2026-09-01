@@ -2,7 +2,7 @@
 
 ## Terminado
 
-- Wallpaper Manager orbital V2: acceso `Super+Shift+W` y thumbnail del Bottom Hub; apertura neutral en `actualCurrent`, preview final con debounce de 220 ms, exclusión bidireccional de overlays y órbita octagonal responsive. Validado en runtime con dos monitores, rueda y teclado reales, Apply/Random/cancelación, 40 aperturas y logs QML limpios.
+- Wallpaper Manager orbital V2.1: acceso `Super+Shift+W`, apertura neutral y debounce V2 preservados; órbita flotante sin panel opaco, scrim ligero, surfaces dinámicas locales, estado Current/Preview, gate de apertura y prefetch acotado a 18 imágenes. Validado en runtime en eDP y HDMI, navegación rápida sin thumbnails vacíos, 40 aperturas con 0 fallos y RSS -9,128 KiB, logs QML limpios y video `/home/dilan/Vídeos/v2.1.mp4`.
 
 - Dock personalizado: estable.
 - Launcher integrado al Dock: estable.

@@ -26,7 +26,11 @@ checks = {
     "transactional_install": "def atomic_replace" in installer and "manifest = snapshot" in installer and "rollback(backup)" in installer,
     "real_orbit_motion": "orbitPhase" in content and "Orbit.satelliteAngle" in content and "NumberAnimation" in content,
     "bounded_responsive_categories": "Math.min(12" in content and "Flickable" in content and "width: Math.min(parent.width - 48, 900)" in content,
-    "safe_preview_assets": content.count("cache: false") >= 3 and "Image.Error" in content,
+    "safe_preview_assets": content.count("cache: true") >= 4 and "Image.Error" in content,
+    "bounded_prefetch": "Orbit.prefetch(filteredEntries, currentIndex, visibleLimit + 6)" in content and "Math.min(18, count)" in helper,
+    "ready_gated_entry": "property bool presentationReady: false" in content and "function updatePresentationReady" in content and content.count("onStatusChanged: root.updatePresentationReady()") >= 2 and "shouldBeActive && presentationReady" in wrapper,
+    "floating_dynamic_surfaces": "Item {\n        id: panel" in content and "m3surfaceContainerHigh, 0.68" in content and "m3scrim, 0.18" in wrapper,
+    "current_preview_state": 'qsTr("Current") : qsTr("Preview")' in content,
 }
 assert all(checks.values()), checks
 print(json.dumps({"ok": True, "score": sum(checks.values()), "total": len(checks), "checks": checks}, ensure_ascii=False))

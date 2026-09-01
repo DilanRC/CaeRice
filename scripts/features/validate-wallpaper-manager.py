@@ -25,15 +25,23 @@ def require(path: Path, *needles: str) -> None:
 
 def main() -> None:
     content = ROOT / "caelestia/modules-owned/modules/wallpaper/Content.qml"
-    require(content, "Orbit.satellites", "Orbit.resolveCurrentIndex", "Orbit.satelliteAngle", "orbitPhase", "Math.min(12", "asynchronous: true", "sourceSize.width", "retainWhileLoading", "cache: false", "Wallpapers.setRandom()", "Mask { maskSource", "layer.enabled: true", "visible: true", "required property int index", "pendingPreviewPath", "interval: 220", "Orbit.wheelIntent", "heroCrossfade")
+    require(content, "Orbit.satellites", "Orbit.prefetch", "Orbit.resolveCurrentIndex", "Orbit.satelliteAngle", "orbitPhase", "Math.min(12", "asynchronous: true", "sourceSize.width", "retainWhileLoading", "cache: true", "presentationReady", "Wallpapers.setRandom()", "Mask { maskSource", "layer.enabled: true", "visible: true", "required property int index", "pendingPreviewPath", "interval: 220", "Orbit.wheelIntent", "heroCrossfade")
     content_text = content.read_text(encoding="utf-8")
     assert "GridView" not in content_text and "Quickshell.exec" not in content_text
     assert "Orbit.visible(filteredEntries, currentIndex" not in content_text, "fixed slots would only swap sources"
     assert "source: satellite.modelData.entry.path" in content_text
     if "Mask {" in content_text:
         assert "import qs.components.effects" in content_text, "Mask requires qs.components.effects"
-    assert "previewCurrent" not in content_text and "openManager(): void {\n        resync();\n        forceActiveFocus();" in content_text
+    assert "previewCurrent" not in content_text
+    open_start = content_text.index("function openManager(): void")
+    open_end = content_text.index("function closeManager", open_start)
+    open_body = content_text[open_start:open_end]
+    for contract in ("presentationReady = false", "resync();", "Qt.callLater(updatePresentationReady)", "forceActiveFocus();"):
+        assert contract in open_body, f"openManager missing {contract}"
     assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content_text
+    assert "Item {\n        id: panel" in content_text and 'color: "black"' not in content_text
+    wrapper_text = (ROOT / "caelestia/modules-owned/modules/wallpaper/Wrapper.qml").read_text(encoding="utf-8")
+    assert "shouldBeActive && presentationReady" in wrapper_text and "m3scrim, 0.18" in wrapper_text
     require(ROOT / "caelestia/modules-owned/modules/WallpaperController.qml", "wallpaperManager", "CustomShortcut", 'name: "wallpapermanager"')
     require(ROOT / "caelestia/modules-owned/modules/BottomHub.qml", "openWallpaperFor", "Wallpapers.actualCurrent")
     require(ROOT / "config/hypr-user.lua", "SUPER + SHIFT + W", "caelestia:wallpapermanager")

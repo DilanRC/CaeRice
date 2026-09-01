@@ -41,6 +41,18 @@ function visible(entries, currentIndex, maximum) {
     return result;
 }
 
+function prefetch(entries, currentIndex, maximum) {
+    const count = entries.length;
+    if (count === 0)
+        return [];
+    const size = clamp(Math.floor(maximum), 1, Math.min(18, count));
+    const start = normalize(currentIndex - Math.floor(size / 2), count);
+    const result = [];
+    for (let i = 0; i < size; ++i)
+        result.push(entries[(start + i) % count]);
+    return result;
+}
+
 function basename(path) {
     const slash = path.lastIndexOf("/");
     return slash >= 0 ? path.slice(slash + 1) : path;

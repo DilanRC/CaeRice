@@ -19,6 +19,12 @@ TestCase {
         ];
     }
     function test_bounded_windows(data) { compare(Orbit.visible(paths(data.count), 0, 12).length, data.expected); }
+    function test_prefetch_is_bounded_but_larger_than_orbit() {
+        compare(Orbit.prefetch(paths(300), 0, 18).length, 18);
+        compare(Orbit.prefetch(paths(5), 0, 18).length, 5);
+        compare(Orbit.prefetch(paths(0), 0, 18).length, 0);
+        compare(Orbit.prefetch(paths(300), 299, 18)[10].path, "/walls/cat/0.webp");
+    }
     function test_current_path_resolution() {
         const entries = [
             {path: "/home/dilan/Imágenes/Wallpapers/388074.jpg"},

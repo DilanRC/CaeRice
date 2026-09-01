@@ -8,7 +8,9 @@ V2 opens neutrally: it reselects `Wallpapers.actualCurrent`, aligns the orbit an
 
 Overlay exclusion is global across screens. A native shortcut, drawer toggle, gesture, controller or Bottom Hub action that opens any competing retained overlay closes Wallpaper Manager on every screen. Opening Wallpaper Manager clears competing overlays on every screen.
 
-The orbital view has one central crossfading crop and at most eleven octagonal satellite images. The selected image is never duplicated in the orbit. Each image loads asynchronously at bounded source sizes. Satellite scale, opacity and z-order derive from its sine/cosine orbit depth. The responsive 900×680 maximum panel keeps centered category chips, concise metadata, native Caelestia buttons, Apply as the primary action and Random as secondary. Categories are `ALL` plus values from `Wallpapers.getCategoryFor`.
+V2.1 uses a floating orbit instead of the former full opaque panel. A light `m3scrim` preserves contrast while the real desktop remains visible; only categories and metadata/actions use translucent `m3surfaceContainerHigh` surfaces. The orbital view has one central crossfading crop and at most eleven octagonal satellite images. The selected image is never duplicated in the orbit. Scale, opacity, z-order and outlines derive from orbit depth and hover state.
+
+Images load asynchronously at bounded source sizes through the shared Qt image cache. A prefetch window capped at 18 thumbnails warms only six entries beyond the visible budget, even for a 300-item model. Entry motion is latched until the current hero and seven essential thumbnails are `Ready` or `Error`, so incomplete geometry is never presented; subsequent navigation keeps the manager visible while textures swap. Metadata distinguishes `Current` from `Preview`, truncates long filenames, and keeps Apply primary and Random secondary.
 
 ## Installation and rollback
 
@@ -37,6 +39,8 @@ Rollback restores that timestamped backup, including `services/Wallpapers.qml`, 
 ```bash
 python3 scripts/features/install-wallpaper-manager.py --rollback /path/to/wallpaper-manager-timestamp
 ```
+
+The deployed V2.1 rollback point is `/home/dilan/.local/state/caerice/backups/wallpaper-manager-20260831-180047-459217`.
 
 The configurator itself is idempotent, preserves file mode, and creates no backup when no change is required.
 

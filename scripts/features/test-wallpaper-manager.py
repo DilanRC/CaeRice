@@ -83,6 +83,22 @@ if "Mask {" in content:
     assert "import qs.components.effects" in content
 assert "Image {\n            anchors.fill: parent; anchors.margins" not in content
 assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content
+
+# V2.1 presentation: bounded shared-cache prefetch, ready-gated entry, and floating surfaces.
+assert "Orbit.prefetch(filteredEntries, currentIndex, visibleLimit + 6)" in content
+assert "Math.min(18, count)" in orbit
+assert "property bool presentationReady: false" in content
+assert "function updatePresentationReady" in content
+assert content.count("onStatusChanged: root.updatePresentationReady()") >= 2
+assert "Math.min(prefetchRepeater.count, 7)" in content
+assert content.count("cache: true") >= 4
+assert "id: panel\n        z: 1" in content and "Item {\n        id: panel" in content
+assert "m3surfaceContainerHigh, 0.68" in content
+assert 'root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")' in content
+assert "shouldBeActive && presentationReady" in wrapper
+assert "m3scrim, 0.18" in wrapper
+assert "m3scrim, 0.44" not in wrapper
+assert 'color: "black"' not in content
 assert "--features display" in canonical
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr

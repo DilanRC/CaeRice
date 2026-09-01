@@ -39,3 +39,18 @@ Una vez ejecutado `scripts/sync-live-to-repo.fish` desde la máquina, `caelestia
 5. Integrar la rama a `main`.
 
 El siguiente módulo planificado es `feature/clipboard-qml` para `Super+V`.
+
+## Wallpaper Manager Orbital V2.1
+
+El manager usa una órbita flotante sobre el wallpaper real, con scrim ligero y superficies dinámicas solo para categorías y acciones. La entrada espera el hero y siete thumbnails esenciales; una ventana de prefetch de hasta 18 imágenes a 128 px alimenta la cache compartida sin cargar la colección completa.
+
+Verificación dirigida:
+
+```bash
+python3 scripts/features/test-wallpaper-manager.py
+python3 scripts/features/eval-wallpaper-manager.py
+python3 scripts/features/validate-wallpaper-manager.py
+qmltestrunner -input caelestia/modules-owned/modules/wallpaper/tests -import caelestia/modules-owned -import /home/dilan/.local/share/caelestia-custom-system/upstream-git
+```
+
+El instalador atómico existente conserva el rollback; V2.1 no cambia servicios, preview, Apply, Random ni la política de overlays.

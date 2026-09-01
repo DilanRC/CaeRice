@@ -12,6 +12,7 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
     readonly property bool shouldBeActive: screenState.wallpaperManager
+    readonly property bool presentationReady: contentLoader.item?.presentationReady ?? false
     readonly property bool globalOtherOverlayOpen: {
         for (const candidate of Screens.screens) {
             if (OverlayPolicy.hasCompetingPanel(ShellState.forScreen(candidate)))
@@ -26,23 +27,22 @@ Item {
     }
 
     visible: opacity > 0.001
-    opacity: shouldBeActive ? 1 : 0
-    scale: shouldBeActive ? 1 : 0.985
+    opacity: shouldBeActive && presentationReady ? 1 : 0
+    scale: shouldBeActive && presentationReady ? 1 : 0.96
     transformOrigin: Item.Center
 
-    Behavior on opacity { NumberAnimation { duration: 140 } }
-    Behavior on scale { NumberAnimation { duration: 140 } }
+    Behavior on opacity { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
+    Behavior on scale { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
 
     Rectangle {
         anchors.fill: parent
-        visible: root.shouldBeActive
-        color: Qt.alpha(Colours.palette.m3scrim, 0.44)
+        color: Qt.alpha(Colours.palette.m3scrim, 0.18)
     }
 
     Loader {
         id: contentLoader
         anchors.fill: parent
-        active: root.shouldBeActive
+        active: root.shouldBeActive || root.opacity > 0.001
         sourceComponent: Content {
             screen: root.screen
             screenState: root.screenState

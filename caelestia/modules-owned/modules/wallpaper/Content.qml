@@ -34,8 +34,27 @@ FocusScope {
     property real oldHeroOpacity: 0
     readonly property int visibleLimit: Math.max(1, Math.min(12, Math.floor((width - 104) / 102)))
     readonly property var orbitEntries: Orbit.satellites(filteredEntries, windowIndex, currentIndex, visibleLimit)
+    readonly property var prefetchEntries: Orbit.prefetch(filteredEntries, currentIndex, visibleLimit + 6)
     readonly property var currentEntry: currentIndex >= 0 ? filteredEntries[currentIndex] : null
     readonly property string currentPath: currentEntry?.path ?? ""
+    property bool presentationReady: false
+
+    function essentialReady(): bool {
+        const count = Math.min(prefetchRepeater.count, 7);
+        if (!count)
+            return !currentPath;
+        for (let i = 0; i < count; ++i) {
+            const item = prefetchRepeater.itemAt(i);
+            if (!item || (item.status !== Image.Ready && item.status !== Image.Error))
+                return false;
+        }
+        return true;
+    }
+
+    function updatePresentationReady(): void {
+        if (!presentationReady && (heroImage.status === Image.Ready || heroImage.status === Image.Error) && essentialReady())
+            presentationReady = true;
+    }
 
     function categoryFor(entry): string { return Wallpapers.getCategoryFor(entry) || qsTr("Unsorted"); }
 
@@ -164,7 +183,9 @@ FocusScope {
     }
 
     function openManager(): void {
+        presentationReady = false;
         resync();
+        Qt.callLater(updatePresentationReady);
         forceActiveFocus();
     }
 
@@ -230,21 +251,43 @@ FocusScope {
 
     MouseArea { anchors.fill: parent; z: 0; onClicked: root.cancel() }
 
-    Rectangle {
+    Repeater {
+        id: prefetchRepeater
+        model: root.prefetchEntries
+        delegate: Image {
+            required property var modelData
+            width: 1
+            height: 1
+            opacity: 0
+            source: modelData.path
+            asynchronous: true
+            sourceSize.width: 128
+            sourceSize.height: 128
+            cache: true
+            onStatusChanged: root.updatePresentationReady()
+        }
+    }
+
+    Item {
         id: panel
         z: 1
         anchors.centerIn: parent
         width: Math.min(parent.width - 48, 900)
         height: Math.min(parent.height - 48, 680)
-        radius: Tokens.rounding.extraLarge
-        color: Colours.palette.m3surfaceContainer
-        border.width: 1
-        border.color: Colours.palette.m3outlineVariant
+
+        Rectangle {
+            anchors.fill: categoryStrip
+            anchors.margins: -8
+            radius: Tokens.rounding.large
+            color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.68)
+            border.width: 1
+            border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.55)
+        }
 
         Flickable {
             id: categoryStrip
             anchors.top: parent.top
-            anchors.topMargin: 20
+            anchors.topMargin: 18
             anchors.horizontalCenter: parent.horizontalCenter
             width: Math.min(categoryRow.width, parent.width - 40)
             height: 36
@@ -274,9 +317,9 @@ FocusScope {
         Item {
             id: orbitRegion
             anchors.top: categoryStrip.bottom
-            anchors.topMargin: 10
-            anchors.bottom: footer.top
-            anchors.bottomMargin: 10
+            anchors.topMargin: 38
+            anchors.bottom: footerSurface.top
+            anchors.bottomMargin: 18
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -325,13 +368,14 @@ FocusScope {
                     sourceSize.width: 640
                     sourceSize.height: 640
                     fillMode: Image.PreserveAspectCrop
-                    cache: false
+                    cache: true
                     mipmap: true
                     retainWhileLoading: true
                     layer.enabled: true
                     layer.effect: Mask { maskSource: heroMask }
                 }
                 Image {
+                    id: heroImage
                     anchors.fill: parent
                     source: root.heroPath
                     opacity: root.newHeroOpacity
@@ -339,17 +383,38 @@ FocusScope {
                     sourceSize.width: 640
                     sourceSize.height: 640
                     fillMode: Image.PreserveAspectCrop
-                    cache: false
+                    cache: true
                     mipmap: true
                     retainWhileLoading: true
                     layer.enabled: true
                     layer.effect: Mask { maskSource: heroMask }
+                    onStatusChanged: root.updatePresentationReady()
                     MaterialIcon {
                         anchors.centerIn: parent
                         visible: parent.status === Image.Error
                         text: "broken_image"
                         color: Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.extraLarge
+                    }
+                }
+
+                Shape {
+                    id: heroOutline
+                    anchors.fill: parent
+                    z: 4
+                    ShapePath {
+                        fillColor: "transparent"
+                        strokeColor: Qt.alpha(Colours.palette.m3outlineVariant, 0.8)
+                        strokeWidth: 1
+                        startX: heroOutline.width * 0.28; startY: 0
+                        PathLine { x: heroOutline.width * 0.72; y: 0 }
+                        PathLine { x: heroOutline.width; y: heroOutline.height * 0.28 }
+                        PathLine { x: heroOutline.width; y: heroOutline.height * 0.72 }
+                        PathLine { x: heroOutline.width * 0.72; y: heroOutline.height }
+                        PathLine { x: heroOutline.width * 0.28; y: heroOutline.height }
+                        PathLine { x: 0; y: heroOutline.height * 0.72 }
+                        PathLine { x: 0; y: heroOutline.height * 0.28 }
+                        PathLine { x: heroOutline.width * 0.28; y: 0 }
                     }
                 }
             }
@@ -363,10 +428,11 @@ FocusScope {
                     readonly property real angle: Orbit.satelliteAngle(index, root.orbitEntries.length, root.orbitPhase)
                     readonly property real depth: (Math.sin(angle) + 1) / 2
                     readonly property real radius: Math.min(orbitRegion.width * 0.37, orbitRegion.height * 0.47, 250)
+                    readonly property bool hovered: satelliteMouse.containsMouse
                     width: 78
                     height: 78
-                    scale: 0.64 + depth * 0.34
-                    opacity: 0.42 + depth * 0.58
+                    scale: (0.72 + depth * 0.38) * (hovered ? 1.06 : 1)
+                    opacity: hovered ? 1 : 0.5 + depth * 0.5
                     z: 2 + Math.round(depth * 8)
                     x: orbitRegion.width / 2 + Math.cos(angle) * radius - width / 2
                     y: orbitRegion.height / 2 + Math.sin(angle) * radius - height / 2
@@ -398,15 +464,36 @@ FocusScope {
                         sourceSize.width: 128
                         sourceSize.height: 128
                         fillMode: Image.PreserveAspectCrop
-                        cache: false
+                        cache: true
                         mipmap: true
                         retainWhileLoading: true
                         layer.enabled: true
                         layer.effect: Mask { maskSource: satelliteMask }
                     }
+                    Shape {
+                        id: satelliteOutline
+                        anchors.fill: parent
+                        z: 3
+                        ShapePath {
+                            fillColor: "transparent"
+                            strokeColor: satellite.hovered ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outlineVariant, 0.72)
+                            strokeWidth: satellite.hovered ? 1.5 : 1
+                            startX: satelliteOutline.width * 0.28; startY: 0
+                            PathLine { x: satelliteOutline.width * 0.72; y: 0 }
+                            PathLine { x: satelliteOutline.width; y: satelliteOutline.height * 0.28 }
+                            PathLine { x: satelliteOutline.width; y: satelliteOutline.height * 0.72 }
+                            PathLine { x: satelliteOutline.width * 0.72; y: satelliteOutline.height }
+                            PathLine { x: satelliteOutline.width * 0.28; y: satelliteOutline.height }
+                            PathLine { x: 0; y: satelliteOutline.height * 0.72 }
+                            PathLine { x: 0; y: satelliteOutline.height * 0.28 }
+                            PathLine { x: satelliteOutline.width * 0.28; y: 0 }
+                        }
+                    }
                     MouseArea {
+                        id: satelliteMouse
                         z: 3
                         anchors.fill: parent
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.selectSatellite(satellite.modelData.index)
                     }
@@ -414,10 +501,23 @@ FocusScope {
             }
         }
 
+        Rectangle {
+            id: footerSurface
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 12
+            width: Math.min(500, parent.width - 40)
+            height: footer.height + 24
+            radius: Tokens.rounding.extraLarge
+            color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.68)
+            border.width: 1
+            border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.55)
+        }
+
         Column {
             id: footer
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 24
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 7
 
@@ -431,7 +531,7 @@ FocusScope {
             }
             StyledText {
                 width: Math.min(440, panel.width - 48)
-                text: root.currentEntry ? qsTr("%1  ·  %2/%3").arg(root.categoryFor(root.currentEntry)).arg(root.currentIndex + 1).arg(root.filteredEntries.length) : qsTr("Add images to the native wallpaper directory")
+                text: root.currentEntry ? qsTr("%1  ·  %2  ·  %3/%4").arg(root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")).arg(root.categoryFor(root.currentEntry)).arg(root.currentIndex + 1).arg(root.filteredEntries.length) : qsTr("Add images to the native wallpaper directory")
                 horizontalAlignment: Text.AlignHCenter
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.label.medium
