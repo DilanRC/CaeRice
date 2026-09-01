@@ -16,8 +16,9 @@ warnings: list[str] = []
 rows: list[dict] = []
 
 WIRING = {
-    "hardware": {"controller": "HardwareController", "flag": "hardware"},
-    "display": {"controller": "DisplayController", "flag": "displayManager"},
+    "hardware": {"controller": "HardwareController", "flag": "hardware", "ipc": "hardware"},
+    "display": {"controller": "DisplayController", "flag": "displayManager", "ipc": "display"},
+    "wallpaper": {"controller": "WallpaperController", "flag": "wallpaperManager", "ipc": "wallpapermanager"},
 }
 
 RETIRED_LIVE = [
@@ -161,6 +162,11 @@ def main() -> None:
         "modules/display/DisplayPresets.qml",
         "modules/display/DisplayCapabilities.qml",
         "modules/display/DisplayOutputControls.qml",
+        "modules/WallpaperController.qml",
+        "modules/OverlayPolicy.js",
+        "modules/wallpaper/Wrapper.qml",
+        "modules/wallpaper/Content.qml",
+        "modules/wallpaper/OrbitModel.js",
     ]:
         check_file(rel)
 
@@ -176,11 +182,12 @@ def main() -> None:
     check_retired()
 
     ipc: dict[str, dict] = {}
-    for target in ["hardware", "display"]:
+    for feature, spec in WIRING.items():
+        target = spec["ipc"]
         cp = cmd(["qs", "-c", "caelestia", "ipc", "call", target, "isOpen"], 8)
         out = cp.stdout.strip() if cp else ""
         ok = bool(cp and cp.returncode == 0 and out in ("true", "false"))
-        ipc[target] = {"ok": ok, "output": out}
+        ipc[feature] = {"target": target, "ok": ok, "output": out}
         if not ok:
             errors.append(f"IPC target not responding: {target} -> {out!r}")
 
