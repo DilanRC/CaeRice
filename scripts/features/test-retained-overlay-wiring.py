@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+MODULES = REPO / "caelestia/modules-owned/modules"
 
 spec = importlib.util.spec_from_file_location(
     "bottom_hub_target",
@@ -111,10 +112,10 @@ def validate_content(text: str, flags: tuple[str, ...]) -> bool:
 
 def main() -> None:
     texts = {"content": base_content()}
-    for flag in ("clipboard", "hardware", "displayManager"):
+    for flag in ("clipboard", "hardware", "displayManager", "wallpaperManager"):
         wire_flag(texts, flag)
 
-    expected_flags = ("overview", "clipboard", "hardware", "displayManager")
+    expected_flags = ("overview", "clipboard", "hardware", "displayManager", "wallpaperManager")
     if not validate_content(texts["content"], expected_flags):
         raise SystemExit("FAIL: sequential retained overlay wiring did not satisfy BottomHub invariants")
     print("PASS sequential-composition")
@@ -128,15 +129,27 @@ def main() -> None:
 
     # A later Display member must survive re-running the older installers.
     for needle in (
-        "screenState.displayManager ? WlrLayer.Overlay",
-        "screenState.displayManager || screenState.launcher",
-        "screenState.displayManager ? null",
-        "s.displayManager)",
+        "screenState.displayManager",
         "root.screenState.displayManager = false;",
+        "screenState.wallpaperManager",
+        "root.screenState.wallpaperManager = false;",
     ):
         if needle not in texts["content"]:
             raise SystemExit(f"FAIL: retained Display member lost after idempotent wiring: {needle}")
     print("PASS later-overlay-preserved")
+
+    policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
+    wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
+    controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
+    for flag in ("launcher", "session", "dashboard", "utilities", "sidebar", "overview", "clipboard", "hardware", "displayManager"):
+        assert flag in policy, flag
+    assert "function closeForWallpaper" in policy and "function hasCompetingPanel" in policy
+    assert "globalOtherOverlayOpen" in wrapper
+    assert "for (const candidate of Screens.screens)" in wrapper
+    assert "onGlobalOtherOverlayOpenChanged" in wrapper
+    assert "closeCompetingPanels();" in wrapper
+    assert "CustomShortcut" in controller and "OverlayPolicy.closeForWallpaper" in controller
+    print("PASS direct-shortcut-and-two-monitor-exclusivity")
 
     print("Retained overlay wiring tests: OK")
 

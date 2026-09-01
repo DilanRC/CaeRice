@@ -16,6 +16,8 @@ trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$BACKUP"
 
 declare -A INITIAL_STATE
+initial_conflicts=0
+needs_migration=0
 
 semantic_target() {
     local root="$1"
@@ -58,6 +60,9 @@ while IFS=$'\t' read -r patchname rel; do
     p="$PATCHES/$patchname"
     state="$(patch_state_live "$p" "$rel")"
     INITIAL_STATE["$rel"]="$state"
+    if [[ "$state" == "CONFLICT" ]]; then
+        initial_conflicts=$((initial_conflicts + 1))
+    fi
     printf '%-9s %s\n' "$state" "$rel"
 
     if [[ -f "$LIVE/$rel" ]]; then
@@ -67,13 +72,21 @@ while IFS=$'\t' read -r patchname rel; do
     fi
 done < "$PATCHES/MANIFEST.tsv"
 
-# El runtime puede estar en un tercer estado legítimo: CaeRice main ya
-# aplicado. Simulamos la migración en una copia temporal y volvemos a validar
-# todos los patches antes de modificar /etc/xdg.
-if [[ -f "$MIGRATOR" ]]; then
+# La migración es exclusivamente un fallback para runtimes legacy. Si todos
+# los archivos ya están READY/ALREADY/TARGET, tocar la copia con el migrador
+# produciría un doble parcheado y falsos CONFLICT en un upstream compatible.
+if (( initial_conflicts > 0 )) && [[ -f "$MIGRATOR" ]]; then
+    needs_migration=1
     echo
-    echo "==> PREFLIGHT: SIMULACIÓN main -> BottomHub"
+    echo "==> PREFLIGHT: SIMULACIÓN legacy -> BottomHub"
     python3 "$MIGRATOR" "$TMP"
+else
+    echo
+    if (( initial_conflicts == 0 )); then
+        echo "==> PREFLIGHT: migración legacy no requerida"
+    else
+        echo "==> PREFLIGHT: migrador legacy no disponible"
+    fi
 fi
 
 echo
@@ -132,9 +145,9 @@ fi
 
 echo "Backup: $BACKUP"
 
-if [[ -f "$MIGRATOR" ]]; then
+if (( needs_migration )); then
     echo
-    echo "==> MIGRACIÓN DE RUNTIME CaeRice main -> BottomHub"
+    echo "==> MIGRACIÓN DE RUNTIME legacy -> BottomHub"
     sudo python3 "$MIGRATOR" "$LIVE"
 fi
 

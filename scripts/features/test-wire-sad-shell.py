@@ -37,12 +37,21 @@ with tempfile.TemporaryDirectory() as tmpdir:
     live = tmp / "live"
     user = tmp / "hypr-user.lua"
     fixture(live, user)
+    display_only, display_changed = wire.wire_all(live, user, ("display",))
+    assert display_changed == {"retired": False, "display": True}, display_changed
+    assert "WallpaperController" not in display_only["shell"]
+    assert "wallpaperManager" not in display_only["screen"]
 
     texts, changed = wire.wire_all(live, user)
-    assert changed == {"retired": False, "display": True}, changed
+    assert changed == {"retired": False, "display": True, "wallpaper": True}, changed
     assert "DisplayController {}" in texts["shell"]
     assert "property bool displayManager" in texts["screen"]
     assert "id: displayManager" in texts["panels"]
+    assert "WallpaperController {}" in texts["shell"]
+    assert "property bool wallpaperManager" in texts["screen"]
+    assert "id: wallpaperManager" in texts["panels"]
+    assert '"SUPER + SHIFT + W"' in texts["user"]
+    assert '"SUPER + SHIFT + E"' not in texts["user"]
 
     stage = tmp / "stage"
     wire.write_staged(texts, stage)
@@ -50,7 +59,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
         (live / rel).write_text((stage / rel).read_text())
     user.write_text((stage / "user-config/hypr-user.lua").read_text())
     _, changed2 = wire.wire_all(live, user)
-    assert changed2 == {"retired": False, "display": False}, changed2
+    assert changed2 == {"retired": False, "display": False, "wallpaper": False}, changed2
 
     legacy = {
         "screen": "property bool gamingCenter\nproperty bool updaterCenter\n",

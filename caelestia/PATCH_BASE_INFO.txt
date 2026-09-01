@@ -1,6 +1,6 @@
-generated_at=2026-08-16T15:23:06-06:00
-installed_package=2.3.0-3
-upstream_tag=v2.3.0
-upstream_commit=94d5eb9e6fe9c6b1f69e663d9ed410a441e2d67f
+generated_at=2026-09-01T11:17:00-06:00
+installed_package=2.4.0-1
+upstream_tag=v2.4.0
+upstream_commit=24aa15eefdb146350d2548c0a015b04eddbd1008
 upstream_repo=https://github.com/caelestia-dots/shell
 live_root=/etc/xdg/quickshell/caelestia

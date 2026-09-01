@@ -101,6 +101,12 @@ hl.bind(
     hl.dsp.global("caelestia:displaymanager")
 )
 
+-- Wallpaper Manager QML nativo
+hl.bind(
+    "SUPER + SHIFT + W",
+    hl.dsp.global("caelestia:wallpapermanager")
+)
+
 
 -- ============================================================
 -- BLOQUEO / SESIÓN
@@ -152,7 +158,7 @@ hl.bind(
 -- SUPER+V       -> Clipboard
 -- SUPER+H       -> Hardware Center
 -- SUPER+SHIFT+O -> Display Manager
--- SUPER+SHIFT+G -> Gaming Center
+-- SUPER+SHIFT+W -> Wallpaper Manager
 -- ============================================================
 
 -- ============================================================

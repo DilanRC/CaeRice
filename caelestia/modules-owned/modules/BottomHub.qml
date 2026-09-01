@@ -15,6 +15,7 @@ import qs.services
 import qs.services as Services
 import qs.utils
 import qs.modules.launcher.services
+import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
     id: hubRoot
@@ -32,11 +33,7 @@ Scope {
     function closeAllPanels(): void {
         for (const screen of Screens.screens) {
             const state = ShellState.forScreen(screen);
-            if (state) {
-                state.sidebar = false;
-                state.utilities = false;
-                state.session = false;
-            }
+            OverlayPolicy.closeOtherPanels(state);
         }
     }
 
@@ -61,6 +58,7 @@ Scope {
         const wasOpen = state.launcher;
         closeAllLaunchers();
         closeAllPanels();
+        OverlayPolicy.closeOtherPanels(state);
         state.launcher = !wasOpen;
         shown = true;
     }
@@ -73,6 +71,7 @@ Scope {
         const wasOpen = state.sidebar || state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        OverlayPolicy.closeOtherPanels(state);
         state.sidebar = !wasOpen;
         state.utilities = !wasOpen;
         shown = true;
@@ -86,7 +85,19 @@ Scope {
         const wasOpen = state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        OverlayPolicy.closeOtherPanels(state);
         state.utilities = !wasOpen;
+        shown = true;
+    }
+
+    function openWallpaperFor(screen): void {
+        for (const candidate of Screens.screens) {
+            const state = ShellState.forScreen(candidate);
+            if (!state)
+                continue;
+            OverlayPolicy.closeOtherPanels(state);
+            state.wallpaperManager = candidate === screen;
+        }
         shown = true;
     }
 
@@ -454,6 +465,15 @@ Scope {
                                 active: win.screenState?.launcher ?? false
                                 tooltip: qsTr("Applications")
                                 onClicked: hubRoot.toggleLauncherFor(win.modelData)
+                            }
+
+                            HubButton {
+                                buttonSize: 40
+                                cropImage: true
+                                imageSource: Wallpapers.actualCurrent
+                                active: win.screenState?.wallpaperManager ?? false
+                                tooltip: qsTr("Wallpaper manager")
+                                onClicked: hubRoot.openWallpaperFor(win.modelData)
                             }
 
                             Row {
@@ -944,9 +964,11 @@ Scope {
                                 iconColor: active ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
                                 onClicked: {
                                     if (win.screenState) {
+                                        const wasOpen = win.screenState.session;
                                         hubRoot.closeAllLaunchers();
                                         hubRoot.closeAllPanels();
-                                        win.screenState.session = !win.screenState.session;
+                                        OverlayPolicy.closeOtherPanels(win.screenState);
+                                        win.screenState.session = !wasOpen;
                                     }
                                 }
                             }

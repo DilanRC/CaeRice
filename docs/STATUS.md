@@ -1,6 +1,8 @@
-# Estado estable — 2026-08-16
+# Estado estable — 2026-08-30
 
 ## Terminado
+
+- Wallpaper Manager orbital V2.1: acceso `Super+Shift+W`, apertura neutral y debounce V2 preservados; órbita flotante sin panel opaco, scrim ligero, surfaces dinámicas locales, estado Current/Preview, gate de apertura y prefetch acotado a 18 imágenes. Validado en runtime en eDP y HDMI, navegación rápida sin thumbnails vacíos, 40 aperturas con 0 fallos y RSS -9,128 KiB, logs QML limpios y video `/home/dilan/Vídeos/v2.1.mp4`.
 
 - Dock personalizado: estable.
 - Launcher integrado al Dock: estable.

@@ -18,8 +18,8 @@
      AreaPicker {}
      Lock {
 @@ -36,6 +37,7 @@
+     }
  
-     ConfigToasts {}
      Shortcuts {}
 +    OverviewController {}
      BatteryMonitor {}

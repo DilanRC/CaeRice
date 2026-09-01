@@ -8,6 +8,7 @@ Item {
 
     property string icon: "circle"
     property string imageSource: ""
+    property bool cropImage: false
     property bool active: false
     property string tooltip: ""
     property int buttonSize: 48
@@ -59,7 +60,11 @@ Item {
         width: Math.round(root.buttonSize * 0.58)
         height: width
         source: root.imageSource
-        fillMode: Image.PreserveAspectFit
+        sourceSize.width: 64
+        sourceSize.height: 64
+        asynchronous: true
+        retainWhileLoading: true
+        fillMode: root.cropImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
         smooth: true
         mipmap: true
     }

@@ -13,8 +13,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of Screens.screens) {
-            const state = ShellState.forScreen(screen);
-            if (state?.hardware)
+            if (ShellState.forScreen(screen)?.wallpaperManager)
                 return true;
         }
         return false;
@@ -24,60 +23,38 @@ Scope {
         for (const screen of Screens.screens) {
             const state = ShellState.forScreen(screen);
             if (state)
-                state.hardware = false;
+                state.wallpaperManager = false;
         }
     }
 
     function closeOtherPanels(): void {
         for (const screen of Screens.screens)
-            OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen));
+            OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen));
     }
 
     function open(): void {
         const state = ShellState.forActive();
         if (!state)
             return;
-
         closeAll();
         closeOtherPanels();
-        state.hardware = true;
+        state.wallpaperManager = true;
     }
 
-    function close(): void {
-        closeAll();
-    }
-
-    function toggle(): void {
-        if (anyOpen()) {
-            closeAll();
-            return;
-        }
-        open();
-    }
+    function close(): void { closeAll(); }
+    function toggle(): void { anyOpen() ? closeAll() : open(); }
 
     CustomShortcut {
-        name: "hardware"
-        description: "Toggle CaeRice Hardware Center"
+        name: "wallpapermanager"
+        description: "Toggle native wallpaper manager"
         onPressed: root.toggle()
     }
 
     IpcHandler {
-        target: "hardware"
-
-        function toggle(): void {
-            root.toggle();
-        }
-
-        function open(): void {
-            root.open();
-        }
-
-        function close(): void {
-            root.close();
-        }
-
-        function isOpen(): bool {
-            return root.anyOpen();
-        }
+        target: "wallpapermanager"
+        function toggle(): void { root.toggle(); }
+        function open(): void { root.open(); }
+        function close(): void { root.close(); }
+        function isOpen(): bool { return root.anyOpen(); }
     }
 }

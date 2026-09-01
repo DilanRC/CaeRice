@@ -240,8 +240,79 @@ def _wire_display(texts: dict[str, str]) -> bool:
     return changed
 
 
-FEATURES = {"display": _wire_display}
-ORDER = ("display",)
+def _wire_wallpaper(texts: dict[str, str]) -> bool:
+    """Add the native wallpaper manager to the existing drawer surface."""
+    changed = False
+    changed |= replace_once(
+        texts, "screen",
+        "    property bool hardware\n    property bool displayManager",
+        "    property bool hardware\n    property bool displayManager\n    property bool wallpaperManager",
+        "property bool wallpaperManager",
+    )
+    changed |= replace_once(
+        texts, "shell",
+        "    DisplayController {}\n    BatteryMonitor {}",
+        "    DisplayController {}\n    WallpaperController {}\n    BatteryMonitor {}",
+        "WallpaperController {}",
+    )
+    changed |= replace_once(
+        texts, "panels",
+        "import qs.modules.display as Display\nimport qs.modules.notifications as Notifications",
+        "import qs.modules.display as Display\nimport qs.modules.wallpaper as Wallpaper\nimport qs.modules.notifications as Notifications",
+        "import qs.modules.wallpaper as Wallpaper",
+    )
+    changed |= replace_once(
+        texts, "panels",
+        "    readonly property alias displayManager: displayManager\n    readonly property alias dashboard: dashboard",
+        "    readonly property alias displayManager: displayManager\n    readonly property alias wallpaperManager: wallpaperManager\n    readonly property alias dashboard: dashboard",
+        "readonly property alias wallpaperManager: wallpaperManager",
+    )
+    changed |= insert_wrapper(
+        texts,
+        "wallpaperManager",
+        "    Wallpaper.Wrapper {\n        id: wallpaperManager\n\n        screen: root.screen\n        screenState: root.screenState\n\n        anchors.fill: parent\n    }\n\n",
+    )
+    changed |= ensure_statement(
+        texts, "content",
+        "        screenState.displayManager = false;", "\n        panels.popouts.close();",
+        "        screenState.wallpaperManager = false;",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware",
+        " ? WlrLayer.Overlay", "screenState.wallpaperManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware",
+        " || screenState.launcher", "screenState.wallpaperManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "mask: screenState.overview || screenState.clipboard || screenState.hardware",
+        " ? null", "screenState.wallpaperManager",
+    )
+    changed |= ensure_or_member(
+        texts, "content",
+        "if (s.overview || s.clipboard || s.hardware", ")\n                return true;",
+        "s.wallpaperManager",
+    )
+    changed |= ensure_statement(
+        texts, "content",
+        "            root.screenState.displayManager = false;", "\n            panels.popouts.hasCurrent = false;",
+        "            root.screenState.wallpaperManager = false;",
+    )
+    changed |= insert_bind(
+        texts,
+        'hl.bind(\n    "SUPER + SHIFT + W",\n    hl.dsp.global("caelestia:wallpapermanager")\n)',
+        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("caelestia:displaymanager")\n)',
+        "Wallpaper Manager QML nativo",
+    )
+    return changed
+
+
+FEATURES = {"display": _wire_display, "wallpaper": _wire_wallpaper}
+ORDER = ("display", "wallpaper")
 
 
 def load_texts(live: Path, usercfg: Path) -> dict[str, str]:
