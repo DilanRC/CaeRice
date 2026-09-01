@@ -14,6 +14,7 @@ scripts = [
     "scripts/features/validate-clipboard-qml.py",
     "scripts/features/validate-hardware-center.py",
     "scripts/features/validate-display-manager.py",
+    "scripts/features/test-wallpaper-manager.py",
     "scripts/features/test-diagnose-sad-wiring.py",
     "scripts/features/test-wire-sad-shell.py",
     "scripts/features/test-bottom-hub-target.py",
