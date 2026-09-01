@@ -319,7 +319,7 @@ FocusScope {
             anchors.top: categoryStrip.bottom
             anchors.topMargin: 38
             anchors.bottom: footerSurface.top
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 70
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -427,15 +427,16 @@ FocusScope {
                     required property int index
                     readonly property real angle: Orbit.satelliteAngle(index, root.orbitEntries.length, root.orbitPhase)
                     readonly property real depth: (Math.sin(angle) + 1) / 2
-                    readonly property real radius: Math.min(orbitRegion.width * 0.37, orbitRegion.height * 0.47, 250)
+                    readonly property real radiusX: Math.min(orbitRegion.width * 0.42, 265)
+                    readonly property real radiusY: Math.min(orbitRegion.height * 0.52, 195)
                     readonly property bool hovered: satelliteMouse.containsMouse
                     width: 78
                     height: 78
                     scale: 1
                     opacity: hovered ? 1 : 0.5 + depth * 0.5
                     z: 2 + Math.round(depth * 8)
-                    x: orbitRegion.width / 2 + Math.cos(angle) * radius - width / 2
-                    y: orbitRegion.height / 2 + Math.sin(angle) * radius - height / 2
+                    x: orbitRegion.width / 2 + Math.cos(angle) * radiusX - width / 2
+                    y: orbitRegion.height / 2 + Math.sin(angle) * radiusY - height / 2
 
                     Shape {
                         id: satelliteMask
