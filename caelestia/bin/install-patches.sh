@@ -8,6 +8,7 @@ OWNED="$BASE/modules-owned"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MIGRATOR="$SCRIPT_DIR/migrate-bottom-hub-from-main.py"
 TARGET_CHECKER="$SCRIPT_DIR/check-bottom-hub-target.py"
+SHELL_NORMALIZER="$SCRIPT_DIR/normalize-shell-24.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$BASE/reinstall-backups/patch-install-$STAMP"
 TMP="$(mktemp -d -t caerice-preflight.XXXXXX)"
@@ -18,6 +19,7 @@ mkdir -p "$BACKUP"
 declare -A INITIAL_STATE
 initial_conflicts=0
 needs_migration=0
+shell_normalized=0
 
 semantic_target() {
     local root="$1"
@@ -72,9 +74,25 @@ while IFS=$'\t' read -r patchname rel; do
     fi
 done < "$PATCHES/MANIFEST.tsv"
 
+# shell.qml del paquete AUR puede diferir levemente del blob upstream aun
+# reportando la misma revisión. Si shell es CONFLICT, normalizamos únicamente
+# las tres invariantes de CaeRice en la copia temporal y exigimos validación
+# semántica antes de considerar resuelto el conflicto.
+if [[ "${INITIAL_STATE[shell.qml]:-}" == "CONFLICT" && -f "$SHELL_NORMALIZER" ]]; then
+    echo
+    echo "==> PREFLIGHT: NORMALIZACIÓN shell.qml Caelestia 2.4"
+    if python3 "$SHELL_NORMALIZER" "$TMP" && semantic_target "$TMP" "shell.qml"; then
+        shell_normalized=1
+        initial_conflicts=$((initial_conflicts - 1))
+        echo "TARGET    shell.qml (normalización validada)"
+    else
+        echo "CONFLICT  shell.qml (normalización rechazada)"
+    fi
+fi
+
 # La migración es exclusivamente un fallback para runtimes legacy. Si todos
-# los archivos ya están READY/ALREADY/TARGET, tocar la copia con el migrador
-# produciría un doble parcheado y falsos CONFLICT en un upstream compatible.
+# los conflictos ya quedaron resueltos por patches/normalizaciones compatibles,
+# tocar la copia con el migrador produciría doble parcheado y falsos CONFLICT.
 if (( initial_conflicts > 0 )) && [[ -f "$MIGRATOR" ]]; then
     needs_migration=1
     echo
@@ -144,6 +162,17 @@ if [[ -f "$OWNED/modules/BottomHub.qml" && ! -f "$OWNED/modules/CustomDock.qml" 
 fi
 
 echo "Backup: $BACKUP"
+
+if (( shell_normalized )); then
+    echo
+    echo "==> NORMALIZACIÓN DE RUNTIME shell.qml"
+    sudo python3 "$SHELL_NORMALIZER" "$LIVE"
+    if ! semantic_target "$LIVE" "shell.qml"; then
+        echo "ERROR: shell.qml no alcanzó el estado validado después del backup." >&2
+        echo "Backup disponible en: $BACKUP" >&2
+        exit 21
+    fi
+fi
 
 if (( needs_migration )); then
     echo
