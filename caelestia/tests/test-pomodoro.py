@@ -8,5 +8,6 @@ with tempfile.TemporaryDirectory() as d:
     now=1000; s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+1; s=p.advance(s, now+2); assert s["phase"]=="BREAK"
     s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+1; s=p.advance(s, now+2); assert s["completedSessions"]==2
     s["phase"]="FOCUS"; s["targetEndTimestamp"]=2000; p.save(s); s["pausedRemainingMs"]=1234; s["phase"]="PAUSED"; p.save(s); assert p.load()["pausedRemainingMs"]==1234
+    s={**p.DEFAULT, "phase":"BREAK", "targetEndTimestamp":2000}; p.save(s); s=p.load(); now=1000; s["pausedRemainingMs"]=9000; s["pausedPhase"]=s["phase"]; s["phase"]="PAUSED"; p.save(s); s=p.load(); s["phase"]=s["pausedPhase"]; assert s["phase"]=="BREAK"
     assert p.event_path().name == "pomodoro-notification.json"
 print("PASS: Pomodoro timestamp transitions, persistence, and restart-safe state")

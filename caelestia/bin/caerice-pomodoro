@@ -4,7 +4,7 @@ from __future__ import annotations
 import json, os, time
 from pathlib import Path
 
-DEFAULT = {"phase":"IDLE", "targetEndTimestamp":0, "pausedRemainingMs":0, "completedSessions":0, "focusMinutes":25, "shortBreakMinutes":5, "longBreakMinutes":15, "sessionsBeforeLongBreak":4}
+DEFAULT = {"phase":"IDLE", "targetEndTimestamp":0, "pausedRemainingMs":0, "pausedPhase":"FOCUS", "completedSessions":0, "focusMinutes":25, "shortBreakMinutes":5, "longBreakMinutes":15, "sessionsBeforeLongBreak":4}
 VALID = {"IDLE", "FOCUS", "PAUSED", "BREAK", "COMPLETED"}
 
 def path():
@@ -30,7 +30,7 @@ def daemon():
         s=load(); old=s["phase"]; s=advance(s)
         if s["phase"] != old:
             save(s)
-            title, message = (("Focus session complete", "Time for a break") if s["phase"] == "BREAK" else ("Break complete", "Ready to focus"))
+            title, message = (("Focus session complete", "Time for a break") if s["phase"] == "BREAK" else (("Break complete", "Ready to focus") if s["phase"] == "FOCUS" else ("Focus cycle complete", "Start a new focus session when ready")))
             event_path().write_text(json.dumps({"sequence": time.time_ns(), "title": title, "message": message})+'\n'); event_path().chmod(0o600)
         time.sleep(0.5)
 def main(argv):
@@ -38,9 +38,9 @@ def main(argv):
     s=advance(load()); cmd=argv[1] if len(argv)>1 else "status"; now=time.time()
     if cmd == "start": s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+s["focusMinutes"]*60
     elif cmd == "pause" and s["phase"] in ("FOCUS","BREAK"):
-        s["pausedRemainingMs"] = max(0, int((s["targetEndTimestamp"]-now)*1000)); s["targetEndTimestamp"]=0; s["phase"]="PAUSED"
+        s["pausedRemainingMs"] = max(0, int((s["targetEndTimestamp"]-now)*1000)); s["pausedPhase"] = s["phase"]; s["targetEndTimestamp"]=0; s["phase"]="PAUSED"
     elif cmd == "resume" and s["phase"] == "PAUSED":
-        s["phase"]="FOCUS" if s["completedSessions"] == 0 or s["completedSessions"] >= s["sessionsBeforeLongBreak"] else "BREAK"; s["targetEndTimestamp"]=now+s["pausedRemainingMs"]/1000
+        s["phase"] = s.get("pausedPhase", "FOCUS"); s["targetEndTimestamp"]=now+s["pausedRemainingMs"]/1000
     elif cmd == "reset": s={**DEFAULT}
     elif cmd == "skip" and s["phase"] == "BREAK": s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+s["focusMinutes"]*60
     elif cmd not in ("status",): return 2

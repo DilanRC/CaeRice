@@ -24,7 +24,7 @@ wrappers = """    Clipboard.Wrapper { id: clipboard; screen: root.screen; screen
     Hardware.Wrapper { id: hardware; screen: root.screen; screenState: root.screenState; anchors.fill: parent }
     Display.Wrapper { id: displayManager; screen: root.screen; screenState: root.screenState; anchors.fill: parent }
     Wallpaper.Wrapper { id: wallpaperManager; screen: root.screen; screenState: root.screenState; anchors.fill: parent }
-    Calendar.Wrapper { id: calendar; screenState: root.screenState; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom }
+    Calendar.Wrapper { id: calendar; screenState: root.screenState; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: bar.implicitHeight + Tokens.padding.medium }
 
 """
 if "id: calendar" not in text:

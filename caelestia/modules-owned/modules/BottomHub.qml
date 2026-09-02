@@ -177,6 +177,7 @@ Scope {
         function toggle(): void { hubRoot.toggle(); }
         function show(): void { hubRoot.setShown(true); }
         function hide(): void { hubRoot.setShown(false); }
+        function isShown(): bool { return hubRoot.shown; }
         function launcher(): void {
             const state = ShellState.forActive();
             if (!state)
@@ -198,6 +199,7 @@ Scope {
         function toggle(): void { hubRoot.toggle(); }
         function show(): void { hubRoot.setShown(true); }
         function hide(): void { hubRoot.setShown(false); }
+        function isShown(): bool { return hubRoot.shown; }
         function launcher(): void {
             const state = ShellState.forActive();
             if (!state)

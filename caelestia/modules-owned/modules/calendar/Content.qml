@@ -16,6 +16,7 @@ Item {
     property date selectedDate: new Date()
     property var selection: ({})
     property var pomodoro: ({})
+    property double nowMs: Date.now()
     readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/caelestia/calendar-events.json`
 
     function load(): void {
@@ -32,11 +33,12 @@ Item {
     FileView { id: pomodoroFile; path: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`; watchChanges: true; printErrors: false; onFileChanged: root.load() }
     Process { id: selectionProcess }
     Process { id: pomoProcess; onExited: root.load() }
+    Timer { interval: 1000; repeat: true; running: pomodoro.phase === "FOCUS" || pomodoro.phase === "BREAK"; onTriggered: root.nowMs = Date.now() }
 
     StyledRect {
         anchors.fill: parent
         radius: Tokens.rounding.large
-        color: Colours.tPalette.m3surfaceContainer
+        color: Colours.palette.m3surfaceContainer
 
         ColumnLayout {
             anchors.fill: parent
@@ -123,11 +125,12 @@ Item {
                 Layout.fillWidth: true
                 StyledText { Layout.fillWidth: true; text: qsTr("FOCUS"); color: Colours.palette.m3primary; font: Tokens.font.title.small }
                 StyledText { text: {
-                    const ms = pomodoro.phase === "PAUSED" ? pomodoro.pausedRemainingMs : Math.max(0, (pomodoro.targetEndTimestamp * 1000) - Date.now());
+                    const ms = pomodoro.phase === "PAUSED" ? Number(pomodoro.pausedRemainingMs || 0) : Math.max(0, (Number(pomodoro.targetEndTimestamp || 0) * 1000) - root.nowMs);
                     return `${String(Math.floor(ms / 60000)).padStart(2, "0")}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
                 } color: Colours.palette.m3onSurface; font: Tokens.font.title.large }
                 Button { text: pomodoro.phase === "FOCUS" || pomodoro.phase === "BREAK" ? qsTr("Pause") : pomodoro.phase === "PAUSED" ? qsTr("Resume") : qsTr("Start"); onClicked: { pomoProcess.command = [Quickshell.env("HOME") + "/.local/bin/caerice-pomodoro", pomodoro.phase === "FOCUS" || pomodoro.phase === "BREAK" ? "pause" : pomodoro.phase === "PAUSED" ? "resume" : "start"]; pomoProcess.running = true; } }
                 Button { text: qsTr("Reset"); onClicked: { pomoProcess.command = [Quickshell.env("HOME") + "/.local/bin/caerice-pomodoro", "reset"]; pomoProcess.running = true; } }
+                Button { visible: pomodoro.phase === "BREAK"; text: qsTr("Skip break"); onClicked: { pomoProcess.command = [Quickshell.env("HOME") + "/.local/bin/caerice-pomodoro", "skip"]; pomoProcess.running = true; } }
             }
         }
     }

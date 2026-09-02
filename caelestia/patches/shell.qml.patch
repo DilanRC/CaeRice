@@ -5,9 +5,15 @@
 +    settings.watchFiles: false
 @@ -31,0 +32 @@
 +    BottomHub {}
-@@ -39,0 +41,5 @@
+@@ -37,6 +39,11 @@
+     ConfigToasts {}
+     Shortcuts {}
+     BatteryMonitor {}
 +    OverviewController {}
 +    ClipboardController {}
 +    HardwareController {}
 +    DisplayController {}
 +    WallpaperController {}
+     IdleMonitors {
+         lock: lock
+     }
