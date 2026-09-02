@@ -65,6 +65,7 @@ Scope {
         id: pomodoroNotification
         path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/caelestia/pomodoro-notification.json`
         watchChanges: true
+        printErrors: false
         property string consumed: ""
         onFileChanged: {
             try {

@@ -7,6 +7,7 @@ import Quickshell
 import Quickshell.Io
 import Caelestia.Config
 import qs.components
+import qs.services
 
 Item {
     id: root
@@ -26,9 +27,9 @@ Item {
     function firstOffset(d: date): int { return (new Date(d.getFullYear(), d.getMonth(), 1).getDay() + 6) % 7; }
 
     Component.onCompleted: load()
-    FileView { id: cache; path: root.cachePath; watchChanges: true; onFileChanged: root.load() }
-    FileView { id: selectionFile; path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`; watchChanges: true; onFileChanged: root.load() }
-    FileView { id: pomodoroFile; path: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`; watchChanges: true; onFileChanged: root.load() }
+    FileView { id: cache; path: root.cachePath; watchChanges: true; printErrors: false; onFileChanged: root.load() }
+    FileView { id: selectionFile; path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`; watchChanges: true; printErrors: false; onFileChanged: root.load() }
+    FileView { id: pomodoroFile; path: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`; watchChanges: true; printErrors: false; onFileChanged: root.load() }
     Process { id: selectionProcess }
     Process { id: pomoProcess; onExited: root.load() }
 
