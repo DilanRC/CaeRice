@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Shared timestamp-based local Pomodoro state."""
 from __future__ import annotations
-import json, os, time
+import fcntl, json, os, time
 from pathlib import Path
 
 DEFAULT = {"phase":"IDLE", "targetEndTimestamp":0, "pausedRemainingMs":0, "pausedPhase":"FOCUS", "completedSessions":0, "focusMinutes":25, "shortBreakMinutes":5, "longBreakMinutes":15, "sessionsBeforeLongBreak":4}
@@ -26,13 +26,18 @@ def advance(s, now=None):
         s["phase"] = "FOCUS"; s["targetEndTimestamp"] = now + s["focusMinutes"]*60
     return s
 def daemon():
-    while True:
-        s=load(); old=s["phase"]; s=advance(s)
-        if s["phase"] != old:
-            save(s)
-            title, message = (("Focus session complete", "Time for a break") if s["phase"] == "BREAK" else (("Break complete", "Ready to focus") if s["phase"] == "FOCUS" else ("Focus cycle complete", "Start a new focus session when ready")))
-            event_path().write_text(json.dumps({"sequence": time.time_ns(), "title": title, "message": message})+'\n'); event_path().chmod(0o600)
-        time.sleep(0.5)
+    lock_path = path().with_name("pomodoro-daemon.lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w") as lock:
+        try: fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError: return 0
+        while True:
+            s=load(); old=s["phase"]; s=advance(s)
+            if s["phase"] != old:
+                save(s)
+                title, message = (("Focus session complete", "Time for a break") if s["phase"] == "BREAK" else (("Break complete", "Ready to focus") if s["phase"] == "FOCUS" else ("Focus cycle complete", "Start a new focus session when ready")))
+                event_path().write_text(json.dumps({"sequence": time.time_ns(), "title": title, "message": message})+'\n'); event_path().chmod(0o600)
+            time.sleep(0.5)
 def main(argv):
     if len(argv) > 1 and argv[1] == "daemon": return daemon()
     s=advance(load()); cmd=argv[1] if len(argv)>1 else "status"; now=time.time()

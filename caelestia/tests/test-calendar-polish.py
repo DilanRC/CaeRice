@@ -7,13 +7,18 @@ for expected in (
     'calendar.primary ? qsTr("Personal")',
     'eventsForDay(dayCell.day).slice(0, 3)',
     'modelData.calendarColor || Colours.palette.m3tertiary',
-    'text: qsTr("Skip break")',
-    '"skip"]',
+    'label: qsTr("Skip break")',
+    'root.runPomodoro("skip")',
     'text: qsTr("No events")',
     'text: qsTr("Take the time for yourself.")',
     'root.eventTime(modelData)',
     'modelData.location',
     'implicitWidth: chipRow.implicitWidth',
+    'component FocusButton: StyledRect',
+    'onClicked: parent.clicked()',
+    'root.pomodoro = JSON.parse(text.trim())',
+    'function runPomodoro(command: string)',
+    'onClicked: root.runPomodoro(',
 ):
     assert expected in content, expected
 assert "delegate: CheckBox" not in content
