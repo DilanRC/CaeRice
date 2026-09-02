@@ -15,7 +15,7 @@
 -        clip: sidebar.visible
 +        anchors.rightMargin: 0
 +        clip: false
-@@ -109,0 +112,9 @@
+@@ -109,0 +112,8 @@
 +    Overview.Wrapper {
 +        id: overview
 +
@@ -24,8 +24,7 @@
 +
 +        anchors.fill: parent
 +    }
-+
-@@ -130 +140,0 @@
+@@ -130,1 +140,0 @@
 -        sidebar: sidebar
 @@ -140,2 +150,2 @@
 -        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top

@@ -15,7 +15,7 @@ import qs.services
 import qs.services as Services
 import qs.utils
 import qs.modules.launcher.services
-import "OverlayPolicy.js" as OverlayPolicy
+    import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
     id: hubRoot
@@ -48,6 +48,44 @@ Scope {
 
     function toggle(): void {
         setShown(!shown);
+    }
+
+    Process {
+        id: calendarSync
+        command: [Paths.home + "/.local/bin/caerice-calendar", "sync"]
+    }
+
+    Process {
+        id: pomodoroOwner
+        command: [Paths.home + "/.local/bin/caerice-pomodoro", "daemon"]
+        running: true
+    }
+
+    FileView {
+        id: pomodoroNotification
+        path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/caelestia/pomodoro-notification.json`
+        watchChanges: true
+        property string consumed: ""
+        onFileChanged: {
+            try {
+                const event = JSON.parse(text());
+                if (event.sequence !== consumed) {
+                    consumed = event.sequence;
+                    Toaster.toast(event.title, event.message, "timer");
+                }
+            } catch (_) {}
+        }
+    }
+
+    function openCalendarFor(screen): void {
+        closeAllLaunchers();
+        closeAllPanels();
+        const state = ShellState.forScreen(screen);
+        if (state)
+            state.calendar = !(state.calendar ?? false);
+        if (state?.calendar && !calendarSync.running)
+            calendarSync.running = true;
+        shown = true;
     }
 
     function toggleLauncherFor(screen): void {
@@ -184,6 +222,7 @@ Scope {
                 || (screenState?.overview ?? false)
                 || (screenState?.sidebar ?? false)
                 || (screenState?.session ?? false)
+                || (screenState?.calendar ?? false)
             readonly property int hubMargin: 8
             readonly property int appRailMaxWidth: Math.max(
                 180,
@@ -950,7 +989,7 @@ Scope {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: hubRoot.toggleUtilitiesFor(win.modelData)
+                                    onClicked: hubRoot.openCalendarFor(win.modelData)
                                 }
                             }
 

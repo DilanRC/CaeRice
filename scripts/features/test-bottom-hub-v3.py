@@ -99,7 +99,7 @@ def main() -> None:
     require(bottom, '"network",\n                                            win.popoutAnchorCenter(networkButton)', "anchored network hover")
     require(bottom, '"bluetooth",\n                                            win.popoutAnchorCenter(bluetoothButton)', "anchored bluetooth hover")
     require(bottom, '"battery",\n                                            win.popoutAnchorCenter(batteryButton)', "anchored battery hover")
-    require(bottom, "onClicked: hubRoot.toggleUtilitiesFor(win.modelData)", "clock-click utilities")
+    require(bottom, "onClicked: hubRoot.openCalendarFor(win.modelData)", "clock-click calendar")
     require(bottom, "win.togglePinned(appItem.modelData);", "right-click pin action")
     require(bottom, "win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);", "middle-click close action")
     require(bottom, "win.cycleItem(appItem.modelData, -1);", "wheel previous action")

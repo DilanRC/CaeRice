@@ -65,7 +65,7 @@ hl.bind(
 -- Dock personalizado
 hl.bind(
     "SUPER + D",
-    hl.dsp.exec_cmd("qs -c caelestia ipc call customDock toggle")
+    hl.dsp.exec_cmd("qs -c ~/.config/quickshell/caelestia/current ipc call customDock toggle")
 )
 
 -- Dashboard de Caelestia

@@ -5,5 +5,9 @@
 +    settings.watchFiles: false
 @@ -31,0 +32 @@
 +    BottomHub {}
-@@ -39,0 +41 @@
+@@ -39,0 +41,5 @@
 +    OverviewController {}
++    ClipboardController {}
++    HardwareController {}
++    DisplayController {}
++    WallpaperController {}

@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""Shared timestamp-based local Pomodoro state."""
+from __future__ import annotations
+import json, os, time
+from pathlib import Path
+
+DEFAULT = {"phase":"IDLE", "targetEndTimestamp":0, "pausedRemainingMs":0, "completedSessions":0, "focusMinutes":25, "shortBreakMinutes":5, "longBreakMinutes":15, "sessionsBeforeLongBreak":4}
+VALID = {"IDLE", "FOCUS", "PAUSED", "BREAK", "COMPLETED"}
+
+def path():
+    return Path(os.environ.get("XDG_STATE_HOME", Path.home()/".local/state"))/"caelestia/pomodoro.json"
+def load():
+    try: data = json.loads(path().read_text())
+    except (OSError, ValueError): data = {}
+    return {**DEFAULT, **data}
+def save(s):
+    p=path(); p.parent.mkdir(parents=True, exist_ok=True); t=p.with_suffix('.tmp'); t.write_text(json.dumps(s, indent=2)+'\n'); t.chmod(0o600); t.replace(p)
+def event_path(): return path().with_name("pomodoro-notification.json")
+def advance(s, now=None):
+    now = time.time() if now is None else now
+    if s["phase"] == "FOCUS" and now >= s["targetEndTimestamp"]:
+        s["completedSessions"] += 1
+        s["phase"] = "BREAK" if s["completedSessions"] < s["sessionsBeforeLongBreak"] else "COMPLETED"
+        s["targetEndTimestamp"] = now + s["shortBreakMinutes"]*60 if s["phase"] == "BREAK" else 0
+    elif s["phase"] == "BREAK" and now >= s["targetEndTimestamp"]:
+        s["phase"] = "FOCUS"; s["targetEndTimestamp"] = now + s["focusMinutes"]*60
+    return s
+def daemon():
+    while True:
+        s=load(); old=s["phase"]; s=advance(s)
+        if s["phase"] != old:
+            save(s)
+            title, message = (("Focus session complete", "Time for a break") if s["phase"] == "BREAK" else ("Break complete", "Ready to focus"))
+            event_path().write_text(json.dumps({"sequence": time.time_ns(), "title": title, "message": message})+'\n'); event_path().chmod(0o600)
+        time.sleep(0.5)
+def main(argv):
+    if len(argv) > 1 and argv[1] == "daemon": return daemon()
+    s=advance(load()); cmd=argv[1] if len(argv)>1 else "status"; now=time.time()
+    if cmd == "start": s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+s["focusMinutes"]*60
+    elif cmd == "pause" and s["phase"] in ("FOCUS","BREAK"):
+        s["pausedRemainingMs"] = max(0, int((s["targetEndTimestamp"]-now)*1000)); s["targetEndTimestamp"]=0; s["phase"]="PAUSED"
+    elif cmd == "resume" and s["phase"] == "PAUSED":
+        s["phase"]="FOCUS" if s["completedSessions"] == 0 or s["completedSessions"] >= s["sessionsBeforeLongBreak"] else "BREAK"; s["targetEndTimestamp"]=now+s["pausedRemainingMs"]/1000
+    elif cmd == "reset": s={**DEFAULT}
+    elif cmd == "skip" and s["phase"] == "BREAK": s["phase"]="FOCUS"; s["targetEndTimestamp"]=now+s["focusMinutes"]*60
+    elif cmd not in ("status",): return 2
+    s=advance(s); save(s); print(json.dumps(s)); return 0
+if __name__ == "__main__": raise SystemExit(main(__import__('sys').argv))

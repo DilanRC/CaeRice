@@ -1,0 +1,1 @@
+{"schema":1,"description":"Single staged CaeRice composition over clean Caelestia upstream","ownedModules":["BottomHub","StatusPill","Overview","Clipboard","Hardware","Display","Wallpaper","Calendar"],"runtimeRule":"promote only after validators pass"}

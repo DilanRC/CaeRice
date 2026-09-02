@@ -1,10 +1,11 @@
 --- a/modules/drawers/ContentWindow.qml
 +++ b/modules/drawers/ContentWindow.qml
-@@ -62,15 +62,16 @@
+@@ -62,15 +62,17 @@
          screenState.launcher = false;
          screenState.session = false;
          screenState.dashboard = false;
 +        screenState.overview = false;
++        screenState.calendar = false;
          panels.popouts.close();
      }
  
@@ -13,7 +14,7 @@
 -    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
 -    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 +    WlrLayershell.layer: screenState.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
-+    WlrLayershell.keyboardFocus: screenState.overview || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
++    WlrLayershell.keyboardFocus: screenState.overview || screenState.calendar || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
  
 -    mask: hasFullscreen ? emptyRegion : regions
 +    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)
@@ -25,19 +26,20 @@
              const s = root.screenState;
              const conf = root.contentItem.Config;
 -            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
-+            if (s.overview)
++            if (s.overview || s.calendar)
 +                return true;
 +            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled) || (s.utilities && conf.utilities.enabled))
                  return true;
              if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                  return true;
-@@ -128,6 +131,8 @@
+@@ -128,6 +131,9 @@
              root.screenState.launcher = false;
              root.screenState.session = false;
              root.screenState.sidebar = false;
 +            root.screenState.utilities = false;
              root.screenState.dashboard = false;
 +            root.screenState.overview = false;
++            root.screenState.calendar = false;
              panels.popouts.hasCurrent = false;
              bar.closeTray();
 @@ -136,7 +141,7 @@
