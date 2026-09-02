@@ -14,19 +14,39 @@
 -    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
 -    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 +    WlrLayershell.layer: screenState.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
-+    WlrLayershell.keyboardFocus: screenState.overview || screenState.calendar || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
++    WlrLayershell.keyboardFocus: screenState.overview || screenState.calendar || screenState.clipboard || screenState.hardware || screenState.displayManager || screenState.wallpaperManager || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
  
 -    mask: hasFullscreen ? emptyRegion : regions
 +    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)
  
      anchors.top: true
      anchors.bottom: true
-@@ -117,7 +118,9 @@
+@@ -78,0 +84,19 @@
++    Shortcut {
++        sequence: "Escape"
++        enabled: focusGrab.active
++        onActivated: {
++            root.screenState.launcher = false;
++            root.screenState.session = false;
++            root.screenState.sidebar = false;
++            root.screenState.utilities = false;
++            root.screenState.dashboard = false;
++            root.screenState.overview = false;
++            root.screenState.calendar = false;
++            root.screenState.clipboard = false;
++            root.screenState.hardware = false;
++            root.screenState.displayManager = false;
++            root.screenState.wallpaperManager = false;
++            panels.popouts.hasCurrent = false;
++            bar.closeTray();
++        }
++    }
+@@ -117,7 +141,9 @@
          active: {
              const s = root.screenState;
              const conf = root.contentItem.Config;
 -            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
-+            if (s.overview || s.calendar)
++            if (s.overview || s.calendar || s.clipboard || s.hardware || s.displayManager || s.wallpaperManager)
 +                return true;
 +            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled) || (s.utilities && conf.utilities.enabled))
                  return true;

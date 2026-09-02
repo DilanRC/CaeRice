@@ -95,6 +95,11 @@ hl.bind(
     hl.dsp.global("caelestia:hardware")
 )
 
+hl.bind(
+    "SUPER + SHIFT + C",
+    hl.dsp.global("caelestia:calendar")
+)
+
 -- Display Manager QML nativo
 hl.bind(
     "SUPER + SHIFT + O",
@@ -120,7 +125,7 @@ hl.bind(
 
 hl.bind(
     "Print",
-    hl.dsp.exec_cmd("caelestia screenshot -r -f")
+    hl.dsp.exec_cmd("grimblast -f copy area")
 )
 
 

@@ -11,6 +11,7 @@ import qs.services
 
 Item {
     id: root
+    focus: true
     required property ScreenState screenState
     property var payload: ({})
     property date selectedDate: new Date()
@@ -34,6 +35,7 @@ Item {
     Process { id: selectionProcess }
     Process { id: pomoProcess; onExited: root.load() }
     Timer { interval: 1000; repeat: true; running: pomodoro.phase === "FOCUS" || pomodoro.phase === "BREAK"; onTriggered: root.nowMs = Date.now() }
+    Keys.onEscapePressed: root.screenState.calendar = false
 
     StyledRect {
         anchors.fill: parent

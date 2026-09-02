@@ -17,10 +17,12 @@ Item {
     implicitHeight: Math.min(760, parent.height - Tokens.padding.large * 2)
     y: parent.height - implicitHeight - Tokens.padding.large + offsetScale * (implicitHeight + 24)
     opacity: 1 - offsetScale
+    onShouldBeActiveChanged: if (shouldBeActive) content.forceActiveFocus()
 
     Behavior on offsetScale { Anim {} }
 
     Content {
+        id: content
         anchors.fill: parent
         screenState: root.screenState
     }

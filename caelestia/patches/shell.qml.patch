@@ -5,11 +5,12 @@
 +    settings.watchFiles: false
 @@ -31,0 +32 @@
 +    BottomHub {}
-@@ -37,6 +39,11 @@
+@@ -37,6 +39,12 @@
      ConfigToasts {}
      Shortcuts {}
      BatteryMonitor {}
 +    OverviewController {}
++    CalendarController {}
 +    ClipboardController {}
 +    HardwareController {}
 +    DisplayController {}
