@@ -131,7 +131,7 @@ hl.bind(
 
 hl.bind(
     "Print",
-    hl.dsp.exec_cmd("grimblast -f copy area")
+    hl.dsp.exec_cmd("caelestia screenshot -r -f")
 )
 
 

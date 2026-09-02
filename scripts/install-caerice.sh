@@ -8,6 +8,7 @@ mkdir -p "$HOME/.local/bin"
 install -m 0755 "$REPO/caelestia/bin/caerice-calendar" "$HOME/.local/bin/caerice-calendar"
 install -m 0755 "$REPO/caelestia/bin/caerice-pomodoro" "$HOME/.local/bin/caerice-pomodoro"
 install -m 0755 "$REPO/caelestia/bin/rollback-runtime.sh" "$HOME/.local/bin/caerice-rollback"
+install -m 0755 "$REPO/caelestia/bin/caelestia" "$HOME/.local/bin/caelestia"
 HYPR_USER="$HOME/.config/caelestia/hypr-user.lua"
 mkdir -p "$(dirname "$HYPR_USER")"
 if [[ -f "$HYPR_USER" ]]; then

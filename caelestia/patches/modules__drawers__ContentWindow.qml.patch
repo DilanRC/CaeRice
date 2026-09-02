@@ -17,7 +17,7 @@
 +    WlrLayershell.keyboardFocus: screenState.overview || screenState.calendar || screenState.clipboard || screenState.hardware || screenState.displayManager || screenState.wallpaperManager || screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
  
 -    mask: hasFullscreen ? emptyRegion : regions
-+    mask: screenState.overview ? null : (hasFullscreen ? emptyRegion : regions)
++    mask: (screenState.overview || screenState.calendar) ? null : (hasFullscreen ? emptyRegion : regions)
  
      anchors.top: true
      anchors.bottom: true
@@ -52,14 +52,13 @@
                  return true;
              if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                  return true;
-@@ -128,6 +131,9 @@
+@@ -128,6 +131,8 @@
              root.screenState.launcher = false;
              root.screenState.session = false;
              root.screenState.sidebar = false;
 +            root.screenState.utilities = false;
              root.screenState.dashboard = false;
 +            root.screenState.overview = false;
-+            root.screenState.calendar = false;
              panels.popouts.hasCurrent = false;
              bar.closeTray();
 @@ -136,7 +141,7 @@

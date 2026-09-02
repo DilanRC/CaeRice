@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${1:-}" == "record" ]]; then
+    shift
+    exec "$HOME/.local/lib/caelestia-record-fixed.py" "$@"
+fi
+
+# The package CLI hardcodes `qs -c caelestia` for region screenshots. Route
+# that one command to CaeRice's user runtime while keeping the public command.
+if [[ "${1:-}" == "screenshot" && " $* " == *" -r "* ]]; then
+    if [[ " $* " == *" -f "* || " $* " == *" --freeze "* ]]; then
+        exec qs -p "$HOME/.config/quickshell/caelestia/current" ipc call picker openFreeze
+    fi
+    exec qs -p "$HOME/.config/quickshell/caelestia/current" ipc call picker open
+fi
+
+exec /usr/bin/caelestia "$@"

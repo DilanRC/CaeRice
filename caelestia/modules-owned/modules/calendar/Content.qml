@@ -27,11 +27,24 @@ Item {
     }
     function daysInMonth(d: date): int { return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); }
     function firstOffset(d: date): int { return (new Date(d.getFullYear(), d.getMonth(), 1).getDay() + 6) % 7; }
+    function eventCount(day: int): int {
+        let count = 0;
+        for (const event of (payload.events || [])) {
+            const start = new Date(event.start);
+            if (start.getFullYear() === selectedDate.getFullYear() && start.getMonth() === selectedDate.getMonth() && start.getDate() === day)
+                count += 1;
+        }
+        return count;
+    }
+    function isToday(day: int): bool {
+        const today = new Date();
+        return today.getFullYear() === selectedDate.getFullYear() && today.getMonth() === selectedDate.getMonth() && today.getDate() === day;
+    }
 
     Component.onCompleted: load()
-    FileView { id: cache; path: root.cachePath; watchChanges: true; printErrors: false; onFileChanged: root.load() }
-    FileView { id: selectionFile; path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`; watchChanges: true; printErrors: false; onFileChanged: root.load() }
-    FileView { id: pomodoroFile; path: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`; watchChanges: true; printErrors: false; onFileChanged: root.load() }
+    FileView { id: cache; path: root.cachePath; watchChanges: true; printErrors: false; onLoaded: root.load(); onFileChanged: root.load() }
+    FileView { id: selectionFile; path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`; watchChanges: true; printErrors: false; onLoaded: root.load(); onFileChanged: root.load() }
+    FileView { id: pomodoroFile; path: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`; watchChanges: true; printErrors: false; onLoaded: root.load(); onFileChanged: root.load() }
     Process { id: selectionProcess }
     Process { id: pomoProcess; onExited: root.load() }
     Timer { interval: 1000; repeat: true; running: pomodoro.phase === "FOCUS" || pomodoro.phase === "BREAK"; onTriggered: root.nowMs = Date.now() }
@@ -49,7 +62,17 @@ Item {
 
             RowLayout {
                 Layout.fillWidth: true
-                StyledText { Layout.fillWidth: true; text: Qt.formatDate(root.selectedDate, "MMMM yyyy"); font: Tokens.font.title.large; color: Colours.palette.m3onSurface }
+                Item {
+                    implicitWidth: 32; implicitHeight: 32
+                    MaterialIcon { anchors.centerIn: parent; text: "chevron_left"; color: Colours.palette.m3onSurface }
+                    MouseArea { anchors.fill: parent; onClicked: root.selectedDate = new Date(root.selectedDate.getFullYear(), root.selectedDate.getMonth() - 1, 1) }
+                }
+                StyledText { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(root.selectedDate, "MMMM yyyy"); font: Tokens.font.title.large; color: Colours.palette.m3onSurface }
+                Item {
+                    implicitWidth: 32; implicitHeight: 32
+                    MaterialIcon { anchors.centerIn: parent; text: "chevron_right"; color: Colours.palette.m3onSurface }
+                    MouseArea { anchors.fill: parent; onClicked: root.selectedDate = new Date(root.selectedDate.getFullYear(), root.selectedDate.getMonth() + 1, 1) }
+                }
                 Item {
                     implicitWidth: 32
                     implicitHeight: 32
@@ -63,17 +86,23 @@ Item {
                 Layout.preferredHeight: 250
                 columns: 7
                 Repeater {
+                    model: [qsTr("Mo"), qsTr("Tu"), qsTr("We"), qsTr("Th"), qsTr("Fr"), qsTr("Sa"), qsTr("Su")]
+                    delegate: StyledText { required property var modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                }
+                Repeater {
                     model: 42
-                    delegate: Button {
+                    delegate: Item {
                         required property int index
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        flat: true
-                        text: {
+                        readonly property int day: {
                             const day = index - root.firstOffset(root.selectedDate) + 1;
-                            return day > 0 && day <= root.daysInMonth(root.selectedDate) ? String(day) : "";
+                            return day > 0 && day <= root.daysInMonth(root.selectedDate) ? day : 0;
                         }
-                        onClicked: if (text !== "") root.selectedDate = new Date(root.selectedDate.getFullYear(), root.selectedDate.getMonth(), Number(text))
+                        StyledRect { anchors.centerIn: parent; width: 30; height: 30; radius: 15; color: root.isToday(parent.day) ? Colours.palette.m3primaryContainer : "transparent" }
+                        StyledText { anchors.centerIn: parent; text: parent.day || ""; color: root.isToday(parent.day) ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface; font: Tokens.font.label.medium }
+                        Rectangle { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; width: parent.day && root.eventCount(parent.day) ? 5 : 0; height: width; radius: width / 2; color: Colours.palette.m3primary }
+                        MouseArea { anchors.fill: parent; enabled: parent.day > 0; onClicked: root.selectedDate = new Date(root.selectedDate.getFullYear(), root.selectedDate.getMonth(), parent.day) }
                     }
                 }
             }
@@ -105,7 +134,7 @@ Item {
             ListView {
                 id: agenda
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: 116
                 clip: true
                 model: root.payload.events || []
                 delegate: RowLayout {
