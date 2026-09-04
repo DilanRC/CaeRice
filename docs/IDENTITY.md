@@ -17,7 +17,7 @@ Prefijo futuro: cortetsu-
 Directorio futuro: ~/.local/share/cortetsu
 ```
 
-No usar variantes como `CorteTetsu`, `CortetsuRice`, `CortetsuOS` o `ShogunRice`.
+No usar variantes como `CorteTetsu`, `CortetsuRice`, `CortetsuOS` ni recuperar nombres provisionales anteriores.
 
 ## Posicionamiento
 
