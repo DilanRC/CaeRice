@@ -25,20 +25,23 @@ FIRST_PARTY_FILES = (
 
 FORBIDDEN_VIEW_TOKENS = (
     "Hypr.",
-    "SystemTray",
+    "SystemTray.",
     "Audio.",
-    "Nmcli",
-    "Bluetooth",
-    "UPower",
-    "Notifs",
-    "Recorder",
+    "Nmcli.",
+    "Bluetooth.",
+    "UPower.",
+    "Notifs.",
+    "Recorder.",
     "Services.IdleInhibitor",
-    "DesktopEntries",
-    "GlobalConfig",
+    "DesktopEntries.",
+    "GlobalConfig.",
     "Apps.",
-    "Wallpapers",
+    "Wallpapers.",
     "qs.services",
     "Caelestia.Config",
+    "Quickshell.Bluetooth",
+    "Quickshell.Services.UPower",
+    "Quickshell.Services.SystemTray",
     "Colours.",
     "Tokens.",
     "StyledRect",
@@ -129,6 +132,8 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "signal launcherRequested()" in mode
     assert "signal wallpaperRequested()" in mode
     assert "signal workspaceRequested(int workspaceId)" in mode
+    assert "width: implicitWidth" in mode
+    assert "height: implicitHeight" in mode
 
     workspace = source["CortetsuWorkspaceDots.qml"]
     assert "signal workspaceRequested(int workspaceId)" in workspace
@@ -143,11 +148,13 @@ def assert_view_contract(source: dict[str, str]) -> None:
     ):
         assert signal in rail
     assert "CortetsuDesign.hoverScale" in rail
+    assert "width: implicitWidth" in rail
 
     tray = source["CortetsuTraySegment.qml"]
     assert "signal hoverRequested(string itemId, real centerX)" in tray
     assert "signal activateRequested(string itemId)" in tray
     assert "signal secondaryRequested(string itemId)" in tray
+    assert "width: visible ? implicitWidth : 0" in tray
 
     status = source["CortetsuStatusSegment.qml"]
     for signal in (
@@ -160,6 +167,7 @@ def assert_view_contract(source: dict[str, str]) -> None:
     ):
         assert signal in status
     assert "StatusPill {" in status
+    assert "width: implicitWidth" in status
 
     button = source["HubButton.qml"]
     assert "CortetsuIcon {" in button
