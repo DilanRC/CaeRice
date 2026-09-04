@@ -46,6 +46,9 @@ python3 "$REPO/core/theme.py" check --repo "$REPO"
 printf '==> Dotfiles Cortetsu\n'
 python3 "$REPO/core/dotfiles.py" apply --repo "$REPO"
 
+printf '==> Retiro de tema heredado\n'
+python3 "$REPO/core/retire_legacy_theme.py"
+
 printf '==> Ciclo de vida del shell\n'
 python3 "$REPO/core/shell_lifecycle.py" migrate
 
@@ -85,6 +88,7 @@ printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
 printf 'System runtime: %s/system/current\n' "$DATA_ROOT"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
 printf 'Tema desktop: ui.toml -> CortetsuDesign/Kitty/GTK/KDE; Caelestia queda sin ownership de esas superficies.\n'
+printf 'Shell personal: Fish es dependencia del perfil personal y se importa de forma explícita con core/import_fish.py.\n'
 printf 'cortetsu-shell.service no se habilita implícitamente; una adopción existente sí se conserva.\n'
 printf 'Rollback completo: cortetsu rollback\n'
 printf 'Supervisión: cortetsu shell status\n'
