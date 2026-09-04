@@ -54,7 +54,7 @@ jobs:
           bash -n scripts/features/test-upstream-bootstrap.sh
       - name: Validate shell quality
         run: python3 scripts/features/test-cortetsu-quality.py
-      - name: Validate native Bottom Hub visuals
+      - name: Validate first-party Bottom Hub
         run: python3 scripts/features/test-native-bottom-hub.py
       - name: Validate native theme
         run: python3 scripts/features/test-native-theme.py
@@ -87,7 +87,12 @@ jobs:
           test -f scripts/features/test-theme-retirement.py
           test -f scripts/features/test-fish-import.py
           test -f scripts/features/test-native-bottom-hub.py
-          test -f caelestia/bin/native-bottom-hub.py
+          test ! -e caelestia/bin/native-bottom-hub.py
+          test -f caelestia/modules-owned/modules/CortetsuBottomHubView.qml
+          test -f caelestia/modules-owned/modules/CortetsuModeSegment.qml
+          test -f caelestia/modules-owned/modules/CortetsuAppRail.qml
+          test -f caelestia/modules-owned/modules/CortetsuTraySegment.qml
+          test -f caelestia/modules-owned/modules/CortetsuStatusSegment.qml
           test -f dotfiles/manifest.toml
           test -f dotfiles/generated/theme/home/.config/kitty/cortetsu-theme.conf
           test -f dotfiles/generated/theme/home/.config/gtk-3.0/cortetsu-colors.css
@@ -110,7 +115,8 @@ jobs:
           grep -q '"personal-shell"' profiles/personal.toml
           grep -q '"upstreamRepo": "https://github.com/caelestia-dots/shell.git"' caelestia/compatibility.json
           grep -q 'ensure-upstream.sh' caelestia/bin/build-runtime.sh
-          grep -q 'native-bottom-hub.py' caelestia/bin/build-runtime.sh
+          grep -q 'CortetsuBottomHubView.qml' caelestia/bin/build-runtime.sh
+          ! grep -q 'native-bottom-hub.py' caelestia/bin/build-runtime.sh
           grep -q 'core/dotfiles.py' scripts/install-cortetsu.sh
           grep -q 'core/system.py' scripts/install-cortetsu.sh
           grep -q 'core/theme.py' scripts/install-cortetsu.sh
