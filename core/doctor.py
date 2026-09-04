@@ -15,6 +15,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dotfiles
 import shell_lifecycle
 
+THEME_KEYS = ("enableTerm", "enableHypr", "enableGtk", "enableQt")
+
 
 def check(name: str, status: str, detail: str, required: bool = False) -> dict:
     return {"name": name, "status": status, "detail": detail, "required": required}
@@ -24,6 +26,28 @@ def package_installed(package: str) -> bool | None:
     if shutil.which("pacman") is None:
         return None
     return subprocess.run(["pacman", "-Q", package], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+
+
+def theme_ownership_check(home: Path) -> dict:
+    cli = home / ".config/caelestia/cli.json"
+    if not cli.is_file():
+        return check("theme-ownership", "warn", f"Caelestia CLI config missing: {cli}")
+    try:
+        payload = json.loads(cli.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return check("theme-ownership", "error", f"cannot read {cli}: {exc}", True)
+    theme = payload.get("theme") if isinstance(payload, dict) else None
+    if not isinstance(theme, dict):
+        return check("theme-ownership", "error", "theme in Caelestia cli.json is not an object", True)
+    enabled = [key for key in THEME_KEYS if theme.get(key) is not False]
+    if enabled:
+        return check(
+            "theme-ownership",
+            "error",
+            "Caelestia can still mutate Cortetsu-owned surfaces: " + ", ".join(enabled),
+            True,
+        )
+    return check("theme-ownership", "ok", "Cortetsu owns terminal/Hyprland/GTK/Qt theme surfaces", True)
 
 
 def run(repo: Path, profile_name: str | None) -> list[dict]:
@@ -78,6 +102,8 @@ def run(repo: Path, profile_name: str | None) -> list[dict]:
         results.append(check("shell-lifecycle", "error", f"legacy direct launch/kill references: {detail}", True))
     else:
         results.append(check("shell-lifecycle", "ok", "systemd --user is the only process owner", True))
+
+    results.append(theme_ownership_check(Path.home()))
 
     secret_tool = shutil.which("secret-tool")
     results.append(check("secret-service", "ok" if secret_tool else "warn", secret_tool or "secret-tool missing"))
