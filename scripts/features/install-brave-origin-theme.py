@@ -12,14 +12,14 @@ from pathlib import Path
 
 HOME = Path.home()
 REPO = Path(__file__).resolve().parents[2]
-SOURCE_HOOK = REPO / "caelestia/bin/caerice-scheme-posthook"
+SOURCE_HOOK = REPO / "caelestia/bin/cortetsu-scheme-posthook"
 TARGET_HOOK = HOME / ".local/bin/caelestia-scheme-posthook"
 LEGACY_HOOK = HOME / ".local/bin/caelestia-scheme-posthook.legacy"
 CLI_JSON = HOME / ".config/caelestia/cli.json"
 STATE = HOME / ".local/state/caelestia/scheme.json"
 POLICY_DIR = Path("/etc/brave/policies/managed")
 POLICY = POLICY_DIR / "caelestia.json"
-MARKER = "CAERICE_BRAVE_ORIGIN_BRIDGE = True"
+MARKER = "CORTETSU_BRAVE_ORIGIN_BRIDGE = True"
 
 
 def run(*args: str, check: bool = True, capture: bool = False):
@@ -81,7 +81,7 @@ def install_hook() -> None:
     # browser handled natively by Caelestia, its existing setting keeps
     # working; Brave Origin is handled independently by this adapter.
     write_json(CLI_JSON, cfg)
-    print("postHook CaeRice:", TARGET_HOOK)
+    print("postHook Cortetsu:", TARGET_HOOK)
 
 
 def initial_policy() -> str:
@@ -113,7 +113,7 @@ def provision_policy() -> None:
     run("sudo", "mkdir", "-p", str(POLICY_DIR))
 
     if POLICY.exists():
-        backup = POLICY.with_name("caelestia.json.pre-caerice")
+        backup = POLICY.with_name("caelestia.json.pre-cortetsu")
         if not backup.exists():
             run("sudo", "cp", "-a", str(POLICY), str(backup))
             print("policy previa preservada en:", backup)

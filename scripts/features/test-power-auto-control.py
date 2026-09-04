@@ -10,7 +10,7 @@ from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULE_PATH = REPO / "caelestia/bin/caerice-power-auto-control"
+MODULE_PATH = REPO / "caelestia/bin/cortetsu-power-auto-control"
 PROFILES = ("power-saver", "balanced", "performance")
 
 
@@ -32,7 +32,7 @@ def load_module(home: Path):
 
 
 def main() -> int:
-    with tempfile.TemporaryDirectory(prefix="caerice-power-auto-test-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-power-auto-test-") as tmp:
         module = load_module(Path(tmp))
         errors: list[BaseException] = []
 

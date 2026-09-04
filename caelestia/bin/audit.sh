@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="${HOME}/.local/share/caelestia-custom-system"
+BASE="${HOME}/.local/share/cortetsu/upstream"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 OUT="$BASE/audit/$STAMP"
 

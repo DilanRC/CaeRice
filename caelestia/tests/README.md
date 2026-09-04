@@ -15,7 +15,7 @@ caelestia/tests/test-status-pill.sh
 ```
 
 The repository installer owns `BottomHub.qml` and `StatusPill.qml` together.
-Do not apply a one-off patch to `/etc`; use `scripts/install-caerice.sh`, whose
+Do not apply a one-off patch to `/etc`; use `scripts/install-cortetsu.sh`, whose
 preflight and backup flow covers every owned Bottom Hub module. Wallpaper
 Manager is outside this feature and is not modified by the Status Pill source.
 

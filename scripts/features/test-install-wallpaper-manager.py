@@ -7,7 +7,7 @@ import importlib.util
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-UPSTREAM = Path("/home/dilan/.local/share/caelestia-custom-system/upstream-git")
+UPSTREAM = Path("/home/dilan/.local/share/cortetsu/upstream/upstream-git")
 
 spec = importlib.util.spec_from_file_location("install_wallpaper_manager", HERE / "install-wallpaper-manager.py")
 assert spec and spec.loader

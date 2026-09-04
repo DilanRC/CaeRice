@@ -11,7 +11,7 @@ from pathlib import Path
 HOME = Path.home()
 UID = os.getuid()
 LIVE = Path("/etc/xdg/quickshell/caelestia")
-REPO = HOME / "CaeRice"
+REPO = HOME / "Cortetsu"
 
 
 def newest_log() -> Path | None:

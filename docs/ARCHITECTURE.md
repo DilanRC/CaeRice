@@ -1,10 +1,10 @@
-# Arquitectura de CaeRice
+# Arquitectura de Cortetsu
 
 ## Principio principal
 
-CaeRice no debe reemplazar archivos completos de una versión nueva de Caelestia con copias viejas. Las modificaciones se dividen en dos categorías:
+Cortetsu no debe reemplazar archivos completos de una versión nueva de Caelestia con copias viejas. Las modificaciones se dividen en dos categorías:
 
-1. **Módulos propios**: archivos completos que pertenecen a CaeRice, por ejemplo `BottomHub.qml`, `HubButton.qml`, `OverviewController.qml` y `modules/overview/*`.
+1. **Módulos propios**: archivos completos que pertenecen a Cortetsu, por ejemplo `BottomHub.qml`, `HubButton.qml`, `OverviewController.qml` y `modules/overview/*`.
 2. **Integraciones sobre upstream**: cambios mínimos sobre archivos nativos de Caelestia, almacenados como patches.
 
 ## Base upstream actual
@@ -19,7 +19,7 @@ El shell real continúa instalado bajo:
 
 `/etc/xdg/quickshell/caelestia`
 
-CaeRice es la fuente versionada. El runtime se valida/aplica mediante los scripts guardados en `caelestia/bin` después de sincronizar el estado real.
+Cortetsu es la fuente versionada. El runtime se valida/aplica mediante los scripts guardados en `caelestia/bin` después de sincronizar el estado real.
 
 ## Superficies e input
 
@@ -44,11 +44,11 @@ Wallpaper Manager sigue el límite `ScreenState -> WallpaperController -> Conten
 Después de actualizar Caelestia:
 
 ```bash
-bash ~/.local/share/caelestia-custom-system/bin/verify-patches.sh
+bash ~/.local/share/cortetsu/upstream/bin/verify-patches.sh
 ```
 
 - `APPLIED`: el patch literal está presente.
-- `TARGET`: el archivo contiene el estado funcional objetivo, pero fue extendido por otras integraciones CaeRice y ya no coincide byte por byte con el patch base.
+- `TARGET`: el archivo contiene el estado funcional objetivo, pero fue extendido por otras integraciones Cortetsu y ya no coincide byte por byte con el patch base.
 - `MISSING`: patch compatible pero no aplicado.
 - `CONFLICT`: upstream o una integración cambió de forma que no satisface ni el patch ni las invariantes semánticas; adaptar antes de tocar el runtime.
 

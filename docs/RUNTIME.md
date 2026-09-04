@@ -1,14 +1,12 @@
 # Runtime versionado de Cortetsu
 
-Cortetsu no escribe `/etc/xdg/quickshell/caelestia`. Ese árbol pertenece al
-paquete. El constructor toma la revisión upstream exacta, aplica patches y
-módulos en staging, ejecuta validadores y sólo entonces promueve una generación.
+Cortetsu nunca escribe `/etc/xdg/quickshell/caelestia`; ese árbol pertenece al paquete y se usa sólo como referencia. El constructor toma la revisión upstream exacta, aplica adapters y módulos en staging, ejecuta gates y sólo entonces promueve una generación.
 
 ```text
 ~/.local/share/cortetsu/builds/<build-id>
-~/.config/quickshell/caelestia/current
-~/.config/quickshell/caelestia/previous
-~/.config/quickshell/caelestia/legacy-previous
+~/.config/quickshell/cortetsu/current
+~/.config/quickshell/cortetsu/previous
+~/.config/quickshell/cortetsu/legacy-previous   # sólo snapshot pre-v2, si existe
 ```
 
 Variables canónicas:
@@ -19,30 +17,15 @@ CORTETSU_RUNTIME_ROOT
 CORTETSU_UPSTREAM_SOURCE
 ```
 
-Las variables `CAERICE_*` equivalentes siguen como fallback temporal.
+No existen fallbacks activos a variables CaeRice.
 
-El flujo verifica que `v2.4.0` resuelva al commit
-`24aa15eefdb146350d2548c0a015b04eddbd1008`, construye en `.staging-*`, genera
-`BUILD.json`, mueve el resultado a una ruta inmutable y cambia `current` con un
-symlink temporal más `mv -T`.
+El flujo verifica que `v2.4.0` resuelva al commit `24aa15eefdb146350d2548c0a015b04eddbd1008`, construye en `.staging-*`, genera `BUILD.json`, convierte la salida en una ruta inmutable y conmuta `current` mediante symlink temporal + `mv -T`.
 
-## Generaciones y migración heredada
+## Generaciones
 
-`current` siempre debe ser una generación administrada por Cortetsu y contener
-`BUILD_ID`, `BUILD.json`, `compatibility.json`, `composition.json` y los módulos
-esenciales. `previous` sólo se usa como destino de rollback cuando cumple el
-mismo contrato.
+`current` y `previous` sólo son válidos cuando contienen `BUILD_ID`, `BUILD.json`, `compatibility.json`, `composition.json` y módulos esenciales. El rollback rechaza cualquier destino que no cumpla ese contrato.
 
-Las instalaciones anteriores podían dejar `previous` apuntando a un runtime que
-tenía `shell.qml`, pero no `BUILD.json`. Esa generación no se borra: durante la
-siguiente promoción se mueve a `legacy-previous`, queda visible para inspección
-y se excluye del rollback automático. La generación `current` administrada
-anterior pasa entonces a `previous`.
-
-`cortetsu verify` valida `current` estrictamente. Si detecta un `previous`
-heredado, emite una advertencia pero no declara inválida la generación actual.
-`cortetsu-rollback` sí rechaza cualquier destino que no tenga metadatos
-completos, evitando volver accidentalmente a un runtime pretransaccional.
+Durante la migración única a v2, un runtime pretransaccional puede conservarse en `legacy-previous`. Es un snapshot archivado para diagnóstico y nunca participa en rollback automático.
 
 ## Rollback
 
@@ -50,15 +33,16 @@ completos, evitando volver accidentalmente a un runtime pretransaccional.
 cortetsu-rollback
 ```
 
-El rollback valida ambas generaciones, usa el mismo lock y conmuta los enlaces
-de forma atómica. El instalador copia todos los helpers `caerice-*` requeridos,
-crea aliases `cortetsu-*`, instala la configuración de Hyprland, el puente de
-temas y las unidades systemd de usuario.
+El rollback comparte el lock del constructor y conmuta enlaces atómicamente. El instalador coloca únicamente helpers `cortetsu-*`, la CLI, el wrapper de Caelestia, configuración Hyprland, bridge de temas y unidades systemd de usuario.
 
-Reinicio:
+## Reinicio
 
 ```bash
 pkill -TERM -x qs
 sleep 1
-qs -p ~/.config/quickshell/caelestia/current -n -d
+qs -p ~/.config/quickshell/cortetsu/current -n -d
 ```
+
+## Migración v2
+
+`scripts/migrate-cortetsu-v2.sh` es idempotente. Antes de retirar nombres instalados antiguos crea un backup timestamped en `~/.local/share/cortetsu/migrations/`, migra Calendar/Pomodoro al namespace XDG de Cortetsu, migra el secreto de Calendar sin imprimirlo y conserva el opt-in del servicio de energía.

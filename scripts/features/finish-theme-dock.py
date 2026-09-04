@@ -13,7 +13,7 @@ HOME = Path.home()
 REPO = Path(__file__).resolve().parents[2]
 SHELL_JSON = HOME / ".config/caelestia/shell.json"
 SCHEME_STATE = HOME / ".local/state/caelestia/scheme.json"
-PACK = REPO / "caelestia/schemes/caerice-pack"
+PACK = REPO / "caelestia/schemes/cortetsu-pack"
 BAD_AUTO_PINS = {
     "brave-hnpfjngllnobngcgfapefoaidbinmjnm-Default",  # WhatsApp Web PWA, seeded accidentally by v1
 }
@@ -175,7 +175,7 @@ def repair_favourites() -> None:
 
 def install_new_pack() -> int:
     print("\n===== EXPANSIÓN EXTRA DE SCHEMES =====")
-    run("python3", str(REPO / "scripts/features/generate-caerice-schemes.py"))
+    run("python3", str(REPO / "scripts/features/generate-cortetsu-schemes.py"))
     root = scheme_root()
     added = 0
     for src in sorted(PACK.rglob("*.txt")):

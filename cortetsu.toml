@@ -1,10 +1,9 @@
-schema = 1
+schema = 2
 
 [project]
 name = "Cortetsu"
-former_name = "CaeRice"
 kind = "dotfiles-platform"
-stage = "identity-transition"
+stage = "v2-modern"
 source_of_truth = "git-main"
 platforms = ["CachyOS", "Arch Linux"]
 
@@ -27,18 +26,14 @@ package_runtime = "/etc/xdg/quickshell/caelestia"
 
 [runtime]
 mode = "versioned-user-generations"
-current = "~/.config/quickshell/caelestia/current"
-previous = "~/.config/quickshell/caelestia/previous"
+current = "~/.config/quickshell/cortetsu/current"
+previous = "~/.config/quickshell/cortetsu/previous"
 generations = "~/.local/share/cortetsu/builds"
 package_runtime_policy = "read-only"
 
 [compatibility]
-policy = "Preserve legacy identifiers until an idempotent, backed-up and tested migration exists."
-legacy_command_prefix = "caerice-"
-legacy_config_dir = "~/.config/caerice"
-legacy_state_dir = "~/.local/state/caerice"
-legacy_staging_dir = "~/.local/share/caelestia-custom-system"
-legacy_installer = "scripts/install-caerice.sh"
+active_legacy = false
+history_only = true
 
 [entrypoints]
 cli = "scripts/cortetsu"
@@ -48,26 +43,9 @@ runtime_verification = "scripts/cortetsu verify"
 audit = "scripts/cortetsu audit"
 
 [product]
-current_modules = [
-  "bottom-hub",
-  "overview",
-  "clipboard",
-  "hardware",
-  "display",
-  "wallpaper",
-  "calendar",
-  "pomodoro",
-]
-retired_modules = ["gaming-center", "caerice-updater"]
-planned_layers = [
-  "packages",
-  "dotfiles",
-  "profiles",
-  "themes",
-  "generations",
-  "actions",
-  "scenes",
-]
+current_modules = ["bottom-hub", "overview", "clipboard", "hardware", "display", "wallpaper", "calendar", "pomodoro"]
+retired_modules = ["gaming-center", "updater"]
+planned_layers = ["packages", "dotfiles", "profiles", "themes", "generations", "actions", "scenes"]
 
 [safety]
 write_strategy = "build-validate-promote-verify"

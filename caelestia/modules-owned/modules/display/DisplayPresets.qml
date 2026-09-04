@@ -18,7 +18,7 @@ StyledRect {
     property string statusText: qsTr("Named layouts")
     property string presetName: ""
     property string actionKind: ""
-    readonly property string helperPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-presets"
+    readonly property string helperPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-presets"
 
     radius: Tokens.rounding.extraLarge
     color: Colours.palette.m3surfaceContainerHigh

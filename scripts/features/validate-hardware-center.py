@@ -28,11 +28,11 @@ QML_REQUIRED = [
     "KeybindsPage.qml",
 ]
 HELPERS = [
-    "caerice-hardware-probe",
-    "caerice-hardware-power",
-    "caerice-power-auto",
-    "caerice-power-auto-control",
-    "caerice-keybinds",
+    "cortetsu-hardware-probe",
+    "cortetsu-hardware-power",
+    "cortetsu-power-auto",
+    "cortetsu-power-auto-control",
+    "cortetsu-keybinds",
 ]
 
 errors: list[str] = []
@@ -69,7 +69,7 @@ for name in QML_REQUIRED:
     require((HARDWARE / name).is_file(), f"falta hardware/{name}")
 for name in HELPERS:
     require((BIN / name).is_file(), f"falta caelestia/bin/{name}")
-require((REPO / "config/systemd/user/caerice-power-auto.service").is_file(), "falta caerice-power-auto.service")
+require((REPO / "config/systemd/user/cortetsu-power-auto.service").is_file(), "falta cortetsu-power-auto.service")
 
 for path in [HARDWARE / name for name in QML_REQUIRED if (HARDWARE / name).exists()]:
     text = path.read_text(encoding="utf-8")
@@ -102,33 +102,33 @@ for name in HELPERS:
     except SyntaxError as exc:
         errors.append(f"{name}: SyntaxError: {exc}")
 
-power_source = (BIN / "caerice-hardware-power").read_text(encoding="utf-8") if (BIN / "caerice-hardware-power").exists() else ""
+power_source = (BIN / "cortetsu-hardware-power").read_text(encoding="utf-8") if (BIN / "cortetsu-hardware-power").exists() else ""
 for forbidden in ["scaling_governor).write", "energy_performance_preference).write", "power_dpm_force_performance_level).write"]:
     require(forbidden not in power_source, f"power helper contiene escritura directa no permitida: {forbidden}")
 require("VALID_PROFILES" in power_source and "power-saver" in power_source and "balanced" in power_source and "performance" in power_source,
         "power helper: whitelist de perfiles incompleta")
 
 if not errors:
-    probe = run_json([sys.executable, str(BIN / "caerice-hardware-probe")], "hardware-probe #1")
+    probe = run_json([sys.executable, str(BIN / "cortetsu-hardware-probe")], "hardware-probe #1")
     if probe:
         # A second sample makes delta-based CPU/process/network/disk metrics meaningful.
-        probe = run_json([sys.executable, str(BIN / "caerice-hardware-probe")], "hardware-probe #2")
+        probe = run_json([sys.executable, str(BIN / "cortetsu-hardware-probe")], "hardware-probe #2")
         for key in ["cpu", "memory", "disk", "disk_io", "network", "gpus", "processes"]:
             require(key in probe, f"hardware-probe: falta clave {key}")
 
-    power = run_json([sys.executable, str(BIN / "caerice-hardware-power")], "hardware-power")
+    power = run_json([sys.executable, str(BIN / "cortetsu-hardware-power")], "hardware-power")
     if power:
         for key in ["profiles", "ac", "battery", "cpu", "gpus"]:
             require(key in power, f"hardware-power: falta clave {key}")
 
-    control = run_json([sys.executable, str(BIN / "caerice-power-auto-control"), "status"], "power-auto-control")
+    control = run_json([sys.executable, str(BIN / "cortetsu-power-auto-control"), "status"], "power-auto-control")
     if control:
         for key in ["config", "service", "last", "events"]:
             require(key in control, f"power-auto-control: falta clave {key}")
 
 install = (REPO / "scripts/features/install-hardware-center.sh").read_text(encoding="utf-8")
 update = (REPO / "scripts/features/update-hardware-center.sh").read_text(encoding="utf-8")
-for needle in ["caerice-hardware-power", "caerice-power-auto", "caerice-power-auto-control", "caerice-keybinds", "caerice-power-auto.service"]:
+for needle in ["cortetsu-hardware-power", "cortetsu-power-auto", "cortetsu-power-auto-control", "cortetsu-keybinds", "cortetsu-power-auto.service"]:
     if needle not in install:
         errors.append(f"install-hardware-center.sh no instala {needle}")
     if needle not in update:

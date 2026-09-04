@@ -61,7 +61,7 @@ Expected: validator `status: OK`, live QML hashes `MATCH`, no Hardware Center QM
 ### 7 Auto
 
 - Starts disabled on first install.
-- Updating CaeRice never enables it automatically.
+- Updating Cortetsu never enables it automatically.
 - AC, battery and low-battery profiles are configurable.
 - Low threshold increments/decrements in 5% steps.
 - `Apply current rule once` works while disabled without enabling the service.
@@ -80,7 +80,7 @@ Expected: validator `status: OK`, live QML hashes `MATCH`, no Hardware Center QM
 After closing Hardware Center:
 
 ```fish
-ps -ef | grep -E 'caerice-hardware-(probe|power)' | grep -v grep
+ps -ef | grep -E 'cortetsu-hardware-(probe|power)' | grep -v grep
 ```
 
 Expected: no persistent main/power probe processes.
@@ -88,7 +88,7 @@ Expected: no persistent main/power probe processes.
 If Auto is disabled:
 
 ```fish
-systemctl --user is-active caerice-power-auto.service
+systemctl --user is-active cortetsu-power-auto.service
 ```
 
 Expected: `inactive`.

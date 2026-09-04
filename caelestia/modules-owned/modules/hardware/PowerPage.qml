@@ -18,7 +18,7 @@ Item {
 
     readonly property string helperPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-hardware-power"
+        "/.local/bin/cortetsu-hardware-power"
 
     readonly property var profiles: power?.profiles ?? ({})
     readonly property var cpu: power?.cpu ?? ({})
@@ -73,12 +73,13 @@ Item {
         return index >= 0 && index < gpus.length ? gpus[index] : ({});
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 2500
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 

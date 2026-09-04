@@ -5,7 +5,7 @@ Fecha: 2026-08-23
 ## Alcance
 
 Validación funcional y visual sobre una reconstrucción completa en
-`/tmp/caerice-qa-shell`, levantada como una segunda instancia de Quickshell.
+`/tmp/cortetsu-qa-shell`, levantada como una segunda instancia de Quickshell.
 La prueba usa la configuración y servicios reales del usuario sin escribir en
 `/etc/xdg`.
 

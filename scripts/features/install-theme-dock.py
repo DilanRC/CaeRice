@@ -19,11 +19,11 @@ SHELL_JSON = HOME / '.config/caelestia/shell.json'
 CLI_JSON = HOME / '.config/caelestia/cli.json'
 KITTY_CONF = HOME / '.config/kitty/kitty.conf'
 SCHEME_STATE = HOME / '.local/state/caelestia/scheme.json'
-SNAP_ROOT = HOME / '.local/share/caelestia-custom-system/snapshots'
-PACK = REPO / 'caelestia/schemes/caerice-pack'
+SNAP_ROOT = HOME / '.local/share/cortetsu/upstream/snapshots'
+PACK = REPO / 'caelestia/schemes/cortetsu-pack'
 PRESERVED = REPO / 'caelestia/schemes/local-preserved/latest'
 INVENTORY = REPO / 'caelestia/schemes/local-preserved/inventory.json'
-KITTY_TEMPLATE = REPO / 'caelestia/templates/kitty-caerice.conf'
+KITTY_TEMPLATE = REPO / 'caelestia/templates/kitty-cortetsu.conf'
 
 
 def run(*args: str, check: bool = True, capture: bool = False):
@@ -135,8 +135,8 @@ def install_catalog(local_root: Path, upstream_root: Path) -> tuple[int, int]:
         official += 1
         print('ADD official:', dst.relative_to(local_root))
 
-    run('python3', str(REPO / 'scripts/features/generate-caerice-schemes.py'))
-    print('\n===== CAERICE SCHEME PACK =====')
+    run('python3', str(REPO / 'scripts/features/generate-cortetsu-schemes.py'))
+    print('\n===== CORTETSU SCHEME PACK =====')
     custom = 0
     for src in sorted(PACK.rglob('*.txt')):
         validate_scheme(src)
@@ -147,7 +147,7 @@ def install_catalog(local_root: Path, upstream_root: Path) -> tuple[int, int]:
         run('sudo', 'mkdir', '-p', str(dst.parent))
         run('sudo', 'install', '-m', '0644', str(src), str(dst))
         custom += 1
-        print('ADD CaeRice:', dst.relative_to(local_root))
+        print('ADD Cortetsu:', dst.relative_to(local_root))
     return official, custom
 
 
@@ -176,7 +176,7 @@ def enable_theme_bridge(backup: Path) -> None:
     print(json.dumps(theme, indent=2, ensure_ascii=False))
 
     if KITTY_TEMPLATE.exists():
-        target = HOME / '.config/caelestia/templates/kitty-caerice.conf'
+        target = HOME / '.config/caelestia/templates/kitty-cortetsu.conf'
         backup_file(target, backup, 'config/kitty-template.conf')
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(KITTY_TEMPLATE, target)
@@ -184,11 +184,11 @@ def enable_theme_bridge(backup: Path) -> None:
         backup_file(KITTY_CONF, backup, 'config/kitty.conf')
         KITTY_CONF.parent.mkdir(parents=True, exist_ok=True)
         text = KITTY_CONF.read_text(encoding='utf-8') if KITTY_CONF.exists() else ''
-        include = 'include ~/.local/state/caelestia/theme/kitty-caerice.conf'
+        include = 'include ~/.local/state/caelestia/theme/kitty-cortetsu.conf'
         if include not in text:
             if text and not text.endswith('\n'):
                 text += '\n'
-            text += '\n# CaeRice: Caelestia active scheme\n' + include + '\n'
+            text += '\n# Cortetsu: Caelestia active scheme\n' + include + '\n'
             KITTY_CONF.write_text(text, encoding='utf-8')
         print('Kitty bridge: OK')
 
@@ -293,7 +293,7 @@ def main() -> None:
     backup = SNAP_ROOT / f'theme-dock-{stamp}'; backup.mkdir(parents=True, exist_ok=True)
     local_root = scheme_root()
 
-    with tempfile.TemporaryDirectory(prefix='caerice-cli-') as td:
+    with tempfile.TemporaryDirectory(prefix='cortetsu-cli-') as td:
         upstream = clone_official(Path(td) / 'cli')
         info = preserve_before_touch(local_root, upstream, backup, stamp)
         official_added, custom_added = install_catalog(local_root, upstream)
@@ -308,7 +308,7 @@ def main() -> None:
     print('backup:', backup)
     print('locales preservados:', len(info['localFiles']))
     print('archivos oficiales nuevos:', official_added)
-    print('schemes CaeRice nuevos:', custom_added)
+    print('schemes Cortetsu nuevos:', custom_added)
     print('pins sembrados:', ', '.join(pinned) or '<ninguno>')
     print("reinicio requerido: pkill -TERM -f 'qs -c caelestia'; sleep 1; caelestia shell -d")
 

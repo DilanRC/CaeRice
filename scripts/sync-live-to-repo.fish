@@ -2,11 +2,11 @@
 
 set -l repo (git rev-parse --show-toplevel 2>/dev/null)
 if test -z "$repo"
-    echo 'ERROR: ejecuta este script dentro del clon local de CaeRice.' >&2
+    echo 'ERROR: ejecuta este script dentro del clon local de Cortetsu.' >&2
     exit 1
 end
 
-set -l src "$HOME/.local/share/caelestia-custom-system"
+set -l src "$HOME/.local/share/cortetsu/upstream"
 if not test -d "$src"
     echo "ERROR: no existe $src" >&2
     exit 2
@@ -62,4 +62,4 @@ git -C "$repo" commit -m "sync: capture live Caelestia state $stamp"
 git -C "$repo" push origin main
 
 echo
-echo 'CaeRice quedó sincronizado con el estado real de la máquina.'
+echo 'Cortetsu quedó sincronizado con el estado real de la máquina.'

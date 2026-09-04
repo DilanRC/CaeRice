@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/calendar-google-read-pomodoro
+      - feature/cortetsu-v2-modernize
   pull_request:
 
 permissions:
@@ -13,24 +13,21 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
-
       - name: Compile Python sources
         run: |
           python3 -m py_compile \
-            caelestia/bin/caerice-calendar \
-            caelestia/bin/caerice-pomodoro \
+            caelestia/bin/cortetsu-calendar \
+            caelestia/bin/cortetsu-pomodoro \
             caelestia/bin/compose-panels.py \
             caelestia/tests/test-calendar-credentials.py \
             caelestia/tests/test-calendar-polish.py \
             caelestia/tests/test-pomodoro.py \
             caelestia/tests/test-runtime-contract.py \
-            scripts/features/test-caerice-build.py
-
+            scripts/features/test-cortetsu-build.py
       - name: Validate shell scripts
         run: |
           bash -n caelestia/bin/build-runtime.sh
@@ -38,8 +35,8 @@ jobs:
           bash -n caelestia/bin/install-patches.sh
           bash -n caelestia/bin/install.sh
           bash -n caelestia/bin/rollback-runtime.sh
-          bash -n scripts/install-caerice.sh
-
+          bash -n scripts/install-cortetsu.sh
+          bash -n scripts/migrate-cortetsu-v2.sh
       - name: Run unit and contract tests
         run: |
           python3 caelestia/tests/test-calendar-credentials.py
@@ -47,14 +44,12 @@ jobs:
           python3 caelestia/tests/test-calendar-polish.py
           python3 caelestia/tests/test-pomodoro.py
           python3 caelestia/tests/test-runtime-contract.py
-
       - name: Fetch exact Caelestia base
         run: |
           git clone --depth 1 --branch v2.4.0 \
             https://github.com/caelestia-dots/shell.git \
             "$RUNNER_TEMP/caelestia-shell"
-
       - name: Build two isolated generations and roll back
         env:
           CORTETSU_UPSTREAM_SOURCE: ${{ runner.temp }}/caelestia-shell
-        run: python3 scripts/features/test-caerice-build.py
+        run: python3 scripts/features/test-cortetsu-build.py

@@ -3,7 +3,7 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 page = (repo / "caelestia/modules-owned/modules/hardware/KeybindsPage.qml").read_text(encoding="utf-8")
-helper = (repo / "caelestia/bin/caerice-keybinds").read_text(encoding="utf-8")
+helper = (repo / "caelestia/bin/cortetsu-keybinds").read_text(encoding="utf-8")
 
 criteria = {
     "native app catalogue": "DesktopEntries.applications.values",

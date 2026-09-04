@@ -2,22 +2,22 @@
 set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de CaeRice" >&2; exit 1; }
+[[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
 
 LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 SRC="$REPO/caelestia/modules-owned/modules"
 VALIDATOR="$REPO/scripts/features/validate-display-manager.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/display-manager-$STAMP"
+BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/display-manager-$STAMP"
 STAGE="$BACKUP/stage"
 HELPERS=(
-    caerice-display-probe
-    caerice-display-plan
-    caerice-display-transaction
-    caerice-display-persist
-    caerice-display-presets
-    caerice-display-workspaces
+    cortetsu-display-probe
+    cortetsu-display-plan
+    cortetsu-display-transaction
+    cortetsu-display-persist
+    cortetsu-display-presets
+    cortetsu-display-workspaces
 )
 
 for f in "$LIVE/shell.qml" "$LIVE/components/ScreenState.qml" "$LIVE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/Panels.qml" "$USERCFG"; do

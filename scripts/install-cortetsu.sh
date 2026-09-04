@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${HOME}/.local/bin"
-DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 HYPR_USER="${XDG_CONFIG_HOME:-$HOME/.config}/caelestia/hypr-user.lua"
 SYSTEMD_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 
@@ -16,21 +16,22 @@ atomic_symlink() {
     mv -Tf "$temporary" "$link"
 }
 
+if [[ -x "$REPO/scripts/migrate-cortetsu-v2.sh" ]]; then
+    "$REPO/scripts/migrate-cortetsu-v2.sh"
+fi
+
 printf '==> Cortetsu: validación y construcción aislada\n'
 "$REPO/caelestia/bin/check-package-updates.sh" || true
 "$REPO/caelestia/bin/build-runtime.sh"
 
-printf '==> Helpers y aliases de compatibilidad\n'
+printf '==> Helpers Cortetsu\n'
 mkdir -p "$BIN_DIR" "$DATA_ROOT"
 while IFS= read -r -d '' source; do
     name="$(basename "$source")"
     install -m 0755 "$source" "$BIN_DIR/$name"
-    canonical="cortetsu-${name#caerice-}"
-    atomic_symlink "$name" "$BIN_DIR/$canonical"
-done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'caerice-*' -print0 | sort -z)
+done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'cortetsu-*' -print0 | sort -z)
 
 install -m 0755 "$REPO/caelestia/bin/rollback-runtime.sh" "$BIN_DIR/cortetsu-rollback"
-atomic_symlink "cortetsu-rollback" "$BIN_DIR/caerice-rollback"
 install -m 0755 "$REPO/caelestia/bin/caelestia" "$BIN_DIR/caelestia"
 
 if [[ -x "$REPO/scripts/cortetsu" ]]; then
@@ -59,7 +60,17 @@ if compgen -G "$REPO/config/systemd/user/*.service" >/dev/null; then
     systemctl --user daemon-reload >/dev/null 2>&1 || true
 fi
 
-runtime_root="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+# Preserve the user's explicit opt-in when migrating the renamed power service.
+if [[ -f "$DATA_ROOT/.power-auto-was-enabled" && -f "$SYSTEMD_USER_DIR/cortetsu-power-auto.service" ]]; then
+    if systemctl --user enable --now cortetsu-power-auto.service >/dev/null 2>&1; then
+        rm -f "$DATA_ROOT/.power-auto-was-enabled"
+        printf 'Power automation: opt-in restored\n'
+    else
+        printf 'WARN: no se pudo reactivar cortetsu-power-auto.service; el marcador se conserva\n' >&2
+    fi
+fi
+
+runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
 printf 'Reinicio: pkill -TERM -x qs; sleep 1; qs -p %q -n -d\n' "$runtime_root/current"

@@ -3,14 +3,14 @@ set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$REPO" ]]; then
-    echo "ERROR: ejecuta este script dentro del clon de CaeRice." >&2
+    echo "ERROR: ejecuta este script dentro del clon de Cortetsu." >&2
     exit 1
 fi
 
 LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/clipboard-qml-$STAMP"
+BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/clipboard-qml-$STAMP"
 STAGE="$BACKUP/stage"
 SRC="$REPO/caelestia/modules-owned/modules"
 

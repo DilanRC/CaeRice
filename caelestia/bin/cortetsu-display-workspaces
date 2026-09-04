@@ -4,14 +4,14 @@ import argparse, json, os, re, shutil, subprocess, tempfile, time
 from pathlib import Path
 
 HERE=Path(__file__).resolve().parent
-PLANNER=HERE/'caerice-display-plan'
-PROBE=HERE/'caerice-display-probe'
+PLANNER=HERE/'cortetsu-display-plan'
+PROBE=HERE/'cortetsu-display-probe'
 CFG=Path.home()/'.config/caelestia/hypr-user.lua'
-STATE=Path.home()/'.config/caerice/display-workspaces.json'
-SNAPS=Path.home()/'.local/share/caelestia-custom-system/snapshots'
-BEGIN='-- CAERICE_WORKSPACE_POLICY_BEGIN'
-END='-- CAERICE_WORKSPACE_POLICY_END'
-DISPLAY_MARK='-- CAERICE_DISPLAY_MANAGED'
+STATE=Path.home()/'.config/cortetsu/display-workspaces.json'
+SNAPS=Path.home()/'.local/share/cortetsu/upstream/snapshots'
+BEGIN='-- CORTETSU_WORKSPACE_POLICY_BEGIN'
+END='-- CORTETSU_WORKSPACE_POLICY_END'
+DISPLAY_MARK='-- CORTETSU_DISPLAY_MANAGED'
 
 def emit(p,c=0): print(json.dumps(p,separators=(',',':'),ensure_ascii=False)); return c
 def atomic_text(path,text):

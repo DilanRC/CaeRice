@@ -35,7 +35,7 @@ FocusScope {
 
     readonly property string probePath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-hardware-probe"
+        "/.local/bin/cortetsu-hardware-probe"
 
     readonly property var processes: snapshot?.processes ?? []
 
@@ -222,7 +222,7 @@ FocusScope {
                     StyledText {
                         width: parent.width
                         text:
-                            `${root.snapshot?.host ?? "CaeRice"} · ` +
+                            `${root.snapshot?.host ?? "Cortetsu"} · ` +
                             `${root.snapshot?.kernel ?? ""} · ` +
                             `${root.uptimeText(root.snapshot?.uptime_sec)}`
                         color: Colours.palette.m3onSurfaceVariant

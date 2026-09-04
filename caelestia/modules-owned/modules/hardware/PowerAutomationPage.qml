@@ -18,7 +18,7 @@ Item {
 
     readonly property string controlPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-power-auto-control"
+        "/.local/bin/cortetsu-power-auto-control"
 
     readonly property var config: automation?.config ?? ({})
     readonly property var service: automation?.service ?? ({})
@@ -93,12 +93,13 @@ Item {
             root.statusText = qsTr("Automation disabled · no background watcher");
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 3500
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 

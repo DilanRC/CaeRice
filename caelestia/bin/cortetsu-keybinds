@@ -19,11 +19,11 @@ HOME = Path.home()
 DEFAULTS = HOME / ".config/hypr/variables.lua"
 OVERRIDES = HOME / ".config/caelestia/hypr-vars.lua"
 USER = HOME / ".config/caelestia/hypr-user.lua"
-SNAPSHOTS = HOME / ".local/share/caelestia-custom-system/snapshots/keybinds"
+SNAPSHOTS = HOME / ".local/share/cortetsu/upstream/snapshots/keybinds"
 
 ENTRY_RE = re.compile(r"(?m)^(\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(\{[^\n]*\}|\"(?:\\.|[^\"])*\")(,?)")
 STRING_RE = re.compile(r'\"((?:\\.|[^\"])*)\"')
-APP_COMMENT_RE = re.compile(r"(?m)^-- CaeRice app shortcut: (.*?) \((.*?)\)\s*$")
+APP_COMMENT_RE = re.compile(r"(?m)^-- Cortetsu app shortcut: (.*?) \((.*?)\)\s*$")
 MOD_BITS = {"SHIFT": 1, "CAPS": 2, "CTRL": 4, "ALT": 8, "MOD2": 16, "MOD3": 32, "SUPER": 64, "MOD5": 128}
 APP_COMMANDS = {
     "kbTerminal": "terminal",
@@ -436,7 +436,7 @@ def add_app(app_id: str, name: str, command: str, chord: str) -> dict:
     ensure_free(chord)
     snapshot = backup()
     text = USER.read_text(encoding="utf-8").rstrip() + "\n\n"
-    text += f"-- CaeRice app shortcut: {name} ({app_id})\n"
+    text += f"-- Cortetsu app shortcut: {name} ({app_id})\n"
     text += f"hl.bind(\n    {lua_quote(chord)},\n    hl.dsp.exec_cmd([[{command}]])\n)\n"
     atomic_write(USER, text)
     reload_and_verify(chord, snapshot)

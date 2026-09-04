@@ -19,7 +19,7 @@ Item {
 
     readonly property string helperPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-hardware-power"
+        "/.local/bin/cortetsu-hardware-power"
 
     readonly property var battery: power?.battery ?? ({})
     readonly property var cpu: power?.cpu ?? ({})
@@ -67,12 +67,13 @@ Item {
             probe.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 2000
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 

@@ -1,0 +1,13 @@
+[Unit]
+Description=Cortetsu automatic AC/battery power profiles
+After=graphical-session.target
+ConditionPathExists=%h/.local/bin/cortetsu-power-auto
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/cortetsu-power-auto
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

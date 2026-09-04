@@ -1,7 +1,7 @@
 --- a/modules/sidebar/Wrapper.qml
 +++ b/modules/sidebar/Wrapper.qml
 @@ -9,0 +10 @@
-+    objectName: "caericeBottomNotificationCenter"
++    objectName: "cortetsuBottomNotificationCenter"
 @@ -13 +14 @@
 -    readonly property bool shouldBeActive: screenState.sidebar && Config.sidebar.enabled
 +    readonly property bool shouldBeActive: screenState.sidebar

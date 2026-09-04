@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LIVE="${CAERICE_LIVE_ROOT:-/etc/xdg/quickshell/caelestia}"
-BASE="$HOME/.local/share/caelestia-custom-system"
+LIVE="${CORTETSU_LIVE_ROOT:-/etc/xdg/quickshell/caelestia}"
+BASE="$HOME/.local/share/cortetsu/upstream"
 
 # Runtime QML.
 sudo rm -f "$LIVE/modules/GamingController.qml" "$LIVE/modules/UpdaterController.qml"
@@ -10,16 +10,16 @@ sudo rm -rf "$LIVE/modules/gaming" "$LIVE/modules/updater"
 
 # Installed helpers and private user state.
 rm -f \
-    "$HOME/.local/bin/caerice-gaming-probe" \
-    "$HOME/.local/bin/caerice-gaming-profile" \
-    "$HOME/.local/bin/caerice-upstream-audit" \
-    "$HOME/.local/bin/caerice-updater" \
-    "$HOME/.local/bin/caerice-updater-commit-base" \
-    "$HOME/.config/caerice/gaming-profiles.json" \
-    "$HOME/.local/state/caerice/gaming-last-open.json" \
-    "$HOME/.local/state/caerice/updater-report.json" \
-    "$HOME/.local/state/caerice/updater-state.json"
-rm -rf "$HOME/.cache/caerice-updater"
+    "$HOME/.local/bin/cortetsu-gaming-probe" \
+    "$HOME/.local/bin/cortetsu-gaming-profile" \
+    "$HOME/.local/bin/cortetsu-upstream-audit" \
+    "$HOME/.local/bin/cortetsu-updater" \
+    "$HOME/.local/bin/cortetsu-updater-commit-base" \
+    "$HOME/.config/cortetsu/gaming-profiles.json" \
+    "$HOME/.local/state/cortetsu/gaming-last-open.json" \
+    "$HOME/.local/state/cortetsu/updater-report.json" \
+    "$HOME/.local/state/cortetsu/updater-state.json"
+rm -rf "$HOME/.cache/cortetsu-updater"
 
 # Stale copies in the local reconstruction cache.
 rm -f "$BASE/modules-owned/modules/GamingController.qml" "$BASE/modules-owned/modules/UpdaterController.qml"
@@ -32,7 +32,7 @@ if [[ -d "$BASE/snapshots" ]]; then
         -exec rm -rf -- {} +
 fi
 
-rmdir "$HOME/.config/caerice" 2>/dev/null || true
-rmdir "$HOME/.local/state/caerice" 2>/dev/null || true
+rmdir "$HOME/.config/cortetsu" 2>/dev/null || true
+rmdir "$HOME/.local/state/cortetsu" 2>/dev/null || true
 
 echo "Retired Gaming/Updater artifacts purged."

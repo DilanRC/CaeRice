@@ -33,7 +33,7 @@ def path() -> Path:
     if override:
         return Path(override).expanduser()
     state_home = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state"))
-    return state_home / "caelestia/pomodoro.json"
+    return state_home / "cortetsu/pomodoro.json"
 
 
 def event_path() -> Path:

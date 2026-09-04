@@ -13,7 +13,7 @@
     "package": "quickshell-git",
     "version": "0.3.1.r6.g0f9939c-1"
   },
-  "runtime": "~/.config/quickshell/caelestia/current",
+  "runtime": "~/.config/quickshell/cortetsu/current",
   "sourceOfTruth": "https://github.com/DilanRC/Cortetsu.git",
   "managedSystemPath": "/etc/xdg/quickshell/caelestia",
   "policy": "The system package path is read-only; Cortetsu builds and promotes user generations."

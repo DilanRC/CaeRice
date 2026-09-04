@@ -17,7 +17,7 @@ Images load asynchronously at bounded source sizes through the shared Qt image c
 Do not run deployment during development. Default staging never writes a live target:
 
 ```bash
-python3 scripts/features/install-wallpaper-manager.py --stage /tmp/caerice-wallpaper-stage
+python3 scripts/features/install-wallpaper-manager.py --stage /tmp/cortetsu-wallpaper-stage
 ```
 
 `update-wallpaper-manager.py` has the same stage-only contract and refuses to overwrite an existing stage.
@@ -29,7 +29,7 @@ python3 scripts/features/install-wallpaper-manager.py --apply --production \
   --live /etc/xdg/quickshell/caelestia \
   --usercfg /home/dilan/.config/caelestia/shell.json \
   --hypr-usercfg /home/dilan/.config/caelestia/hypr-user.lua \
-  --backup-root /home/dilan/.local/share/caelestia-custom-system/snapshots
+  --backup-root /home/dilan/.local/share/cortetsu/upstream/snapshots
 ```
 
 Run the privileged file install as Dilan, not through a root environment with an implicit `$HOME`; use `pkexec env HOME=/home/dilan ...` or an equivalent sudo command with all three explicit user paths above.
@@ -40,7 +40,7 @@ Rollback restores that timestamped backup, including `services/Wallpapers.qml`, 
 python3 scripts/features/install-wallpaper-manager.py --rollback /path/to/wallpaper-manager-timestamp
 ```
 
-The deployed V2.1 rollback point is `/home/dilan/.local/state/caerice/backups/wallpaper-manager-20260831-180047-459217`.
+The deployed V2.1 rollback point is `/home/dilan/.local/state/cortetsu/backups/wallpaper-manager-20260831-180047-459217`.
 
 The configurator itself is idempotent, preserves file mode, and creates no backup when no change is required.
 

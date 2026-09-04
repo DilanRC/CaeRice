@@ -12,10 +12,10 @@ import uuid
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PROBE = HERE / "caerice-display-probe"
-PLANNER = HERE / "caerice-display-plan"
+PROBE = HERE / "cortetsu-display-probe"
+PLANNER = HERE / "cortetsu-display-plan"
 RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"))
-STATE = RUNTIME / "caerice-display-preview.json"
+STATE = RUNTIME / "cortetsu-display-preview.json"
 
 
 def emit(payload: dict, code: int = 0) -> int:
@@ -33,7 +33,7 @@ def read_json(path: Path) -> dict:
 
 def write_state(payload: dict) -> None:
     STATE.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_name = tempfile.mkstemp(prefix="caerice-display-preview-", suffix=".json", dir=STATE.parent)
+    fd, tmp_name = tempfile.mkstemp(prefix="cortetsu-display-preview-", suffix=".json", dir=STATE.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
             json.dump(payload, handle, separators=(",", ":"))
@@ -324,7 +324,7 @@ def status() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="CaeRice timed display preview transaction")
+    parser = argparse.ArgumentParser(description="Cortetsu timed display preview transaction")
     sub = parser.add_subparsers(dest="command", required=True)
     preview_parser = sub.add_parser("preview")
     preview_parser.add_argument("--candidate", required=True)

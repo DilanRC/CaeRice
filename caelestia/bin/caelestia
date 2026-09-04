@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-runtime_root="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 runtime="$runtime_root/current"
 
 if [[ "${1:-}" == "record" && -x "$HOME/.local/lib/caelestia-record-fixed.py" ]]; then

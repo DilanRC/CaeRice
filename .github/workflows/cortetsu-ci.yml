@@ -10,69 +10,57 @@ permissions:
 jobs:
   static:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
-
       - name: Validate repository whitespace
         run: git diff --check HEAD^ HEAD
-
       - name: Validate Cortetsu manifest
         run: |
           python3 - <<'PY'
           import pathlib
           import tomllib
-
-          path = pathlib.Path("cortetsu.toml")
-          with path.open("rb") as handle:
+          with pathlib.Path('cortetsu.toml').open('rb') as handle:
               data = tomllib.load(handle)
-
-          assert data["project"]["name"] == "Cortetsu"
-          assert data["project"]["former_name"] == "CaeRice"
-          assert data["identity"]["canonical_command"] == "cortetsu"
-          assert data["upstream"]["caelestia"]["tag"] == "v2.4.0"
-          assert data["compatibility"]["legacy_installer"] == "scripts/install-caerice.sh"
-          print("manifest: valid")
+          assert data['project']['name'] == 'Cortetsu'
+          assert data['project']['stage'] == 'v2-modern'
+          assert data['identity']['canonical_command'] == 'cortetsu'
+          assert data['upstream']['caelestia']['tag'] == 'v2.4.0'
+          assert data['runtime']['current'].endswith('/quickshell/cortetsu/current')
+          assert data['compatibility']['active_legacy'] is False
+          print('manifest: valid')
           PY
-
       - name: Compile Python sources
         shell: bash
         run: |
           set -euo pipefail
-
-          while IFS= read -r -d '' file; do
-            python3 -m py_compile "$file"
-          done < <(find scripts -type f -name '*.py' -print0)
-
+          while IFS= read -r -d '' file; do python3 -m py_compile "$file"; done < <(find scripts -type f -name '*.py' -print0)
           while IFS= read -r -d '' file; do
             first_line="$(head -n 1 "$file" || true)"
-            if [[ "$first_line" == *python3* ]]; then
-              python3 -m py_compile "$file"
-            fi
+            if [[ "$first_line" == *python3* ]]; then python3 -m py_compile "$file"; fi
           done < <(find caelestia/bin -type f -print0)
-
       - name: Validate Bash syntax
         shell: bash
         run: |
           set -euo pipefail
-
-          while IFS= read -r -d '' file; do
-            bash -n "$file"
-          done < <(find scripts caelestia/bin -type f -name '*.sh' -print0)
-
+          while IFS= read -r -d '' file; do bash -n "$file"; done < <(find scripts caelestia/bin -type f -name '*.sh' -print0)
           bash -n scripts/cortetsu
-
-      - name: Validate transition contract
+          bash -n scripts/migrate-cortetsu-v2.sh
+      - name: Validate shell quality
+        run: python3 scripts/features/test-cortetsu-quality.py
+      - name: Validate modern contract
         shell: bash
         run: |
           set -euo pipefail
           test -x scripts/cortetsu
-          test -f scripts/install-caerice.sh
+          test -x scripts/migrate-cortetsu-v2.sh
+          test -f scripts/install-cortetsu.sh
           test -f docs/CORTETSU_ARCHITECTURE.md
-          test -f docs/MIGRATION_FROM_CAERICE.md
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
-          ! grep -R --line-number --exclude-dir=.git --exclude='MIGRATION_FROM_CAERICE.md' 'ShogunRice' README.md docs/CORTETSU_ARCHITECTURE.md docs/IDENTITY.md docs/PROVENANCE.md cortetsu.toml scripts/cortetsu
+          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
+          ! git grep -n -I 'sh -c' -- '*.qml'
+          ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
+          ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'

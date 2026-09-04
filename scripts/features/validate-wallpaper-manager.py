@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static contract gate for the native CaeRice Wallpaper Manager."""
+"""Static contract gate for the native Cortetsu Wallpaper Manager."""
 from __future__ import annotations
 
 import shutil
@@ -9,7 +9,7 @@ import importlib.util
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path("/home/dilan/.local/share/caelestia-custom-system/upstream-git")
+SOURCE = Path("/home/dilan/.local/share/cortetsu/upstream/upstream-git")
 
 spec = importlib.util.spec_from_file_location("install_wallpaper_manager", ROOT / "scripts/features/install-wallpaper-manager.py")
 assert spec and spec.loader

@@ -34,7 +34,7 @@ def files():
 def main() -> None:
     blockers = []
     review = []
-    print("===== CAERICE THEME AUDIT =====")
+    print("===== CORTETSU THEME AUDIT =====")
     for path in files():
         rel = path.relative_to(REPO)
         for no, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):

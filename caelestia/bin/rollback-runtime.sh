@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
-RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
+RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 
 fail() {
     printf 'ERROR: %s\n' "$*" >&2

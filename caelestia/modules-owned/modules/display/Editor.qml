@@ -24,9 +24,9 @@ FocusScope {
     property string planStatus: qsTr("No dry run yet")
 
     readonly property string probePath:
-        StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-probe"
+        StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-probe"
     readonly property string plannerPath:
-        StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-plan"
+        StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-plan"
     readonly property var monitors: snapshot?.hyprland ?? []
     readonly property var selectedCandidate:
         selectedIndex >= 0 && selectedIndex < candidateOutputs.length ? candidateOutputs[selectedIndex] : ({})

@@ -10,14 +10,14 @@ import tempfile
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-helper = Path(__file__).resolve().parents[1] / "bin/caerice-pomodoro"
+helper = Path(__file__).resolve().parents[1] / "bin/cortetsu-pomodoro"
 spec = importlib.util.spec_from_loader("pomodoro", SourceFileLoader("pomodoro", str(helper)))
 module = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(module)
 
 with tempfile.TemporaryDirectory() as directory:
-    state_path = Path(directory) / "caelestia/pomodoro.json"
+    state_path = Path(directory) / "cortetsu/pomodoro.json"
     module.path = lambda: state_path
     state = module.load()
     assert state["phase"] == "IDLE" and state["schema"] == 2
@@ -63,4 +63,4 @@ with tempfile.TemporaryDirectory() as directory:
         )
         assert result.returncode == 0
 
-print("PASS: Pomodoro short/long breaks, pause/resume, persistence, notifications, and singleton daemon")
+print("PASS: Pomodoro short/long breaks, pause/resume, canonical state, notifications, and singleton daemon")

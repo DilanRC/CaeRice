@@ -1,4 +1,4 @@
-# CaeRice Hardware Center
+# Cortetsu Hardware Center
 
 Branch: `feature/hardware-center`
 
@@ -17,7 +17,7 @@ uses the same native surface as Launcher, Overview and Clipboard.
 - Power and Energy pages use an on-demand power helper only while those pages exist.
 - Closing Hardware Center destroys the polling/UI tree.
 - Automatic AC/battery switching is separate and **disabled by default**. It
-  starts `caerice-power-auto.service` only after explicit user opt-in on page 7.
+  starts `cortetsu-power-auto.service` only after explicit user opt-in on page 7.
 
 ## Pages
 
@@ -37,13 +37,13 @@ not close it; only clicking outside the panel, `Esc`, the close button or
 `Super+H` closes/toggles it.
 
 Keybind changes are written only to the user's Caelestia files. Every change
-creates a snapshot under `~/.local/share/caelestia-custom-system/snapshots/keybinds/`.
+creates a snapshot under `~/.local/share/cortetsu/upstream/snapshots/keybinds/`.
 If Hyprland rejects the reload or the new combination is missing, the helper
 restores the previous files automatically.
 
 ## Telemetry
 
-`~/.local/bin/caerice-hardware-probe` provides:
+`~/.local/bin/cortetsu-hardware-probe` provides:
 
 - CPU total/per-core usage, average frequency, package temperature and governor.
 - RAM used/available/cache/buffers plus swap.
@@ -57,7 +57,7 @@ restores the previous files automatically.
 - All readable `/proc` processes with instantaneous CPU deltas, RAM, user, state, threads, parent PID, elapsed time and command line. The UI performs filtering/sorting locally so PID/name/command searches can find idle processes too.
 - Host, kernel, uptime and load average.
 
-`~/.local/bin/caerice-hardware-power` provides:
+`~/.local/bin/cortetsu-hardware-power` provides:
 
 - `powerprofilesctl` backend/current/available/degraded state.
 - AC sources and battery energy, health, voltage, draw and runtime estimates.
@@ -83,11 +83,11 @@ voltages or GPU power limits directly. It delegates supported profile changes to
 
 Automation uses:
 
-- `~/.local/bin/caerice-power-auto`
-- `~/.local/bin/caerice-power-auto-control`
-- `~/.config/systemd/user/caerice-power-auto.service`
-- `~/.config/caerice/power-auto.json`
-- `~/.local/state/caerice/power-auto-events.jsonl`
+- `~/.local/bin/cortetsu-power-auto`
+- `~/.local/bin/cortetsu-power-auto-control`
+- `~/.config/systemd/user/cortetsu-power-auto.service`
+- `~/.config/cortetsu/power-auto.json`
+- `~/.local/state/cortetsu/power-auto-events.jsonl`
 
 Defaults:
 
@@ -105,7 +105,7 @@ from the UI.
 
 The interaction model takes inspiration from btop resource histories, process
 filter/sort/detail/signal controls, network auto-scaling, disk I/O and sensors.
-No btop C++/terminal UI source is vendored or launched. CaeRice uses its own
+No btop C++/terminal UI source is vendored or launched. Cortetsu uses its own
 `/proc`/`/sys` collectors and native QML.
 
 Reference: https://github.com/aristocratos/btop
@@ -120,7 +120,7 @@ The UI uses `Colours.palette.*`, `Colours.tPalette.*` where appropriate and
 First installation:
 
 ```fish
-cd ~/CaeRice
+cd ~/Cortetsu
 git switch feature/hardware-center
 git pull --ff-only
 bash scripts/features/install-hardware-center.sh
@@ -129,7 +129,7 @@ bash scripts/features/install-hardware-center.sh
 Development update after native integration already exists:
 
 ```fish
-cd ~/CaeRice
+cd ~/Cortetsu
 git pull --ff-only
 bash scripts/features/update-hardware-center.sh
 ```

@@ -22,8 +22,8 @@ Item {
     readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/caelestia/calendar-events.json`
     readonly property string selectionPath: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`
     readonly property string pomodoroPath: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`
-    readonly property string calendarHelperPath: `${Quickshell.env("HOME")}/.local/bin/caerice-calendar`
-    readonly property string pomodoroHelperPath: `${Quickshell.env("HOME")}/.local/bin/caerice-pomodoro`
+    readonly property string calendarHelperPath: `${Quickshell.env("HOME")}/.local/bin/cortetsu-calendar`
+    readonly property string pomodoroHelperPath: `${Quickshell.env("HOME")}/.local/bin/cortetsu-pomodoro`
     readonly property var selectedEvents: (payload.events || []).filter(event => eventOccursOnDate(event, selectedDate))
 
     function eventDate(event): date {
@@ -267,7 +267,7 @@ Item {
                                     StyledText { text: root.friendlyName(modelData); color: parent.parent.enabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.medium }
                                     StyledText { text: parent.parent.enabled ? "✓" : "+"; color: parent.parent.enabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.medium }
                                 }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { selectionProcess.command = [Quickshell.env("HOME") + "/.local/bin/caerice-calendar", "set-selection", modelData.calendarId, parent.enabled ? "false" : "true"]; selectionProcess.running = true; } }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { selectionProcess.command = [Quickshell.env("HOME") + "/.local/bin/cortetsu-calendar", "set-selection", modelData.calendarId, parent.enabled ? "false" : "true"]; selectionProcess.running = true; } }
                             }
                         }
                     }

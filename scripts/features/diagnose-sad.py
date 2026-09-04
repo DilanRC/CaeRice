@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-LIVE = Path(os.environ.get("CAERICE_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"))
+LIVE = Path(os.environ.get("CORTETSU_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"))
 UID = os.getuid()
 errors: list[str] = []
 warnings: list[str] = []
@@ -28,11 +28,11 @@ RETIRED_LIVE = [
     "modules/updater",
 ]
 RETIRED_HELPERS = [
-    "caerice-gaming-probe",
-    "caerice-gaming-profile",
-    "caerice-upstream-audit",
-    "caerice-updater",
-    "caerice-updater-commit-base",
+    "cortetsu-gaming-probe",
+    "cortetsu-gaming-profile",
+    "cortetsu-upstream-audit",
+    "cortetsu-updater",
+    "cortetsu-updater-commit-base",
 ]
 
 
@@ -170,13 +170,13 @@ def main() -> None:
     ]:
         check_file(rel)
 
-    json_helper("caerice-hardware-probe")
-    json_helper("caerice-hardware-power")
-    json_helper("caerice-display-probe")
-    json_helper("caerice-display-transaction", ["status"])
-    json_helper("caerice-display-persist", ["status"])
-    json_helper("caerice-display-presets", ["list"])
-    json_helper("caerice-display-workspaces", ["status"])
+    json_helper("cortetsu-hardware-probe")
+    json_helper("cortetsu-hardware-power")
+    json_helper("cortetsu-display-probe")
+    json_helper("cortetsu-display-transaction", ["status"])
+    json_helper("cortetsu-display-persist", ["status"])
+    json_helper("cortetsu-display-presets", ["list"])
+    json_helper("cortetsu-display-workspaces", ["status"])
 
     wired = check_wiring()
     check_retired()
@@ -201,7 +201,7 @@ def main() -> None:
 
     auto: dict[str, str] = {}
     for action in ["is-enabled", "is-active"]:
-        cp = cmd(["systemctl", "--user", action, "caerice-power-auto.service"], 8)
+        cp = cmd(["systemctl", "--user", action, "cortetsu-power-auto.service"], 8)
         auto[action] = cp.stdout.strip() if cp else "unknown"
 
     persistent: list[str] = []
@@ -210,12 +210,12 @@ def main() -> None:
     if cp:
         for line in cp.stdout.splitlines():
             if re.search(
-                r"caerice-(hardware-(probe|power)|display-(probe|plan|persist|presets|workspaces))",
+                r"cortetsu-(hardware-(probe|power)|display-(probe|plan|persist|presets|workspaces))",
                 line,
             ) and "diagnose-sad.py" not in line:
                 persistent.append(line.strip())
             if re.search(
-                r"caerice-(gaming-(probe|profile)|upstream-audit|updater(?:-commit-base)?)",
+                r"cortetsu-(gaming-(probe|profile)|upstream-audit|updater(?:-commit-base)?)",
                 line,
             ) and "diagnose-sad.py" not in line:
                 retired_processes.append(line.strip())

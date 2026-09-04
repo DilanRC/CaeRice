@@ -50,7 +50,7 @@ def normalize(root: Path) -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Normaliza shell.qml para CaeRice sobre Caelestia 2.4")
+    parser = argparse.ArgumentParser(description="Normaliza shell.qml para Cortetsu sobre Caelestia 2.4")
     parser.add_argument("root", type=Path)
     args = parser.parse_args()
     changed = normalize(args.root.resolve())

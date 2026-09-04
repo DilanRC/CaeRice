@@ -23,12 +23,12 @@ Item {
 
     implicitWidth: buttonSize
     implicitHeight: buttonSize
-    scale: mouse.containsMouse ? 1.10 : 1
+    scale: mouse.containsMouse ? 1.06 : 1
 
     Behavior on scale {
         NumberAnimation {
-            duration: 110
-            easing.type: Easing.OutCubic
+            duration: Tokens.anim.durations.expressiveFastSpatial
+            easing: Tokens.anim.expressiveFastSpatial
         }
     }
 
@@ -42,7 +42,10 @@ Item {
                 : "transparent"
 
         Behavior on color {
-            ColorAnimation { duration: 110 }
+            ColorAnimation {
+                duration: Tokens.anim.durations.expressiveFastEffects
+                easing: Tokens.anim.expressiveFastEffects
+            }
         }
     }
 

@@ -3,28 +3,28 @@ set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$REPO" ]]; then
-    echo "ERROR: ejecuta este script dentro del clon de CaeRice." >&2
+    echo "ERROR: ejecuta este script dentro del clon de Cortetsu." >&2
     exit 1
 fi
 
 LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP="$HOME/.local/share/caelestia-custom-system/snapshots/hardware-center-$STAMP"
+BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/hardware-center-$STAMP"
 STAGE="$BACKUP/stage"
 SRC="$REPO/caelestia/modules-owned/modules"
-PROBE_SRC="$REPO/caelestia/bin/caerice-hardware-probe"
-PROBE_DST="$HOME/.local/bin/caerice-hardware-probe"
-POWER_SRC="$REPO/caelestia/bin/caerice-hardware-power"
-POWER_DST="$HOME/.local/bin/caerice-hardware-power"
-AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
-AUTO_DST="$HOME/.local/bin/caerice-power-auto"
-AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
-AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
-KEYBINDS_SRC="$REPO/caelestia/bin/caerice-keybinds"
-KEYBINDS_DST="$HOME/.local/bin/caerice-keybinds"
-UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
-UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
+PROBE_SRC="$REPO/caelestia/bin/cortetsu-hardware-probe"
+PROBE_DST="$HOME/.local/bin/cortetsu-hardware-probe"
+POWER_SRC="$REPO/caelestia/bin/cortetsu-hardware-power"
+POWER_DST="$HOME/.local/bin/cortetsu-hardware-power"
+AUTO_SRC="$REPO/caelestia/bin/cortetsu-power-auto"
+AUTO_DST="$HOME/.local/bin/cortetsu-power-auto"
+AUTO_CTL_SRC="$REPO/caelestia/bin/cortetsu-power-auto-control"
+AUTO_CTL_DST="$HOME/.local/bin/cortetsu-power-auto-control"
+KEYBINDS_SRC="$REPO/caelestia/bin/cortetsu-keybinds"
+KEYBINDS_DST="$HOME/.local/bin/cortetsu-keybinds"
+UNIT_SRC="$REPO/config/systemd/user/cortetsu-power-auto.service"
+UNIT_DST="$HOME/.config/systemd/user/cortetsu-power-auto.service"
 VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
 
 for f in \
@@ -313,8 +313,8 @@ install -m 0644 "$UNIT_SRC" "$UNIT_DST"
 systemctl --user daemon-reload
 
 # Preserve the user's opt-in state. Installation never enables Auto by itself.
-if systemctl --user is-enabled --quiet caerice-power-auto.service 2>/dev/null; then
-    systemctl --user try-restart caerice-power-auto.service >/dev/null 2>&1 || true
+if systemctl --user is-enabled --quiet cortetsu-power-auto.service 2>/dev/null; then
+    systemctl --user try-restart cortetsu-power-auto.service >/dev/null 2>&1 || true
 fi
 
 hyprctl reload >/dev/null

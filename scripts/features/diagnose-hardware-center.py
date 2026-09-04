@@ -60,9 +60,9 @@ for repo_path, live_path in checks:
         print(f"      repo {repo_hash}")
         print(f"      live {live_hash}")
 
-print_json_command("MAIN TELEMETRY", HOME / ".local/bin/caerice-hardware-probe")
-print_json_command("POWER TELEMETRY", HOME / ".local/bin/caerice-hardware-power")
-print_json_command("POWER AUTOMATION", HOME / ".local/bin/caerice-power-auto-control", "status")
+print_json_command("MAIN TELEMETRY", HOME / ".local/bin/cortetsu-hardware-probe")
+print_json_command("POWER TELEMETRY", HOME / ".local/bin/cortetsu-hardware-power")
+print_json_command("POWER AUTOMATION", HOME / ".local/bin/cortetsu-power-auto-control", "status")
 
 print("\n===== IPC =====")
 ipc = run("qs", "-c", "caelestia", "ipc", "call", "hardware", "isOpen")
@@ -70,7 +70,7 @@ print(f"hardware isOpen: {(ipc.stdout or ipc.stderr).strip()}")
 
 print("\n===== SYSTEMD AUTO SERVICE =====")
 for verb in ("is-enabled", "is-active"):
-    cp = run("systemctl", "--user", verb, "caerice-power-auto.service")
+    cp = run("systemctl", "--user", verb, "cortetsu-power-auto.service")
     value = (cp.stdout or cp.stderr).strip()
     print(f"{verb}: {value} (exit {cp.returncode})")
 
