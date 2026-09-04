@@ -43,6 +43,9 @@ fi
 printf '==> Dotfiles Cortetsu\n'
 python3 "$REPO/core/dotfiles.py" apply --repo "$REPO"
 
+printf '==> Ciclo de vida del shell\n'
+python3 "$REPO/core/shell_lifecycle.py" migrate
+
 printf '==> Integración de tema\n'
 if [[ -f "$REPO/scripts/features/install-theme-bridge.py" ]]; then
     python3 "$REPO/scripts/features/install-theme-bridge.py"
@@ -63,11 +66,22 @@ fi
 printf '==> Generación unificada Cortetsu\n'
 python3 "$REPO/core/system.py" promote --repo "$REPO"
 
+# Never enable shell supervision implicitly. Once the user has explicitly
+# adopted it, however, an install should move the running process to the newly
+# promoted runtime automatically.
+if systemctl --user is-active --quiet cortetsu-shell.service 2>/dev/null; then
+    if systemctl --user restart cortetsu-shell.service; then
+        printf 'Shell supervision: active service restarted on promoted runtime\n'
+    else
+        printf 'WARN: cortetsu-shell.service estaba activo pero no pudo reiniciarse\n' >&2
+    fi
+fi
+
 runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
 printf 'System runtime: %s/system/current\n' "$DATA_ROOT"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
-printf 'cortetsu-shell.service se instala sin habilitar para evitar un segundo shell durante la transición.\n'
+printf 'cortetsu-shell.service no se habilita implícitamente; una adopción existente sí se conserva.\n'
 printf 'Rollback completo: cortetsu rollback\n'
-printf 'Reinicio manual: pkill -TERM -x qs; sleep 1; qs -p %q -n -d\n' "$runtime_root/current"
+printf 'Supervisión: cortetsu shell status\n'
