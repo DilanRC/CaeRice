@@ -8,6 +8,21 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "core/shell_lifecycle.py"
+UNIT = REPO / "config/systemd/user/cortetsu-shell.service"
+INSTALLER = REPO / "scripts/install-cortetsu.sh"
+
+unit_text = UNIT.read_text(encoding="utf-8")
+assert "Type=simple" in unit_text
+exec_start = next(line for line in unit_text.splitlines() if line.startswith("ExecStart="))
+assert "/usr/bin/qs" in exec_start
+assert " -n" in exec_start
+assert " -d" not in exec_start and "--daemonize" not in exec_start, (
+    "systemd must own the foreground Quickshell process; daemonizing makes Type=simple go inactive"
+)
+
+installer_text = INSTALLER.read_text(encoding="utf-8")
+assert "is-enabled --quiet cortetsu-shell.service" in installer_text
+assert "systemctl --user restart cortetsu-shell.service" in installer_text
 
 with tempfile.TemporaryDirectory(prefix="cortetsu-shell-lifecycle-") as tmp:
     root = Path(tmp)
@@ -98,4 +113,4 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-shell-lifecycle-") as tmp:
     )
     assert "already reconciled" in second.stdout
 
-print("PASS: Hyprland lifecycle migration backs up active config, ignores backups, and is idempotent")
+print("PASS: systemd owns foreground Quickshell; Hyprland lifecycle migration is backed up and idempotent")
