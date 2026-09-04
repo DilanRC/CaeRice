@@ -1,0 +1,48 @@
+name: Cortetsu v2 polish
+
+on:
+  push:
+    branches:
+      - feature/cortetsu-v2-modernize
+    paths:
+      - scripts/maintenance/cortetsu-v2-polish.py
+      - .github/workflows/cortetsu-v2-polish.yml
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: feature/cortetsu-v2-modernize
+      - name: Configure Git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Apply post-rewrite corrections and optimizations
+        run: python3 scripts/maintenance/cortetsu-v2-polish.py
+      - name: Remove one-shot script
+        run: |
+          rm -f scripts/maintenance/cortetsu-v2-polish.py
+          rmdir scripts/maintenance 2>/dev/null || true
+      - name: Mechanical gates
+        run: |
+          git diff --check
+          test -x scripts/migrate-cortetsu-v2.sh
+          test -f scripts/install-cortetsu.sh
+          test -f caelestia/bin/cortetsu-calendar
+          test -f caelestia/bin/cortetsu-pomodoro
+          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh'
+          ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**'
+          ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**'
+          ! git grep -n -I 'CORTETSU_UPSTREAM_SOURCE:-${CORTETSU_UPSTREAM_SOURCE' -- ':!docs/history/**'
+      - name: Commit polished tree
+        run: |
+          git add -A ':!.github/workflows'
+          git commit -m 'refactor(v2): purge active legacy and idle polling'
+          git push origin HEAD:feature/cortetsu-v2-modernize
