@@ -23,13 +23,27 @@ for relative in (
     assert "running: root.visible" in text, f"hidden-page polling regression: {relative}"
     assert "onVisibleChanged: { if (visible) refresh(); }" in text, f"missing wake-on-visible: {relative}"
 
-# Cortetsu owns interaction character even while colours remain adaptive through
-# the temporary shell adapter.
+# Cortetsu owns the first visual primitives directly. Typography/icon metrics can
+# still come from the temporary adapter, but button/status chrome must not read
+# Caelestia Colours anymore.
 hub = (modules / "HubButton.qml").read_text(encoding="utf-8")
+status = (modules / "StatusPill.qml").read_text(encoding="utf-8")
+surface = (modules / "CortetsuSurface.qml").read_text(encoding="utf-8")
 design = (modules / "CortetsuDesign.js").read_text(encoding="utf-8")
+
 assert 'import "CortetsuDesign.js" as CortetsuDesign' in hub
+assert 'import "CortetsuDesign.js" as CortetsuDesign' in status
+assert 'import "CortetsuDesign.js" as CortetsuDesign' in surface
+assert "CortetsuSurface" in hub
+assert "CortetsuSurface" in status
+assert "Colours." not in hub
+assert "Colours." not in status
+assert "CortetsuDesign.colorTetsu" in surface
+assert "CortetsuDesign.colorIndigo" in surface
+assert "CortetsuDesign.colorVermillion" in surface
 assert "CortetsuDesign.hoverScale" in hub
 assert hub.count("CortetsuDesign.motionFastMs") >= 2
+assert "CortetsuDesign.motionStandardMs" in status
 assert "hoverScale = 1.04" in design
 assert "motionFastMs = 100" in design
 assert "mouse.containsMouse ? 1.06 : 1" not in hub
@@ -42,4 +56,4 @@ pomodoro = (repo / "caelestia/bin/cortetsu-pomodoro").read_text(encoding="utf-8"
 assert '/ "cortetsu"' in calendar
 assert 'state_home / "cortetsu/pomodoro.json"' in pomodoro
 
-print("PASS: Cortetsu quality gate: cold hidden pages, owned restrained motion, canonical state, no QML shell pipelines")
+print("PASS: Cortetsu quality gate: cold hidden pages, native visual primitives, canonical state, no QML shell pipelines")

@@ -11,20 +11,32 @@ La estética samurái de Cortetsu es contenida: precisión, contraste, espacio y
 - **washi**: texto principal ligeramente cálido;
 - **ma**: espacio negativo deliberado para reducir ruido visual.
 
-La paleta puede seguir adaptándose al wallpaper durante la etapa de adapter, pero jerarquía, interacción y motion pertenecen a Cortetsu.
-
 ## Fuente declarativa
 
-`~/.config/cortetsu/ui.toml` es el contrato de producto. Vive dentro de las generaciones de dotfiles y define identidad, spacing, radios y presupuesto de motion. La UI irá migrando progresivamente de tokens del adapter a tokens Cortetsu compilados desde ese contrato.
+`~/.config/cortetsu/ui.toml` es el contrato de producto. Vive dentro de las generaciones de dotfiles y define identidad, spacing, radios y presupuesto de motion. `core/theme.py` compila esos tokens a `modules/CortetsuDesign.js` y a las salidas nativas de Kitty/GTK/KDE.
 
-El primer token activo propio vive en `modules/CortetsuDesign.js`: el Bottom Hub ya usa `hoverScale=1.04` y `motionFastMs=100` en lugar de codificar su carácter de interacción mediante el runtime upstream.
+La migración del shell es incremental: la lógica funcional puede seguir usando temporalmente servicios, tipografía e icon metrics del adapter Caelestia, pero las superficies propias deben dejar de depender de `Colours`/Material 3 a medida que pasan a Cortetsu.
+
+## Primitives QML
+
+`CortetsuSurface.qml` es la primera primitive visual nativa. Usa únicamente QtQuick y `CortetsuDesign.js` para definir:
+
+- superficies sumi/tetsu;
+- hover contenido;
+- selección índigo;
+- outline bermellón para estado activo/importante;
+- radios y motion propios;
+- estado pressed sin rebote ornamental.
+
+`HubButton.qml` y `StatusPill.qml` ya consumen esta primitive y no leen `Colours` de Caelestia. Esto convierte controles compartidos del Bottom Hub en la primera capa de chrome inequívocamente Cortetsu sin duplicar lógica de interacción.
 
 ## Motion
 
-- hover: 100 ms, escala contenida;
-- toggles: feedback inmediato;
+- pressed: 70 ms, reducción mínima de escala;
+- hover: 100 ms, escala máxima 1.04;
+- cambios de estado: 100–160 ms;
+- transiciones deliberadas: 220 ms;
 - popovers: entrada breve, sin rebote ornamental;
-- paneles: transición espacial clara;
 - animación infinita: sólo para estados activos que realmente lo justifican.
 
 El objetivo no es añadir animación, sino eliminar latencia percibida sin mantener trabajo cuando la interfaz está quieta.
@@ -48,8 +60,9 @@ Advanced metrics ->
 
 - una familia de radios, spacing y tipografía;
 - ningún color hardcoded cuando existe token semántico;
-- estados de hover/focus/pressed consistentes;
-- contraste legible en light/dark y fondos derivados del wallpaper;
+- estados hover/focus/pressed consistentes;
+- el bermellón comunica importancia, no decoración constante;
+- el índigo mantiene foco/selección sin competir con contenido;
 - iconografía funcional, no ornamental;
 - el contenido manda sobre el chrome;
 - overlays con exclusividad y foco predecibles;
