@@ -7,7 +7,7 @@ Row {
     required property int workspaceCount
     required property int workspaceOffset
     required property int activeWsId
-    required property var workspaceOccupancy
+    required property var occupiedWorkspaceIds
 
     signal workspaceRequested(int workspaceId)
 
@@ -28,7 +28,7 @@ Row {
 
             readonly property int wsId: root.workspaceOffset + index + 1
             readonly property bool active: wsId === root.activeWsId
-            readonly property bool occupied: root.workspaceOccupancy[wsId] ?? false
+            readonly property bool occupied: root.occupiedWorkspaceIds.includes(wsId)
 
             width: active ? 18 : 8
             height: 28
