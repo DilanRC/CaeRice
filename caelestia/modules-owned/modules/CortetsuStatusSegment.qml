@@ -12,7 +12,7 @@ Item {
     required property string bluetoothIcon
     required property bool bluetoothActive
     required property string batteryIcon
-    required property color batteryIconColor
+    required property bool batteryCritical
     required property string batteryTooltip
     required property int notificationCount
     required property bool sidebarActive
@@ -99,7 +99,9 @@ Item {
             buttonSize: 40
             iconSize: CortetsuTypography.iconMediumPx
             icon: root.batteryIcon
-            iconColor: root.batteryIconColor
+            iconColor: root.batteryCritical
+                ? CortetsuDesign.colorVermillion
+                : CortetsuDesign.colorMuted
             tooltip: root.batteryTooltip
             onHoveredChanged: {
                 if (hovered)
