@@ -23,13 +23,14 @@ jobs:
           import tomllib
           with pathlib.Path('cortetsu.toml').open('rb') as handle:
               data = tomllib.load(handle)
-          assert data['schema'] == 3
+          assert data['schema'] == 4
           assert data['project']['name'] == 'Cortetsu'
-          assert data['project']['stage'] == 'dotfiles-foundation'
+          assert data['project']['stage'] == 'unified-system-generations'
           assert data['identity']['canonical_command'] == 'cortetsu'
           assert data['upstream']['caelestia']['tag'] == 'v2.4.0'
           assert data['runtime']['current'].endswith('/quickshell/cortetsu/current')
           assert data['dotfiles']['default_profile'] == 'personal'
+          assert data['system']['components'] == ['shell', 'dotfiles']
           assert data['compatibility']['active_legacy'] is False
           print('manifest: valid')
           PY
@@ -55,6 +56,8 @@ jobs:
         run: python3 scripts/features/test-cortetsu-quality.py
       - name: Validate immutable dotfiles
         run: python3 scripts/features/test-dotfiles-platform.py
+      - name: Validate unified system generations
+        run: python3 scripts/features/test-system-generations.py
       - name: Validate migration resilience
         run: bash scripts/features/test-v2-migration-unreadable.sh
       - name: Validate modern contract
@@ -63,8 +66,10 @@ jobs:
           set -euo pipefail
           test -x scripts/cortetsu
           test -x core/dotfiles.py
+          test -x core/system.py
           test -x core/doctor.py
           test -x scripts/features/test-dotfiles-platform.py
+          test -x scripts/features/test-system-generations.py
           test -f dotfiles/manifest.toml
           test -f profiles/base.toml
           test -f profiles/personal.toml
@@ -79,6 +84,8 @@ jobs:
           grep -q '"upstreamRepo": "https://github.com/caelestia-dots/shell.git"' caelestia/compatibility.json
           grep -q 'ensure-upstream.sh' caelestia/bin/build-runtime.sh
           grep -q 'core/dotfiles.py' scripts/install-cortetsu.sh
+          grep -q 'core/system.py' scripts/install-cortetsu.sh
+          grep -q 'rollback) rollback_cmd' scripts/cortetsu
           ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!caelestia/bin/ensure-upstream.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
