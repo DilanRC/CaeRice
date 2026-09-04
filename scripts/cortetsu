@@ -44,6 +44,7 @@ Usage:
   cortetsu rollback                Roll back shell + dotfiles as one system
   cortetsu system <action>         promote|verify|status|rollback|gc
   cortetsu dotfiles <action>       plan|apply|verify|status|rollback|gc
+  cortetsu theme <action>          check|compile|adopt native desktop theme
   cortetsu shell <action>          status|adopt|reconcile|restart|disable|logs
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
@@ -110,6 +111,14 @@ system_cmd() {
     local action="${1:-status}"
     [[ $# -eq 0 ]] || shift
     python3 "$ROOT/core/system.py" "$action" --repo "$ROOT" "$@"
+}
+
+theme_cmd() {
+    require_repo
+    require_file "$ROOT/core/theme.py"
+    local action="${1:-check}"
+    [[ $# -eq 0 ]] || shift
+    python3 "$ROOT/core/theme.py" "$action" --repo "$ROOT" "$@"
 }
 
 reconcile_shell_lifecycle() {
@@ -196,6 +205,7 @@ test_cmd() {
         "scripts/features/eval-keybind-editor.py"
         "scripts/features/test-shell-normalizer.py"
         "scripts/features/test-cortetsu-quality.py"
+        "scripts/features/test-native-theme.py"
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"
         "scripts/features/test-shell-lifecycle.py"
@@ -250,6 +260,7 @@ verify_cmd() {
         archived_resolved="$(resolved_generation "$LEGACY_PREVIOUS")"
         [[ -z "$archived_resolved" || ! -f "$archived_resolved/shell.qml" ]] || printf 'INFO: snapshot pre-v2 archivado: %s\n' "$archived_resolved"
     fi
+    theme_cmd check
     run_python_test "scripts/features/test-cortetsu-quality.py"
     run_python_test "caelestia/tests/test-runtime-contract.py"
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
@@ -281,6 +292,7 @@ case "$command" in
     rollback) rollback_cmd "$@" ;;
     system) system_cmd "$@" ;;
     dotfiles) dotfiles_cmd "$@" ;;
+    theme) theme_cmd "$@" ;;
     shell) shell_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
