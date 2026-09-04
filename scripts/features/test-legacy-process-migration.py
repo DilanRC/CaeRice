@@ -40,6 +40,14 @@ with tempfile.TemporaryDirectory(prefix="legacy-process-") as tmp:
     subprocess.run(["python3", str(script), "migrate", "--home", str(home), "--data-root", str(data)], env=env, check=True)
     assert "caerice-pomodoro" not in execs.read_text(encoding="utf-8")
 
+    managed = root / "managed.lua"
+    managed.write_text('caelestia-wallpaper-color-daemon\n', encoding="utf-8")
+    managed_link = config / "managed-link.lua"
+    managed_link.symlink_to(managed)
+    before = managed.read_text(encoding="utf-8")
+    subprocess.run(["python3", str(script), "migrate", "--home", str(home), "--data-root", str(data)], env=env, check=True)
+    assert managed.read_text(encoding="utf-8") == before
+
 source = script.read_text(encoding="utf-8")
 assert "pkill" not in source and "os.kill" not in source and "killpg" not in source
 print("PASS: legacy process migration is backed up, idempotent, and signal-free")

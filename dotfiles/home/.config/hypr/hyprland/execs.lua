@@ -28,7 +28,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start cortetsu-shell.service")
 
     -- Keep Caelestia colours synced with static wallpapers and Wallpaper Engine.
-    hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/caelestia-wallpaper-color-daemon")
+    hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/cortetsu-wallpaper-color-daemon")
 
     -- Relaunch Wallpaper Engine renderer with per-monitor args and no fullscreen pause.
     hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/wallpaper-engine-render-daemon")

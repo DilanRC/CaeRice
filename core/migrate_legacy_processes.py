@@ -96,6 +96,9 @@ def migrate(home: Path, data_root: Path) -> int:
                 print("DEFERRED pomodoro: Cortetsu helper is not installed", file=sys.stderr)
             if "wallpaper-color" in kinds and not (home / ".local/bin/cortetsu-wallpaper-color-daemon").exists():
                 continue
+            if path.is_symlink():
+                print(f"DEFERRED managed symlink: update its Cortetsu source instead: {path}")
+                continue
             backup_path(path, home, backup)
             updated = original.replace("caerice-pomodoro", "cortetsu-pomodoro")
             updated = updated.replace("caelestia-wallpaper-color-daemon", "cortetsu-wallpaper-color-daemon")
