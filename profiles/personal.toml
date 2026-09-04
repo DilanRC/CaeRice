@@ -1,5 +1,5 @@
 schema = 1
 name = "personal"
 inherits = ["base"]
-enabled_tags = ["scenes"]
+enabled_tags = ["scenes", "hyprland"]
 package_groups = ["desktop-integrations", "optional-tools"]
