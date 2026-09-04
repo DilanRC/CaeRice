@@ -32,7 +32,7 @@ FORBIDDEN_VIEW_TOKENS = (
     "UPower",
     "Notifs",
     "Recorder",
-    "IdleInhibitor",
+    "Services.IdleInhibitor",
     "DesktopEntries",
     "GlobalConfig",
     "Apps.",
