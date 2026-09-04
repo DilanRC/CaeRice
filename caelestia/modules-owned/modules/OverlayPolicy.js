@@ -10,6 +10,8 @@ function closeOtherPanels(state) {
     state.utilities = false;
     state.sidebar = false;
     state.overview = false;
+    if (state.calendar !== undefined)
+        state.calendar = false;
     state.wallpaperManager = false;
     if (state.clipboard !== undefined)
         state.clipboard = false;
@@ -28,6 +30,8 @@ function closeForWallpaper(state) {
     state.utilities = false;
     state.sidebar = false;
     state.overview = false;
+    if (state.calendar !== undefined)
+        state.calendar = false;
     if (state.clipboard !== undefined)
         state.clipboard = false;
     if (state.hardware !== undefined)
@@ -38,5 +42,5 @@ function closeForWallpaper(state) {
 
 function hasCompetingPanel(state) {
     return !!state && (state.launcher || state.session || state.dashboard || state.utilities
-        || state.sidebar || state.overview || state.clipboard || state.hardware || state.displayManager);
+        || state.sidebar || state.overview || state.calendar || state.clipboard || state.hardware || state.displayManager);
 }

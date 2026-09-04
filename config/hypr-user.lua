@@ -65,7 +65,7 @@ hl.bind(
 -- Dock personalizado
 hl.bind(
     "SUPER + D",
-    hl.dsp.exec_cmd("qs -c caelestia ipc call customDock toggle")
+    hl.dsp.exec_cmd("qs -p ~/.config/quickshell/caelestia/current ipc call customDock toggle")
 )
 
 -- Dashboard de Caelestia
@@ -93,6 +93,11 @@ hl.bind(
 hl.bind(
     "SUPER + H",
     hl.dsp.global("caelestia:hardware")
+)
+
+hl.bind(
+    "SUPER + SHIFT + C",
+    hl.dsp.global("caelestia:calendar")
 )
 
 -- Display Manager QML nativo
@@ -159,6 +164,7 @@ hl.bind(
 -- SUPER+H       -> Hardware Center
 -- SUPER+SHIFT+O -> Display Manager
 -- SUPER+SHIFT+W -> Wallpaper Manager
+-- SUPER+SHIFT+C -> Calendar
 -- ============================================================
 
 -- ============================================================

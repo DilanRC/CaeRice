@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""Restart-safe local Pomodoro state shared by Cortetsu and Quickshell."""
+from __future__ import annotations
+
+import contextlib
+import fcntl
+import json
+import os
+import sys
+import time
+from pathlib import Path
+from typing import Any, Iterator
+
+DEFAULT: dict[str, Any] = {
+    "schema": 2,
+    "phase": "IDLE",
+    "targetEndTimestamp": 0.0,
+    "pausedRemainingMs": 0,
+    "pausedPhase": "FOCUS",
+    "completedSessions": 0,
+    "focusMinutes": 25,
+    "shortBreakMinutes": 5,
+    "longBreakMinutes": 15,
+    "sessionsBeforeLongBreak": 4,
+}
+VALID_PHASES = {"IDLE", "FOCUS", "BREAK", "LONG_BREAK", "PAUSED", "COMPLETED"}
+ACTIVE_PHASES = {"FOCUS", "BREAK", "LONG_BREAK"}
+BREAK_PHASES = {"BREAK", "LONG_BREAK"}
+
+
+def path() -> Path:
+    override = os.environ.get("CORTETSU_POMODORO_STATE")
+    if override:
+        return Path(override).expanduser()
+    state_home = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state"))
+    return state_home / "caelestia/pomodoro.json"
+
+
+def event_path() -> Path:
+    return path().with_name("pomodoro-notification.json")
+
+
+def state_lock_path() -> Path:
+    return path().with_name("pomodoro-state.lock")
+
+
+def daemon_lock_path() -> Path:
+    return path().with_name("pomodoro-daemon.lock")
+
+
+def normalize_state(raw: Any) -> dict[str, Any]:
+    data = raw if isinstance(raw, dict) else {}
+    state = {**DEFAULT, **data}
+    if state.get("phase") not in VALID_PHASES:
+        state["phase"] = "IDLE"
+    if state["phase"] == "PAUSED" and state.get("pausedPhase") not in ACTIVE_PHASES:
+        state["pausedPhase"] = "FOCUS"
+
+    for key, fallback in (
+        ("focusMinutes", 25),
+        ("shortBreakMinutes", 5),
+        ("longBreakMinutes", 15),
+        ("sessionsBeforeLongBreak", 4),
+    ):
+        try:
+            value = int(state.get(key, fallback))
+        except (TypeError, ValueError):
+            value = fallback
+        state[key] = max(1, value)
+
+    for key in ("completedSessions", "pausedRemainingMs"):
+        try:
+            value = int(state.get(key, 0))
+        except (TypeError, ValueError):
+            value = 0
+        state[key] = max(0, value)
+
+    try:
+        state["targetEndTimestamp"] = max(0.0, float(state.get("targetEndTimestamp", 0)))
+    except (TypeError, ValueError):
+        state["targetEndTimestamp"] = 0.0
+    state["schema"] = 2
+    return state
+
+
+def load() -> dict[str, Any]:
+    try:
+        raw = json.loads(path().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raw = {}
+    return normalize_state(raw)
+
+
+def save(state: dict[str, Any]) -> None:
+    destination = path()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    normalized = normalize_state(state)
+    temporary = destination.with_name(f".{destination.name}.tmp.{os.getpid()}")
+    temporary.write_text(json.dumps(normalized, indent=2) + "\n", encoding="utf-8")
+    temporary.chmod(0o600)
+    temporary.replace(destination)
+
+
+@contextlib.contextmanager
+def state_lock() -> Iterator[None]:
+    lock_path = state_lock_path()
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w", encoding="utf-8") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        yield
+
+
+def phase_duration_seconds(state: dict[str, Any], phase: str) -> int:
+    if phase == "FOCUS":
+        return int(state["focusMinutes"]) * 60
+    if phase == "LONG_BREAK":
+        return int(state["longBreakMinutes"]) * 60
+    return int(state["shortBreakMinutes"]) * 60
+
+
+def advance(state: dict[str, Any], now: float | None = None) -> dict[str, Any]:
+    state = normalize_state(state)
+    current_time = time.time() if now is None else now
+    target = float(state.get("targetEndTimestamp", 0))
+    if not target or current_time < target:
+        return state
+
+    if state["phase"] == "FOCUS":
+        state["completedSessions"] += 1
+        cycle = max(1, int(state["sessionsBeforeLongBreak"]))
+        next_phase = "LONG_BREAK" if state["completedSessions"] % cycle == 0 else "BREAK"
+        state["phase"] = next_phase
+        state["targetEndTimestamp"] = current_time + phase_duration_seconds(state, next_phase)
+        state["pausedRemainingMs"] = 0
+        state["pausedPhase"] = next_phase
+    elif state["phase"] in BREAK_PHASES:
+        state["phase"] = "FOCUS"
+        state["targetEndTimestamp"] = current_time + phase_duration_seconds(state, "FOCUS")
+        state["pausedRemainingMs"] = 0
+        state["pausedPhase"] = "FOCUS"
+    return state
+
+
+def notification_for_transition(old_phase: str, new_phase: str) -> tuple[str, str] | None:
+    if old_phase == "FOCUS" and new_phase == "BREAK":
+        return "Focus session complete", "Time for a short break"
+    if old_phase == "FOCUS" and new_phase == "LONG_BREAK":
+        return "Focus cycle complete", "Time for a long break"
+    if old_phase in BREAK_PHASES and new_phase == "FOCUS":
+        return "Break complete", "Ready to focus"
+    return None
+
+
+def write_event(title: str, message: str) -> None:
+    destination = event_path()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"sequence": time.time_ns(), "title": title, "message": message}
+    temporary = destination.with_name(f".{destination.name}.tmp.{os.getpid()}")
+    temporary.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+    temporary.chmod(0o600)
+    temporary.replace(destination)
+
+
+def daemon() -> int:
+    lock_path = daemon_lock_path()
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w", encoding="utf-8") as daemon_lock:
+        try:
+            fcntl.flock(daemon_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return 0
+        try:
+            while True:
+                transition: tuple[str, str] | None = None
+                with state_lock():
+                    state = load()
+                    old_phase = state["phase"]
+                    state = advance(state)
+                    if state["phase"] != old_phase:
+                        save(state)
+                        transition = notification_for_transition(old_phase, state["phase"])
+                if transition:
+                    write_event(*transition)
+                time.sleep(0.5)
+        except KeyboardInterrupt:
+            return 0
+
+
+def apply_command(state: dict[str, Any], command: str, now: float | None = None) -> dict[str, Any]:
+    state = advance(state, now)
+    current_time = time.time() if now is None else now
+
+    if command == "status":
+        return state
+    if command == "start":
+        state["phase"] = "FOCUS"
+        state["targetEndTimestamp"] = current_time + phase_duration_seconds(state, "FOCUS")
+        state["pausedRemainingMs"] = 0
+        state["pausedPhase"] = "FOCUS"
+    elif command == "pause" and state["phase"] in ACTIVE_PHASES:
+        state["pausedRemainingMs"] = max(
+            0,
+            int((float(state["targetEndTimestamp"]) - current_time) * 1000),
+        )
+        state["pausedPhase"] = state["phase"]
+        state["targetEndTimestamp"] = 0.0
+        state["phase"] = "PAUSED"
+    elif command == "resume" and state["phase"] == "PAUSED":
+        resumed_phase = state.get("pausedPhase", "FOCUS")
+        if resumed_phase not in ACTIVE_PHASES:
+            resumed_phase = "FOCUS"
+        remaining_ms = max(1, int(state.get("pausedRemainingMs", 0)))
+        state["phase"] = resumed_phase
+        state["targetEndTimestamp"] = current_time + remaining_ms / 1000
+        state["pausedRemainingMs"] = 0
+    elif command == "skip" and state["phase"] in BREAK_PHASES:
+        state["phase"] = "FOCUS"
+        state["targetEndTimestamp"] = current_time + phase_duration_seconds(state, "FOCUS")
+        state["pausedRemainingMs"] = 0
+        state["pausedPhase"] = "FOCUS"
+    elif command == "reset":
+        state = {**DEFAULT}
+    elif command not in {"start", "pause", "resume", "skip", "reset"}:
+        raise ValueError(f"unknown command: {command}")
+    return normalize_state(state)
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) > 1 and argv[1] == "daemon":
+        return daemon()
+    command = argv[1] if len(argv) > 1 else "status"
+    try:
+        with state_lock():
+            state = apply_command(load(), command)
+            save(state)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    print(json.dumps(state, separators=(",", ":")))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))

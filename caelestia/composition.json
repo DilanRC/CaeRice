@@ -1,0 +1,15 @@
+{
+  "schema": 2,
+  "description": "Single staged Cortetsu composition over a verified Caelestia upstream revision",
+  "ownedModules": [
+    "BottomHub",
+    "StatusPill",
+    "Overview",
+    "Clipboard",
+    "Hardware",
+    "Display",
+    "Wallpaper",
+    "Calendar"
+  ],
+  "runtimeRule": "Promote only after validators pass; retain the previous healthy generation for atomic rollback."
+}
