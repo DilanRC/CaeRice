@@ -5,43 +5,9 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  polish:
-    if: ${{ github.ref == 'refs/heads/feature/cortetsu-v2-modernize' && github.actor != 'github-actions[bot]' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: feature/cortetsu-v2-modernize
-      - name: Configure Git
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-      - name: Apply deterministic polish
-        run: python3 scripts/maintenance/cortetsu-v2-polish.py
-      - name: Remove one-shot polish script
-        run: |
-          rm -f scripts/maintenance/cortetsu-v2-polish.py
-          rmdir scripts/maintenance 2>/dev/null || true
-      - name: Gate rewritten tree
-        run: |
-          git diff --check
-          test -x scripts/migrate-cortetsu-v2.sh
-          test -f scripts/install-cortetsu.sh
-          test -f caelestia/bin/cortetsu-calendar
-          test -f caelestia/bin/cortetsu-pomodoro
-          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!.github/workflows/**'
-          ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
-          ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
-      - name: Commit polished tree
-        run: |
-          git add -A ':!.github/workflows'
-          git commit -m 'refactor(v2): purge active legacy and idle polling'
-          git push origin HEAD:feature/cortetsu-v2-modernize
-
   static:
     runs-on: ubuntu-latest
     steps:
@@ -58,9 +24,11 @@ jobs:
           with pathlib.Path('cortetsu.toml').open('rb') as handle:
               data = tomllib.load(handle)
           assert data['project']['name'] == 'Cortetsu'
+          assert data['project']['stage'] == 'v2-modern'
           assert data['identity']['canonical_command'] == 'cortetsu'
           assert data['upstream']['caelestia']['tag'] == 'v2.4.0'
           assert data['runtime']['current'].endswith('/quickshell/cortetsu/current')
+          assert data['compatibility']['active_legacy'] is False
           print('manifest: valid')
           PY
       - name: Compile Python sources
@@ -78,11 +46,13 @@ jobs:
           set -euo pipefail
           while IFS= read -r -d '' file; do bash -n "$file"; done < <(find scripts caelestia/bin -type f -name '*.sh' -print0)
           bash -n scripts/cortetsu
+          bash -n scripts/migrate-cortetsu-v2.sh
       - name: Validate modern contract
         shell: bash
         run: |
           set -euo pipefail
           test -x scripts/cortetsu
+          test -x scripts/migrate-cortetsu-v2.sh
           test -f scripts/install-cortetsu.sh
           test -f docs/CORTETSU_ARCHITECTURE.md
           test -f docs/IDENTITY.md
@@ -90,3 +60,5 @@ jobs:
           grep -q '^# Cortetsu' README.md
           ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
+          ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**'
+          ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**'
