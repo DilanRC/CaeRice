@@ -2,9 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import Caelestia.Config
-import qs.components
 import "CortetsuDesign.js" as CortetsuDesign
+import "CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
@@ -14,8 +13,6 @@ Item {
     property bool idleInhibited: false
 
     readonly property bool hasStatus: recordingActive || dndActive || idleInhibited
-    readonly property int visibleItemCount:
-        Number(recordingActive) + Number(dndActive) + Number(idleInhibited)
 
     signal stopRecordingRequested()
     signal toggleDndRequested()
@@ -147,13 +144,13 @@ Item {
             anchors.centerIn: parent
             spacing: CortetsuDesign.spacingUnit
 
-            MaterialIcon {
-                id: icon
+            CortetsuIcon {
+                id: iconLabel
 
                 anchors.verticalCenter: parent.verticalCenter
                 text: item.icon
                 color: item.iconColor
-                fontStyle: Tokens.font.icon.small
+                iconSize: CortetsuTypography.iconSmallPx
                 scale: item.pulse && root.recordingActive ? 1 : 0.9
 
                 SequentialAnimation on scale {
@@ -173,11 +170,11 @@ Item {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.verticalCenter: parent.verticalCenter
                 text: item.label
                 color: item.textColor
-                font: Tokens.font.label.small
+                textSize: CortetsuTypography.labelSmallPx
             }
         }
 
@@ -190,19 +187,15 @@ Item {
             text: item.tooltip
 
             background: CortetsuSurface {
-                implicitWidth: tooltipContent.implicitWidth + CortetsuDesign.spacingStandard * 2
-                implicitHeight: tooltipContent.implicitHeight + CortetsuDesign.spacingCompact * 2
                 radiusValue: CortetsuDesign.radiusSmall
                 baseColor: CortetsuDesign.colorTetsu
                 outlined: true
             }
 
-            contentItem: StyledText {
-                id: tooltipContent
-
+            contentItem: CortetsuText {
                 text: tooltipPopup.text
                 color: CortetsuDesign.colorWashi
-                font: Tokens.font.label.small
+                textSize: CortetsuTypography.labelSmallPx
             }
         }
 
