@@ -150,11 +150,6 @@ target = ".config/gtk-4.0/thunar.css"
 tags = ["toolkit"]
 
 [[entry]]
-source = "dotfiles/imported/desktop/home/.config/kitty/caelestia-theme.conf"
-target = ".config/kitty/caelestia-theme.conf"
-tags = ["terminal"]
-
-[[entry]]
 source = "dotfiles/imported/desktop/home/.config/kitty/kitty.conf"
 target = ".config/kitty/kitty.conf"
 tags = ["terminal"]
