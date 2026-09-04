@@ -36,16 +36,19 @@ usage() {
 Cortetsu command entrypoint
 
 Usage:
-  cortetsu status                  Show repository, shell and dotfiles generations
+  cortetsu status                  Show repository and all generation layers
   cortetsu plan                    Preview dotfiles adoption without writing
   cortetsu apply                   Build and promote a dotfiles generation
   cortetsu doctor [--json]         Check packages, runtime, dotfiles and services
+  cortetsu generations             Show unified system generations
+  cortetsu rollback                Roll back shell + dotfiles as one system
+  cortetsu system <action>         promote|verify|status|rollback|gc
   cortetsu dotfiles <action>       plan|apply|verify|status|rollback|gc
   cortetsu shell <action>          status|adopt|restart|disable|logs
   cortetsu test                    Run repository, UX and transaction regressions
-  cortetsu verify                  Verify shell + dotfiles promoted generations
+  cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
-  cortetsu install                 Build shell and apply a verified dotfiles generation
+  cortetsu install                 Build shell, dotfiles and unified system generation
   cortetsu help                    Show this help
 EOF
 }
@@ -101,6 +104,14 @@ dotfiles_cmd() {
     fi
 }
 
+system_cmd() {
+    require_repo
+    require_file "$ROOT/core/system.py"
+    local action="${1:-status}"
+    [[ $# -eq 0 ]] || shift
+    python3 "$ROOT/core/system.py" "$action" --repo "$ROOT" "$@"
+}
+
 shell_cmd() {
     require_repo
     local action="${1:-status}"
@@ -134,7 +145,7 @@ shell_cmd() {
 }
 
 status_cmd() {
-    printf 'Cortetsu\nRoot: %s\nStage: dotfiles-foundation\n' "${ROOT:-unavailable}"
+    printf 'Cortetsu\nRoot: %s\nStage: unified-system-generations\n' "${ROOT:-unavailable}"
     if [[ -n "$BASE_INFO" && -f "$BASE_INFO" ]]; then
         printf '\nShell base contract:\n'; sed 's/^/  /' "$BASE_INFO"
     fi
@@ -145,14 +156,16 @@ status_cmd() {
         [[ -z "$(git -C "$ROOT" status --porcelain)" ]] && dirty=no || dirty=yes
         printf '\nGit:\n  branch=%s\n  revision=%s\n  dirty=%s\n' "${branch:-detached}" "$revision" "$dirty"
     fi
-    printf '\nRuntime generations:\n  root=%s\n' "$RUNTIME_ROOT"
+    printf '\nShell generations:\n  root=%s\n' "$RUNTIME_ROOT"
     show_generation current "$CURRENT"
     show_generation previous "$PREVIOUS"
     if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then show_generation archived_previous "$LEGACY_PREVIOUS"; fi
     printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
     if [[ -n "$ROOT" && -f "$ROOT/core/dotfiles.py" ]]; then
-        printf '\n'
-        dotfiles_cmd status
+        printf '\n'; dotfiles_cmd status
+    fi
+    if [[ -n "$ROOT" && -f "$ROOT/core/system.py" ]]; then
+        printf '\n'; system_cmd status
     fi
     printf '\nCanonical namespace:\n  commands=cortetsu-*\n  config=~/.config/cortetsu\n  state=~/.local/state/cortetsu\n  data=~/.local/share/cortetsu\n'
 }
@@ -174,6 +187,7 @@ test_cmd() {
         "scripts/features/test-shell-normalizer.py"
         "scripts/features/test-cortetsu-quality.py"
         "scripts/features/test-dotfiles-platform.py"
+        "scripts/features/test-system-generations.py"
         "caelestia/tests/test-calendar-credentials.py"
         "caelestia/tests/test-calendar-polish.py"
         "caelestia/tests/test-pomodoro.py"
@@ -229,7 +243,8 @@ verify_cmd() {
     run_python_test "caelestia/tests/test-runtime-contract.py"
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
     dotfiles_cmd verify
-    printf '\nCortetsu promoted runtime and dotfiles verified.\n'
+    system_cmd verify
+    printf '\nCortetsu promoted system verified.\n'
 }
 
 doctor_cmd() {
@@ -240,8 +255,9 @@ doctor_cmd() {
 
 plan_cmd() { dotfiles_cmd plan "$@"; }
 apply_cmd() { dotfiles_cmd apply "$@"; }
+rollback_cmd() { system_cmd rollback "$@"; systemctl --user daemon-reload >/dev/null 2>&1 || true; }
 audit_cmd() { require_repo; status_cmd; printf '\n===== DOCTOR =====\n'; doctor_cmd; printf '\n===== REPOSITORY TESTS =====\n'; test_cmd; printf '\n===== PROMOTED SYSTEM =====\n'; verify_cmd; }
-install_cmd() { require_repo; require_file "$ROOT/scripts/install-cortetsu.sh"; printf 'Cortetsu: building shell and dotfiles generations.\n'; bash "$ROOT/scripts/install-cortetsu.sh"; }
+install_cmd() { require_repo; require_file "$ROOT/scripts/install-cortetsu.sh"; printf 'Cortetsu: building shell, dotfiles and unified system generation.\n'; bash "$ROOT/scripts/install-cortetsu.sh"; }
 
 command="${1:-help}"
 shift || true
@@ -250,6 +266,9 @@ case "$command" in
     plan) plan_cmd "$@" ;;
     apply) apply_cmd "$@" ;;
     doctor) doctor_cmd "$@" ;;
+    generations) system_cmd status "$@" ;;
+    rollback) rollback_cmd "$@" ;;
+    system) system_cmd "$@" ;;
     dotfiles) dotfiles_cmd "$@" ;;
     shell) shell_cmd "$@" ;;
     test) test_cmd "$@" ;;
