@@ -1,4 +1,4 @@
-/* Thunar theme */
+/* Thunar theme — Cortetsu token-driven */
 
 /* =============================================================================
    Global Resets
@@ -14,7 +14,7 @@
    ============================================================================= */
 
 .thunar.background {
-    background: #0e0e0e;
+    background: @window_bg_color;
 }
 
 .thunar .titlebar {
@@ -29,7 +29,6 @@
    Layout Containers
    ============================================================================= */
 
-/* Paned separator between sidebar and main view */
 .thunar paned > separator {
     min-width: 4px;
     margin-right: -7px;
@@ -39,13 +38,11 @@
     box-shadow: none;
 }
 
-
-/* Main file view frame */
 .thunar .frame.standard-view {
     padding: 10px;
     margin: 10px 15px 0 0;
     border-radius: 15px;
-    background-color: #131313;
+    background-color: @card_bg_color;
     animation: fading 400ms ease forwards;
     opacity: 0;
     animation-delay: 250ms;
@@ -57,16 +54,15 @@
 }
 
 .thunar .frame.standard-view .view *:selected {
-    color: #c6c6c6;
+    color: @accent_color;
 }
 
 .thunar .rubberband {
-    background-color: alpha(#c6c6c6, 0.15);
-    border: 1px solid alpha(#c6c6c6, 0.15);
+    background-color: alpha(@accent_color, 0.15);
+    border: 1px solid alpha(@accent_color, 0.15);
 }
 
-
-/*  Tabs */
+/* Tabs */
 .thunar header.top {
     background: none;
     padding: 0 10px 0 0;
@@ -77,18 +73,18 @@
     margin: 0;
     transition: all ease 300ms;
 }
+
 .thunar header.top tabs .reorderable-page + .reorderable-page {
     margin: 0 0 0 10px;
 }
 
 .thunar header.top tabs .reorderable-page:hover {
-    background-color: alpha(#c6c6c6, 0.08);
-
+    background-color: alpha(@accent_color, 0.08);
 }
-.thunar header.top tabs .reorderable-page:checked {
-    color: #c6c6c6;
-    background-color: alpha(#c6c6c6, 0.15);
 
+.thunar header.top tabs .reorderable-page:checked {
+    color: @accent_color;
+    background-color: alpha(@accent_color, 0.15);
 }
 
 /* =============================================================================
@@ -111,12 +107,12 @@
 }
 
 .thunar .sidebar .view:hover {
-    background: alpha(#e5e5e5, 0.1);
+    background: alpha(@window_fg_color, 0.1);
 }
 
 .thunar .sidebar .view:selected {
-    background: alpha(#c6c6c6, 0.15);
-    color: #c6c6c6;
+    background: alpha(@accent_color, 0.15);
+    color: @accent_color;
 }
 
 /* =============================================================================
@@ -132,18 +128,18 @@
 .thunar .location-button.toggle:checked,
 .thunar .path-bar-button.toggle:checked {
     padding: 8px 25px;
-    background: alpha(#c6c6c6, 0.15);
-    color: #c6c6c6;
+    background: alpha(@accent_color, 0.15);
+    color: @accent_color;
     box-shadow: none;
 }
 
 .thunar .location-button.path-bar-button:not(:checked) {
-    background-color: #131313;
+    background-color: @card_bg_color;
 }
 
 .thunar .location-button.path-bar-button:not(:checked):hover {
-    background: alpha(#c6c6c6, 0.08);
-    color: alpha(#c6c6c6, 0.8);
+    background: alpha(@accent_color, 0.08);
+    color: alpha(@accent_color, 0.8);
 }
 
 .thunar .location-button.toggle+.location-button.toggle:checked {
@@ -160,7 +156,7 @@
    ============================================================================= */
 
 .thunar button.toggle:checked {
-    color: #c6c6c6;
+    color: @accent_color;
 }
 
 .thunar .image-button {
@@ -174,13 +170,12 @@
    ============================================================================= */
 
 .thunar statusbar {
-    background-color: #131313;
+    background-color: @card_bg_color;
     border-radius: 15px;
     padding: 10px 10px;
     margin: 15px 5px 15px -10px;
-    color: #e5e5e5;
+    color: @window_fg_color;
 }
-
 
 /* =============================================================================
    Image preview
@@ -189,7 +184,6 @@
 .thunar box.vertical .image {
     margin: 15px;
 }
-
 
 /* =============================================================================
    Animation
