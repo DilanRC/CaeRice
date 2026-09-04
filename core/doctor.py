@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dotfiles
+import shell_lifecycle
 
 
 def check(name: str, status: str, detail: str, required: bool = False) -> dict:
@@ -70,6 +71,13 @@ def run(repo: Path, profile_name: str | None) -> list[dict]:
 
     service = Path.home() / ".config/systemd/user/cortetsu-shell.service"
     results.append(check("shell-service", "ok" if service.exists() else "warn", str(service)))
+
+    legacy_lifecycle = shell_lifecycle.scan(Path.home())
+    if legacy_lifecycle:
+        detail = "; ".join(str(item["path"]) for item in legacy_lifecycle)
+        results.append(check("shell-lifecycle", "error", f"legacy direct launch/kill references: {detail}", True))
+    else:
+        results.append(check("shell-lifecycle", "ok", "systemd --user is the only process owner", True))
 
     secret_tool = shutil.which("secret-tool")
     results.append(check("secret-service", "ok" if secret_tool else "warn", secret_tool or "secret-tool missing"))

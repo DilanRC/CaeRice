@@ -44,7 +44,7 @@ Usage:
   cortetsu rollback                Roll back shell + dotfiles as one system
   cortetsu system <action>         promote|verify|status|rollback|gc
   cortetsu dotfiles <action>       plan|apply|verify|status|rollback|gc
-  cortetsu shell <action>          status|adopt|restart|disable|logs
+  cortetsu shell <action>          status|adopt|reconcile|restart|disable|logs
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -112,6 +112,12 @@ system_cmd() {
     python3 "$ROOT/core/system.py" "$action" --repo "$ROOT" "$@"
 }
 
+reconcile_shell_lifecycle() {
+    require_repo
+    require_file "$ROOT/core/shell_lifecycle.py"
+    python3 "$ROOT/core/shell_lifecycle.py" migrate
+}
+
 shell_cmd() {
     require_repo
     local action="${1:-status}"
@@ -122,12 +128,16 @@ shell_cmd() {
             ;;
         adopt)
             require_file "${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/$SHELL_UNIT"
+            reconcile_shell_lifecycle
             systemctl --user daemon-reload
             pkill -TERM -x qs >/dev/null 2>&1 || true
             sleep 1
             systemctl --user enable --now "$SHELL_UNIT"
             systemctl --user is-active --quiet "$SHELL_UNIT" || fail "$SHELL_UNIT no quedó activo"
             printf 'Cortetsu shell supervision: adopted by systemd --user\n'
+            ;;
+        reconcile)
+            reconcile_shell_lifecycle
             ;;
         restart)
             systemctl --user daemon-reload
@@ -188,6 +198,7 @@ test_cmd() {
         "scripts/features/test-cortetsu-quality.py"
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"
+        "scripts/features/test-shell-lifecycle.py"
         "caelestia/tests/test-calendar-credentials.py"
         "caelestia/tests/test-calendar-polish.py"
         "caelestia/tests/test-pomodoro.py"

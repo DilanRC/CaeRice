@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import os
+import subprocess
+import tempfile
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[2]
+SCRIPT = REPO / "core/shell_lifecycle.py"
+
+with tempfile.TemporaryDirectory(prefix="cortetsu-shell-lifecycle-") as tmp:
+    root = Path(tmp)
+    home = root / "home"
+    data = root / "data"
+    hypr = home / ".config/hypr/hyprland"
+    hypr.mkdir(parents=True)
+
+    execs = hypr / "execs.lua"
+    keybinds = hypr / "keybinds.lua"
+    stale_backup = hypr / "keybinds.lua.bak"
+
+    execs.write_text(
+        'hl.exec_cmd("caelestia shell -d")\n'
+        'hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/caelestia-wallpaper-color-daemon")\n',
+        encoding="utf-8",
+    )
+    keybinds.write_text(
+        'hl.dispatch(hl.dsp.exec_cmd("caelestia shell -d"))\n'
+        'create_bind("CTRL + SUPER + SHIFT + R", hl.dsp.exec_cmd("qs -c caelestia kill"), release)\n'
+        'hl.dsp.exec_cmd("qs -c caelestia kill; sleep .1; caelestia shell -d")\n'
+        'create_bind(vars.kbScreenshot, hl.dsp.exec_cmd("caelestia screenshot"), locked)\n',
+        encoding="utf-8",
+    )
+    stale_backup.write_text('caelestia shell -d\n', encoding="utf-8")
+
+    env = os.environ.copy()
+    env.update(HOME=str(home), CORTETSU_DATA_ROOT=str(data))
+
+    scan = subprocess.run(
+        ["python3", str(SCRIPT), "scan", "--home", str(home)],
+        cwd=REPO,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    assert scan.returncode == 1
+    assert "execs.lua" in scan.stdout and "keybinds.lua" in scan.stdout
+
+    migrated = subprocess.run(
+        ["python3", str(SCRIPT), "migrate", "--home", str(home)],
+        cwd=REPO,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=True,
+    )
+    assert "MIGRATED lifecycle=" in migrated.stdout
+    assert "BACKUP lifecycle=" in migrated.stdout
+
+    execs_text = execs.read_text(encoding="utf-8")
+    keybinds_text = keybinds.read_text(encoding="utf-8")
+    assert "caelestia shell -d" not in execs_text
+    assert "caelestia shell -d" not in keybinds_text
+    assert "qs -c caelestia kill" not in keybinds_text
+    assert "systemctl --user start cortetsu-shell.service" in execs_text
+    assert "systemctl --user start cortetsu-shell.service" in keybinds_text
+    assert "systemctl --user stop cortetsu-shell.service" in keybinds_text
+    assert "systemctl --user restart cortetsu-shell.service" in keybinds_text
+    assert "caelestia screenshot" in keybinds_text
+    assert stale_backup.read_text(encoding="utf-8") == "caelestia shell -d\n"
+
+    backups = list((data / "migrations").glob("*/hypr-shell-lifecycle/.config/hypr/hyprland/execs.lua"))
+    assert backups, "expected a backup of active Hyprland lifecycle config"
+    assert "caelestia shell -d" in backups[0].read_text(encoding="utf-8")
+
+    verify = subprocess.run(
+        ["python3", str(SCRIPT), "verify", "--home", str(home)],
+        cwd=REPO,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=True,
+    )
+    assert "PASS: Hyprland shell lifecycle is systemd-owned" in verify.stdout
+
+    second = subprocess.run(
+        ["python3", str(SCRIPT), "migrate", "--home", str(home)],
+        cwd=REPO,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=True,
+    )
+    assert "already reconciled" in second.stdout
+
+print("PASS: Hyprland lifecycle migration backs up active config, ignores backups, and is idempotent")
