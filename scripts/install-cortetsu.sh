@@ -67,13 +67,14 @@ printf '==> Generación unificada Cortetsu\n'
 python3 "$REPO/core/system.py" promote --repo "$REPO"
 
 # Never enable shell supervision implicitly. Once the user has explicitly
-# adopted it, however, an install should move the running process to the newly
-# promoted runtime automatically.
-if systemctl --user is-active --quiet cortetsu-shell.service 2>/dev/null; then
+# adopted it, is-enabled is our durable opt-in. Restarting also recovers a
+# previously adopted service that became inactive because an older unit used
+# Quickshell's --daemonize flag under Type=simple.
+if systemctl --user is-enabled --quiet cortetsu-shell.service 2>/dev/null; then
     if systemctl --user restart cortetsu-shell.service; then
-        printf 'Shell supervision: active service restarted on promoted runtime\n'
+        printf 'Shell supervision: adopted service running on promoted runtime\n'
     else
-        printf 'WARN: cortetsu-shell.service estaba activo pero no pudo reiniciarse\n' >&2
+        printf 'WARN: cortetsu-shell.service está habilitado pero no pudo arrancar\n' >&2
     fi
 fi
 
