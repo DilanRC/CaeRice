@@ -23,7 +23,14 @@ package = "caelestia-shell"
 installed_version = "2.4.0-1"
 tag = "v2.4.0"
 commit = "24aa15eefdb146350d2548c0a015b04eddbd1008"
-runtime = "/etc/xdg/quickshell/caelestia"
+package_runtime = "/etc/xdg/quickshell/caelestia"
+
+[runtime]
+mode = "versioned-user-generations"
+current = "~/.config/quickshell/caelestia/current"
+previous = "~/.config/quickshell/caelestia/previous"
+generations = "~/.local/share/cortetsu/builds"
+package_runtime_policy = "read-only"
 
 [compatibility]
 policy = "Preserve legacy identifiers until an idempotent, backed-up and tested migration exists."
@@ -48,6 +55,8 @@ current_modules = [
   "hardware",
   "display",
   "wallpaper",
+  "calendar",
+  "pomodoro",
 ]
 retired_modules = ["gaming-center", "caerice-updater"]
 planned_layers = [
@@ -61,7 +70,7 @@ planned_layers = [
 ]
 
 [safety]
-write_strategy = "stage-validate-backup-apply-verify"
+write_strategy = "build-validate-promote-verify"
 allow_secrets_in_git = false
 allow_blind_upstream_overwrite = false
 require_capability_detection = true
