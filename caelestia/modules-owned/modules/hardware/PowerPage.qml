@@ -73,12 +73,13 @@ Item {
         return index >= 0 && index < gpus.length ? gpus[index] : ({});
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 2500
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 

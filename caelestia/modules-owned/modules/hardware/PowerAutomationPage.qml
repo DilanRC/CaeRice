@@ -93,12 +93,13 @@ Item {
             root.statusText = qsTr("Automation disabled · no background watcher");
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 3500
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 

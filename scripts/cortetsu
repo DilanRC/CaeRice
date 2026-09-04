@@ -3,8 +3,8 @@ set -euo pipefail
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
-DATA_ROOT="${CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
-RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}}"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
+RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 CURRENT="$RUNTIME_ROOT/current"
 PREVIOUS="$RUNTIME_ROOT/previous"
 LEGACY_PREVIOUS="$RUNTIME_ROOT/legacy-previous"

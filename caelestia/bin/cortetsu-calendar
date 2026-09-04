@@ -35,7 +35,6 @@ AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 API_ROOT = "https://www.googleapis.com/calendar/v3"
 SERVICE = "cortetsu-google-calendar"
-LEGACY_SERVICE = "cortetsu-google-calendar"
 STALE_SECONDS = 900
 LOOKBACK_DAYS = 62
 LOOKAHEAD_DAYS = 370
@@ -47,8 +46,8 @@ class CalendarError(RuntimeError):
 
 
 def paths() -> tuple[Path, Path, Path]:
-    config = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "caelestia"
-    cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "caelestia"
+    config = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "cortetsu"
+    cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "cortetsu"
     return (
         config / "calendar-client.json",
         config / "calendar-selection.json",
@@ -113,16 +112,7 @@ def _secret_lookup(service: str) -> str | None:
 
 
 def secret_get() -> str | None:
-    current = _secret_lookup(SERVICE)
-    if current:
-        return current
-    legacy = _secret_lookup(LEGACY_SERVICE)
-    if legacy:
-        try:
-            secret_set(legacy)
-        except (CalendarError, OSError, subprocess.SubprocessError):
-            pass
-    return legacy
+    return _secret_lookup(SERVICE)
 
 
 def secret_set(token: str) -> None:
@@ -144,7 +134,7 @@ def secret_set(token: str) -> None:
 
 def secret_clear() -> None:
     tool = _secret_tool()
-    for service in (SERVICE, LEGACY_SERVICE):
+    for service in (SERVICE,):
         subprocess.run(
             [tool, "clear", "service", service],
             check=False,

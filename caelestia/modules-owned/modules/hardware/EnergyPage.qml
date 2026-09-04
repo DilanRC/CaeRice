@@ -67,12 +67,13 @@ Item {
             probe.running = true;
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { if (root.visible) refresh(); }
+    onVisibleChanged: { if (visible) refresh(); }
 
     Timer {
         interval: 2000
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: root.refresh()
     }
 
