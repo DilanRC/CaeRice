@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
+import os
 import subprocess
+import tempfile
 import tomllib
 from pathlib import Path
 
@@ -55,4 +58,36 @@ assert "core/theme.py\" check" in install
 assert "core/theme.py\" adopt" in install
 assert "install-theme-bridge.py" not in install
 
-print("PASS: ui.toml owns Cortetsu shell/Kitty/GTK/KDE theme outputs without active Caelestia desktop mutation")
+with tempfile.TemporaryDirectory(prefix="cortetsu-theme-test-") as tmp:
+    root = Path(tmp)
+    home = root / "home"
+    config = home / ".config"
+    data = home / ".local/share"
+    cli = config / "caelestia/cli.json"
+    cli.parent.mkdir(parents=True)
+    original = {
+        "theme": {
+            "enableTerm": True,
+            "enableHypr": True,
+            "enableGtk": True,
+            "enableQt": True,
+            "enableDiscord": True,
+            "postHook": "/example/preserved-hook",
+        }
+    }
+    cli.write_text(json.dumps(original), encoding="utf-8")
+    env = os.environ.copy()
+    env.update({"HOME": str(home), "XDG_CONFIG_HOME": str(config), "XDG_DATA_HOME": str(data)})
+    subprocess.run(["python3", str(repo / "core/theme.py"), "adopt", "--repo", str(repo)], env=env, check=True)
+    migrated = json.loads(cli.read_text(encoding="utf-8"))
+    for key in ("enableTerm", "enableHypr", "enableGtk", "enableQt"):
+        assert migrated["theme"][key] is False
+    assert migrated["theme"]["enableDiscord"] is True
+    assert migrated["theme"]["postHook"] == "/example/preserved-hook"
+    backups = list((data / "cortetsu/migrations").glob("*/theme-ownership/cli.json"))
+    assert len(backups) == 1
+    assert json.loads(backups[0].read_text(encoding="utf-8")) == original
+    subprocess.run(["python3", str(repo / "core/theme.py"), "adopt", "--repo", str(repo)], env=env, check=True)
+    assert len(list((data / "cortetsu/migrations").glob("*/theme-ownership/cli.json"))) == 1
+
+print("PASS: ui.toml owns Cortetsu shell/Kitty/GTK/KDE theme outputs and safely disables Caelestia desktop mutation")
