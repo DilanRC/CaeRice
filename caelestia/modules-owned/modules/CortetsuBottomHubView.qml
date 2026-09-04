@@ -20,7 +20,7 @@ Item {
     required property string bluetoothIcon
     required property bool bluetoothActive
     required property string batteryIcon
-    required property color batteryIconColor
+    required property bool batteryCritical
     required property string batteryTooltip
     required property int notificationCount
     required property bool sidebarActive
@@ -119,7 +119,7 @@ Item {
         bluetoothIcon: root.bluetoothIcon
         bluetoothActive: root.bluetoothActive
         batteryIcon: root.batteryIcon
-        batteryIconColor: root.batteryIconColor
+        batteryCritical: root.batteryCritical
         batteryTooltip: root.batteryTooltip
         notificationCount: root.notificationCount
         sidebarActive: root.sidebarActive
