@@ -10,6 +10,11 @@ lock_file="$state_dir/lock"
 
 hash_sources() {
     {
+        if pgrep -u "$USER" -f 'linux-wallpaperengine' >/dev/null 2>&1; then
+            printf 'wallpaper-engine=active\n'
+        else
+            printf 'wallpaper-engine=inactive\n'
+        fi
         if [[ -f "$active_config" ]]; then
             stat -c '%Y %s' "$active_config"
             jq -r '.activeWallpapers | to_entries[]? | "\(.key)=\(.value.backgroundId)"' "$active_config" 2>/dev/null || true

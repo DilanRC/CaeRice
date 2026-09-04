@@ -78,6 +78,7 @@ for marker in ("legacy-processes.lock", "DEFERRED", "NO_PROCESS_SIGNALING", "cae
     assert marker in legacy_process_migration, marker
 assert "pkill" not in legacy_process_migration and "killpg" not in legacy_process_migration
 assert "flock -n 9" in wallpaper_daemon and "caelestia-wallpaper-color-daemon" not in wallpaper_daemon
+assert "wallpaper-engine=active" in wallpaper_daemon and "wallpaper-engine=inactive" in wallpaper_daemon
 assert "PartOf=graphical-session.target" in wallpaper_unit
 assert "Restart=on-failure" in wallpaper_unit
 assert "cortetsu-wallpaper-color-daemon" in wallpaper_unit
