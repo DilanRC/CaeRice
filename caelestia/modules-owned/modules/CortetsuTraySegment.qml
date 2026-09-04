@@ -14,6 +14,8 @@ Item {
 
     implicitWidth: trayRow.implicitWidth + CortetsuDesign.spacingStandard
     implicitHeight: 52
+    width: visible ? implicitWidth : 0
+    height: implicitHeight
     visible: items.length > 0
 
     CortetsuSurface {
@@ -37,6 +39,8 @@ Item {
 
                 implicitWidth: 34
                 implicitHeight: 40
+                width: implicitWidth
+                height: implicitHeight
 
                 CortetsuSurface {
                     anchors.fill: parent
