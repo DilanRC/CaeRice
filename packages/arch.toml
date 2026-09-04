@@ -24,3 +24,8 @@ commands = ["nmcli", "wpctl", "secret-tool", "powerprofilesctl"]
 required = false
 packages = ["clipse", "ddcutil"]
 commands = ["clipse", "ddcutil"]
+
+[group.wallpaper-colours]
+required = false
+packages = ["imagemagick", "python-materialyoucolor"]
+commands = ["magick", "python3"]

@@ -9,7 +9,7 @@ tmp="$(mktemp "${state}.tmp.XXXXXX")"
 trap 'rm -f "$tmp"' EXIT
 mkdir -p "$(dirname "$state")"
 
-# Compatibility boundary: the active QML runtime consumes this upstream M3
-# scheme contract. The watcher and ownership are Cortetsu-owned.
-/usr/bin/caelestia wallpaper -p "$image" | jq -e 'if .name == "dynamic" and (.colours.primary | type == "string") then . else error("invalid dynamic scheme") end' > "$tmp"
+# Cortetsu owns generation; the output deliberately preserves the M3 contract
+# consumed by the still-compatible upstream Colours.qml service.
+"$HOME/.local/bin/cortetsu-wallpaper-colours" "$image" | jq -e 'if .name == "dynamic" and (.colours.primary | type == "string") then . else error("invalid dynamic scheme") end' > "$tmp"
 install -m 0644 "$tmp" "$state"

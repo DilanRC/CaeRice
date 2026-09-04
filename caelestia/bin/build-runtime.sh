@@ -112,6 +112,8 @@ python3 "$REPO/scripts/features/test-cortetsu-screen-state.py"
 python3 "$REPO/scripts/features/test-legacy-process-migration.py"
 bash -n "$REPO/caelestia/bin/cortetsu-wallpaper-color-daemon"
 bash -n "$REPO/caelestia/bin/cortetsu-apply-wallpaper-colors"
+python3 -m py_compile "$REPO/caelestia/bin/cortetsu-wallpaper-colours"
+bash -n "$REPO/caelestia/bin/cortetsu-apply-wallpaper-colors"
 
 for required in \
     shell.qml \
