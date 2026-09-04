@@ -1,6 +1,6 @@
 # Cortetsu dotfiles platform
 
-Cortetsu no trata los dotfiles como enlaces sueltos al repositorio. Los construye como generaciones inmutables, valida el contenido y cambia una única referencia `current`.
+Cortetsu no trata los dotfiles como enlaces sueltos al repositorio. Construye tres capas inmutables: shell, dotfiles y una generación de sistema que fija exactamente qué versión de ambas forma el escritorio activo.
 
 ## Modelo
 
@@ -9,28 +9,47 @@ repo
   dotfiles/manifest.toml
   profiles/*.toml
   packages/arch.toml
-        |
-        v
-~/.local/share/cortetsu/dotfiles/builds/<id>/home/...
-        |
-        +-- current
-        +-- previous
-        |
-        v
-~/.config/... -> ~/.local/share/cortetsu/dotfiles/current/home/.config/...
+       │
+       ├── shell build
+       │     ~/.local/share/cortetsu/builds/<id>
+       │
+       ├── dotfiles build
+       │     ~/.local/share/cortetsu/dotfiles/builds/<id>/home/...
+       │
+       └── system generation
+             ~/.local/share/cortetsu/system/builds/<id>/SYSTEM.json
+                    │
+                    ├── shellGeneration
+                    └── dotfilesGeneration
 ```
 
-Los targets administrados apuntan siempre a la ruta estable `current`. Un cambio de generación modifica todo el conjunto sin volver a escribir cada configuración.
+Los targets administrados de usuario apuntan a la ruta estable `~/.local/share/cortetsu/dotfiles/current/home/...`. El shell usa `~/.config/quickshell/cortetsu/current`. La generación de sistema verifica que ambos `current` coinciden exactamente con el par registrado en `SYSTEM.json`.
+
+## Rollback completo
+
+`cortetsu rollback` es la operación de producto. Antes de cambiar nada valida la generación de sistema anterior, su shell y todos los hashes de sus dotfiles. Después mueve coordinadamente:
+
+```text
+system/current
+shell/current
+shell/previous
+dotfiles/current
+dotfiles/previous
+system/previous
+```
+
+Si una operación intermedia falla, restaura los `current` anteriores y no acepta la nueva combinación como válida. `cortetsu-rollback` sigue instalado únicamente como herramienta de recuperación de bajo nivel para el shell.
 
 ## Seguridad
 
 - paths absolutos y `..` son rechazados por schema;
 - un archivo existente no administrado se respalda antes de adoptarlo;
 - directorios completos existentes no se reemplazan automáticamente;
-- cada archivo de una generación tiene SHA-256 registrado;
-- `verify` valida hashes, perfil y enlaces administrados;
-- `rollback` intercambia `current` y `previous` sólo después de validar ambas generaciones;
-- `gc` nunca elimina `current` ni `previous`.
+- cada archivo de una generación de dotfiles tiene SHA-256 registrado;
+- `verify` valida hashes, perfil, enlaces administrados y coherencia shell/dotfiles/system;
+- `rollback` sólo usa generaciones previamente verificables;
+- `gc` nunca elimina `current` ni `previous`;
+- el runtime del paquete bajo `/etc` sigue siendo sólo referencia.
 
 ## Perfiles
 
@@ -40,16 +59,21 @@ Los targets administrados apuntan siempre a la ruta estable `current`. Un cambio
 
 ```bash
 cortetsu plan
-cortetsu apply
+cortetsu install
+cortetsu verify
+cortetsu generations
+cortetsu rollback
 cortetsu doctor
+
+cortetsu system status
+cortetsu system rollback
 cortetsu dotfiles status
 cortetsu dotfiles verify
-cortetsu dotfiles rollback
 cortetsu dotfiles gc
 ```
 
-`cortetsu install` aplica los dotfiles después de construir una generación de shell válida. El servicio `cortetsu-shell.service` se instala pero no se habilita automáticamente mientras exista la posibilidad de un autostart previo.
+`cortetsu install` construye primero un shell válido, promueve los dotfiles, ejecuta integraciones y finalmente crea una generación de sistema que fija ese par. El servicio `cortetsu-shell.service` se instala pero no se habilita automáticamente mientras exista la posibilidad de un autostart previo.
 
 ## Dirección
 
-Esta capa es la base para que packages, Hyprland, terminal, servicios, themes, scenes y el shell converjan en una única generación de sistema Cortetsu. Caelestia permanece temporalmente como adapter del shell, no como dueño de los dotfiles.
+El siguiente crecimiento de esta misma plataforma incorpora Hyprland completo, terminal, shell interactivo, Git, GTK/Qt, apps, package bootstrap, themes compilados y scenes al manifest. Caelestia permanece temporalmente como adapter del shell; no es dueño del sistema ni de los dotfiles.
