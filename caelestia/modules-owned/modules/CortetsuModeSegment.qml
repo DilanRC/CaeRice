@@ -18,6 +18,8 @@ Item {
 
     implicitWidth: content.implicitWidth + CortetsuDesign.spacingStandard
     implicitHeight: 52
+    width: implicitWidth
+    height: implicitHeight
 
     CortetsuSurface {
         anchors.fill: parent
