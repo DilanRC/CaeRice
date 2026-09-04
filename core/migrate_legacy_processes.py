@@ -88,15 +88,17 @@ def migrate(home: Path, data_root: Path) -> int:
         for path in files_to_scan(home):
             original = path.read_text(encoding="utf-8", errors="replace")
             kinds = classify(original)
-            if "wallpaper-color" in kinds:
+            if "wallpaper-color" in kinds and not (home / ".local/bin/cortetsu-wallpaper-color-daemon").exists():
                 deferred += 1
-            if "pomodoro" not in kinds:
+            if not kinds or ("pomodoro" not in kinds and "wallpaper-color" not in kinds):
                 continue
-            if not (home / ".local/bin/cortetsu-pomodoro").exists():
+            if "pomodoro" in kinds and not (home / ".local/bin/cortetsu-pomodoro").exists():
                 print("DEFERRED pomodoro: Cortetsu helper is not installed", file=sys.stderr)
+            if "wallpaper-color" in kinds and not (home / ".local/bin/cortetsu-wallpaper-color-daemon").exists():
                 continue
             backup_path(path, home, backup)
             updated = original.replace("caerice-pomodoro", "cortetsu-pomodoro")
+            updated = updated.replace("caelestia-wallpaper-color-daemon", "cortetsu-wallpaper-color-daemon")
             if updated != original:
                 path.write_text(updated, encoding="utf-8")
                 changed += 1

@@ -10,6 +10,7 @@ ensure_upstream = (repo / "caelestia/bin/ensure-upstream.sh").read_text(encoding
 installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 migration = (repo / "scripts/migrate-cortetsu-v2.sh").read_text(encoding="utf-8")
 legacy_process_migration = (repo / "core/migrate_legacy_processes.py").read_text(encoding="utf-8")
+wallpaper_daemon = (repo / "caelestia/bin/cortetsu-wallpaper-color-daemon").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
@@ -75,6 +76,7 @@ for marker in (
 for marker in ("legacy-processes.lock", "DEFERRED", "NO_PROCESS_SIGNALING", "caerice-pomodoro", "caelestia-wallpaper-color-daemon"):
     assert marker in legacy_process_migration, marker
 assert "pkill" not in legacy_process_migration and "killpg" not in legacy_process_migration
+assert "flock -n 9" in wallpaper_daemon and "caelestia-wallpaper-color-daemon" not in wallpaper_daemon
 
 for marker in (
     "atomic_link", "build.lock", "is_managed_generation", "BUILD.json",

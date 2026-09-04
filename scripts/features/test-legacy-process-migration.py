@@ -17,6 +17,7 @@ with tempfile.TemporaryDirectory(prefix="legacy-process-") as tmp:
     config.mkdir(parents=True)
     bin_dir.mkdir(parents=True)
     (bin_dir / "cortetsu-pomodoro").touch()
+    (bin_dir / "cortetsu-wallpaper-color-daemon").touch()
     execs = config / "execs.lua"
     execs.write_text(
         'hl.exec_cmd(os.getenv("HOME") .. "/.local/bin/caelestia-wallpaper-color-daemon")\n'
@@ -31,9 +32,9 @@ with tempfile.TemporaryDirectory(prefix="legacy-process-") as tmp:
     updated = execs.read_text(encoding="utf-8")
     assert "cortetsu-pomodoro daemon" in updated
     assert "caerice-pomodoro" not in updated
-    assert "caelestia-wallpaper-color-daemon" in updated
+    assert "cortetsu-wallpaper-color-daemon" in updated
     marker = (data / "legacy-processes.last").read_text(encoding="utf-8")
-    assert "changed=1" in marker and "deferred=1" in marker
+    assert "changed=1" in marker and "deferred=0" in marker
     backups = list((data / "migrations").glob("*/legacy-processes/config/hypr/execs.lua"))
     assert backups and "caerice-pomodoro" in backups[0].read_text(encoding="utf-8")
     subprocess.run(["python3", str(script), "migrate", "--home", str(home), "--data-root", str(data)], env=env, check=True)

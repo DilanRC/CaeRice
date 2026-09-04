@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+image="${1:-}"
+[[ -n "$image" && -f "$image" ]] || { echo "usage: cortetsu-apply-wallpaper-colors /path/to/image" >&2; exit 2; }
+
+state="${XDG_STATE_HOME:-$HOME/.local/state}/caelestia/scheme.json"
+tmp="$(mktemp "${state}.tmp.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+mkdir -p "$(dirname "$state")"
+
+# Compatibility boundary: the active QML runtime consumes this upstream M3
+# scheme contract. The watcher and ownership are Cortetsu-owned.
+/usr/bin/caelestia wallpaper -p "$image" | jq -e 'if .name == "dynamic" and (.colours.primary | type == "string") then . else error("invalid dynamic scheme") end' > "$tmp"
+install -m 0644 "$tmp" "$state"
+if [[ -x "$HOME/.local/bin/cortetsu-scheme-posthook" ]]; then
+    "$HOME/.local/bin/cortetsu-scheme-posthook"
+fi
