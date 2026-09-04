@@ -30,6 +30,8 @@ while IFS= read -r -d '' source; do
     install -m 0755 "$source" "$BIN_DIR/$name"
 done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'cortetsu-*' -print0 | sort -z)
 
+# Low-level shell rollback remains available for recovery. Normal operation uses
+# `cortetsu rollback`, which reverts the full system generation.
 install -m 0755 "$REPO/caelestia/bin/rollback-runtime.sh" "$BIN_DIR/cortetsu-rollback"
 install -m 0755 "$REPO/caelestia/bin/caelestia" "$BIN_DIR/caelestia"
 
@@ -58,9 +60,14 @@ if [[ -f "$DATA_ROOT/.power-auto-was-enabled" && -f "$SYSTEMD_USER_DIR/cortetsu-
     fi
 fi
 
+printf '==> Generación unificada Cortetsu\n'
+python3 "$REPO/core/system.py" promote --repo "$REPO"
+
 runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
+printf 'System runtime: %s/system/current\n' "$DATA_ROOT"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
 printf 'cortetsu-shell.service se instala sin habilitar para evitar un segundo shell durante la transición.\n'
-printf 'Reinicio: pkill -TERM -x qs; sleep 1; qs -p %q -n -d\n' "$runtime_root/current"
+printf 'Rollback completo: cortetsu rollback\n'
+printf 'Reinicio manual: pkill -TERM -x qs; sleep 1; qs -p %q -n -d\n' "$runtime_root/current"
