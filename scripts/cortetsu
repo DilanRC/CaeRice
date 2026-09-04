@@ -128,6 +128,7 @@ test_cmd() {
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
+    run_bash_test "scripts/features/test-upstream-bootstrap.sh"
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
     printf '\nCortetsu repository regressions passed.\n'
 }

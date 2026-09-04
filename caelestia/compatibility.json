@@ -7,7 +7,8 @@
     "version": "2.4.0",
     "upstreamTag": "v2.4.0",
     "upstreamTagObject": "15c41f3e19818199f653aa7dcec81d49affd7152",
-    "upstreamCommit": "24aa15eefdb146350d2548c0a015b04eddbd1008"
+    "upstreamCommit": "24aa15eefdb146350d2548c0a015b04eddbd1008",
+    "upstreamRepo": "https://github.com/caelestia-dots/shell.git"
   },
   "quickshell": {
     "package": "quickshell-git",

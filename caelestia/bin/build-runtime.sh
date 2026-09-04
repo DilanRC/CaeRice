@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
-UPSTREAM="${CORTETSU_UPSTREAM_SOURCE:-$HOME/.local/share/cortetsu/upstream/upstream-git}"
+UPSTREAM="$(bash "$REPO/caelestia/bin/ensure-upstream.sh")"
 COMPATIBILITY="$REPO/caelestia/compatibility.json"
 BUILD_ROOT="$DATA_ROOT/builds"
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
@@ -36,7 +36,6 @@ cleanup() {
 trap cleanup EXIT
 
 require_file "$COMPATIBILITY"
-require_file "$UPSTREAM/shell.qml"
 require_file "$REPO/caelestia/patches/MANIFEST.tsv"
 
 readarray -t upstream_contract < <(

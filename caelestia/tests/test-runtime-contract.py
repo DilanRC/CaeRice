@@ -6,6 +6,7 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 build = (repo / "caelestia/bin/build-runtime.sh").read_text(encoding="utf-8")
+ensure_upstream = (repo / "caelestia/bin/ensure-upstream.sh").read_text(encoding="utf-8")
 installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 migration = (repo / "scripts/migrate-cortetsu-v2.sh").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
@@ -19,11 +20,12 @@ composition = json.loads((repo / "caelestia/composition.json").read_text(encodin
 assert compatibility["project"] == "Cortetsu"
 assert compatibility["caelestiaShell"]["upstreamTag"] == "v2.4.0"
 assert compatibility["caelestiaShell"]["upstreamCommit"] == "24aa15eefdb146350d2548c0a015b04eddbd1008"
+assert compatibility["caelestiaShell"]["upstreamRepo"] == "https://github.com/caelestia-dots/shell.git"
 assert compatibility["sourceOfTruth"] == "https://github.com/DilanRC/Cortetsu.git"
 assert composition["description"].startswith("Single staged Cortetsu")
 
 for marker in (
-    "CORTETSU_DATA_ROOT", "CORTETSU_RUNTIME_ROOT", "CORTETSU_UPSTREAM_SOURCE",
+    "CORTETSU_DATA_ROOT", "CORTETSU_RUNTIME_ROOT", "ensure-upstream.sh",
     'git -C "$UPSTREAM" archive', "STAGING=", "atomic_link",
     "test-calendar-credentials.py", "test-calendar-polish.py", "test-runtime-contract.py",
     "is_managed_generation",
@@ -32,6 +34,17 @@ for marker in (
 assert 'cp -a "$PACKAGE_ROOT' not in build
 assert "/etc/xdg/quickshell/caelestia" not in build
 assert "CAERICE_" not in build and "caerice-" not in build
+
+for marker in (
+    "CORTETSU_UPSTREAM_SOURCE",
+    "CORTETSU_UPSTREAM_CACHE",
+    "caelestia-custom-system/upstream-git",
+    "repo_has_exact_base",
+    "git clone --local --no-checkout",
+    "git -C \"$path\" fetch --force --depth=1 origin",
+    "https://github.com/caelestia-dots/shell.git",
+):
+    assert marker in ensure_upstream, marker
 
 for marker in (
     "scripts/migrate-cortetsu-v2.sh",
@@ -79,4 +92,4 @@ for marker in (
     assert marker in cli, marker
 assert "CAERICE_" not in cli and "caerice-" not in cli
 
-print("PASS: Cortetsu v2 canonical namespace, staged runtime, migration, helpers and rollback contract")
+print("PASS: Cortetsu v2 canonical namespace, self-healing upstream, staged runtime, migration, helpers and rollback contract")
