@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -9,13 +8,11 @@ import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
 import Caelestia.Config
-import qs.components
-import qs.components.effects
 import qs.services
 import qs.services as Services
 import qs.utils
 import qs.modules.launcher.services
-    import "OverlayPolicy.js" as OverlayPolicy
+import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
     id: hubRoot
@@ -63,7 +60,7 @@ Scope {
 
     FileView {
         id: pomodoroNotification
-        path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/caelestia/pomodoro-notification.json`
+        path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/cortetsu/pomodoro-notification.json`
         watchChanges: true
         printErrors: false
         property string consumed: ""
@@ -227,22 +224,42 @@ Scope {
                 || (screenState?.session ?? false)
                 || (screenState?.calendar ?? false)
             readonly property int hubMargin: 8
-            readonly property int appRailMaxWidth: Math.max(
-                180,
-                modelData.width - Math.max(leftSegment.width, rightOccupiedWidth) * 2 - 48
-            )
-            readonly property int rightOccupiedWidth:
-                statusSegment.width + (traySegment.visible ? traySegment.width + 8 : 0)
             readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
             readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
             readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
+            readonly property var occupiedWorkspaceIds: Hypr.workspaces.values
+                .filter(ws => ws.lastIpcObject?.windows > 0)
+                .map(ws => ws.id)
+
+            readonly property string volumeIcon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
+            readonly property string networkIcon: Nmcli.activeEthernet
+                ? "cable"
+                : Nmcli.active
+                    ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0)
+                    : "wifi_off"
+            readonly property bool networkActive: Nmcli.activeEthernet || !!Nmcli.active
+            readonly property bool bluetoothActive: Bluetooth.devices.values.some(device => device.connected)
+            readonly property string bluetoothIcon: !Bluetooth.defaultAdapter?.enabled
+                ? "bluetooth_disabled"
+                : bluetoothActive
+                    ? "bluetooth_connected"
+                    : "bluetooth"
+            readonly property bool batteryCharging: [
+                UPowerDeviceState.Charging,
+                UPowerDeviceState.FullyCharged,
+                UPowerDeviceState.PendingCharge
+            ].includes(UPower.displayDevice.state)
+            readonly property string batteryIcon: UPower.displayDevice.isLaptopBattery
+                ? Icons.getBatteryIcon(UPower.displayDevice.percentage, batteryCharging)
+                : "balance"
+            readonly property bool batteryCritical:
+                UPower.onBattery && UPower.displayDevice.percentage <= 0.2
+            readonly property string batteryTooltip: UPower.displayDevice.isLaptopBattery
+                ? qsTr("Battery %1%").arg(Math.round(UPower.displayDevice.percentage * 100))
+                : qsTr("Power profile")
 
             property date now: new Date()
             property var pendingFocusClient: null
-
-            function popoutAnchorCenter(item): real {
-                return hubMargin + item.mapToItem(hubRow, item.width / 2, 0).x;
-            }
 
             readonly property var dockItems: {
                 const clients = Hypr.toplevels.values.filter(client => {
@@ -300,6 +317,34 @@ Scope {
                     result.push(group);
 
                 return result;
+            }
+
+            readonly property var dockViewItems: dockItems.map(item => ({
+                key: item.key,
+                pinned: item.pinned,
+                running: item.windows.length > 0,
+                active: item.windows.some(
+                    client => client.lastIpcObject?.address === activeAddress
+                ),
+                iconSource: item.entry?.icon
+                    ? Quickshell.iconPath(item.entry.icon, "image-missing")
+                    : Icons.getAppIcon(item.className, "image-missing"),
+                windowCount: item.windows.length
+            }))
+
+            readonly property var trayViewItems: SystemTray.items.values
+                .filter(item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id))
+                .map(item => ({
+                    id: item.id,
+                    iconSource: item.icon || Icons.getTrayIcon(item.id, item.icon)
+                }))
+
+            function dockItemForKey(key): var {
+                return dockItems.find(item => item.key === key) ?? null;
+            }
+
+            function trayItemForId(itemId): var {
+                return SystemTray.items.values.find(item => item.id === itemId) ?? null;
             }
 
             function togglePinned(item): void {
@@ -404,6 +449,67 @@ Scope {
                 focusWindow(item.windows[(index + direction + count) % count]);
             }
 
+            function activateDockKey(key): void {
+                const item = dockItemForKey(key);
+                if (item)
+                    activateItem(item);
+            }
+
+            function cycleDockKey(key, direction): void {
+                const item = dockItemForKey(key);
+                if (item)
+                    cycleItem(item, direction);
+            }
+
+            function closeDockKey(key): void {
+                const item = dockItemForKey(key);
+                if (!item)
+                    return;
+                const active = activeWindowFor(item);
+                closeWindow(active ?? item.windows[0]);
+            }
+
+            function togglePinnedKey(key): void {
+                const item = dockItemForKey(key);
+                if (item)
+                    togglePinned(item);
+            }
+
+            function showTrayMenu(itemId, centerX): void {
+                const item = trayItemForId(itemId);
+                if (!item)
+                    return;
+                const sourceIndex = SystemTray.items.values.indexOf(item);
+                if (sourceIndex < 0)
+                    return;
+                hubRoot.showAttachedControlFor(
+                    modelData,
+                    `traymenu${sourceIndex}`,
+                    hubMargin + centerX
+                );
+            }
+
+            function activateTrayItem(itemId, secondary = false): void {
+                const item = trayItemForId(itemId);
+                if (!item)
+                    return;
+                if (secondary)
+                    item.secondaryActivate();
+                else
+                    item.activate();
+            }
+
+            function toggleSession(): void {
+                if (!screenState)
+                    return;
+
+                const wasOpen = screenState.session;
+                hubRoot.closeAllLaunchers();
+                hubRoot.closeAllPanels();
+                OverlayPolicy.closeOtherPanels(screenState);
+                screenState.session = !wasOpen;
+            }
+
             Process {
                 id: cursorPosProcess
 
@@ -468,555 +574,79 @@ Scope {
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
             implicitWidth: modelData.width - hubMargin * 2
-            implicitHeight: hubSurface.implicitHeight + 6
+            implicitHeight: bottomHubView.implicitHeight + 6
 
-            StyledRect {
-                id: hubSurface
+            CortetsuBottomHubView {
+                id: bottomHubView
 
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                implicitHeight: 60
-                radius: 0
-                color: "transparent"
-                border.width: 0
-
-                Item {
-                    id: hubRow
-                    anchors.fill: parent
-
-                    StyledRect {
-                        id: leftSegment
-
-                        anchors.left: parent.left
-                        anchors.leftMargin: 2
-                        anchors.verticalCenter: parent.verticalCenter
-                        implicitWidth: modeRow.implicitWidth + 12
-                        implicitHeight: 52
-                        radius: Tokens.rounding.full
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Row {
-                            id: modeRow
-                            anchors.centerIn: parent
-                            spacing: 2
-
-                            HubButton {
-                                buttonSize: 44
-                                imageSource: "file:///usr/share/icons/cachyos.svg"
-                                active: win.screenState?.launcher ?? false
-                                tooltip: qsTr("Applications")
-                                onClicked: hubRoot.toggleLauncherFor(win.modelData)
-                            }
-
-                            HubButton {
-                                buttonSize: 40
-                                cropImage: true
-                                imageSource: Wallpapers.actualCurrent
-                                active: win.screenState?.wallpaperManager ?? false
-                                tooltip: qsTr("Wallpaper manager")
-                                onClicked: hubRoot.openWallpaperFor(win.modelData)
-                            }
-
-                            Row {
-                                id: workspaceDots
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 5
-
-                                Item {
-                                    width: 3
-                                    height: 1
-                                }
-
-                                Repeater {
-                                    model: win.workspaceCount
-
-                                    Item {
-                                        id: workspaceDot
-                                        required property int index
-                                        readonly property int wsId: win.workspaceOffset + index + 1
-                                        readonly property bool active: wsId === win.activeWsId
-                                        readonly property bool occupied: Hypr.workspaces.values.some(
-                                            ws => ws.id === wsId && ws.lastIpcObject?.windows > 0
-                                        )
-
-                                        width: active ? 18 : 8
-                                        height: 28
-
-                                        Behavior on width {
-                                            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                                        }
-
-                                        StyledRect {
-                                            anchors.centerIn: parent
-                                            width: workspaceDot.active ? 18 : 8
-                                            height: 8
-                                            radius: Tokens.rounding.full
-                                            color: workspaceDot.active
-                                                ? Colours.palette.m3primary
-                                                : workspaceDot.occupied
-                                                    ? Colours.palette.m3secondary
-                                                    : Colours.palette.m3outlineVariant
-
-                                            Behavior on width {
-                                                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                                            }
-                                        }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: Hypr.dispatch(
-                                                Hypr.usingLua
-                                                    ? `hl.dsp.focus({ workspace = "${workspaceDot.wsId}" })`
-                                                    : `workspace ${workspaceDot.wsId}`
-                                            )
-                                        }
-                                    }
-                                }
-
-                                Item {
-                                    width: 7
-                                    height: 1
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        id: appSegment
-
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                        implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)
-                        implicitHeight: 52
-                        radius: Tokens.rounding.full
-                        color: Colours.tPalette.m3surfaceContainer
-                        clip: true
-
-                        Flickable {
-                            id: appRail
-                            anchors.fill: parent
-                            anchors.leftMargin: 7
-                            anchors.rightMargin: 7
-                            contentWidth: appRailContent.implicitWidth
-                            contentHeight: height
-                            boundsBehavior: Flickable.StopAtBounds
-                            interactive: contentWidth > width
-                            clip: true
-
-                            Row {
-                                id: appRailContent
-                                height: parent.height
-                                spacing: 4
-
-                                Repeater {
-                                    model: win.dockItems
-
-                                    Item {
-                                        id: appItem
-                                        required property var modelData
-
-                                        readonly property bool running: modelData.windows.length > 0
-                                        readonly property bool active: modelData.windows.some(
-                                            client => client.lastIpcObject?.address === win.activeAddress
-                                        )
-                                        readonly property string iconSource: {
-                                            if (modelData.entry?.icon)
-                                                return Quickshell.iconPath(modelData.entry.icon, "image-missing");
-                                            return Icons.getAppIcon(modelData.className, "image-missing");
-                                        }
-
-                                        implicitWidth: 46
-                                        implicitHeight: 52
-                                        scale: appMouse.containsMouse ? 1.10 : 1
-
-                                        Behavior on scale {
-                                            NumberAnimation {
-                                                duration: 110
-                                                easing.type: Easing.OutCubic
-                                            }
-                                        }
-
-                                        StyledRect {
-                                            anchors.fill: parent
-                                            anchors.topMargin: 2
-                                            anchors.bottomMargin: 2
-                                            radius: Tokens.rounding.large
-                                            color: appItem.active
-                                                ? Colours.palette.m3secondaryContainer
-                                                : appMouse.containsMouse
-                                                    ? Colours.palette.m3surfaceContainerHighest
-                                                    : "transparent"
-                                            border.width: 0
-
-                                            Behavior on color {
-                                                ColorAnimation { duration: 110 }
-                                            }
-                                        }
-
-                                        Image {
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 6
-                                            width: 32
-                                            height: 32
-                                            source: appItem.iconSource
-                                            fillMode: Image.PreserveAspectFit
-                                            smooth: true
-                                            mipmap: true
-                                            opacity: appItem.running ? 1 : 0.62
-                                        }
-
-                                        StyledRect {
-                                            visible: appItem.modelData.pinned && !appItem.running
-                                            anchors.top: parent.top
-                                            anchors.right: parent.right
-                                            anchors.topMargin: 6
-                                            anchors.rightMargin: 5
-                                            width: 7
-                                            height: 7
-                                            radius: 4
-                                            color: Colours.palette.m3tertiary
-                                        }
-
-                                        Row {
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.bottom: parent.bottom
-                                            anchors.bottomMargin: 4
-                                            spacing: 3
-                                            visible: appItem.running
-
-                                            Repeater {
-                                                model: Math.min(appItem.modelData.windows.length, 4)
-
-                                                Rectangle {
-                                                    required property int index
-                                                    width: appItem.active ? 12 : 5
-                                                    height: 5
-                                                    radius: 3
-                                                    color: appItem.active
-                                                        ? Colours.palette.m3primary
-                                                        : Colours.palette.m3onSurfaceVariant
-                                                    opacity: index < 3 ? 1 : 0.55
-                                                }
-                                            }
-                                        }
-
-                                        MouseArea {
-                                            id: appMouse
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-                                            cursorShape: Qt.PointingHandCursor
-
-                                            onClicked: event => {
-                                                if (event.button === Qt.RightButton) {
-                                                    win.togglePinned(appItem.modelData);
-                                                    return;
-                                                }
-
-                                                if (event.button === Qt.MiddleButton) {
-                                                    const activeWindow = win.activeWindowFor(appItem.modelData);
-                                                    win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);
-                                                    return;
-                                                }
-
-                                                win.activateItem(appItem.modelData);
-                                            }
-
-                                            onWheel: wheel => {
-                                                if (wheel.angleDelta.y > 0)
-                                                    win.cycleItem(appItem.modelData, -1);
-                                                else if (wheel.angleDelta.y < 0)
-                                                    win.cycleItem(appItem.modelData, 1);
-
-                                                wheel.accepted = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        id: traySegment
-
-                        readonly property var trayItems: SystemTray.items.values.filter(
-                            item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id)
-                        )
-
-                        visible: trayItems.length > 0
-                        anchors.right: statusSegment.left
-                        anchors.rightMargin: 8
-                        anchors.verticalCenter: parent.verticalCenter
-                        implicitWidth: trayRow.implicitWidth + 12
-                        implicitHeight: 52
-                        radius: Tokens.rounding.full
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Row {
-                            id: trayRow
-                            anchors.centerIn: parent
-                            spacing: 2
-
-                            Repeater {
-                                model: traySegment.trayItems
-
-                                Item {
-                                    id: trayItem
-                                    required property SystemTrayItem modelData
-                                    readonly property int sourceIndex: SystemTray.items.values.indexOf(modelData)
-                                    readonly property string iconSource: modelData.icon
-                                        || Icons.getTrayIcon(modelData.id, modelData.icon)
-
-                                    implicitWidth: 34
-                                    implicitHeight: 40
-
-                                    ColouredIcon {
-                                        anchors.centerIn: parent
-                                        implicitWidth: 22
-                                        implicitHeight: 22
-                                        source: trayItem.iconSource
-                                        colour: Colours.palette.m3secondary
-                                        layer.enabled: Config.bar.tray.recolour
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                        cursorShape: Qt.PointingHandCursor
-                                        onEntered: hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            `traymenu${trayItem.sourceIndex}`,
-                                            win.popoutAnchorCenter(trayItem)
-                                        )
-                                        onClicked: event => {
-                                            if (event.button === Qt.LeftButton)
-                                                trayItem.modelData.activate();
-                                            else
-                                                trayItem.modelData.secondaryActivate();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    StyledRect {
-                        id: statusSegment
-
-                        anchors.right: parent.right
-                        anchors.rightMargin: 2
-                        anchors.verticalCenter: parent.verticalCenter
-                        implicitWidth: statusRow.implicitWidth + 8
-                        implicitHeight: 52
-                        radius: Tokens.rounding.full
-                        color: Colours.tPalette.m3surfaceContainer
-
-                        Row {
-                            id: statusRow
-                            anchors.centerIn: parent
-                            spacing: 2
-
-                            HubButton {
-                                id: volumeButton
-                                buttonSize: 40
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
-                                tooltip: Audio.muted ? qsTr("Unmute") : qsTr("Mute")
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            "audio",
-                                            win.popoutAnchorCenter(volumeButton)
-                                        );
-                                }
-                                onClicked: {
-                                    if (Audio.sink?.audio)
-                                        Audio.sink.audio.muted = !Audio.sink.audio.muted;
-                                }
-                                onWheel: delta => {
-                                    if (delta > 0)
-                                        Audio.incrementVolume();
-                                    else if (delta < 0)
-                                        Audio.decrementVolume();
-                                }
-                            }
-
-                            HubButton {
-                                id: networkButton
-                                buttonSize: 40
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: Nmcli.activeEthernet
-                                    ? "cable"
-                                    : Nmcli.active
-                                        ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0)
-                                        : "wifi_off"
-                                active: Nmcli.activeEthernet || !!Nmcli.active
-                                tooltip: qsTr("Network")
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            "network",
-                                            win.popoutAnchorCenter(networkButton)
-                                        );
-                                }
-                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "network")
-                            }
-
-                            HubButton {
-                                id: bluetoothButton
-                                buttonSize: 40
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: !Bluetooth.defaultAdapter?.enabled
-                                    ? "bluetooth_disabled"
-                                    : Bluetooth.devices.values.some(device => device.connected)
-                                        ? "bluetooth_connected"
-                                        : "bluetooth"
-                                active: Bluetooth.devices.values.some(device => device.connected)
-                                tooltip: qsTr("Bluetooth")
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            "bluetooth",
-                                            win.popoutAnchorCenter(bluetoothButton)
-                                        );
-                                }
-                                onClicked: hubRoot.toggleDetachedControlFor(win.modelData, "bluetooth")
-                            }
-
-                            HubButton {
-                                id: batteryButton
-                                buttonSize: 40
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: UPower.displayDevice.isLaptopBattery
-                                    ? Icons.getBatteryIcon(
-                                        UPower.displayDevice.percentage,
-                                        [UPowerDeviceState.Charging, UPowerDeviceState.FullyCharged, UPowerDeviceState.PendingCharge].includes(UPower.displayDevice.state)
-                                    )
-                                    : "balance"
-                                iconColor: UPower.onBattery && UPower.displayDevice.percentage <= 0.2
-                                    ? Colours.palette.m3error
-                                    : Colours.palette.m3secondary
-                                tooltip: UPower.displayDevice.isLaptopBattery
-                                    ? qsTr("Battery %1%").arg(Math.round(UPower.displayDevice.percentage * 100))
-                                    : qsTr("Power profile")
-                                onHoveredChanged: {
-                                    if (hovered)
-                                        hubRoot.showAttachedControlFor(
-                                            win.modelData,
-                                            "battery",
-                                            win.popoutAnchorCenter(batteryButton)
-                                        );
-                                }
-                                onClicked: hubRoot.showAttachedControlFor(
-                                    win.modelData,
-                                    "battery",
-                                    win.popoutAnchorCenter(batteryButton)
-                                )
-                            }
-
-                            Item {
-                                implicitWidth: 44
-                                implicitHeight: 44
-
-                                HubButton {
-                                    anchors.fill: parent
-                                    buttonSize: 44
-                                    iconFontStyle: Tokens.font.icon.medium
-                                    icon: "notifications"
-                                    active: win.screenState?.sidebar ?? false
-                                    tooltip: qsTr("Notifications")
-                                    onClicked: hubRoot.toggleSidebarFor(win.modelData)
-                                }
-
-                                Rectangle {
-                                    visible: Notifs.notClosed.length > 0
-                                    anchors.top: parent.top
-                                    anchors.right: parent.right
-                                    anchors.topMargin: 0
-                                    anchors.rightMargin: 0
-                                    width: 18
-                                    height: 18
-                                    radius: 9
-                                    color: Colours.palette.m3primary
-
-                                    StyledText {
-                                        anchors.centerIn: parent
-                                        text: Math.min(Notifs.notClosed.length, 9)
-                                        color: Colours.palette.m3onPrimary
-                                        font: Tokens.font.label.small
-                                    }
-                                }
-                            }
-
-                            StatusPill {
-                                recordingActive: Recorder.running
-                                dndActive: Notifs.dnd
-                                idleInhibited: Services.IdleInhibitor.enabled
-                                onStopRecordingRequested: Recorder.stop()
-                                onToggleDndRequested: Notifs.dnd = !Notifs.dnd
-                                onToggleIdleInhibitorRequested: Services.IdleInhibitor.enabled = !Services.IdleInhibitor.enabled
-                            }
-
-                            Item {
-                                implicitWidth: 74
-                                implicitHeight: 44
-
-                                Column {
-                                    anchors.centerIn: parent
-                                    spacing: -2
-
-                                    StyledText {
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        text: Qt.formatDateTime(win.now, "HH:mm")
-                                        color: Colours.palette.m3onSurface
-                                        font: Tokens.font.label.large
-                                    }
-
-                                    StyledText {
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        text: Qt.formatDateTime(win.now, "ddd d")
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font: Tokens.font.label.small
-                                    }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: hubRoot.openCalendarFor(win.modelData)
-                                }
-                            }
-
-                            HubButton {
-                                buttonSize: 44
-                                iconFontStyle: Tokens.font.icon.medium
-                                icon: "power_settings_new"
-                                active: win.screenState?.session ?? false
-                                tooltip: qsTr("Session")
-                                activeColor: Colours.palette.m3errorContainer
-                                iconColor: active ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
-                                onClicked: {
-                                    if (win.screenState) {
-                                        const wasOpen = win.screenState.session;
-                                        hubRoot.closeAllLaunchers();
-                                        hubRoot.closeAllPanels();
-                                        OverlayPolicy.closeOtherPanels(win.screenState);
-                                        win.screenState.session = !wasOpen;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                height: implicitHeight
+
+                launcherActive: win.screenState?.launcher ?? false
+                wallpaperActive: win.screenState?.wallpaperManager ?? false
+                wallpaperSource: Wallpapers.actualCurrent
+                workspaceCount: win.workspaceCount
+                workspaceOffset: win.workspaceOffset
+                activeWsId: win.activeWsId
+                occupiedWorkspaceIds: win.occupiedWorkspaceIds
+                dockItems: win.dockViewItems
+                trayItems: win.trayViewItems
+
+                volumeIcon: win.volumeIcon
+                volumeMuted: Audio.muted
+                networkIcon: win.networkIcon
+                networkActive: win.networkActive
+                bluetoothIcon: win.bluetoothIcon
+                bluetoothActive: win.bluetoothActive
+                batteryIcon: win.batteryIcon
+                batteryCritical: win.batteryCritical
+                batteryTooltip: win.batteryTooltip
+                notificationCount: Notifs.notClosed.length
+                sidebarActive: win.screenState?.sidebar ?? false
+                recordingActive: Recorder.running
+                dndActive: Notifs.dnd
+                idleInhibited: Services.IdleInhibitor.enabled
+                now: win.now
+                sessionActive: win.screenState?.session ?? false
+
+                onLauncherRequested: hubRoot.toggleLauncherFor(win.modelData)
+                onWallpaperRequested: hubRoot.openWallpaperFor(win.modelData)
+                onWorkspaceRequested: workspaceId => Hypr.dispatch(
+                    Hypr.usingLua
+                        ? `hl.dsp.focus({ workspace = \"${workspaceId}\" })`
+                        : `workspace ${workspaceId}`
+                )
+                onAppActivateRequested: key => win.activateDockKey(key)
+                onAppTogglePinnedRequested: key => win.togglePinnedKey(key)
+                onAppCloseRequested: key => win.closeDockKey(key)
+                onAppCycleRequested: (key, direction) => win.cycleDockKey(key, direction)
+                onTrayHoverRequested: (itemId, centerX) => win.showTrayMenu(itemId, centerX)
+                onTrayActivateRequested: itemId => win.activateTrayItem(itemId)
+                onTraySecondaryRequested: itemId => win.activateTrayItem(itemId, true)
+                onAttachedControlRequested: (mode, centerX) => hubRoot.showAttachedControlFor(
+                    win.modelData,
+                    mode,
+                    win.hubMargin + centerX
+                )
+                onDetachedControlRequested: mode => hubRoot.toggleDetachedControlFor(win.modelData, mode)
+                onVolumeMuteRequested: {
+                    if (Audio.sink?.audio)
+                        Audio.sink.audio.muted = !Audio.sink.audio.muted;
                 }
+                onVolumeWheel: delta => {
+                    if (delta > 0)
+                        Audio.incrementVolume();
+                    else if (delta < 0)
+                        Audio.decrementVolume();
+                }
+                onNotificationsRequested: hubRoot.toggleSidebarFor(win.modelData)
+                onStopRecordingRequested: Recorder.stop()
+                onToggleDndRequested: Notifs.dnd = !Notifs.dnd
+                onToggleIdleInhibitorRequested: Services.IdleInhibitor.enabled = !Services.IdleInhibitor.enabled
+                onCalendarRequested: hubRoot.openCalendarFor(win.modelData)
+                onSessionRequested: win.toggleSession()
             }
         }
     }
