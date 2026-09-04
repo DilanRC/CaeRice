@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E2E gate: legacy runtime -> two Cortetsu generations -> safe rollback."""
+"""E2E gate: unmanaged runtime -> two Cortetsu generations -> safe rollback."""
 from __future__ import annotations
 
 import os
@@ -11,10 +11,7 @@ repo = Path(__file__).resolve().parents[2]
 upstream = Path(
     os.environ.get(
         "CORTETSU_UPSTREAM_SOURCE",
-        os.environ.get(
-            "CORTETSU_UPSTREAM_SOURCE",
-            str(Path.home() / ".local/share/cortetsu/upstream/upstream-git"),
-        ),
+        str(Path.home() / ".local/share/cortetsu/upstream/upstream-git"),
     )
 )
 
@@ -22,11 +19,11 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     root = Path(temporary)
     data = root / "data"
     runtime = root / "runtime"
-    legacy = root / "legacy-runtime"
+    unmanaged = root / "unmanaged-runtime"
     runtime.mkdir()
-    legacy.mkdir()
-    (legacy / "shell.qml").write_text("// legacy runtime without BUILD.json\n", encoding="utf-8")
-    (runtime / "current").symlink_to(legacy, target_is_directory=True)
+    unmanaged.mkdir()
+    (unmanaged / "shell.qml").write_text("// pre-v2 runtime without BUILD.json\n", encoding="utf-8")
+    (runtime / "current").symlink_to(unmanaged, target_is_directory=True)
 
     env = os.environ.copy()
     env.update(
@@ -41,28 +38,28 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
 
     subprocess.run([str(build)], cwd=repo, env=env, check=True)
     first = (runtime / "current").resolve()
-    assert first != legacy
+    assert first != unmanaged
     assert (first / "shell.qml").is_file()
     assert (first / "modules/calendar/Content.qml").is_file()
     assert (first / "BUILD.json").is_file()
     assert not (runtime / "previous").exists()
-    assert (runtime / "legacy-previous").resolve() == legacy
+    assert (runtime / "legacy-previous").resolve() == unmanaged
 
-    # Reproduce the exact migration edge case seen on an existing installation:
-    # current is managed, but previous still points to a pre-BUILD.json runtime.
-    (runtime / "previous").symlink_to(legacy, target_is_directory=True)
+    # Reproduce an upgrade edge case: current is managed while previous still
+    # points at an unmanaged pre-v2 generation. Verification must quarantine it.
+    (runtime / "previous").symlink_to(unmanaged, target_is_directory=True)
     subprocess.run([str(cli), "verify"], cwd=repo, env=env, check=True)
 
     subprocess.run([str(build)], cwd=repo, env=env, check=True)
     second = (runtime / "current").resolve()
     assert second != first
     assert (runtime / "previous").resolve() == first
-    assert (runtime / "legacy-previous").resolve() == legacy
+    assert (runtime / "legacy-previous").resolve() == unmanaged
 
     subprocess.run([str(cli), "verify"], cwd=repo, env=env, check=True)
     subprocess.run([str(rollback)], cwd=repo, env=env, check=True)
     assert (runtime / "current").resolve() == first
     assert (runtime / "previous").resolve() == second
-    assert (runtime / "legacy-previous").resolve() == legacy
+    assert (runtime / "legacy-previous").resolve() == unmanaged
 
-print("PASS: legacy runtime quarantined, managed generations verified, and rollback stayed safe")
+print("PASS: unmanaged runtime quarantined, managed generations verified, and rollback stayed safe")
