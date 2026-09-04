@@ -1,0 +1,68 @@
+schema = 1
+
+[project]
+name = "Cortetsu"
+former_name = "CaeRice"
+kind = "dotfiles-platform"
+stage = "identity-transition"
+source_of_truth = "git-main"
+platforms = ["CachyOS", "Arch Linux"]
+
+[identity]
+origin = "Coined from Cortés + tetsu (iron)."
+style = "samurai-inspired, restrained, technical"
+canonical_command = "cortetsu"
+
+[stack]
+compositor = "Hyprland"
+shell_base = "Caelestia"
+widgets = "Quickshell"
+
+[upstream.caelestia]
+package = "caelestia-shell"
+installed_version = "2.4.0-1"
+tag = "v2.4.0"
+commit = "24aa15eefdb146350d2548c0a015b04eddbd1008"
+runtime = "/etc/xdg/quickshell/caelestia"
+
+[compatibility]
+policy = "Preserve legacy identifiers until an idempotent, backed-up and tested migration exists."
+legacy_command_prefix = "caerice-"
+legacy_config_dir = "~/.config/caerice"
+legacy_state_dir = "~/.local/state/caerice"
+legacy_staging_dir = "~/.local/share/caelestia-custom-system"
+legacy_installer = "scripts/install-caerice.sh"
+
+[entrypoints]
+cli = "scripts/cortetsu"
+installer = "scripts/cortetsu install"
+static_tests = "scripts/cortetsu test"
+runtime_verification = "scripts/cortetsu verify"
+audit = "scripts/cortetsu audit"
+
+[product]
+current_modules = [
+  "bottom-hub",
+  "overview",
+  "clipboard",
+  "hardware",
+  "display",
+  "wallpaper",
+]
+retired_modules = ["gaming-center", "caerice-updater"]
+planned_layers = [
+  "packages",
+  "dotfiles",
+  "profiles",
+  "themes",
+  "generations",
+  "actions",
+  "scenes",
+]
+
+[safety]
+write_strategy = "stage-validate-backup-apply-verify"
+allow_secrets_in_git = false
+allow_blind_upstream_overwrite = false
+require_capability_detection = true
+require_real_runtime_verification = true

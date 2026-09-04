@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BASE_INFO="$ROOT/caelestia/PATCH_BASE_INFO.txt"
+
+usage() {
+    cat <<'EOF'
+Cortetsu command entrypoint
+
+Usage:
+  ./scripts/cortetsu status   Show repository and upstream state
+  ./scripts/cortetsu test     Run non-destructive repository regressions
+  ./scripts/cortetsu verify   Verify the installed runtime without applying changes
+  ./scripts/cortetsu audit    Run the existing full audit
+  ./scripts/cortetsu install  Rebuild the installed runtime with preflight and backups
+  ./scripts/cortetsu help     Show this help
+
+Compatibility:
+  The transition still uses proven caerice-* helpers and legacy state paths.
+  They are implementation details until transactional migrations replace them.
+EOF
+}
+
+require_file() {
+    local path="$1"
+    if [[ ! -f "$path" ]]; then
+        printf 'ERROR: missing required file: %s\n' "$path" >&2
+        exit 2
+    fi
+}
+
+status_cmd() {
+    printf 'Cortetsu\n'
+    printf 'Root: %s\n' "$ROOT"
+    printf 'Stage: identity-transition\n'
+
+    if [[ -f "$BASE_INFO" ]]; then
+        printf '\nCurrent shell base:\n'
+        sed 's/^/  /' "$BASE_INFO"
+    fi
+
+    if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        local branch revision dirty
+        branch="$(git -C "$ROOT" branch --show-current)"
+        revision="$(git -C "$ROOT" rev-parse --short HEAD)"
+        if [[ -n "$(git -C "$ROOT" status --porcelain)" ]]; then
+            dirty="yes"
+        else
+            dirty="no"
+        fi
+        printf '\nGit:\n'
+        printf '  branch=%s\n' "${branch:-detached}"
+        printf '  revision=%s\n' "$revision"
+        printf '  dirty=%s\n' "$dirty"
+    fi
+
+    printf '\nLegacy compatibility retained:\n'
+    printf '  command_prefix=caerice-*\n'
+    printf '  config=~/.config/caerice\n'
+    printf '  staging=~/.local/share/caelestia-custom-system\n'
+}
+
+test_cmd() {
+    local tests=(
+        "scripts/features/test-bottom-hub-target.py"
+        "scripts/features/test-bottom-hub-v3.py"
+        "scripts/features/test-bottom-hub-v4.py"
+        "scripts/features/test-retained-overlay-wiring.py"
+        "scripts/features/test-contentwindow-overview-base.py"
+        "scripts/features/test-wallpaper-manager.py"
+        "scripts/features/test-keybinds.py"
+        "scripts/features/eval-keybind-editor.py"
+        "scripts/features/test-shell-normalizer.py"
+    )
+
+    local test_path
+    for test_path in "${tests[@]}"; do
+        require_file "$ROOT/$test_path"
+        printf '==> %s\n' "$test_path"
+        python3 "$ROOT/$test_path"
+    done
+
+    printf '\nCortetsu repository regressions passed.\n'
+}
+
+verify_cmd() {
+    require_file "$ROOT/caelestia/bin/verify-patches.sh"
+    require_file "$ROOT/scripts/features/validate-sad.py"
+
+    if [[ ! -d /etc/xdg/quickshell/caelestia ]]; then
+        printf 'ERROR: current shell runtime not found at /etc/xdg/quickshell/caelestia\n' >&2
+        exit 3
+    fi
+
+    bash "$ROOT/caelestia/bin/verify-patches.sh"
+    python3 "$ROOT/scripts/features/validate-sad.py"
+}
+
+audit_cmd() {
+    require_file "$ROOT/caelestia/bin/audit.sh"
+    bash "$ROOT/caelestia/bin/audit.sh"
+}
+
+install_cmd() {
+    require_file "$ROOT/scripts/install-caerice.sh"
+    printf 'Cortetsu: invoking the proven legacy-compatible installer.\n'
+    bash "$ROOT/scripts/install-caerice.sh"
+}
+
+command_name="${1:-help}"
+case "$command_name" in
+    status)
+        status_cmd
+        ;;
+    test)
+        test_cmd
+        ;;
+    verify)
+        verify_cmd
+        ;;
+    audit)
+        audit_cmd
+        ;;
+    install)
+        install_cmd
+        ;;
+    help|-h|--help)
+        usage
+        ;;
+    *)
+        printf 'ERROR: unknown command: %s\n\n' "$command_name" >&2
+        usage >&2
+        exit 64
+        ;;
+esac

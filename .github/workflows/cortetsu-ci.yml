@@ -1,0 +1,78 @@
+name: Cortetsu static validation
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Validate repository whitespace
+        run: git diff --check HEAD^ HEAD
+
+      - name: Validate Cortetsu manifest
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          import tomllib
+
+          path = pathlib.Path("cortetsu.toml")
+          with path.open("rb") as handle:
+              data = tomllib.load(handle)
+
+          assert data["project"]["name"] == "Cortetsu"
+          assert data["project"]["former_name"] == "CaeRice"
+          assert data["identity"]["canonical_command"] == "cortetsu"
+          assert data["upstream"]["caelestia"]["tag"] == "v2.4.0"
+          assert data["compatibility"]["legacy_installer"] == "scripts/install-caerice.sh"
+          print("manifest: valid")
+          PY
+
+      - name: Compile Python sources
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            python3 -m py_compile "$file"
+          done < <(find scripts -type f -name '*.py' -print0)
+
+          while IFS= read -r -d '' file; do
+            first_line="$(head -n 1 "$file" || true)"
+            if [[ "$first_line" == *python3* ]]; then
+              python3 -m py_compile "$file"
+            fi
+          done < <(find caelestia/bin -type f -print0)
+
+      - name: Validate Bash syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            bash -n "$file"
+          done < <(find scripts caelestia/bin -type f -name '*.sh' -print0)
+
+          bash -n scripts/cortetsu
+
+      - name: Validate transition contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -x scripts/cortetsu
+          test -f scripts/install-caerice.sh
+          test -f docs/CORTETSU_ARCHITECTURE.md
+          test -f docs/MIGRATION_FROM_CAERICE.md
+          test -f docs/IDENTITY.md
+          test -f docs/PROVENANCE.md
+          grep -q '^# Cortetsu' README.md
+          ! grep -R --line-number --exclude-dir=.git --exclude='MIGRATION_FROM_CAERICE.md' 'ShogunRice' README.md docs/CORTETSU_ARCHITECTURE.md docs/IDENTITY.md docs/PROVENANCE.md cortetsu.toml scripts/cortetsu
