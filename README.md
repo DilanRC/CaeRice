@@ -1,41 +1,61 @@
 # Cortetsu
 
-> Dotfiles personal para CachyOS/Arch: Hyprland, Quickshell, Qt 6/QML y un shell de escritorio rápido, reversible y visualmente coherente.
+> Dotfiles personal para CachyOS/Arch: Hyprland, Quickshell, Qt 6/QML y un escritorio rápido, reversible y visualmente coherente.
 
 **Cortetsu** combina Cortés con *tetsu* (鉄, hierro/acero): una identidad propia inspirada en disciplina samurái, tinta sumi, acero ennegrecido, índigo y bermellón. La referencia es estética y de producto; no depende de la identidad de ningún shell upstream.
+
+## Qué es ahora
+
+Cortetsu ya no es sólo un patchset de shell. Es una plataforma de dotfiles con cuatro contratos independientes y verificables:
+
+1. **shell runtime**: generaciones inmutables de Quickshell;
+2. **dotfiles runtime**: generaciones inmutables para configuración de usuario;
+3. **profile**: selección declarativa de capacidades y paquetes;
+4. **doctor**: comprobación del sistema antes de asumir que una función existe.
+
+Los dotfiles administrados apuntan a una única referencia estable `~/.local/share/cortetsu/dotfiles/current`. Cambiar esa referencia cambia todo el conjunto; rollback no reescribe archivos uno por uno.
 
 ## Principios
 
 - cero escrituras sobre el runtime del paquete en `/etc`;
 - generaciones de usuario inmutables con `current`, `previous` y rollback atómico;
+- archivos preexistentes respaldados antes de ser adoptados;
 - namespace activo exclusivamente `cortetsu-*` / `CORTETSU_*`;
 - nada de `sh -c` en QML;
 - paneles ocultos sin polling continuo;
 - procesos y telemetría compartidos en vez de duplicados por vista;
 - secretos fuera del repositorio mediante Secret Service;
-- cambios críticos con staging, pruebas y verificación real;
-- historial de la etapa anterior preservado sólo como procedencia, nunca como dependencia activa.
+- cambios críticos con staging, hashes, pruebas y verificación real;
+- historial anterior preservado sólo como procedencia, nunca como dependencia activa.
 
 ## Stack confirmado
 
 - CachyOS / Arch Linux;
 - Hyprland `0.56.2`;
 - Quickshell `0.3.1` o build git compatible;
-- Caelestia Shell `2.4.0` como base upstream temporal;
+- Caelestia Shell `2.4.0` como adapter temporal del shell;
 - Qt 6 / QML para interfaz;
 - PipeWire/WirePlumber, NetworkManager, UPower y systemd --user para integración del sistema.
 
-La base actual de Caelestia se reconstruye desde `v2.4.0` commit `24aa15eefdb146350d2548c0a015b04eddbd1008`. Cortetsu aplica sus adapters y módulos sólo dentro de staging. La dirección del proyecto es reducir progresivamente esos adapters hasta que el shell sea completamente propio.
+La base actual de Caelestia se reconstruye desde `v2.4.0` commit `24aa15eefdb146350d2548c0a015b04eddbd1008`. Cortetsu aplica adapters y módulos sólo dentro de staging. La dirección del proyecto es reducir progresivamente esos adapters hasta que el shell sea completamente propio.
 
-## Runtime
+## Generaciones
 
 ```text
 ~/.local/share/cortetsu/builds/<build-id>
 ~/.config/quickshell/cortetsu/current
 ~/.config/quickshell/cortetsu/previous
+
+~/.local/share/cortetsu/dotfiles/builds/<build-id>
+~/.local/share/cortetsu/dotfiles/current
+~/.local/share/cortetsu/dotfiles/previous
 ```
 
 `/etc/xdg/quickshell/caelestia` es referencia de solo lectura.
+
+## Perfil personal
+
+`profiles/personal.toml` hereda de `profiles/base.toml`. El manifest `dotfiles/manifest.toml` decide qué archivos pertenecen a Cortetsu y `packages/arch.toml` describe dependencias por grupos. Nada instala paquetes automáticamente todavía: `doctor` detecta drift antes de que `bootstrap` se convierta en una operación de sistema.
 
 ## Módulos
 
@@ -48,25 +68,28 @@ La base actual de Caelestia se reconstruye desde `v2.4.0` commit `24aa15eefdb146
 - Calendar: Google Calendar de solo lectura;
 - Focus/Pomodoro: ciclo persistente con descansos cortos y largos.
 
-Los módulos retirados (Gaming Center y Updater) no forman parte del runtime.
-
 ## CLI
 
 ```bash
-./scripts/cortetsu status
-./scripts/cortetsu test
-./scripts/cortetsu verify
-./scripts/cortetsu audit
-./scripts/cortetsu install
+cortetsu status
+cortetsu plan
+cortetsu apply
+cortetsu doctor
+cortetsu dotfiles status
+cortetsu dotfiles rollback
+cortetsu test
+cortetsu verify
+cortetsu audit
+cortetsu install
 ```
 
-La primera instalación de Cortetsu v2 ejecuta una migración idempotente: respalda el estado antiguo, mueve únicamente datos propiedad de Cortetsu al namespace nuevo, retira comandos antiguos administrados y conserva configuración de Caelestia que el upstream todavía necesita.
+`cortetsu install` construye primero un shell válido y luego promueve una generación de dotfiles. `cortetsu-shell.service` se instala, pero no se habilita automáticamente mientras se retira el mecanismo de autostart anterior.
 
 ## Calidad
 
-CI valida sintaxis, Python, Bash, namespace, ausencia de shell arbitrario en QML, Calendar/Pomodoro, composición de overlays y el flujo E2E `upstream exacto -> dos generaciones -> rollback`.
+CI valida sintaxis, Python, Bash, namespace, ausencia de shell arbitrario en QML, Calendar/Pomodoro, composición de overlays, transacciones de dotfiles y el flujo E2E `upstream exacto -> dos generaciones -> rollback`.
 
-Los objetivos de rendimiento están en [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) y el lenguaje visual en [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md). La arquitectura general está en [`docs/CORTETSU_ARCHITECTURE.md`](docs/CORTETSU_ARCHITECTURE.md).
+Los objetivos de rendimiento están en [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md), el lenguaje visual en [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) y la nueva plataforma de configuración en [`docs/DOTFILES_PLATFORM.md`](docs/DOTFILES_PLATFORM.md).
 
 ## Procedencia
 

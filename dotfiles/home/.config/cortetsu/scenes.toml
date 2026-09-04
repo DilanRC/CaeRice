@@ -1,0 +1,27 @@
+schema = 1
+
+[scene.deep_work]
+label = "Deep Work"
+dnd = true
+power_profile = "balanced"
+bottom_hub = "compact"
+
+[scene.gaming]
+label = "Gaming"
+dnd = true
+power_profile = "performance"
+bottom_hub = "minimal"
+prefer_vrr = true
+
+[scene.presentation]
+label = "Presentation"
+dnd = true
+power_profile = "balanced"
+prevent_idle = true
+
+[scene.battery]
+label = "Battery"
+dnd = false
+power_profile = "power-saver"
+reduce_motion = true
+reduce_blur = true

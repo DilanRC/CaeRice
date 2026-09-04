@@ -4,7 +4,6 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${HOME}/.local/bin"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
-HYPR_USER="${XDG_CONFIG_HOME:-$HOME/.config}/caelestia/hypr-user.lua"
 SYSTEMD_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 
 atomic_symlink() {
@@ -39,26 +38,15 @@ if [[ -x "$REPO/scripts/cortetsu" ]]; then
     atomic_symlink "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"
 fi
 
-printf '==> Configuración de usuario\n'
-mkdir -p "$(dirname "$HYPR_USER")"
-if [[ -f "$HYPR_USER" ]] && ! cmp -s "$REPO/config/hypr-user.lua" "$HYPR_USER"; then
-    cp -a "$HYPR_USER" "$HYPR_USER.bak.$(date +%Y%m%d-%H%M%S)"
-fi
-temporary_hypr="${HYPR_USER}.tmp.$$"
-install -m 0644 "$REPO/config/hypr-user.lua" "$temporary_hypr"
-mv -Tf "$temporary_hypr" "$HYPR_USER"
+printf '==> Dotfiles Cortetsu\n'
+python3 "$REPO/core/dotfiles.py" apply --repo "$REPO"
 
+printf '==> Integración de tema\n'
 if [[ -f "$REPO/scripts/features/install-theme-bridge.py" ]]; then
     python3 "$REPO/scripts/features/install-theme-bridge.py"
 fi
 
-if compgen -G "$REPO/config/systemd/user/*.service" >/dev/null; then
-    mkdir -p "$SYSTEMD_USER_DIR"
-    for service in "$REPO"/config/systemd/user/*.service; do
-        install -m 0644 "$service" "$SYSTEMD_USER_DIR/$(basename "$service")"
-    done
-    systemctl --user daemon-reload >/dev/null 2>&1 || true
-fi
+systemctl --user daemon-reload >/dev/null 2>&1 || true
 
 # Preserve the user's explicit opt-in when migrating the renamed power service.
 if [[ -f "$DATA_ROOT/.power-auto-was-enabled" && -f "$SYSTEMD_USER_DIR/cortetsu-power-auto.service" ]]; then
@@ -72,5 +60,7 @@ fi
 
 runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
+printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
+printf 'cortetsu-shell.service se instala sin habilitar para evitar un segundo shell durante la transición.\n'
 printf 'Reinicio: pkill -TERM -x qs; sleep 1; qs -p %q -n -d\n' "$runtime_root/current"

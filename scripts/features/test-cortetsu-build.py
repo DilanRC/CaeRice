@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E2E gate: unmanaged runtime -> two Cortetsu generations -> safe rollback."""
+"""E2E gate: unmanaged runtime -> promoted shell + dotfiles -> rollback."""
 from __future__ import annotations
 
 import os
@@ -11,15 +11,17 @@ repo = Path(__file__).resolve().parents[2]
 upstream = Path(
     os.environ.get(
         "CORTETSU_UPSTREAM_SOURCE",
-        str(Path.home() / ".local/share/cortetsu/upstream/upstream-git"),
+        str(Path.home() / ".cache/cortetsu/upstream/caelestia-shell"),
     )
 )
 
 with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     root = Path(temporary)
+    home = root / "home"
     data = root / "data"
     runtime = root / "runtime"
     unmanaged = root / "unmanaged-runtime"
+    home.mkdir()
     runtime.mkdir()
     unmanaged.mkdir()
     (unmanaged / "shell.qml").write_text("// pre-v2 runtime without BUILD.json\n", encoding="utf-8")
@@ -27,6 +29,8 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
 
     env = os.environ.copy()
     env.update(
+        HOME=str(home),
+        XDG_CONFIG_HOME=str(home / ".config"),
         CORTETSU_DATA_ROOT=str(data),
         CORTETSU_RUNTIME_ROOT=str(runtime),
         CORTETSU_UPSTREAM_SOURCE=str(upstream),
@@ -34,6 +38,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
 
     build = repo / "caelestia/bin/build-runtime.sh"
     rollback = repo / "caelestia/bin/rollback-runtime.sh"
+    dotfiles = repo / "core/dotfiles.py"
     cli = repo / "scripts/cortetsu"
 
     subprocess.run([str(build)], cwd=repo, env=env, check=True)
@@ -44,6 +49,21 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     assert (first / "BUILD.json").is_file()
     assert not (runtime / "previous").exists()
     assert (runtime / "legacy-previous").resolve() == unmanaged
+
+    # A Cortetsu system is now shell + dotfiles. Promote the dotfiles layer in
+    # the same isolated HOME before asking the top-level CLI to verify it.
+    subprocess.run(
+        ["python3", str(dotfiles), "apply", "--repo", str(repo), "--profile", "personal"],
+        cwd=repo,
+        env=env,
+        check=True,
+    )
+    subprocess.run(
+        ["python3", str(dotfiles), "verify", "--repo", str(repo), "--profile", "personal"],
+        cwd=repo,
+        env=env,
+        check=True,
+    )
 
     # Reproduce an upgrade edge case: current is managed while previous still
     # points at an unmanaged pre-v2 generation. Verification must quarantine it.
@@ -62,4 +82,4 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     assert (runtime / "previous").resolve() == second
     assert (runtime / "legacy-previous").resolve() == unmanaged
 
-print("PASS: unmanaged runtime quarantined, managed generations verified, and rollback stayed safe")
+print("PASS: unmanaged runtime quarantined, shell + dotfiles verified, and rollback stayed safe")

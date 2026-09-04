@@ -23,11 +23,13 @@ jobs:
           import tomllib
           with pathlib.Path('cortetsu.toml').open('rb') as handle:
               data = tomllib.load(handle)
+          assert data['schema'] == 3
           assert data['project']['name'] == 'Cortetsu'
-          assert data['project']['stage'] == 'v2-modern'
+          assert data['project']['stage'] == 'dotfiles-foundation'
           assert data['identity']['canonical_command'] == 'cortetsu'
           assert data['upstream']['caelestia']['tag'] == 'v2.4.0'
           assert data['runtime']['current'].endswith('/quickshell/cortetsu/current')
+          assert data['dotfiles']['default_profile'] == 'personal'
           assert data['compatibility']['active_legacy'] is False
           print('manifest: valid')
           PY
@@ -35,7 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r -d '' file; do python3 -m py_compile "$file"; done < <(find scripts -type f -name '*.py' -print0)
+          while IFS= read -r -d '' file; do python3 -m py_compile "$file"; done < <(find core scripts -type f -name '*.py' -print0)
           while IFS= read -r -d '' file; do
             first_line="$(head -n 1 "$file" || true)"
             if [[ "$first_line" == *python3* ]]; then python3 -m py_compile "$file"; fi
@@ -51,6 +53,8 @@ jobs:
           bash -n scripts/features/test-upstream-bootstrap.sh
       - name: Validate shell quality
         run: python3 scripts/features/test-cortetsu-quality.py
+      - name: Validate immutable dotfiles
+        run: python3 scripts/features/test-dotfiles-platform.py
       - name: Validate migration resilience
         run: bash scripts/features/test-v2-migration-unreadable.sh
       - name: Validate modern contract
@@ -58,15 +62,23 @@ jobs:
         run: |
           set -euo pipefail
           test -x scripts/cortetsu
-          test -x scripts/migrate-cortetsu-v2.sh
-          test -f scripts/install-cortetsu.sh
+          test -x core/dotfiles.py
+          test -x core/doctor.py
+          test -x scripts/features/test-dotfiles-platform.py
+          test -f dotfiles/manifest.toml
+          test -f profiles/base.toml
+          test -f profiles/personal.toml
+          test -f packages/arch.toml
+          test -f config/systemd/user/cortetsu-shell.service
           test -f caelestia/bin/ensure-upstream.sh
           test -f docs/CORTETSU_ARCHITECTURE.md
+          test -f docs/DOTFILES_PLATFORM.md
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
           grep -q '"upstreamRepo": "https://github.com/caelestia-dots/shell.git"' caelestia/compatibility.json
           grep -q 'ensure-upstream.sh' caelestia/bin/build-runtime.sh
+          grep -q 'core/dotfiles.py' scripts/install-cortetsu.sh
           ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!caelestia/bin/ensure-upstream.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'

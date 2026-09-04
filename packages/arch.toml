@@ -1,0 +1,21 @@
+schema = 1
+
+[group.core]
+required = true
+packages = ["git", "python", "util-linux"]
+commands = ["git", "python3", "bash", "flock", "systemctl"]
+
+[group.shell]
+required = true
+packages = ["hyprland", "caelestia-shell", "quickshell-git"]
+commands = ["hyprctl", "qs"]
+
+[group.desktop-integrations]
+required = false
+packages = ["networkmanager", "pipewire", "wireplumber", "libsecret", "power-profiles-daemon"]
+commands = ["nmcli", "wpctl", "secret-tool", "powerprofilesctl"]
+
+[group.optional-tools]
+required = false
+packages = ["clipse", "ddcutil"]
+commands = ["clipse", "ddcutil"]

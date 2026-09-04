@@ -1,0 +1,22 @@
+schema = 1
+
+[idle]
+allow_hidden_page_polling = false
+allow_qml_shell_pipelines = false
+prefer_event_sources = true
+
+[latency_ms]
+overlay_first_frame_target = 120
+hover_feedback_target = 16
+command_palette_target = 90
+
+[rendering]
+prefer_async_images = true
+limit_prefetch = true
+suspend_hidden_surfaces = true
+
+[telemetry]
+shared_sources = true
+prefer_dbus = true
+prefer_hyprland_ipc = true
+prefer_pipewire_events = true
