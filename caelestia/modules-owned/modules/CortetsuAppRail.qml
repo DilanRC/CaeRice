@@ -16,6 +16,8 @@ Item {
 
     implicitWidth: Math.min(appRailContent.implicitWidth + 14, maxWidth)
     implicitHeight: 52
+    width: implicitWidth
+    height: implicitHeight
     clip: true
 
     CortetsuSurface {
@@ -50,6 +52,8 @@ Item {
 
                     implicitWidth: 46
                     implicitHeight: 52
+                    width: implicitWidth
+                    height: implicitHeight
                     scale: appMouse.containsMouse ? CortetsuDesign.hoverScale : 1
 
                     Behavior on scale {
