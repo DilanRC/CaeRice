@@ -1,5 +1,4 @@
 import QtQuick
-import qs.services
 import "CortetsuDesign.js" as CortetsuDesign
 
 Row {
@@ -8,6 +7,9 @@ Row {
     required property int workspaceCount
     required property int workspaceOffset
     required property int activeWsId
+    required property var workspaceOccupancy
+
+    signal workspaceRequested(int workspaceId)
 
     spacing: 5
 
@@ -26,9 +28,7 @@ Row {
 
             readonly property int wsId: root.workspaceOffset + index + 1
             readonly property bool active: wsId === root.activeWsId
-            readonly property bool occupied: Hypr.workspaces.values.some(
-                workspace => workspace.id === wsId && workspace.lastIpcObject?.windows > 0
-            )
+            readonly property bool occupied: root.workspaceOccupancy[wsId] ?? false
 
             width: active ? 18 : 8
             height: 28
@@ -62,11 +62,7 @@ Row {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Hypr.dispatch(
-                    Hypr.usingLua
-                        ? `hl.dsp.focus({ workspace = "${workspaceDot.wsId}" })`
-                        : `workspace ${workspaceDot.wsId}`
-                )
+                onClicked: root.workspaceRequested(workspaceDot.wsId)
             }
         }
     }
