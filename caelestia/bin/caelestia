@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "${1:-}" == "record" ]]; then
+runtime_root="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+runtime="$runtime_root/current"
+
+if [[ "${1:-}" == "record" && -x "$HOME/.local/lib/caelestia-record-fixed.py" ]]; then
     shift
     exec "$HOME/.local/lib/caelestia-record-fixed.py" "$@"
 fi
 
-# The package CLI hardcodes `qs -c caelestia` for region screenshots. Route
-# that one command to CaeRice's user runtime while keeping the public command.
-if [[ "${1:-}" == "screenshot" && " $* " == *" -r "* ]]; then
+# Route packaged region-screenshot IPC to Cortetsu's promoted user generation.
+if [[ -f "$runtime/shell.qml" && "${1:-}" == "screenshot" && " $* " == *" -r "* ]]; then
     if [[ " $* " == *" -f "* || " $* " == *" --freeze "* ]]; then
-        exec qs -p "$HOME/.config/quickshell/caelestia/current" ipc call picker openFreeze
+        exec qs -p "$runtime" ipc call picker openFreeze
     fi
-    exec qs -p "$HOME/.config/quickshell/caelestia/current" ipc call picker open
+    exec qs -p "$runtime" ipc call picker open
 fi
 
+[[ -x /usr/bin/caelestia ]] || {
+    echo "ERROR: /usr/bin/caelestia no existe" >&2
+    exit 127
+}
 exec /usr/bin/caelestia "$@"

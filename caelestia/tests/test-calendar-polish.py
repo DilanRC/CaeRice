@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Regression gate for the Calendar V1.1 interaction and information design."""
 from pathlib import Path
 
-content = (Path(__file__).resolve().parents[1] / "modules-owned/modules/calendar/Content.qml").read_text()
+content = (Path(__file__).resolve().parents[1] / "modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
 for expected in (
     'calendar.primary ? qsTr("Personal")',
     'eventsForDay(dayCell.day).slice(0, 3)',
@@ -18,8 +17,14 @@ for expected in (
     'onClicked: parent.clicked()',
     'root.pomodoro = JSON.parse(text.trim())',
     'function runPomodoro(command: string)',
-    'onClicked: root.runPomodoro(',
+    'function onCalendarChanged()',
+    'root.requestCalendarSync()',
+    'root.requestCalendarSync(true)',
+    'onFileChanged: pomodoroReload.restart()',
+    'phase === "LONG_BREAK"',
+    'qsTr("Long break")',
+    'eventOccursOnDate',
 ):
     assert expected in content, expected
 assert "delegate: CheckBox" not in content
-print("PASS: calendar polish preserves chips, colored indicators, event details, empty state, and skip break")
+print("PASS: Calendar lifecycle sync, event design, and full Pomodoro phases are wired")

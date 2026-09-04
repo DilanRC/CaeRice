@@ -1,9 +1,20 @@
 {
-  "schema": 1,
-  "caelestiaShell": {"package": "caelestia-shell", "version": "2.4.0", "upstreamTag": "v2.4.0", "upstreamCommit": "15c41f3e19818199f653aa7dcec81d49affd7152"},
-  "quickshell": {"package": "quickshell-git", "version": "0.3.1.r6.g0f9939c-1"},
+  "schema": 2,
+  "project": "Cortetsu",
+  "caelestiaShell": {
+    "package": "caelestia-shell",
+    "installedVersion": "2.4.0-1",
+    "version": "2.4.0",
+    "upstreamTag": "v2.4.0",
+    "upstreamTagObject": "15c41f3e19818199f653aa7dcec81d49affd7152",
+    "upstreamCommit": "24aa15eefdb146350d2548c0a015b04eddbd1008"
+  },
+  "quickshell": {
+    "package": "quickshell-git",
+    "version": "0.3.1.r6.g0f9939c-1"
+  },
   "runtime": "~/.config/quickshell/caelestia/current",
-  "sourceOfTruth": "https://github.com/DilanRC/CaeRice.git",
+  "sourceOfTruth": "https://github.com/DilanRC/Cortetsu.git",
   "managedSystemPath": "/etc/xdg/quickshell/caelestia",
-  "policy": "system path is read-only to CaeRice"
+  "policy": "The system package path is read-only; Cortetsu builds and promotes user generations."
 }

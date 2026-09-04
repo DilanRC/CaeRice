@@ -1,69 +1,80 @@
-# Calendar Panel, Google Calendar y Pomodoro
+# Calendar, Google Calendar y Pomodoro
 
-## Estado de implementación
+Cortetsu integra un calendario mensual de solo lectura, agenda diaria y un
+Pomodoro persistente. OAuth y HTTP viven en `caelestia/bin/caerice-calendar`;
+QML consume JSON estructurado y ejecuta acciones del helper.
 
-La integración usa un helper local (`caelestia/bin/caerice-calendar`) y no
-coloca OAuth ni HTTP en QML. El helper solo llama a:
+El prefijo `caerice-*` se conserva por compatibilidad. El instalador crea los
+aliases canónicos `cortetsu-calendar` y `cortetsu-pomodoro`.
 
-- `GET https://www.googleapis.com/calendar/v3/users/me/calendarList`
-- `GET https://www.googleapis.com/calendar/v3/calendars/{calendarId}/events`
+## Google Calendar: solo lectura
 
-Scopes exactos:
+El helper sólo llama a `CalendarList.list` y `Events.list`, con estos scopes:
 
 ```text
 https://www.googleapis.com/auth/calendar.events.readonly
 https://www.googleapis.com/auth/calendar.calendarlist.readonly
 ```
 
-No existe ni debe existir una ruta de escritura. CaeRice no cambia calendarios,
-eventos, colores, visibilidad, recordatorios ni invitaciones. Para modificar un
-evento se debe usar Google Calendar web o móvil.
+No existe una ruta de escritura: Cortetsu no cambia eventos, calendarios,
+recordatorios ni invitaciones.
 
-## Preparación OAuth
+## OAuth
 
-1. Crear o seleccionar un proyecto en Google Cloud Console.
-2. Habilitar únicamente Google Calendar API.
-3. Configurar OAuth consent screen como aplicación de escritorio en pruebas.
-4. Crear credenciales OAuth de tipo Desktop application.
-5. Guardar el JSON descargado en:
-   `~/.config/caelestia/calendar-client.json`, con permisos `0600`.
-6. Ejecutar `~/.local/bin/caerice-calendar sync` y completar la autorización en
-   el navegador.
+1. Habilitar Google Calendar API en Google Cloud.
+2. Crear credenciales OAuth de tipo **Desktop application**.
+3. Guardar el JSON en `~/.config/caelestia/calendar-client.json` con modo `0600`.
+4. Abrir el panel o ejecutar `cortetsu-calendar sync --force`.
 
-El refresh token se almacena con Secret Service mediante `secret-tool`, nunca en
-el cache de eventos, argumentos de proceso o logs. El cache está en
-`$XDG_CACHE_HOME/caelestia/calendar-events.json`; la selección local está en
-`$XDG_CONFIG_HOME/caelestia/calendar-selection.json`.
+El flujo usa PKCE, valida un `state` aleatorio, escucha sólo en `127.0.0.1` y
+expira a los cinco minutos. El refresh token se guarda con Secret Service
+(`secret-tool`), nunca en configuración, cache o logs. La entrada heredada
+`caerice-google-calendar` se reconoce para migración compatible.
 
-## Sincronización y selección
+## Sincronización
 
-La primera sincronización habilita los calendarios que Google marca como
-seleccionados y siempre incluye el primario. Las siguientes sincronizaciones
-solo consultan los calendarios habilitados localmente. Cada evento conserva la
-identidad compuesta `calendarId + eventId`, además de nombre y color.
+El panel solicita sincronización cada vez que se abre, tanto desde Bottom Hub
+como por shortcut o IPC. Un cache de menos de 15 minutos se reutiliza; el botón
+de refresco fuerza una consulta nueva. Se conservan 62 días anteriores y 370
+días futuros, con paginación, eventos recurrentes expandidos y zona horaria
+IANA. Los eventos de varios días aparecen en cada fecha que abarcan.
 
-El rango inicial es ahora a 30 días, con `singleEvents=true`, `showDeleted=false`,
-`orderBy=startTime`, paginación por `nextPageToken` y zona horaria local.
-El umbral previsto de refresco es 15 minutos, al abrir el panel.
+Archivos locales:
 
-## Desconectar
-
-```bash
-~/.local/bin/caerice-calendar disconnect
+```text
+$XDG_CONFIG_HOME/caelestia/calendar-selection.json
+$XDG_CACHE_HOME/caelestia/calendar-events.json
 ```
 
-Esto elimina la autorización local de Secret Service y no modifica Google
-Calendar. Para revocar completamente el acceso, retirar también CaeRice desde
-la página de seguridad de la cuenta Google.
+Cambiar un chip de calendario actualiza la selección y fuerza un nuevo sync.
 
-## Instalación y rollback
+## Pomodoro
 
-La instalación debe ejecutarse mediante `scripts/install-caerice.sh`; no copiar
-QML manualmente a `/etc/xdg`. El instalador conserva backups en
-`~/.local/share/caelestia-custom-system/reinstall-backups/`. Para volver atrás,
-usar la rama `main` y reinstalar con el mismo instalador.
+Estado:
 
-## Gate permanente
+```text
+$XDG_STATE_HOME/caelestia/pomodoro.json
+```
 
-`caelestia/tests/test-calendar-readonly.sh` verifica los scopes exactos y falla
-si aparecen scopes amplios o métodos Calendar de mutación.
+Flujo predeterminado:
+
+```text
+25 min FOCUS -> 5 min BREAK
+cada 4 sesiones -> 15 min LONG_BREAK
+BREAK/LONG_BREAK -> FOCUS
+```
+
+Pausa, reanudación, reinicio y salto de descanso sobreviven al reinicio del
+shell. Timestamps mantienen el tiempo correcto tras suspensión. Locks separan
+el daemon singleton de las escrituras de estado, y las transiciones producen
+un toast local.
+
+## Desconectar y probar
+
+```bash
+cortetsu-calendar disconnect
+bash caelestia/tests/test-calendar-readonly.sh
+python3 caelestia/tests/test-calendar-credentials.py
+python3 caelestia/tests/test-calendar-polish.py
+python3 caelestia/tests/test-pomodoro.py
+```
