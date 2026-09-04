@@ -26,5 +26,7 @@ for expected in (
     'eventOccursOnDate',
 ):
     assert expected in content, expected
+assert 'Tokens.font.title.large' in content
+assert 'Tokens.font.display.small' not in content
 assert "delegate: CheckBox" not in content
 print("PASS: Calendar lifecycle sync, event design, and full Pomodoro phases are wired")

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+state_dir="${XDG_RUNTIME_DIR:-/tmp}/cortetsu-wallpaper-color-daemon"
+mkdir -p "$state_dir"
+active_config="$HOME/.config/Linux Wallpaper Engine/active-wallpapers.json"
+static_path_file="${XDG_STATE_HOME:-$HOME/.local/state}/caelestia/wallpaper/path.txt"
+last_hash_file="$state_dir/last.hash"
+lock_file="$state_dir/lock"
+
+hash_sources() {
+    {
+        if [[ -f "$active_config" ]]; then
+            stat -c '%Y %s' "$active_config"
+            jq -r '.activeWallpapers | to_entries[]? | "\(.key)=\(.value.backgroundId)"' "$active_config" 2>/dev/null || true
+        fi
+        if [[ -f "$static_path_file" ]]; then
+            static_path="$(tr -d '\n' < "$static_path_file")"
+            printf 'static=%s\n' "$static_path"
+            [[ -f "$static_path" ]] && stat -c '%Y %s' "$static_path" || true
+        fi
+    } | sha256sum | awk '{print $1}'
+}
+
+apply_colors() {
+    local static_path=""
+    if [[ -f "$static_path_file" ]]; then
+        static_path="$(tr -d '\n' < "$static_path_file")"
+    fi
+    if pgrep -u "$USER" -f 'linux-wallpaperengine' >/dev/null 2>&1; then
+        return 0
+    fi
+    if [[ -n "$static_path" && -f "$static_path" ]]; then
+        "$HOME/.local/bin/cortetsu-apply-wallpaper-colors" "$static_path" >/dev/null 2>&1 || true
+    fi
+}
+
+(
+    flock -n 9 || exit 0
+    previous=""
+    [[ -f "$last_hash_file" ]] && previous="$(cat "$last_hash_file")"
+    while true; do
+        current="$(hash_sources)"
+        if [[ "$current" != "$previous" ]]; then
+            apply_colors
+            printf '%s\n' "$current" > "$last_hash_file"
+            previous="$current"
+        fi
+        sleep 2
+    done
+) 9>"$lock_file"

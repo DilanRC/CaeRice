@@ -49,6 +49,8 @@ def main() -> None:
     require(HYPR, '"SUPER + H",\n    hl.dsp.global("caelestia:hardware")', "SUPER+H a Hardware Center")
     require(HUB, "hubRoot.toggleLauncherFor(state.modelData);", "SUPER alterna el launcher")
     require(SHORTCUTS, "const open = !(screenState.sidebar || screenState.utilities);", "SUPER+N abre ambos centros")
+    require(SHORTCUTS, 'Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")', "ruta XDG del launcher")
+    forbid(SHORTCUTS, "/quickshell/caelestia/current", "ruta legacy del launcher")
     require(PANELS, "anchors.right: root.screenState.utilities ? utilities.left : parent.right", "centros adyacentes")
     require(POPOUT, "content.bottomAnchorCenter - content.nonAnimWidth / 2", "popup centrado en su icono")
     require(WINDOW_CARD, "import qs.utils", "Overview resuelve Icons sin ReferenceError")

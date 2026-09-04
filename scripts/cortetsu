@@ -46,6 +46,7 @@ Usage:
   cortetsu dotfiles <action>       plan|apply|verify|status|rollback|gc
   cortetsu theme <action>          check|compile|adopt native desktop theme
   cortetsu shell <action>          status|adopt|reconcile|restart|disable|logs
+  cortetsu legacy-processes <action> scan|migrate
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -192,6 +193,14 @@ status_cmd() {
 run_python_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; python3 "$ROOT/$relative"; }
 run_bash_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; bash "$ROOT/$relative"; }
 
+legacy_processes_cmd() {
+    require_repo
+    require_file "$ROOT/core/migrate_legacy_processes.py"
+    local action="${1:-scan}"
+    [[ "$action" == "scan" || "$action" == "migrate" ]] || fail "acción legacy-processes inválida: $action"
+    python3 "$ROOT/core/migrate_legacy_processes.py" "$action"
+}
+
 test_cmd() {
     require_repo
     local tests=(
@@ -214,12 +223,15 @@ test_cmd() {
         "caelestia/tests/test-calendar-polish.py"
         "caelestia/tests/test-pomodoro.py"
         "caelestia/tests/test-runtime-contract.py"
+        "scripts/features/test-cortetsu-screen-state.py"
+        "scripts/features/test-legacy-process-migration.py"
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
     run_bash_test "scripts/features/test-upstream-bootstrap.sh"
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
+    run_bash_test "caelestia/evals/legacy-process-migration-eval.sh"
     printf '\nCortetsu repository regressions passed.\n'
 }
 
@@ -295,6 +307,7 @@ case "$command" in
     dotfiles) dotfiles_cmd "$@" ;;
     theme) theme_cmd "$@" ;;
     shell) shell_cmd "$@" ;;
+    legacy-processes) legacy_processes_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
     audit) audit_cmd "$@" ;;
