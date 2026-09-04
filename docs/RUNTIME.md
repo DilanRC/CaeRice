@@ -8,6 +8,7 @@ módulos en staging, ejecuta validadores y sólo entonces promueve una generaci�
 ~/.local/share/cortetsu/builds/<build-id>
 ~/.config/quickshell/caelestia/current
 ~/.config/quickshell/caelestia/previous
+~/.config/quickshell/caelestia/legacy-previous
 ```
 
 Variables canónicas:
@@ -23,9 +24,27 @@ Las variables `CAERICE_*` equivalentes siguen como fallback temporal.
 El flujo verifica que `v2.4.0` resuelva al commit
 `24aa15eefdb146350d2548c0a015b04eddbd1008`, construye en `.staging-*`, genera
 `BUILD.json`, mueve el resultado a una ruta inmutable y cambia `current` con un
-symlink temporal más `mv -T`. La generación anterior queda en `previous`.
+symlink temporal más `mv -T`.
 
-Rollback:
+## Generaciones y migración heredada
+
+`current` siempre debe ser una generación administrada por Cortetsu y contener
+`BUILD_ID`, `BUILD.json`, `compatibility.json`, `composition.json` y los módulos
+esenciales. `previous` sólo se usa como destino de rollback cuando cumple el
+mismo contrato.
+
+Las instalaciones anteriores podían dejar `previous` apuntando a un runtime que
+tenía `shell.qml`, pero no `BUILD.json`. Esa generación no se borra: durante la
+siguiente promoción se mueve a `legacy-previous`, queda visible para inspección
+y se excluye del rollback automático. La generación `current` administrada
+anterior pasa entonces a `previous`.
+
+`cortetsu verify` valida `current` estrictamente. Si detecta un `previous`
+heredado, emite una advertencia pero no declara inválida la generación actual.
+`cortetsu-rollback` sí rechaza cualquier destino que no tenga metadatos
+completos, evitando volver accidentalmente a un runtime pretransaccional.
+
+## Rollback
 
 ```bash
 cortetsu-rollback

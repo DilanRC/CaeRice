@@ -7,6 +7,7 @@ DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.lo
 RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
 CURRENT="$RUNTIME_ROOT/current"
 PREVIOUS="$RUNTIME_ROOT/previous"
+LEGACY_PREVIOUS="$RUNTIME_ROOT/legacy-previous"
 
 find_repo_root() {
     local candidate=""
@@ -73,6 +74,25 @@ resolved_generation() {
     readlink -f "$1" 2>/dev/null || true
 }
 
+is_managed_generation() {
+    local root="$1"
+    local required
+    [[ -n "$root" ]] || return 1
+
+    for required in \
+        shell.qml \
+        BUILD_ID \
+        BUILD.json \
+        compatibility.json \
+        composition.json \
+        modules/BottomHub.qml \
+        modules/calendar/Content.qml \
+        modules/calendar/Wrapper.qml
+    do
+        [[ -f "$root/$required" ]] || return 1
+    done
+}
+
 show_generation() {
     local label="$1"
     local link="$2"
@@ -85,11 +105,13 @@ show_generation() {
     fi
 
     printf '  %s=%s\n' "$label" "$resolved"
-    if [[ -f "$resolved/BUILD_ID" ]]; then
-        printf '  %s_build_id=%s\n' "$label" "$(tr -d '\n' < "$resolved/BUILD_ID")"
+    if ! is_managed_generation "$resolved"; then
+        printf '  %s_metadata=legacy-unmanaged\n' "$label"
+        return
     fi
-    if [[ -f "$resolved/BUILD.json" ]]; then
-        python3 - "$label" "$resolved/BUILD.json" <<'PY'
+
+    printf '  %s_build_id=%s\n' "$label" "$(tr -d '\n' < "$resolved/BUILD_ID")"
+    python3 - "$label" "$resolved/BUILD.json" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -102,7 +124,6 @@ else:
     print(f"  {label}_upstream={payload.get('upstreamTag', 'unknown')}@{payload.get('upstreamCommit', 'unknown')}")
     print(f"  {label}_revision={payload.get('repositoryRevision', 'unknown')}")
 PY
-    fi
 }
 
 status_cmd() {
@@ -134,6 +155,9 @@ status_cmd() {
     printf '  root=%s\n' "$RUNTIME_ROOT"
     show_generation current "$CURRENT"
     show_generation previous "$PREVIOUS"
+    if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then
+        show_generation legacy_previous "$LEGACY_PREVIOUS"
+    fi
     printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
 
     printf '\nLegacy compatibility retained:\n'
@@ -191,20 +215,7 @@ verify_generation() {
     local resolved
     resolved="$(resolved_generation "$link")"
     [[ -n "$resolved" ]] || fail "no existe la generación $label: $link"
-
-    local required
-    for required in \
-        shell.qml \
-        BUILD_ID \
-        BUILD.json \
-        compatibility.json \
-        composition.json \
-        modules/BottomHub.qml \
-        modules/calendar/Content.qml \
-        modules/calendar/Wrapper.qml
-    do
-        require_file "$resolved/$required"
-    done
+    is_managed_generation "$resolved" || fail "$label no es una generación Cortetsu administrada: $resolved"
 
     python3 - "$resolved/BUILD.json" "$ROOT/caelestia/compatibility.json" <<'PY'
 import json
@@ -227,12 +238,27 @@ verify_cmd() {
     require_file "$ROOT/caelestia/compatibility.json"
     verify_generation current "$CURRENT"
 
+    local current_resolved previous_resolved legacy_resolved
+    current_resolved="$(resolved_generation "$CURRENT")"
+
     if [[ -e "$PREVIOUS" || -L "$PREVIOUS" ]]; then
-        verify_generation previous "$PREVIOUS"
-        local current_resolved previous_resolved
-        current_resolved="$(resolved_generation "$CURRENT")"
         previous_resolved="$(resolved_generation "$PREVIOUS")"
-        [[ "$current_resolved" != "$previous_resolved" ]] || fail "current y previous apuntan a la misma generación"
+        if is_managed_generation "$previous_resolved"; then
+            verify_generation previous "$PREVIOUS"
+            [[ "$current_resolved" != "$previous_resolved" ]] || fail "current y previous apuntan a la misma generación"
+        elif [[ -n "$previous_resolved" && -f "$previous_resolved/shell.qml" ]]; then
+            printf 'WARN: previous no administrado por Cortetsu; se ignora para rollback: %s\n' "$previous_resolved" >&2
+            printf 'WARN: ejecuta cortetsu install una vez más para moverlo a legacy-previous.\n' >&2
+        else
+            printf 'WARN: el enlace previous está roto y se ignora: %s\n' "$PREVIOUS" >&2
+        fi
+    fi
+
+    if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then
+        legacy_resolved="$(resolved_generation "$LEGACY_PREVIOUS")"
+        if [[ -n "$legacy_resolved" && -f "$legacy_resolved/shell.qml" ]]; then
+            printf 'INFO: runtime heredado conservado fuera del rollback automático: %s\n' "$legacy_resolved"
+        fi
     fi
 
     run_python_test "caelestia/tests/test-runtime-contract.py"

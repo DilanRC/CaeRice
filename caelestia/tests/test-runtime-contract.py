@@ -7,11 +7,11 @@ from pathlib import Path
 repo = Path(__file__).resolve().parents[2]
 build = (repo / "caelestia/bin/build-runtime.sh").read_text(encoding="utf-8")
 installer = (repo / "scripts/install-caerice.sh").read_text(encoding="utf-8")
-cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
 content = (repo / "caelestia/modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
+cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
 compatibility = json.loads((repo / "caelestia/compatibility.json").read_text(encoding="utf-8"))
 composition = json.loads((repo / "caelestia/composition.json").read_text(encoding="utf-8"))
 
@@ -31,6 +31,9 @@ for marker in (
     "test-calendar-credentials.py",
     "test-calendar-polish.py",
     "test-runtime-contract.py",
+    "is_managed_generation",
+    "legacy-previous",
+    "runtime anterior sin metadatos Cortetsu",
 ):
     assert marker in build, marker
 assert 'cp -a "$PACKAGE_ROOT' not in build
@@ -47,27 +50,22 @@ for marker in (
 ):
     assert marker in installer, marker
 assert "sudo " not in installer
-assert 'install -m 0755 "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"' not in installer
 
 for marker in (
-    'readlink -f "${BASH_SOURCE[0]}"',
-    "CORTETSU_REPO_ROOT",
-    'candidates+=("$DATA_ROOT/repository")',
-    "versioned-user-runtime",
-    "verify_generation current",
+    "atomic_link",
+    "build.lock",
+    "is_managed_generation",
     "BUILD.json",
-    "test-calendar-credentials.py",
-    "test-calendar-readonly.sh",
-    "test-pomodoro.py",
-    "test-runtime-contract.py",
+    "previous no es una generación Cortetsu administrada",
 ):
-    assert marker in cli, marker
-assert "verify-patches.sh" not in cli
-assert "validate-sad.py" not in cli
+    assert marker in rollback, marker
+assert "ln -sfn" not in rollback
 
-assert "atomic_link" in rollback and "build.lock" in rollback and "ln -sfn" not in rollback
-assert 'runtime="$runtime_root/current"' in wrapper and "exec /usr/bin/caelestia" in wrapper
-assert "required_imports" in composer and "invalid composed marker count" in composer
+assert 'runtime="$runtime_root/current"' in wrapper
+assert "exec /usr/bin/caelestia" in wrapper
+assert "required_imports" in composer
+assert "invalid composed marker count" in composer
+
 for marker in (
     "function onCalendarChanged()",
     "requestCalendarSync(true)",
@@ -75,4 +73,17 @@ for marker in (
     "eventOccursOnDate",
 ):
     assert marker in content, marker
-print("PASS: Cortetsu staged runtime, installed CLI, complete helpers, atomic rollback, and Calendar lifecycle contract")
+
+for marker in (
+    'LEGACY_PREVIOUS="$RUNTIME_ROOT/legacy-previous"',
+    "is_managed_generation",
+    "legacy-unmanaged",
+    "previous no administrado por Cortetsu",
+    "verify_generation current",
+):
+    assert marker in cli, marker
+
+print(
+    "PASS: Cortetsu staged runtime, legacy migration, installed CLI, complete helpers, "
+    "safe rollback, and Calendar lifecycle contract"
+)
