@@ -14,40 +14,43 @@ Item {
     property string tooltip: ""
     property int buttonSize: 48
     property font iconFontStyle: Tokens.font.icon.extraLarge
-    property color activeColor: Colours.palette.m3secondaryContainer
-    property color hoverColor: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-    property color iconColor: active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3secondary
+    property color activeColor: CortetsuDesign.colorIndigo
+    property color hoverColor: Qt.lighter(CortetsuDesign.colorTetsu, 1.18)
+    property color iconColor: active || hovered
+        ? CortetsuDesign.colorWashi
+        : CortetsuDesign.colorMuted
     readonly property bool hovered: mouse.containsMouse
+    readonly property bool pressed: mouse.pressed
 
     signal clicked()
     signal wheel(real delta)
 
     implicitWidth: buttonSize
     implicitHeight: buttonSize
-    scale: root.hovered ? CortetsuDesign.hoverScale : 1
+    scale: root.pressed
+        ? 0.97
+        : root.hovered
+            ? CortetsuDesign.hoverScale
+            : 1
 
     Behavior on scale {
         NumberAnimation {
-            duration: CortetsuDesign.motionFastMs
-            easing: Tokens.anim.expressiveFastSpatial
+            duration: CortetsuDesign.motionInstantMs
+            easing.type: Easing.OutCubic
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         anchors.fill: parent
-        radius: Tokens.rounding.large
-        color: root.active
-            ? root.activeColor
-            : root.hovered
-                ? root.hoverColor
-                : "transparent"
-
-        Behavior on color {
-            ColorAnimation {
-                duration: CortetsuDesign.motionFastMs
-                easing: Tokens.anim.expressiveFastEffects
-            }
-        }
+        anchors.margins: 2
+        radiusValue: CortetsuDesign.radiusMedium
+        baseColor: "transparent"
+        hoverColor: root.hoverColor
+        activeColor: root.activeColor
+        hovered: root.hovered
+        pressed: root.pressed
+        active: root.active
+        outlined: root.active
     }
 
     MaterialIcon {
@@ -56,6 +59,13 @@ Item {
         text: root.icon
         color: root.iconColor
         fontStyle: root.iconFontStyle
+
+        Behavior on color {
+            ColorAnimation {
+                duration: CortetsuDesign.motionFastMs
+                easing.type: Easing.OutCubic
+            }
+        }
     }
 
     Image {
@@ -71,6 +81,14 @@ Item {
         fillMode: root.cropImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
         smooth: true
         mipmap: true
+        opacity: root.hovered || root.active ? 1 : 0.88
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: CortetsuDesign.motionFastMs
+                easing.type: Easing.OutCubic
+            }
+        }
     }
 
     MouseArea {
