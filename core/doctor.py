@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -47,11 +48,14 @@ def run(repo: Path, profile_name: str | None) -> list[dict]:
                 continue
             results.append(check(f"pkg:{package}", "ok" if installed else ("error" if required else "warn"), "installed" if installed else "missing", required))
 
-    runtime = Path(os.environ.get("CORTETSU_RUNTIME_ROOT", Path.home() / ".config/quickshell/cortetsu")) / "current/shell.qml"
+    runtime = Path.home() / ".config/quickshell/cortetsu/current/shell.qml"
     results.append(check("runtime", "ok" if runtime.is_file() else "error", str(runtime), True))
 
     try:
-        dotfiles.verify(repo, profile_name)
+        # verify() is intentionally user-friendly and prints a PASS line. Doctor
+        # captures it so --json always remains machine-parseable.
+        with contextlib.redirect_stdout(io.StringIO()):
+            dotfiles.verify(repo, profile_name)
     except Exception as exc:
         results.append(check("dotfiles", "error", str(exc), True))
     else:
@@ -60,6 +64,9 @@ def run(repo: Path, profile_name: str | None) -> list[dict]:
     if shutil.which("systemctl"):
         rc = subprocess.run(["systemctl", "--user", "show-environment"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
         results.append(check("systemd-user", "ok" if rc == 0 else "warn", "available" if rc == 0 else "user manager unavailable"))
+        enabled = subprocess.run(["systemctl", "--user", "is-enabled", "cortetsu-shell.service"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        state = enabled.stdout.strip() or "disabled/unavailable"
+        results.append(check("shell-supervision", "ok" if enabled.returncode == 0 else "warn", state))
 
     service = Path.home() / ".config/systemd/user/cortetsu-shell.service"
     results.append(check("shell-service", "ok" if service.exists() else "warn", str(service)))

@@ -2,6 +2,7 @@ import QtQuick
 import Caelestia.Config
 import qs.components
 import qs.services
+import "CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
@@ -23,11 +24,11 @@ Item {
 
     implicitWidth: buttonSize
     implicitHeight: buttonSize
-    scale: mouse.containsMouse ? 1.06 : 1
+    scale: root.hovered ? CortetsuDesign.hoverScale : 1
 
     Behavior on scale {
         NumberAnimation {
-            duration: Tokens.anim.durations.expressiveFastSpatial
+            duration: CortetsuDesign.motionFastMs
             easing: Tokens.anim.expressiveFastSpatial
         }
     }
@@ -37,13 +38,13 @@ Item {
         radius: Tokens.rounding.large
         color: root.active
             ? root.activeColor
-            : mouse.containsMouse
+            : root.hovered
                 ? root.hoverColor
                 : "transparent"
 
         Behavior on color {
             ColorAnimation {
-                duration: Tokens.anim.durations.expressiveFastEffects
+                duration: CortetsuDesign.motionFastMs
                 easing: Tokens.anim.expressiveFastEffects
             }
         }

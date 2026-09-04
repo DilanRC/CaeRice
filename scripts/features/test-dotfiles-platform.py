@@ -9,6 +9,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 CORE = REPO / "core/dotfiles.py"
+DOCTOR = REPO / "core/doctor.py"
 
 
 def run(env: dict[str, str], *args: str) -> str:
@@ -63,6 +64,21 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-dotfiles-test-") as tmp:
     assert backups, "unmanaged config was not backed up"
     assert backups[-1].read_text(encoding="utf-8") == "legacy=true\n"
 
+    # Machine-readable doctor output must remain valid JSON even when a required
+    # runtime check is expected to fail in the isolated test HOME.
+    doctor = subprocess.run(
+        ["python3", str(DOCTOR), "--repo", str(REPO), "--profile", "personal", "--json"],
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    doctor_payload = json.loads(doctor.stdout)
+    assert doctor_payload["schema"] == 1
+    assert any(item["name"] == "dotfiles" and item["status"] == "ok" for item in doctor_payload["checks"])
+    assert any(item["name"] == "runtime" and item["status"] == "error" for item in doctor_payload["checks"])
+
     second = run(env, "apply")
     assert "PREVIOUS dotfiles=" in second
     second_generation = current_link.resolve(strict=True)
@@ -82,4 +98,4 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-dotfiles-test-") as tmp:
     assert current_link.resolve(strict=True).exists()
     assert previous_link.resolve(strict=True).exists()
 
-print("PASS: immutable dotfiles plan/apply/backup/verify/rollback/gc contract")
+print("PASS: immutable dotfiles plan/apply/backup/doctor/verify/rollback/gc contract")

@@ -11,17 +11,23 @@ La estética samurái de Cortetsu es contenida: precisión, contraste, espacio y
 - **washi**: texto principal ligeramente cálido;
 - **ma**: espacio negativo deliberado para reducir ruido visual.
 
-Cortetsu usa la paleta Material 3 generada por el stack actual como fuente adaptable, pero la jerarquía y el motion son propios.
+La paleta puede seguir adaptándose al wallpaper durante la etapa de adapter, pero jerarquía, interacción y motion pertenecen a Cortetsu.
+
+## Fuente declarativa
+
+`~/.config/cortetsu/ui.toml` es el contrato de producto. Vive dentro de las generaciones de dotfiles y define identidad, spacing, radios y presupuesto de motion. La UI irá migrando progresivamente de tokens del adapter a tokens Cortetsu compilados desde ese contrato.
+
+El primer token activo propio vive en `modules/CortetsuDesign.js`: el Bottom Hub ya usa `hoverScale=1.04` y `motionFastMs=100` en lugar de codificar su carácter de interacción mediante el runtime upstream.
 
 ## Motion
 
-- hover: rápido y discreto;
+- hover: 100 ms, escala contenida;
 - toggles: feedback inmediato;
 - popovers: entrada breve, sin rebote ornamental;
 - paneles: transición espacial clara;
 - animación infinita: sólo para estados activos que realmente lo justifican.
 
-Los componentes deben preferir `Tokens.anim` del runtime sobre duraciones mágicas. El Bottom Hub usa escala contenida para evitar el efecto de dock elástico exagerado.
+El objetivo no es añadir animación, sino eliminar latencia percibida sin mantener trabajo cuando la interfaz está quieta.
 
 ## Jerarquía
 
