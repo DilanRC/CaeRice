@@ -31,12 +31,14 @@ jobs:
       - name: Validate shell scripts
         run: |
           bash -n caelestia/bin/build-runtime.sh
+          bash -n caelestia/bin/ensure-upstream.sh
           bash -n caelestia/bin/caelestia
           bash -n caelestia/bin/install-patches.sh
           bash -n caelestia/bin/install.sh
           bash -n caelestia/bin/rollback-runtime.sh
           bash -n scripts/install-cortetsu.sh
           bash -n scripts/migrate-cortetsu-v2.sh
+          bash -n scripts/features/test-upstream-bootstrap.sh
       - name: Run unit and contract tests
         run: |
           python3 caelestia/tests/test-calendar-credentials.py
@@ -49,6 +51,10 @@ jobs:
           git clone --depth 1 --branch v2.4.0 \
             https://github.com/caelestia-dots/shell.git \
             "$RUNNER_TEMP/caelestia-shell"
+      - name: Verify upstream cache bootstrap
+        env:
+          CORTETSU_UPSTREAM_TEST_SOURCE: ${{ runner.temp }}/caelestia-shell
+        run: bash scripts/features/test-upstream-bootstrap.sh
       - name: Build two isolated generations and roll back
         env:
           CORTETSU_UPSTREAM_SOURCE: ${{ runner.temp }}/caelestia-shell
