@@ -9,6 +9,7 @@ build = (repo / "caelestia/bin/build-runtime.sh").read_text(encoding="utf-8")
 ensure_upstream = (repo / "caelestia/bin/ensure-upstream.sh").read_text(encoding="utf-8")
 installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 migration = (repo / "scripts/migrate-cortetsu-v2.sh").read_text(encoding="utf-8")
+legacy_process_migration = (repo / "core/migrate_legacy_processes.py").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
@@ -60,6 +61,7 @@ for marker in (
 assert "install-theme-bridge.py" not in installer
 assert "canonical=" not in installer
 assert "sudo " not in installer
+assert "legacy-processes) legacy_processes_cmd" in cli
 
 for marker in (
     'calendar-client.json" "$CONFIG_HOME/cortetsu/calendar-client.json"',
@@ -69,6 +71,10 @@ for marker in (
     'BACKUP="$DATA_ROOT/migrations/$STAMP"',
 ):
     assert marker in migration, marker
+
+for marker in ("legacy-processes.lock", "DEFERRED", "NO_PROCESS_SIGNALING", "caerice-pomodoro", "caelestia-wallpaper-color-daemon"):
+    assert marker in legacy_process_migration, marker
+assert "pkill" not in legacy_process_migration and "killpg" not in legacy_process_migration
 
 for marker in (
     "atomic_link", "build.lock", "is_managed_generation", "BUILD.json",

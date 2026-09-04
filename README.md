@@ -89,9 +89,13 @@ cortetsu doctor
 cortetsu shell adopt
 cortetsu test
 cortetsu audit
+cortetsu legacy-processes scan
+cortetsu legacy-processes migrate
 ```
 
 `cortetsu install` construye shell, dotfiles e integración y al final promueve una única generación de sistema. `cortetsu-shell.service` se instala, pero no se habilita automáticamente mientras se retira el mecanismo de autostart anterior.
+
+`cortetsu legacy-processes scan` audita launchers y procesos visibles de los daemons legacy. `migrate` respalda y reemplaza sólo referencias de Pomodoro cuando el helper Cortetsu existe; el daemon de color de wallpaper queda `DEFERRED` hasta tener un reemplazo equivalente. Esta operación no envía señales, no usa `pkill` y no mata grupos de procesos.
 
 ## Calidad
 

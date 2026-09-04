@@ -7,7 +7,7 @@
 -                const screenState = ShellState.forActive();
 -                screenState.launcher = !screenState.launcher;
 +                Quickshell.execDetached([
-+                    "qs", "-p", Quickshell.env("HOME") + "/.config/quickshell/caelestia/current",
++                    "qs", "-p", (Quickshell.env("XDG_CONFIG_HOME") || (Quickshell.env("HOME") + "/.config")) + "/quickshell/cortetsu/current",
 +                    "ipc", "call",
 +                    "customDock", "launcher"
 +                ]);

@@ -108,6 +108,8 @@ python3 "$REPO/caelestia/tests/test-calendar-credentials.py"
 python3 "$REPO/caelestia/tests/test-calendar-polish.py"
 python3 "$REPO/caelestia/tests/test-pomodoro.py"
 python3 "$REPO/caelestia/tests/test-runtime-contract.py"
+python3 "$REPO/scripts/features/test-cortetsu-screen-state.py"
+python3 "$REPO/scripts/features/test-legacy-process-migration.py"
 
 for required in \
     shell.qml \
@@ -120,6 +122,8 @@ for required in \
     modules/CortetsuStatusSegment.qml \
     modules/calendar/Content.qml \
     modules/calendar/Wrapper.qml \
+    modules/CortetsuScreenState.qml \
+    modules/CortetsuOverlayPolicy.js \
     compatibility.json \
     composition.json
 do
