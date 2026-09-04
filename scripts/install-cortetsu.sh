@@ -40,16 +40,17 @@ if [[ -x "$REPO/scripts/cortetsu" ]]; then
     atomic_symlink "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"
 fi
 
+printf '==> Tema nativo Cortetsu\n'
+python3 "$REPO/core/theme.py" check --repo "$REPO"
+
 printf '==> Dotfiles Cortetsu\n'
 python3 "$REPO/core/dotfiles.py" apply --repo "$REPO"
 
 printf '==> Ciclo de vida del shell\n'
 python3 "$REPO/core/shell_lifecycle.py" migrate
 
-printf '==> Integración de tema\n'
-if [[ -f "$REPO/scripts/features/install-theme-bridge.py" ]]; then
-    python3 "$REPO/scripts/features/install-theme-bridge.py"
-fi
+printf '==> Ownership de tema\n'
+python3 "$REPO/core/theme.py" adopt --repo "$REPO"
 
 systemctl --user daemon-reload >/dev/null 2>&1 || true
 
@@ -83,6 +84,7 @@ printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
 printf 'System runtime: %s/system/current\n' "$DATA_ROOT"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
+printf 'Tema desktop: ui.toml -> CortetsuDesign/Kitty/GTK/KDE; Caelestia queda sin ownership de esas superficies.\n'
 printf 'cortetsu-shell.service no se habilita implícitamente; una adopción existente sí se conserva.\n'
 printf 'Rollback completo: cortetsu rollback\n'
 printf 'Supervisión: cortetsu shell status\n'
