@@ -2,90 +2,218 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
-import importlib.util
-import tempfile
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-compiler_path = repo / "caelestia/bin/native-bottom-hub.py"
-source_path = repo / "caelestia/modules-owned/modules/BottomHub.qml"
-workspace_component_path = repo / "caelestia/modules-owned/modules/CortetsuWorkspaceDots.qml"
+modules = repo / "caelestia/modules-owned/modules"
+controller_path = modules / "BottomHub.qml"
 
-spec = importlib.util.spec_from_file_location("native_bottom_hub", compiler_path)
-assert spec and spec.loader
-compiler = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(compiler)
+FIRST_PARTY_FILES = (
+    "CortetsuBottomHubView.qml",
+    "CortetsuModeSegment.qml",
+    "CortetsuWorkspaceDots.qml",
+    "CortetsuAppRail.qml",
+    "CortetsuTraySegment.qml",
+    "CortetsuStatusSegment.qml",
+    "HubButton.qml",
+    "StatusPill.qml",
+    "CortetsuIcon.qml",
+    "CortetsuText.qml",
+    "CortetsuSurface.qml",
+    "CortetsuTypography.js",
+)
+
+FORBIDDEN_VIEW_TOKENS = (
+    "Hypr.",
+    "SystemTray.",
+    "Audio.",
+    "Nmcli.",
+    "Bluetooth.",
+    "UPower.",
+    "Notifs.",
+    "Recorder.",
+    "Services.IdleInhibitor",
+    "DesktopEntries.",
+    "GlobalConfig.",
+    "Apps.",
+    "Wallpapers.",
+    "qs.services",
+    "Caelestia.Config",
+    "Quickshell.Bluetooth",
+    "Quickshell.Services.UPower",
+    "Quickshell.Services.SystemTray",
+    "Colours.",
+    "Tokens.",
+    "StyledRect",
+    "StyledText",
+    "MaterialIcon",
+    "ColouredIcon",
+)
+
+FORBIDDEN_CONTROLLER_VISUALS = (
+    "Colours.",
+    "Tokens.",
+    "StyledRect",
+    "StyledText",
+    "MaterialIcon",
+    "ColouredIcon",
+    "CortetsuDesign",
+    "CortetsuSurface {",
+    "HubButton {",
+    "StatusPill {",
+)
 
 
-def digest(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def read(path: Path) -> str:
+    assert path.is_file(), f"missing Bottom Hub file: {path}"
+    return path.read_text(encoding="utf-8")
 
 
-def assert_workspace_component(text: str) -> None:
-    assert 'import "CortetsuDesign.js" as CortetsuDesign' in text
-    assert "required property int workspaceCount" in text
-    assert "required property int workspaceOffset" in text
-    assert "required property int activeWsId" in text
-    assert "required property var occupiedWorkspaceIds" in text
-    assert "signal workspaceRequested(int workspaceId)" in text
-    assert text.count("CortetsuDesign.motionStandardMs") >= 2
-    assert "CortetsuDesign.colorIndigo" in text
-    assert "CortetsuDesign.colorMuted" in text
-    assert "root.occupiedWorkspaceIds.includes(wsId)" in text
-    assert "root.workspaceRequested(workspaceDot.wsId)" in text
-    assert "Colours." not in text
-    assert "Tokens." not in text
-    assert "StyledRect" not in text
-    assert "Caelestia.Config" not in text
-    assert "Hypr." not in text
-    assert "qs.services" not in text
+def assert_controller(text: str) -> None:
+    assert text.count("CortetsuBottomHubView {") == 1
+    assert "CortetsuWorkspaceDots {" not in text
+    assert "CortetsuAppRail {" not in text
+    assert "CortetsuTraySegment {" not in text
+    assert "CortetsuStatusSegment {" not in text
+
+    for token in FORBIDDEN_CONTROLLER_VISUALS:
+        assert token not in text, f"BottomHub controller leaked visual primitive: {token}"
+
+    for fingerprint in (
+        'target: "bottomHub"',
+        'target: "customDock"',
+        "function togglePinned(item): void",
+        "function focusWindowNow(client): void",
+        "function closeWindow(client): void",
+        "function activateItem(item): void",
+        "function cycleItem(item, direction): void",
+        "function showTrayMenu(itemId, centerX): void",
+        "function activateTrayItem(itemId, secondary = false): void",
+        "function toggleSession(): void",
+        "GlobalConfig.launcher.favouriteApps",
+        "SystemTray.items.values",
+        "Apps.launch(item.entry)",
+        "Hypr.dispatch(",
+        "Audio.incrementVolume()",
+        "Audio.decrementVolume()",
+        "Nmcli.activeEthernet",
+        "Bluetooth.devices.values",
+        "UPower.displayDevice",
+        "Recorder.stop()",
+        "Notifs.dnd = !Notifs.dnd",
+        "Services.IdleInhibitor.enabled = !Services.IdleInhibitor.enabled",
+        "hubRoot.toggleLauncherFor(win.modelData)",
+        "hubRoot.openWallpaperFor(win.modelData)",
+        "hubRoot.toggleSidebarFor(win.modelData)",
+    ):
+        assert fingerprint in text, f"BottomHub controller lost behavior: {fingerprint}"
+
+    assert "/cortetsu/pomodoro-notification.json" in text
+    assert "/caelestia/pomodoro-notification.json" not in text
 
 
-def assert_runtime(text: str) -> None:
-    compiler.validate(text)
-    assert "Colours." not in text
-    assert "CortetsuDesign.colorTetsu" in text
-    assert "CortetsuDesign.colorIndigo" in text
-    assert "CortetsuDesign.colorVermillion" in text
-    assert "CortetsuDesign.colorWashi" in text
-    assert "CortetsuDesign.colorMuted" in text
-    assert text.count("CortetsuSurface {") >= 4
-    assert text.count("CortetsuWorkspaceDots {") == 1
-    assert "id: workspaceDot\n" not in text
-    assert "occupiedWorkspaceIds: Hypr.workspaces.values" in text
-    assert "onWorkspaceRequested: workspaceId => Hypr.dispatch(" in text
-    assert "scale: appMouse.containsMouse ? CortetsuDesign.hoverScale : 1" in text
-    assert "duration: CortetsuDesign.motionFastMs" in text
+def assert_view_file(path: Path, text: str) -> None:
+    for token in FORBIDDEN_VIEW_TOKENS:
+        assert token not in text, f"{path.name} leaked backend/legacy visual dependency: {token}"
+
+
+def assert_view_contract(source: dict[str, str]) -> None:
+    view = source["CortetsuBottomHubView.qml"]
+    for component in (
+        "CortetsuModeSegment {",
+        "CortetsuAppRail {",
+        "CortetsuTraySegment {",
+        "CortetsuStatusSegment {",
+    ):
+        assert view.count(component) == 1, f"Bottom Hub view must own exactly one {component}"
+
+    mode = source["CortetsuModeSegment.qml"]
+    assert mode.count("CortetsuWorkspaceDots {") == 1
+    assert "signal launcherRequested()" in mode
+    assert "signal wallpaperRequested()" in mode
+    assert "signal workspaceRequested(int workspaceId)" in mode
+    assert "width: implicitWidth" in mode
+    assert "height: implicitHeight" in mode
+
+    workspace = source["CortetsuWorkspaceDots.qml"]
+    assert "signal workspaceRequested(int workspaceId)" in workspace
+    assert "CortetsuDesign.motionStandardMs" in workspace
+
+    rail = source["CortetsuAppRail.qml"]
+    for signal in (
+        "signal activateRequested(string key)",
+        "signal togglePinnedRequested(string key)",
+        "signal closeRequested(string key)",
+        "signal cycleRequested(string key, int direction)",
+    ):
+        assert signal in rail
+    assert "CortetsuDesign.hoverScale" in rail
+    assert "width: implicitWidth" in rail
+
+    tray = source["CortetsuTraySegment.qml"]
+    assert "signal hoverRequested(string itemId, real centerX)" in tray
+    assert "signal activateRequested(string itemId)" in tray
+    assert "signal secondaryRequested(string itemId)" in tray
+    assert "width: visible ? implicitWidth : 0" in tray
+
+    status = source["CortetsuStatusSegment.qml"]
+    for signal in (
+        "signal attachedControlRequested(string mode, real centerX)",
+        "signal detachedControlRequested(string mode)",
+        "signal volumeMuteRequested()",
+        "signal notificationsRequested()",
+        "signal calendarRequested()",
+        "signal sessionRequested()",
+    ):
+        assert signal in status
+    assert "StatusPill {" in status
+    assert "width: implicitWidth" in status
+
+    button = source["HubButton.qml"]
+    assert "CortetsuIcon {" in button
+    assert "CortetsuSurface {" in button
+    assert "CortetsuDesign.hoverScale" in button
+
+    pill = source["StatusPill.qml"]
+    assert "CortetsuIcon {" in pill
+    assert "CortetsuText {" in pill
+    assert "MaterialIcon" not in pill
+    assert "StyledText" not in pill
+
+    icon = source["CortetsuIcon.qml"]
+    assert 'font.family: CortetsuTypography.iconFamily' in icon
+    text = source["CortetsuText.qml"]
+    assert 'font.family: CortetsuTypography.uiFamily' in text
+
+
+def load_source_contract() -> tuple[str, dict[str, str]]:
+    controller = read(controller_path)
+    views: dict[str, str] = {}
+    for name in FIRST_PARTY_FILES:
+        path = modules / name
+        text = read(path)
+        assert_view_file(path, text)
+        views[name] = text
+    return controller, views
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--runtime", type=Path)
 args = parser.parse_args()
 
-workspace_source = workspace_component_path.read_text(encoding="utf-8")
-assert_workspace_component(workspace_source)
+controller, views = load_source_contract()
+assert_controller(controller)
+assert_view_contract(views)
 
-source = source_path.read_text(encoding="utf-8")
-with tempfile.TemporaryDirectory(prefix="cortetsu-bottom-hub-") as temp_dir:
-    candidate = Path(temp_dir) / "BottomHub.qml"
-    candidate.write_text(source, encoding="utf-8")
-
-    first = compiler.transform(candidate.read_text(encoding="utf-8"))
-    assert_runtime(first)
-    first_hash = digest(first)
-    candidate.write_text(first, encoding="utf-8")
-
-    second = compiler.transform(candidate.read_text(encoding="utf-8"))
-    assert digest(second) == first_hash, "native Bottom Hub compiler is not idempotent"
-    assert_runtime(second)
+compiler = repo / "caelestia/bin/native-bottom-hub.py"
+assert not compiler.exists(), "transitional native-bottom-hub.py compiler must be retired"
 
 if args.runtime:
-    runtime = args.runtime.read_text(encoding="utf-8")
-    assert_runtime(runtime)
+    runtime_controller = read(args.runtime)
+    assert runtime_controller == controller, "runtime BottomHub.qml must be the first-party source verbatim"
+    runtime_modules = args.runtime.parent
+    for name, expected in views.items():
+        actual = read(runtime_modules / name)
+        assert actual == expected, f"runtime {name} drifted from first-party source"
 
-    runtime_workspace = args.runtime.with_name("CortetsuWorkspaceDots.qml")
-    assert runtime_workspace.is_file(), "runtime did not include CortetsuWorkspaceDots.qml"
-    assert_workspace_component(runtime_workspace.read_text(encoding="utf-8"))
-
-print("PASS: Bottom Hub delegates workspace presentation to a controller-free Cortetsu first-party component")
+print("PASS: Bottom Hub presentation is fully first-party; BottomHub.qml is controller-only and compiler-free")

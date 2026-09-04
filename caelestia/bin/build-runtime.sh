@@ -37,7 +37,8 @@ trap cleanup EXIT
 
 require_file "$COMPATIBILITY"
 require_file "$REPO/caelestia/patches/MANIFEST.tsv"
-require_file "$REPO/caelestia/bin/native-bottom-hub.py"
+require_file "$REPO/caelestia/modules-owned/modules/BottomHub.qml"
+require_file "$REPO/caelestia/modules-owned/modules/CortetsuBottomHubView.qml"
 
 readarray -t upstream_contract < <(
     python3 - "$COMPATIBILITY" <<'PY'
@@ -88,8 +89,6 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/caelestia/modules-owned/modules/." "$STAGING/modules/"
-python3 "$REPO/caelestia/bin/native-bottom-hub.py" "$STAGING/modules/BottomHub.qml"
-python3 "$REPO/caelestia/bin/native-bottom-hub.py" --check "$STAGING/modules/BottomHub.qml"
 python3 "$REPO/caelestia/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/caelestia/composition.json" "$STAGING/composition.json"
@@ -113,6 +112,12 @@ python3 "$REPO/caelestia/tests/test-runtime-contract.py"
 for required in \
     shell.qml \
     modules/BottomHub.qml \
+    modules/CortetsuBottomHubView.qml \
+    modules/CortetsuModeSegment.qml \
+    modules/CortetsuWorkspaceDots.qml \
+    modules/CortetsuAppRail.qml \
+    modules/CortetsuTraySegment.qml \
+    modules/CortetsuStatusSegment.qml \
     modules/calendar/Content.qml \
     modules/calendar/Wrapper.qml \
     compatibility.json \

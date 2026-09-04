@@ -195,6 +195,7 @@ run_bash_test() { local relative="$1"; require_repo; require_file "$ROOT/$relati
 test_cmd() {
     require_repo
     local tests=(
+        "scripts/features/test-native-bottom-hub.py"
         "scripts/features/test-bottom-hub-target.py"
         "scripts/features/test-bottom-hub-v3.py"
         "scripts/features/test-bottom-hub-v4.py"

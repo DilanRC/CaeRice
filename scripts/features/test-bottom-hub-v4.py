@@ -2,7 +2,10 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-HUB = (ROOT / "caelestia/modules-owned/modules/BottomHub.qml").read_text()
+MODULES = ROOT / "caelestia/modules-owned/modules"
+HUB = (MODULES / "BottomHub.qml").read_text()
+VIEW = (MODULES / "CortetsuBottomHubView.qml").read_text()
+TRAY = (MODULES / "CortetsuTraySegment.qml").read_text()
 MIGRATOR = (ROOT / "caelestia/bin/migrate-bottom-hub-from-main.py").read_text()
 CHECKER = (ROOT / "caelestia/bin/check-bottom-hub-target.py").read_text()
 HYPR = (ROOT / "caelestia/user-config/.config/caelestia/hypr-user.lua").read_text()
@@ -10,7 +13,7 @@ MANIFEST = (ROOT / "caelestia/patches/MANIFEST.tsv").read_text()
 SHORTCUTS = (ROOT / "caelestia/patches/modules__Shortcuts.qml.patch").read_text()
 PANELS = (ROOT / "caelestia/patches/modules__drawers__Panels.qml.patch").read_text()
 POPOUT = (ROOT / "caelestia/patches/modules__bar__popouts__ClipWrapper.qml.patch").read_text()
-WINDOW_CARD = (ROOT / "caelestia/modules-owned/modules/overview/WindowCard.qml").read_text()
+WINDOW_CARD = (MODULES / "overview/WindowCard.qml").read_text()
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -24,15 +27,17 @@ def forbid(text: str, needle: str, label: str) -> None:
 
 
 def main() -> None:
-    require(HUB, "id: appSegment", "isla central")
-    require(HUB, "id: traySegment", "isla tray")
-    require(HUB, "id: statusSegment", "isla sistema")
-    if not (HUB.index("id: appSegment") < HUB.index("id: traySegment") < HUB.index("id: statusSegment")):
+    require(HUB, "CortetsuBottomHubView {", "frontera first-party")
+    require(VIEW, "id: appSegment", "isla central")
+    require(VIEW, "id: traySegment", "isla tray")
+    require(VIEW, "id: statusSegment", "isla sistema")
+    if not (VIEW.index("id: appSegment") < VIEW.index("id: traySegment") < VIEW.index("id: statusSegment")):
         raise SystemExit("FAIL: orden visual esperado center -> tray -> system")
-    require(HUB, "anchors.right: statusSegment.left", "tray separado de sistema")
-    require(HUB, "sourceIndex: SystemTray.items.values.indexOf(modelData)", "indice SNI estable")
-    require(HUB, "modelData.icon\n                                        || Icons.getTrayIcon", "icono SNI prioritario")
+    require(VIEW, "anchors.right: statusSegment.left", "tray separado de sistema")
+    require(HUB, "const sourceIndex = SystemTray.items.values.indexOf(item);", "indice SNI estable")
+    require(HUB, "item.icon || Icons.getTrayIcon(item.id, item.icon)", "icono SNI prioritario")
     require(HUB, "toggleUtilitiesFor", "control único de ajustes")
+    forbid(TRAY, "SystemTray", "backend SNI dentro de la vista")
     forbid(HUB, "`traymenu${trayItem.index}`", "índice filtrado incorrecto")
 
     require(MIGRATOR, "def qml_block(", "migración QML por bloque")
