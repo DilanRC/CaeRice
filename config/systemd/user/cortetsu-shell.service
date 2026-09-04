@@ -6,7 +6,7 @@ ConditionPathExists=%h/.config/quickshell/cortetsu/current/shell.qml
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/qs -p %h/.config/quickshell/cortetsu/current -n -d
+ExecStart=/usr/bin/qs -p %h/.config/quickshell/cortetsu/current -n
 Restart=on-failure
 RestartSec=1
 TimeoutStopSec=5
