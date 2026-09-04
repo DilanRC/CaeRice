@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -31,6 +32,24 @@ SEGMENT_STYLE_NEW = """                        radiusValue: CortetsuDesign.radiu
                         baseColor: CortetsuDesign.colorTetsu
                         outlined: true"""
 
+WORKSPACE_PATTERN = re.compile(
+    r"(?ms)^                            Row \{\n"
+    r"                                id: workspaceDots\n"
+    r".*?"
+    r"^                                Item \{\n"
+    r"                                    width: 7\n"
+    r"                                    height: 1\n"
+    r"                                \}\n"
+    r"^                            \}"
+)
+WORKSPACE_COMPONENT = """                            CortetsuWorkspaceDots {
+                                id: workspaceDots
+                                anchors.verticalCenter: parent.verticalCenter
+                                workspaceCount: win.workspaceCount
+                                workspaceOffset: win.workspaceOffset
+                                activeWsId: win.activeWsId
+                            }"""
+
 
 def fail(message: str) -> None:
     raise RuntimeError(message)
@@ -49,10 +68,13 @@ def validate(text: str) -> None:
         fail("BottomHub final conserva motion hardcoded heredado")
     if "CortetsuDesign.hoverScale" not in text:
         fail("BottomHub final no usa hoverScale Cortetsu")
-    if text.count("CortetsuDesign.motionStandardMs") < 2:
-        fail("BottomHub final no usa motionStandardMs para workspaces")
     if text.count("CortetsuSurface {") < 4:
         fail("BottomHub final no usa CortetsuSurface para los cuatro segmentos")
+    if text.count("CortetsuWorkspaceDots {") != 1:
+        fail("BottomHub final no delega workspaces al componente Cortetsu first-party")
+    if "id: workspaceDot\n" in text:
+        fail("BottomHub final todavía contiene el delegate visual de workspaces inline")
+
     for segment_id in SEGMENT_IDS:
         marker = f"id: {segment_id}"
         if marker not in text:
@@ -71,6 +93,13 @@ def validate(text: str) -> None:
             fail(f"BottomHub final perdió controlador: {fingerprint}")
 
 
+def extract_workspace_component(text: str) -> str:
+    rendered, count = WORKSPACE_PATTERN.subn(WORKSPACE_COMPONENT, text, count=1)
+    if count != 1:
+        fail(f"se esperaba extraer 1 bloque workspaceDots; encontrados {count}")
+    return rendered
+
+
 def transform(text: str) -> str:
     try:
         validate(text)
@@ -84,6 +113,9 @@ def transform(text: str) -> str:
         if text.count(anchor) != 1:
             fail("no se pudo ubicar el punto de import de BottomHub")
         text = text.replace(anchor, anchor + DESIGN_IMPORT + "\n", 1)
+
+    if "CortetsuWorkspaceDots {" not in text:
+        text = extract_workspace_component(text)
 
     style_count = text.count(SEGMENT_STYLE_OLD)
     if style_count != 4:
@@ -118,7 +150,7 @@ def write_atomic(path: Path, text: str) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Compile BottomHub presentation from Caelestia palette calls to Cortetsu visual tokens")
+    parser = argparse.ArgumentParser(description="Compile BottomHub presentation into Cortetsu first-party visual components and tokens")
     parser.add_argument("path", type=Path)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
@@ -127,7 +159,7 @@ def main() -> int:
         source = args.path.read_text(encoding="utf-8")
         if args.check:
             validate(source)
-            print(f"PASS: native Bottom Hub visual contract: {args.path}")
+            print(f"PASS: native Bottom Hub component contract: {args.path}")
             return 0
 
         rendered = transform(source)
@@ -135,7 +167,7 @@ def main() -> int:
             print(f"Cortetsu Bottom Hub visuals: already native: {args.path}")
             return 0
         write_atomic(args.path, rendered)
-        print(f"Cortetsu Bottom Hub visuals: compiled: {args.path}")
+        print(f"Cortetsu Bottom Hub visuals: compiled with first-party components: {args.path}")
         return 0
     except (OSError, RuntimeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
