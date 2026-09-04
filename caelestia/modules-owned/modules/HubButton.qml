@@ -26,6 +26,8 @@ Item {
 
     implicitWidth: buttonSize
     implicitHeight: buttonSize
+    width: implicitWidth
+    height: implicitHeight
     scale: root.pressed
         ? 0.97
         : root.hovered
