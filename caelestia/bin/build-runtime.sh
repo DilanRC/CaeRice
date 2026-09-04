@@ -20,6 +20,16 @@ require_file() {
     [[ -f "$1" ]] || fail "falta archivo requerido: $1"
 }
 
+is_managed_generation() {
+    local root="$1"
+    [[ -n "$root" ]] || return 1
+    [[ -f "$root/shell.qml" ]] || return 1
+    [[ -f "$root/BUILD_ID" ]] || return 1
+    [[ -f "$root/BUILD.json" ]] || return 1
+    [[ -f "$root/compatibility.json" ]] || return 1
+    [[ -f "$root/composition.json" ]] || return 1
+}
+
 cleanup() {
     [[ ! -d "$STAGING" ]] || rm -rf "$STAGING"
 }
@@ -138,15 +148,33 @@ atomic_link() {
     mv -Tf "$temporary" "$link"
 }
 
+legacy_previous="$RUNTIME_ROOT/legacy-previous"
+if [[ -L "$RUNTIME_ROOT/previous" ]]; then
+    existing_previous="$(readlink -f "$RUNTIME_ROOT/previous" || true)"
+    if ! is_managed_generation "$existing_previous"; then
+        if [[ -n "$existing_previous" && -f "$existing_previous/shell.qml" ]]; then
+            atomic_link "$existing_previous" "$legacy_previous"
+            printf 'WARN: previous heredado preservado como legacy-previous=%s\n' "$existing_previous"
+        fi
+        rm -f "$RUNTIME_ROOT/previous"
+    fi
+fi
+
 previous_target=""
 if [[ -L "$RUNTIME_ROOT/current" ]]; then
     previous_target="$(readlink -f "$RUNTIME_ROOT/current" || true)"
 fi
-if [[ -n "$previous_target" && -f "$previous_target/shell.qml" ]]; then
+if is_managed_generation "$previous_target"; then
     atomic_link "$previous_target" "$RUNTIME_ROOT/previous"
+elif [[ -n "$previous_target" && -f "$previous_target/shell.qml" ]]; then
+    atomic_link "$previous_target" "$legacy_previous"
+    rm -f "$RUNTIME_ROOT/previous"
+    printf 'WARN: runtime anterior sin metadatos Cortetsu; queda fuera del rollback automático: %s\n' "$previous_target"
 fi
+
 atomic_link "$FINAL" "$RUNTIME_ROOT/current"
 [[ -f "$RUNTIME_ROOT/current/shell.qml" ]] || fail "la promoción no produjo un runtime válido"
 trap - EXIT
 printf 'PROMOTED current=%s\n' "$(readlink -f "$RUNTIME_ROOT/current")"
 printf 'PREVIOUS previous=%s\n' "$(readlink -f "$RUNTIME_ROOT/previous" 2>/dev/null || true)"
+printf 'LEGACY previous=%s\n' "$(readlink -f "$legacy_previous" 2>/dev/null || true)"
