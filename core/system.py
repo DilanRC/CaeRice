@@ -1,0 +1,274 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import fcntl
+import json
+import os
+import shutil
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import dotfiles
+
+SCHEMA = 1
+
+
+class SystemError(RuntimeError):
+    pass
+
+
+def data_root() -> Path:
+    return dotfiles.data_root()
+
+
+def runtime_root() -> Path:
+    return Path(os.environ.get("CORTETSU_RUNTIME_ROOT", Path.home() / ".config/quickshell/cortetsu")).expanduser()
+
+
+def system_root() -> Path:
+    return data_root() / "system"
+
+
+def resolve_link(path: Path) -> Path | None:
+    if not path.is_symlink():
+        return None
+    try:
+        return path.resolve(strict=True)
+    except OSError:
+        return None
+
+
+def atomic_link(target: Path, link: Path) -> None:
+    link.parent.mkdir(parents=True, exist_ok=True)
+    temporary = link.with_name(f"{link.name}.tmp.{os.getpid()}")
+    try:
+        temporary.unlink(missing_ok=True)
+        os.symlink(str(target), temporary)
+        os.replace(temporary, link)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def validate_shell(path: Path) -> dict:
+    for relative in ("shell.qml", "BUILD_ID", "BUILD.json"):
+        if not (path / relative).is_file():
+            raise SystemError(f"generación shell inválida, falta {relative}: {path}")
+    try:
+        payload = json.loads((path / "BUILD.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemError(f"BUILD.json inválido: {path}: {exc}") from exc
+    if payload.get("schema") != 1:
+        raise SystemError(f"schema shell no soportado: {path}")
+    return payload
+
+
+def validate_dotfiles(path: Path) -> dict:
+    try:
+        return dotfiles.validate_generation(path)
+    except Exception as exc:
+        raise SystemError(f"generación dotfiles inválida: {path}: {exc}") from exc
+
+
+def generation_payload(path: Path) -> dict:
+    file = path / "SYSTEM.json"
+    if not file.is_file():
+        raise SystemError(f"generación de sistema sin SYSTEM.json: {path}")
+    try:
+        payload = json.loads(file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemError(f"SYSTEM.json inválido: {path}: {exc}") from exc
+    if payload.get("schema") != SCHEMA:
+        raise SystemError(f"schema de sistema no soportado: {path}")
+    return payload
+
+
+def validate_system(path: Path) -> dict:
+    payload = generation_payload(path)
+    shell = Path(str(payload.get("shellGeneration", "")))
+    dots = Path(str(payload.get("dotfilesGeneration", "")))
+    if not shell.is_absolute() or not dots.is_absolute():
+        raise SystemError(f"SYSTEM.json contiene rutas no absolutas: {path}")
+    validate_shell(shell)
+    validate_dotfiles(dots)
+    return payload
+
+
+def current_components() -> tuple[Path, Path]:
+    shell = resolve_link(runtime_root() / "current")
+    dots = resolve_link(data_root() / "dotfiles/current")
+    if shell is None:
+        raise SystemError("no existe shell current administrado")
+    if dots is None:
+        raise SystemError("no existe dotfiles current administrado")
+    validate_shell(shell)
+    validate_dotfiles(dots)
+    return shell, dots
+
+
+def repo_revision(repo: Path) -> str:
+    try:
+        return subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
+def build_id() -> str:
+    return datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + f"-{os.getpid()}"
+
+
+def promote(repo: Path) -> int:
+    shell, dots = current_components()
+    root = system_root()
+    builds = root / "builds"
+    builds.mkdir(parents=True, exist_ok=True)
+    generation = builds / build_id()
+    generation.mkdir()
+    payload = {
+        "schema": SCHEMA,
+        "buildId": generation.name,
+        "builtAt": datetime.now(timezone.utc).isoformat(),
+        "repositoryRevision": repo_revision(repo),
+        "shellGeneration": str(shell),
+        "dotfilesGeneration": str(dots),
+    }
+    (generation / "SYSTEM.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    validate_system(generation)
+
+    current = root / "current"
+    previous = root / "previous"
+    old_current = resolve_link(current)
+    if old_current is not None:
+        validate_system(old_current)
+        atomic_link(old_current, previous)
+    atomic_link(generation, current)
+    verify(repo)
+    print(f"PROMOTED system={generation}")
+    if old_current is not None:
+        print(f"PREVIOUS system={old_current}")
+    return 0
+
+
+def verify(repo: Path) -> int:
+    current = resolve_link(system_root() / "current")
+    if current is None:
+        raise SystemError("no existe generación de sistema current")
+    payload = validate_system(current)
+    shell, dots = current_components()
+    expected_shell = Path(payload["shellGeneration"])
+    expected_dots = Path(payload["dotfilesGeneration"])
+    if shell != expected_shell:
+        raise SystemError(f"system/shell drift: current={shell} expected={expected_shell}")
+    if dots != expected_dots:
+        raise SystemError(f"system/dotfiles drift: current={dots} expected={expected_dots}")
+    print(f"PASS: system generation {current}")
+    return 0
+
+
+def status(repo: Path) -> int:
+    root = system_root()
+    print("System generations:")
+    for label in ("current", "previous"):
+        resolved = resolve_link(root / label)
+        print(f"  {label}={resolved or 'missing'}")
+        if resolved is not None:
+            try:
+                payload = validate_system(resolved)
+            except Exception as exc:
+                print(f"  {label}_metadata=invalid ({exc})")
+            else:
+                print(f"  {label}_shell={payload['shellGeneration']}")
+                print(f"  {label}_dotfiles={payload['dotfilesGeneration']}")
+                print(f"  {label}_revision={payload.get('repositoryRevision', 'unknown')}")
+    return 0
+
+
+def rollback(repo: Path) -> int:
+    root = system_root()
+    lock_path = root / "system.lock"
+    root.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("w", encoding="utf-8") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        current_meta = resolve_link(root / "current")
+        previous_meta = resolve_link(root / "previous")
+        if current_meta is None or previous_meta is None:
+            raise SystemError("rollback de sistema requiere current y previous")
+        current_payload = validate_system(current_meta)
+        target_payload = validate_system(previous_meta)
+
+        old_shell, old_dots = current_components()
+        target_shell = Path(target_payload["shellGeneration"])
+        target_dots = Path(target_payload["dotfilesGeneration"])
+        validate_shell(target_shell)
+        validate_dotfiles(target_dots)
+
+        shell_current = runtime_root() / "current"
+        shell_previous = runtime_root() / "previous"
+        dots_current = data_root() / "dotfiles/current"
+        dots_previous = data_root() / "dotfiles/previous"
+        try:
+            atomic_link(old_shell, shell_previous)
+            atomic_link(target_shell, shell_current)
+            atomic_link(old_dots, dots_previous)
+            atomic_link(target_dots, dots_current)
+            atomic_link(current_meta, root / "previous")
+            atomic_link(previous_meta, root / "current")
+            verify(repo)
+        except Exception:
+            atomic_link(old_shell, shell_current)
+            atomic_link(old_dots, dots_current)
+            atomic_link(current_meta, root / "current")
+            atomic_link(previous_meta, root / "previous")
+            raise
+
+        print(
+            "ROLLED BACK system "
+            f"current={previous_meta} previous={current_meta} "
+            f"shell={target_shell} dotfiles={target_dots}"
+        )
+    return 0
+
+
+def gc(repo: Path, keep: int) -> int:
+    root = system_root()
+    builds = root / "builds"
+    builds.mkdir(parents=True, exist_ok=True)
+    protected = {p for p in (resolve_link(root / "current"), resolve_link(root / "previous")) if p is not None}
+    candidates = sorted((p for p in builds.iterdir() if p.is_dir()), key=lambda p: p.name, reverse=True)
+    retained = set(candidates[: max(keep, 0)]) | protected
+    removed = 0
+    for candidate in candidates:
+        if candidate not in retained:
+            shutil.rmtree(candidate)
+            removed += 1
+    print(f"GC system removed={removed} retained={len(retained)}")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Cortetsu unified system generations")
+    parser.add_argument("action", choices=("promote", "verify", "status", "rollback", "gc"))
+    parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--keep", type=int, default=3)
+    args = parser.parse_args()
+    repo = args.repo.resolve()
+    try:
+        if args.action == "promote":
+            return promote(repo)
+        if args.action == "verify":
+            return verify(repo)
+        if args.action == "status":
+            return status(repo)
+        if args.action == "rollback":
+            return rollback(repo)
+        return gc(repo, args.keep)
+    except (SystemError, OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
