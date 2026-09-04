@@ -27,14 +27,19 @@ def assert_workspace_component(text: str) -> None:
     assert "required property int workspaceCount" in text
     assert "required property int workspaceOffset" in text
     assert "required property int activeWsId" in text
+    assert "required property var occupiedWorkspaceIds" in text
+    assert "signal workspaceRequested(int workspaceId)" in text
     assert text.count("CortetsuDesign.motionStandardMs") >= 2
     assert "CortetsuDesign.colorIndigo" in text
     assert "CortetsuDesign.colorMuted" in text
-    assert "Hypr.dispatch(" in text
+    assert "root.occupiedWorkspaceIds.includes(wsId)" in text
+    assert "root.workspaceRequested(workspaceDot.wsId)" in text
     assert "Colours." not in text
     assert "Tokens." not in text
     assert "StyledRect" not in text
     assert "Caelestia.Config" not in text
+    assert "Hypr." not in text
+    assert "qs.services" not in text
 
 
 def assert_runtime(text: str) -> None:
@@ -48,6 +53,8 @@ def assert_runtime(text: str) -> None:
     assert text.count("CortetsuSurface {") >= 4
     assert text.count("CortetsuWorkspaceDots {") == 1
     assert "id: workspaceDot\n" not in text
+    assert "occupiedWorkspaceIds: Hypr.workspaces.values" in text
+    assert "onWorkspaceRequested: workspaceId => Hypr.dispatch(" in text
     assert "scale: appMouse.containsMouse ? CortetsuDesign.hoverScale : 1" in text
     assert "duration: CortetsuDesign.motionFastMs" in text
 
@@ -81,4 +88,4 @@ if args.runtime:
     assert runtime_workspace.is_file(), "runtime did not include CortetsuWorkspaceDots.qml"
     assert_workspace_component(runtime_workspace.read_text(encoding="utf-8"))
 
-print("PASS: Bottom Hub delegates workspace presentation to a Cortetsu first-party component without touching controllers")
+print("PASS: Bottom Hub delegates workspace presentation to a controller-free Cortetsu first-party component")
