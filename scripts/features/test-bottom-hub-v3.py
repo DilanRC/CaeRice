@@ -4,8 +4,14 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-BOTTOM_HUB = REPO / "caelestia/modules-owned/modules/BottomHub.qml"
-HUB_BUTTON = REPO / "caelestia/modules-owned/modules/HubButton.qml"
+MODULES = REPO / "caelestia/modules-owned/modules"
+BOTTOM_HUB = MODULES / "BottomHub.qml"
+VIEW = MODULES / "CortetsuBottomHubView.qml"
+MODE = MODULES / "CortetsuModeSegment.qml"
+RAIL = MODULES / "CortetsuAppRail.qml"
+TRAY = MODULES / "CortetsuTraySegment.qml"
+STATUS = MODULES / "CortetsuStatusSegment.qml"
+HUB_BUTTON = MODULES / "HubButton.qml"
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -58,55 +64,38 @@ def require_balanced_qml(text: str, path: Path) -> None:
 
 def main() -> None:
     bottom = BOTTOM_HUB.read_text(encoding="utf-8")
+    view = VIEW.read_text(encoding="utf-8")
+    mode = MODE.read_text(encoding="utf-8")
+    rail = RAIL.read_text(encoding="utf-8")
+    tray = TRAY.read_text(encoding="utf-8")
+    status = STATUS.read_text(encoding="utf-8")
     button = HUB_BUTTON.read_text(encoding="utf-8")
 
-    require_balanced_qml(bottom, BOTTOM_HUB)
-    require_balanced_qml(button, HUB_BUTTON)
+    for path, text in (
+        (BOTTOM_HUB, bottom),
+        (VIEW, view),
+        (MODE, mode),
+        (RAIL, rail),
+        (TRAY, tray),
+        (STATUS, status),
+        (HUB_BUTTON, button),
+    ):
+        require_balanced_qml(text, path)
 
     require(bottom, "readonly property bool panelActive:", "panel activity state")
     require(bottom, "readonly property int hubMargin: 8", "full-width hub margin")
-    require(bottom, "readonly property int appRailMaxWidth:", "bounded app rail width")
     require(bottom, "implicitWidth: modelData.width - hubMargin * 2", "monitor-width bar")
-    require(bottom, 'color: "transparent"\n                border.width: 0', "transparent outer surface")
-    require(bottom, "id: leftSegment", "anchored left segment")
-    require(bottom, "anchors.horizontalCenter: parent.horizontalCenter", "centered app segment")
-    require(bottom, "implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)", "content-sized app rail")
-    if "Layout.fillWidth: true" in bottom:
-        raise SystemExit("FAIL: app rail must size to content instead of filling the bar")
-    require(bottom, "Flickable {", "scrollable app rail")
-    require(bottom, "interactive: contentWidth > width", "rail overflow interaction")
-    require(bottom, "visible: appItem.modelData.pinned && !appItem.running", "pinned dormant badge")
-    require(bottom, "model: Math.min(appItem.modelData.windows.length, 4)", "capped window indicators")
-    require(bottom, 'imageSource: "file:///usr/share/icons/cachyos.svg"', "CachyOS launcher logo")
-    require(bottom, "id: workspaceDots", "workspace indicator spheres")
-    require(bottom, "Icons.getVolumeIcon(Audio.volume, Audio.muted)", "Caelestia volume icon")
-    if 'icon: "speaker_group"' in bottom:
-        raise SystemExit("FAIL: duplicate audio output control remains")
-    require(bottom, "id: volumeButton", "single audio control")
-    require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "Caelestia network icon")
-    require(bottom, '"bluetooth_connected"', "Caelestia bluetooth state icon")
-    require(bottom, "Icons.getBatteryIcon(", "Caelestia battery icon")
-    require(bottom, "trayItems: SystemTray.items.values.filter(", "system tray items")
-    require(bottom, "layer.enabled: Config.bar.tray.recolour", "native tray recolouring")
-    require(bottom, "`traymenu${trayItem.sourceIndex}`", "native tray hover menu")
-    require(bottom, "Colours.tPalette.m3surfaceContainer", "scheme-aware translucent surfaces")
-    require(bottom, "activeColor: Colours.palette.m3errorContainer", "session danger active state")
-    require(bottom, "onClicked: hubRoot.toggleLauncherFor(win.modelData)", "launcher action")
-    if "toggleOverviewFor" in bottom or 'icon: "view_quilt"' in bottom:
-        raise SystemExit("FAIL: overview control must not be present in BottomHub")
-    require(bottom, "onClicked: hubRoot.toggleSidebarFor(win.modelData)", "sidebar action")
-    require(bottom, '"audio",\n                                            win.popoutAnchorCenter(volumeButton)', "anchored audio hover")
-    require(bottom, '"network",\n                                            win.popoutAnchorCenter(networkButton)', "anchored network hover")
-    require(bottom, '"bluetooth",\n                                            win.popoutAnchorCenter(bluetoothButton)', "anchored bluetooth hover")
-    require(bottom, '"battery",\n                                            win.popoutAnchorCenter(batteryButton)', "anchored battery hover")
-    require(bottom, "onClicked: hubRoot.openCalendarFor(win.modelData)", "clock-click calendar")
-    require(bottom, "win.togglePinned(appItem.modelData);", "right-click pin action")
-    require(bottom, "win.closeWindow(activeWindow ?? appItem.modelData.windows[0]);", "middle-click close action")
-    require(bottom, "win.cycleItem(appItem.modelData, -1);", "wheel previous action")
-    require(bottom, "win.cycleItem(appItem.modelData, 1);", "wheel next action")
+    require(bottom, "CortetsuBottomHubView {", "first-party view boundary")
+    if "StyledRect {" in bottom or "Colours." in bottom or "Tokens." in bottom:
+        raise SystemExit("FAIL: controller must not contain legacy visual primitives")
 
+    require(view, "readonly property real appRailMaxWidth:", "bounded app rail width")
+    require(view, "id: leftSegment", "anchored left segment")
+    require(view, "anchors.horizontalCenter: parent.horizontalCenter", "centered app segment")
+    require(view, "id: traySegment", "tray segment")
+    require(view, "id: statusSegment", "right status segment")
     require_order(
-        bottom,
+        view,
         [
             ("id: leftSegment", "left mode segment"),
             ("id: appSegment", "center app segment"),
@@ -115,15 +104,54 @@ def main() -> None:
         ],
     )
 
+    require(rail, "Flickable {", "scrollable app rail")
+    require(rail, "interactive: contentWidth > width", "rail overflow interaction")
+    require(rail, "visible: appItem.modelData.pinned && !appItem.modelData.running", "pinned dormant badge")
+    require(rail, "model: Math.min(appItem.modelData.windowCount, 4)", "capped window indicators")
+    require(rail, "root.togglePinnedRequested(appItem.modelData.key);", "right-click pin request")
+    require(rail, "root.closeRequested(appItem.modelData.key);", "middle-click close request")
+    require(rail, "root.cycleRequested(appItem.modelData.key, -1);", "wheel previous request")
+    require(rail, "root.cycleRequested(appItem.modelData.key, 1);", "wheel next request")
+
+    require(mode, 'imageSource: "file:///usr/share/icons/cachyos.svg"', "CachyOS launcher logo")
+    require(mode, "CortetsuWorkspaceDots {", "workspace indicator component")
+
+    require(bottom, "Icons.getVolumeIcon(Audio.volume, Audio.muted)", "volume icon controller")
+    require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "network icon controller")
+    require(bottom, '"bluetooth_connected"', "bluetooth state icon")
+    require(bottom, "Icons.getBatteryIcon(UPower.displayDevice.percentage, batteryCharging)", "battery icon controller")
+    require(bottom, "SystemTray.items.values", "system tray controller")
+    require(bottom, "item.icon || Icons.getTrayIcon(item.id, item.icon)", "tray icon priority")
+    require(bottom, "`traymenu${sourceIndex}`", "native tray hover menu")
+    require(tray, "Image {", "first-party tray image")
+    if "ColouredIcon" in tray or "Config.bar.tray.recolour" in tray:
+        raise SystemExit("FAIL: tray view must not depend on Caelestia recolour primitives")
+
+    require(status, 'root.attachedControlRequested("audio", root.centerFor(volumeButton))', "anchored audio hover")
+    require(status, 'root.attachedControlRequested("network", root.centerFor(networkButton))', "anchored network hover")
+    require(status, 'root.attachedControlRequested("bluetooth", root.centerFor(bluetoothButton))', "anchored bluetooth hover")
+    require(status, 'root.attachedControlRequested("battery", root.centerFor(batteryButton))', "anchored battery hover")
+    require(status, "onClicked: root.calendarRequested()", "clock-click calendar request")
+
+    require(bottom, "onLauncherRequested: hubRoot.toggleLauncherFor(win.modelData)", "launcher action")
+    require(bottom, "onNotificationsRequested: hubRoot.toggleSidebarFor(win.modelData)", "sidebar action")
+    require(bottom, "onAppTogglePinnedRequested: key => win.togglePinnedKey(key)", "pin controller action")
+    require(bottom, "onAppCloseRequested: key => win.closeDockKey(key)", "close controller action")
+    require(bottom, "onAppCycleRequested: (key, direction) => win.cycleDockKey(key, direction)", "cycle controller action")
+    require(bottom, "onCalendarRequested: hubRoot.openCalendarFor(win.modelData)", "calendar controller action")
+    if "toggleOverviewFor" in bottom or 'icon: "view_quilt"' in mode:
+        raise SystemExit("FAIL: overview control must not be present in BottomHub")
+
     require(button, "property int buttonSize: 48", "button size parameter")
-    require(button, "property font iconFontStyle:", "button icon scale parameter")
+    require(button, "property int iconSize:", "button icon size parameter")
     require(button, 'property string imageSource: ""', "image button support")
     require(button, "signal wheel(real delta)", "wheel interaction support")
     require(button, "property color activeColor:", "button active color parameter")
     require(button, "property color iconColor:", "button icon color parameter")
     require(button, "readonly property bool hovered: mouse.containsMouse", "hover state exposure")
-    require(button, "implicitWidth: buttonSize", "button width binding")
-    require(button, "implicitHeight: buttonSize", "button height binding")
+    require(button, "CortetsuIcon {", "first-party icon primitive")
+    if "MaterialIcon" in button or "Tokens." in button or "Colours." in button:
+        raise SystemExit("FAIL: HubButton still depends on inherited Material visuals")
 
     print("BottomHub v3 semantic tests: OK")
 
