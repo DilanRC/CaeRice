@@ -8,7 +8,7 @@ Cortetsu no pretende ser una colección de archivos para copiar a ciegas. Su obj
 
 ## Estado de la transición
 
-La identidad canónica del proyecto pasa a ser **Cortetsu**. Durante la migración se conservan temporalmente nombres técnicos heredados como `caerice-*`, `~/.config/caerice` y `~/.local/share/caelestia-custom-system`. Renombrarlos de golpe rompería helpers, servicios systemd, rutas de estado e instalaciones existentes.
+La identidad canónica del proyecto es **Cortetsu**. Durante la migración se conservan temporalmente nombres técnicos heredados como `caerice-*`, `~/.config/caerice` y `scripts/install-caerice.sh`. Renombrarlos de golpe rompería helpers, servicios systemd, rutas de estado e instalaciones existentes.
 
 Esos identificadores se retirarán únicamente mediante migraciones idempotentes, con backup, validación y compatibilidad hacia atrás. Los documentos históricos pueden seguir usando el nombre CaeRice cuando describen estados anteriores.
 
@@ -20,7 +20,9 @@ Esos identificadores se retirarán únicamente mediante migraciones idempotentes
 - paquete integrado: `caelestia-shell 2.4.0-1`;
 - upstream: `v2.4.0`;
 - commit upstream: `24aa15eefdb146350d2548c0a015b04eddbd1008`;
-- runtime actual: `/etc/xdg/quickshell/caelestia`.
+- runtime promovido: `~/.config/quickshell/caelestia/current`;
+- runtime anterior recuperable: `~/.config/quickshell/caelestia/previous`;
+- árbol del paquete `/etc/xdg/quickshell/caelestia`: referencia de solo lectura.
 
 Caelestia es una dependencia de la implementación actual, no la identidad ni el límite futuro del proyecto.
 
@@ -32,8 +34,10 @@ Caelestia es una dependencia de la implementación actual, no la identidad ni el
 - Hardware Center con rendimiento, procesos, sensores, I/O, energía y keybinds;
 - Display Manager con preview, confirmación, persistencia y rollback;
 - Wallpaper Manager orbital con prefetch limitado y protección contra previews obsoletos;
+- Calendar mensual y agenda diaria de Google Calendar en modo estrictamente de solo lectura;
+- Pomodoro persistente con enfoque, descanso corto, descanso largo, pausa y reanudación;
 - temas y esquemas coordinados con el shell;
-- patches mínimos, módulos propios, preflight, backups y validadores semánticos.
+- construcción en staging, generaciones versionadas, promoción atómica, rollback y validadores semánticos.
 
 Gaming Center y el antiguo CaeRice Updater permanecen retirados del runtime.
 
@@ -51,7 +55,7 @@ Cortetsu crecerá como un dotfiles completo mediante capas independientes:
 8. generaciones reproducibles y rollback;
 9. escenas transaccionales para trabajo, estudio, batería, presentación y gaming.
 
-La arquitectura objetivo y sus fases están documentadas en [`docs/CORTETSU_ARCHITECTURE.md`](docs/CORTETSU_ARCHITECTURE.md). La política de compatibilidad está en [`docs/MIGRATION_FROM_CAERICE.md`](docs/MIGRATION_FROM_CAERICE.md).
+La arquitectura objetivo y sus fases están documentadas en [`docs/CORTETSU_ARCHITECTURE.md`](docs/CORTETSU_ARCHITECTURE.md). Calendar y Pomodoro están documentados en [`docs/CALENDAR.md`](docs/CALENDAR.md), y el modelo de despliegue en [`docs/RUNTIME.md`](docs/RUNTIME.md).
 
 ## Entrada unificada
 
@@ -63,11 +67,11 @@ La arquitectura objetivo y sus fases están documentadas en [`docs/CORTETSU_ARCH
 ./scripts/cortetsu install
 ```
 
-`install` conserva por ahora el instalador interno probado de CaeRice. Antes de modificar el runtime ejecuta pruebas, preflight y backups.
+`install` conserva por ahora el instalador interno compatible `scripts/install-caerice.sh`. Construye fuera de `/etc`, valida la generación, la promueve de forma atómica e instala todos los helpers requeridos junto con aliases `cortetsu-*`.
 
 ## Estructura actual
 
-- `caelestia/`: módulos propios, patches, helpers, pruebas y datos de la integración actual;
+- `caelestia/`: módulos propios, patches, helpers, pruebas y contrato de compatibilidad;
 - `config/`: configuración de usuario versionada;
 - `scripts/`: instalación, mantenimiento, migración y validación;
 - `docs/`: arquitectura, decisiones, QA e historial;
@@ -81,7 +85,7 @@ La estructura futura incorporará `dotfiles/`, `profiles/`, `packages/`, `themes
 - cada cambio funcional nace en una rama dedicada;
 - no se reemplazan árboles completos de una versión nueva del shell con copias antiguas;
 - las integraciones sobre upstream deben ser mínimas y verificables;
-- toda escritura crítica requiere staging, backup y validación posterior;
+- toda escritura crítica requiere staging, validación y promoción atómica;
 - las capacidades se detectan; no se asume hardware inexistente;
 - secretos, tokens y datos privados nunca se versionan;
 - la verificación real en CachyOS/Arch tiene prioridad sobre validaciones puramente estáticas;
