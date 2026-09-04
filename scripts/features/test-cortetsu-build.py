@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E2E gate: unmanaged runtime -> promoted shell + dotfiles -> rollback."""
+"""E2E gate: unmanaged runtime -> two unified Cortetsu systems -> rollback."""
 from __future__ import annotations
 
 import os
@@ -37,49 +37,64 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     )
 
     build = repo / "caelestia/bin/build-runtime.sh"
-    rollback = repo / "caelestia/bin/rollback-runtime.sh"
     dotfiles = repo / "core/dotfiles.py"
+    system = repo / "core/system.py"
     cli = repo / "scripts/cortetsu"
 
     subprocess.run([str(build)], cwd=repo, env=env, check=True)
-    first = (runtime / "current").resolve()
-    assert first != unmanaged
-    assert (first / "shell.qml").is_file()
-    assert (first / "modules/calendar/Content.qml").is_file()
-    assert (first / "BUILD.json").is_file()
+    shell1 = (runtime / "current").resolve()
+    assert shell1 != unmanaged
+    assert (shell1 / "shell.qml").is_file()
+    assert (shell1 / "modules/calendar/Content.qml").is_file()
+    assert (shell1 / "BUILD.json").is_file()
     assert not (runtime / "previous").exists()
     assert (runtime / "legacy-previous").resolve() == unmanaged
 
-    # A Cortetsu system is now shell + dotfiles. Promote the dotfiles layer in
-    # the same isolated HOME before asking the top-level CLI to verify it.
     subprocess.run(
         ["python3", str(dotfiles), "apply", "--repo", str(repo), "--profile", "personal"],
         cwd=repo,
         env=env,
         check=True,
     )
-    subprocess.run(
-        ["python3", str(dotfiles), "verify", "--repo", str(repo), "--profile", "personal"],
-        cwd=repo,
-        env=env,
-        check=True,
-    )
+    dots1 = (data / "dotfiles/current").resolve(strict=True)
+    subprocess.run(["python3", str(system), "promote", "--repo", str(repo)], cwd=repo, env=env, check=True)
+    system1 = (data / "system/current").resolve(strict=True)
 
-    # Reproduce an upgrade edge case: current is managed while previous still
-    # points at an unmanaged pre-v2 generation. Verification must quarantine it.
+    # Reproduce an upgrade edge case: shell current is managed while shell
+    # previous still points at the unmanaged pre-v2 generation.
     (runtime / "previous").symlink_to(unmanaged, target_is_directory=True)
     subprocess.run([str(cli), "verify"], cwd=repo, env=env, check=True)
 
     subprocess.run([str(build)], cwd=repo, env=env, check=True)
-    second = (runtime / "current").resolve()
-    assert second != first
-    assert (runtime / "previous").resolve() == first
+    shell2 = (runtime / "current").resolve()
+    assert shell2 != shell1
+    assert (runtime / "previous").resolve() == shell1
     assert (runtime / "legacy-previous").resolve() == unmanaged
 
+    subprocess.run(
+        ["python3", str(dotfiles), "apply", "--repo", str(repo), "--profile", "personal"],
+        cwd=repo,
+        env=env,
+        check=True,
+    )
+    dots2 = (data / "dotfiles/current").resolve(strict=True)
+    assert dots2 != dots1
+    subprocess.run(["python3", str(system), "promote", "--repo", str(repo)], cwd=repo, env=env, check=True)
+    system2 = (data / "system/current").resolve(strict=True)
+    assert system2 != system1
+    assert (data / "system/previous").resolve(strict=True) == system1
     subprocess.run([str(cli), "verify"], cwd=repo, env=env, check=True)
-    subprocess.run([str(rollback)], cwd=repo, env=env, check=True)
-    assert (runtime / "current").resolve() == first
-    assert (runtime / "previous").resolve() == second
-    assert (runtime / "legacy-previous").resolve() == unmanaged
 
-print("PASS: unmanaged runtime quarantined, shell + dotfiles verified, and rollback stayed safe")
+    # Top-level rollback is the product contract: shell and dotfiles move
+    # together to the exact previous Cortetsu system generation.
+    subprocess.run([str(cli), "rollback"], cwd=repo, env=env, check=True)
+    assert (data / "system/current").resolve(strict=True) == system1
+    assert (data / "system/previous").resolve(strict=True) == system2
+    assert (runtime / "current").resolve(strict=True) == shell1
+    assert (runtime / "previous").resolve(strict=True) == shell2
+    assert (data / "dotfiles/current").resolve(strict=True) == dots1
+    assert (data / "dotfiles/previous").resolve(strict=True) == dots2
+    assert (runtime / "legacy-previous").resolve() == unmanaged
+    subprocess.run([str(cli), "verify"], cwd=repo, env=env, check=True)
+
+print("PASS: shell + dotfiles promote and roll back as one Cortetsu system")

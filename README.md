@@ -6,19 +6,20 @@
 
 ## Qué es ahora
 
-Cortetsu ya no es sólo un patchset de shell. Es una plataforma de dotfiles con cuatro contratos independientes y verificables:
+Cortetsu ya no es sólo un patchset de shell. Es una plataforma de dotfiles que construye el escritorio como un sistema versionado:
 
-1. **shell runtime**: generaciones inmutables de Quickshell;
-2. **dotfiles runtime**: generaciones inmutables para configuración de usuario;
-3. **profile**: selección declarativa de capacidades y paquetes;
-4. **doctor**: comprobación del sistema antes de asumir que una función existe.
+1. **shell runtime**: generación inmutable de Quickshell;
+2. **dotfiles runtime**: configuración de usuario inmutable y hasheada;
+3. **system generation**: registra el par exacto shell + dotfiles que forma el escritorio activo;
+4. **profile**: selección declarativa de capacidades y paquetes;
+5. **doctor**: comprobación del sistema antes de asumir que una función existe.
 
-Los dotfiles administrados apuntan a una única referencia estable `~/.local/share/cortetsu/dotfiles/current`. Cambiar esa referencia cambia todo el conjunto; rollback no reescribe archivos uno por uno.
+`cortetsu rollback` revierte shell y dotfiles coordinadamente a la generación de sistema anterior. Los rollbacks específicos de cada capa quedan como herramientas de recuperación avanzada.
 
 ## Principios
 
 - cero escrituras sobre el runtime del paquete en `/etc`;
-- generaciones de usuario inmutables con `current`, `previous` y rollback atómico;
+- generaciones de usuario inmutables con `current`, `previous` y rollback verificable;
 - archivos preexistentes respaldados antes de ser adoptados;
 - namespace activo exclusivamente `cortetsu-*` / `CORTETSU_*`;
 - nada de `sh -c` en QML;
@@ -42,16 +43,23 @@ La base actual de Caelestia se reconstruye desde `v2.4.0` commit `24aa15eefdb146
 ## Generaciones
 
 ```text
+# Shell
 ~/.local/share/cortetsu/builds/<build-id>
 ~/.config/quickshell/cortetsu/current
 ~/.config/quickshell/cortetsu/previous
 
+# Dotfiles
 ~/.local/share/cortetsu/dotfiles/builds/<build-id>
 ~/.local/share/cortetsu/dotfiles/current
 ~/.local/share/cortetsu/dotfiles/previous
+
+# Sistema completo
+~/.local/share/cortetsu/system/builds/<build-id>/SYSTEM.json
+~/.local/share/cortetsu/system/current
+~/.local/share/cortetsu/system/previous
 ```
 
-`/etc/xdg/quickshell/caelestia` es referencia de solo lectura.
+`SYSTEM.json` fija las rutas exactas de la generación de shell y de dotfiles. `cortetsu verify` comprueba que los tres niveles coincidan. `/etc/xdg/quickshell/caelestia` es referencia de solo lectura.
 
 ## Perfil personal
 
@@ -73,23 +81,23 @@ La base actual de Caelestia se reconstruye desde `v2.4.0` commit `24aa15eefdb146
 ```bash
 cortetsu status
 cortetsu plan
-cortetsu apply
-cortetsu doctor
-cortetsu dotfiles status
-cortetsu dotfiles rollback
-cortetsu test
-cortetsu verify
-cortetsu audit
 cortetsu install
+cortetsu verify
+cortetsu generations
+cortetsu rollback
+cortetsu doctor
+cortetsu shell adopt
+cortetsu test
+cortetsu audit
 ```
 
-`cortetsu install` construye primero un shell válido y luego promueve una generación de dotfiles. `cortetsu-shell.service` se instala, pero no se habilita automáticamente mientras se retira el mecanismo de autostart anterior.
+`cortetsu install` construye shell, dotfiles e integración y al final promueve una única generación de sistema. `cortetsu-shell.service` se instala, pero no se habilita automáticamente mientras se retira el mecanismo de autostart anterior.
 
 ## Calidad
 
-CI valida sintaxis, Python, Bash, namespace, ausencia de shell arbitrario en QML, Calendar/Pomodoro, composición de overlays, transacciones de dotfiles y el flujo E2E `upstream exacto -> dos generaciones -> rollback`.
+CI valida sintaxis, Python, Bash, namespace, ausencia de shell arbitrario en QML, Calendar/Pomodoro, composición de overlays, transacciones de dotfiles, generaciones unificadas y el flujo E2E `upstream exacto -> sistema 1 -> sistema 2 -> rollback completo`.
 
-Los objetivos de rendimiento están en [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md), el lenguaje visual en [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) y la nueva plataforma de configuración en [`docs/DOTFILES_PLATFORM.md`](docs/DOTFILES_PLATFORM.md).
+Los objetivos de rendimiento están en [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md), el lenguaje visual en [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) y la plataforma de configuración en [`docs/DOTFILES_PLATFORM.md`](docs/DOTFILES_PLATFORM.md).
 
 ## Procedencia
 

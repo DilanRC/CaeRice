@@ -1,9 +1,9 @@
-schema = 3
+schema = 4
 
 [project]
 name = "Cortetsu"
 kind = "dotfiles-platform"
-stage = "dotfiles-foundation"
+stage = "unified-system-generations"
 source_of_truth = "git-main"
 platforms = ["CachyOS", "Arch Linux"]
 
@@ -40,6 +40,13 @@ previous = "~/.local/share/cortetsu/dotfiles/previous"
 generations = "~/.local/share/cortetsu/dotfiles/builds"
 strategy = "build-hash-backup-promote-verify"
 
+[system]
+current = "~/.local/share/cortetsu/system/current"
+previous = "~/.local/share/cortetsu/system/previous"
+generations = "~/.local/share/cortetsu/system/builds"
+components = ["shell", "dotfiles"]
+rollback = "coordinated-compensating-transaction"
+
 [packages]
 platform = "arch"
 manifest = "packages/arch.toml"
@@ -57,6 +64,8 @@ runtime_verification = "scripts/cortetsu verify"
 audit = "scripts/cortetsu audit"
 doctor = "scripts/cortetsu doctor"
 plan = "scripts/cortetsu plan"
+rollback = "scripts/cortetsu rollback"
+generations = "scripts/cortetsu generations"
 
 [product]
 current_modules = ["bottom-hub", "overview", "clipboard", "hardware", "display", "wallpaper", "calendar", "pomodoro"]
