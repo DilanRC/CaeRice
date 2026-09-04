@@ -32,19 +32,15 @@ copy_if_missing() {
     fi
 }
 
-# Preserve the complete old Cortetsu-owned namespaces before any cleanup.
 backup_path "$CONFIG_HOME/caerice" "config/caerice"
 backup_path "$STATE_HOME/caerice" "state/caerice"
 backup_path "$CONFIG_HOME/quickshell/caelestia" "runtime/quickshell-caelestia"
 
-# State previously stored under generic Caelestia paths but owned by Cortetsu.
 copy_if_missing "$CONFIG_HOME/caelestia/calendar-client.json" "$CONFIG_HOME/cortetsu/calendar-client.json" 600
 copy_if_missing "$CONFIG_HOME/caelestia/calendar-selection.json" "$CONFIG_HOME/cortetsu/calendar-selection.json" 600
 copy_if_missing "$CACHE_HOME/caelestia/calendar-events.json" "$CACHE_HOME/cortetsu/calendar-events.json" 600
 copy_if_missing "$STATE_HOME/caelestia/pomodoro.json" "$STATE_HOME/cortetsu/pomodoro.json" 600
 
-# Copy old CaeRice-owned config/state into the canonical namespace without
-# overwriting already-migrated values.
 if [[ -d "$CONFIG_HOME/caerice" ]]; then
     cp -an "$CONFIG_HOME/caerice/." "$CONFIG_HOME/cortetsu/" || true
 fi
@@ -52,8 +48,22 @@ if [[ -d "$STATE_HOME/caerice" ]]; then
     cp -an "$STATE_HOME/caerice/." "$STATE_HOME/cortetsu/" || true
 fi
 
-# Retire old managed commands after backing them up. The installer will place
-# canonical cortetsu-* commands immediately after this migration.
+# Migrate the Calendar refresh token without ever printing it. The old secret is
+# only cleared after the canonical entry is confirmed stored.
+if command -v secret-tool >/dev/null 2>&1; then
+    canonical_secret="$(secret-tool lookup service cortetsu-google-calendar 2>/dev/null || true)"
+    if [[ -z "$canonical_secret" ]]; then
+        legacy_secret="$(secret-tool lookup service caerice-google-calendar 2>/dev/null || true)"
+        if [[ -n "$legacy_secret" ]]; then
+            if printf '%s' "$legacy_secret" | secret-tool store --label='Cortetsu Google Calendar refresh token' service cortetsu-google-calendar >/dev/null 2>&1; then
+                secret-tool clear service caerice-google-calendar >/dev/null 2>&1 || true
+            fi
+        fi
+        unset legacy_secret
+    fi
+    unset canonical_secret
+fi
+
 mkdir -p "$BACKUP/bin"
 shopt -s nullglob
 for old in "$HOME"/.local/bin/caerice-*; do
@@ -62,10 +72,7 @@ for old in "$HOME"/.local/bin/caerice-*; do
 done
 shopt -u nullglob
 
-# Retire the old user service name. Preserve whether it was enabled so the new
-# canonical unit can inherit that opt-in after installation.
 OLD_UNIT="caerice-power-auto.service"
-NEW_UNIT="cortetsu-power-auto.service"
 if systemctl --user is-enabled "$OLD_UNIT" >/dev/null 2>&1; then
     printf 'enabled\n' > "$DATA_ROOT/.power-auto-was-enabled"
 fi
