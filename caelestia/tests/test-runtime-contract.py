@@ -50,12 +50,14 @@ for marker in (
     "scripts/migrate-cortetsu-v2.sh",
     'find "$REPO/caelestia/bin" -maxdepth 1 -type f -name \'cortetsu-*\'',
     "cortetsu-rollback",
-    "install-theme-bridge.py",
+    'core/theme.py" check',
+    'core/theme.py" adopt',
     "systemctl --user daemon-reload",
     'atomic_symlink "$REPO" "$DATA_ROOT/repository"',
     'atomic_symlink "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"',
 ):
     assert marker in installer, marker
+assert "install-theme-bridge.py" not in installer
 assert "canonical=" not in installer
 assert "sudo " not in installer
 
@@ -88,8 +90,9 @@ for marker in (
 
 for marker in (
     "is_managed_generation", "verify_generation current", "CORTETSU_RUNTIME_ROOT",
+    "theme_cmd check",
 ):
     assert marker in cli, marker
 assert "CAERICE_" not in cli and "caerice-" not in cli
 
-print("PASS: Cortetsu v2 canonical namespace, self-healing upstream, staged runtime, migration, helpers and rollback contract")
+print("PASS: Cortetsu v2 canonical namespace, self-healing upstream, staged runtime, native theme ownership, migration, helpers and rollback contract")
