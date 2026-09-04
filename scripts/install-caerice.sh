@@ -3,6 +3,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${HOME}/.local/bin"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
 HYPR_USER="${XDG_CONFIG_HOME:-$HOME/.config}/caelestia/hypr-user.lua"
 SYSTEMD_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 
@@ -20,7 +21,7 @@ printf '==> Cortetsu: validación y construcción aislada\n'
 "$REPO/caelestia/bin/build-runtime.sh"
 
 printf '==> Helpers y aliases de compatibilidad\n'
-mkdir -p "$BIN_DIR"
+mkdir -p "$BIN_DIR" "$DATA_ROOT"
 while IFS= read -r -d '' source; do
     name="$(basename "$source")"
     install -m 0755 "$source" "$BIN_DIR/$name"
@@ -31,8 +32,10 @@ done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'caerice-*' -print
 install -m 0755 "$REPO/caelestia/bin/rollback-runtime.sh" "$BIN_DIR/cortetsu-rollback"
 atomic_symlink "cortetsu-rollback" "$BIN_DIR/caerice-rollback"
 install -m 0755 "$REPO/caelestia/bin/caelestia" "$BIN_DIR/caelestia"
+
 if [[ -x "$REPO/scripts/cortetsu" ]]; then
-    install -m 0755 "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"
+    atomic_symlink "$REPO" "$DATA_ROOT/repository"
+    atomic_symlink "$REPO/scripts/cortetsu" "$BIN_DIR/cortetsu"
 fi
 
 printf '==> Configuración de usuario\n'
