@@ -1,0 +1,37 @@
+schema = 1
+
+[identity]
+name = "Cortetsu"
+concept = "forged restraint"
+
+[palette]
+sumi = "#0B0D10"
+tetsu = "#171B21"
+washi = "#E7E0D5"
+indigo = "#334E68"
+vermillion = "#D64B32"
+muted = "#8A919B"
+
+[shape]
+radius_small = 8
+radius_medium = 14
+radius_large = 22
+
+[spacing]
+unit = 4
+compact = 8
+standard = 12
+comfortable = 20
+spacious = 28
+
+[motion]
+instant_ms = 70
+fast_ms = 100
+standard_ms = 160
+deliberate_ms = 220
+hover_scale = 1.04
+
+[principles]
+space = "ma"
+material = "sumi-tetsu-washi"
+accent = "vermillion"

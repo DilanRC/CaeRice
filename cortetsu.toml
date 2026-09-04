@@ -1,9 +1,9 @@
-schema = 2
+schema = 3
 
 [project]
 name = "Cortetsu"
 kind = "dotfiles-platform"
-stage = "v2-modern"
+stage = "dotfiles-foundation"
 source_of_truth = "git-main"
 platforms = ["CachyOS", "Arch Linux"]
 
@@ -23,6 +23,7 @@ installed_version = "2.4.0-1"
 tag = "v2.4.0"
 commit = "24aa15eefdb146350d2548c0a015b04eddbd1008"
 package_runtime = "/etc/xdg/quickshell/caelestia"
+role = "temporary-shell-adapter"
 
 [runtime]
 mode = "versioned-user-generations"
@@ -30,6 +31,19 @@ current = "~/.config/quickshell/cortetsu/current"
 previous = "~/.config/quickshell/cortetsu/previous"
 generations = "~/.local/share/cortetsu/builds"
 package_runtime_policy = "read-only"
+
+[dotfiles]
+manifest = "dotfiles/manifest.toml"
+default_profile = "personal"
+current = "~/.local/share/cortetsu/dotfiles/current"
+previous = "~/.local/share/cortetsu/dotfiles/previous"
+generations = "~/.local/share/cortetsu/dotfiles/builds"
+strategy = "build-hash-backup-promote-verify"
+
+[packages]
+platform = "arch"
+manifest = "packages/arch.toml"
+auto_install = false
 
 [compatibility]
 active_legacy = false
@@ -41,11 +55,13 @@ installer = "scripts/cortetsu install"
 static_tests = "scripts/cortetsu test"
 runtime_verification = "scripts/cortetsu verify"
 audit = "scripts/cortetsu audit"
+doctor = "scripts/cortetsu doctor"
+plan = "scripts/cortetsu plan"
 
 [product]
 current_modules = ["bottom-hub", "overview", "clipboard", "hardware", "display", "wallpaper", "calendar", "pomodoro"]
 retired_modules = ["gaming-center", "updater"]
-planned_layers = ["packages", "dotfiles", "profiles", "themes", "generations", "actions", "scenes"]
+owned_layers = ["packages", "dotfiles", "profiles", "themes", "generations", "services", "actions", "scenes"]
 
 [safety]
 write_strategy = "build-validate-promote-verify"
