@@ -1,46 +1,121 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BASE_INFO="$ROOT/caelestia/PATCH_BASE_INFO.txt"
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+DATA_ROOT="${CORTETU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
+RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+CURRENT="$RUNTIME_ROOT/current"
+PREVIOUS="$RUNTIME_ROOT/previous"
+
+find_repo_root() {
+    local candidate=""
+    local git_root=""
+    local candidates=()
+
+    if [[ -n "${CORTETSU_REPO_ROOT:-}" ]]; then
+        candidates+=("$CORTETSU_REPO_ROOT")
+    fi
+    candidates+=("$SCRIPT_DIR/..")
+    if [[ -e "$DATA_ROOT/repository" || -L "$DATA_ROOT/repository" ]]; then
+        candidates+=("$DATA_ROOT/repository")
+    fi
+    git_root="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
+    if [[ -n "$git_root" ]]; then
+        candidates+=("$git_root")
+    fi
+
+    for candidate in "${candidates[@]}"; do
+        candidate="$(readlink -f "$candidate" 2>/dev/null || true)"
+        if [[ -n "$candidate" && -f "$candidate/cortetsu.toml" && -f "$candidate/scripts/cortetsu" ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+ROOT="$(find_repo_root || true)"
+BASE_INFO="${ROOT:+$ROOT/caelestia/PATCH_BASE_INFO.txt}"
 
 usage() {
     cat <<'EOF'
 Cortetsu command entrypoint
 
 Usage:
-  ./scripts/cortetsu status   Show repository and upstream state
-  ./scripts/cortetsu test     Run non-destructive repository regressions
-  ./scripts/cortetsu verify   Verify the installed runtime without applying changes
-  ./scripts/cortetsu audit    Run the existing full audit
-  ./scripts/cortetsu install  Rebuild the installed runtime with preflight and backups
-  ./scripts/cortetsu help     Show this help
+  cortetsu status   Show repository, upstream and promoted generation state
+  cortetsu test     Run non-destructive repository regressions
+  cortetsu verify   Verify the promoted user runtime without applying changes
+  cortetsu audit    Run status, tests and runtime verification
+  cortetsu install  Build, validate and promote a new runtime generation
+  cortetsu help     Show this help
 
 Compatibility:
-  The transition still uses proven caerice-* helpers and legacy state paths.
-  They are implementation details until transactional migrations replace them.
+  Proven caerice-* helpers and selected legacy paths remain available as aliases
+  until their idempotent migrations are complete.
 EOF
 }
 
+fail() {
+    printf 'ERROR: %s\n' "$*" >&2
+    exit 1
+}
+
+require_repo() {
+    [[ -n "$ROOT" ]] || fail "no se encontró el repositorio Cortetsu; ejecuta desde el clon o define CORTETSU_REPO_ROOT"
+}
+
 require_file() {
-    local path="$1"
-    if [[ ! -f "$path" ]]; then
-        printf 'ERROR: missing required file: %s\n' "$path" >&2
-        exit 2
+    [[ -f "$1" ]] || fail "falta archivo requerido: $1"
+}
+
+resolved_generation() {
+    readlink -f "$1" 2>/dev/null || true
+}
+
+show_generation() {
+    local label="$1"
+    local link="$2"
+    local resolved
+    resolved="$(resolved_generation "$link")"
+
+    if [[ -z "$resolved" || ! -f "$resolved/shell.qml" ]]; then
+        printf '  %s=missing\n' "$label"
+        return
+    fi
+
+    printf '  %s=%s\n' "$label" "$resolved"
+    if [[ -f "$resolved/BUILD_ID" ]]; then
+        printf '  %s_build_id=%s\n' "$label" "$(tr -d '\n' < "$resolved/BUILD_ID")"
+    fi
+    if [[ -f "$resolved/BUILD.json" ]]; then
+        python3 - "$label" "$resolved/BUILD.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+label, path = sys.argv[1:]
+try:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+except (OSError, ValueError):
+    print(f"  {label}_metadata=invalid")
+else:
+    print(f"  {label}_upstream={payload.get('upstreamTag', 'unknown')}@{payload.get('upstreamCommit', 'unknown')}")
+    print(f"  {label}_revision={payload.get('repositoryRevision', 'unknown')}")
+PY
     fi
 }
 
 status_cmd() {
     printf 'Cortetsu\n'
-    printf 'Root: %s\n' "$ROOT"
-    printf 'Stage: identity-transition\n'
+    printf 'Root: %s\n' "${ROOT:-unavailable}"
+    printf 'Stage: versioned-user-runtime\n'
 
-    if [[ -f "$BASE_INFO" ]]; then
-        printf '\nCurrent shell base:\n'
+    if [[ -n "$BASE_INFO" && -f "$BASE_INFO" ]]; then
+        printf '\nShell base contract:\n'
         sed 's/^/  /' "$BASE_INFO"
     fi
 
-    if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    if [[ -n "$ROOT" ]] && git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         local branch revision dirty
         branch="$(git -C "$ROOT" branch --show-current)"
         revision="$(git -C "$ROOT" rev-parse --short HEAD)"
@@ -55,13 +130,36 @@ status_cmd() {
         printf '  dirty=%s\n' "$dirty"
     fi
 
+    printf '\nRuntime generations:\n'
+    printf '  root=%s\n' "$RUNTIME_ROOT"
+    show_generation current "$CURRENT"
+    show_generation previous "$PREVIOUS"
+    printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
+
     printf '\nLegacy compatibility retained:\n'
     printf '  command_prefix=caerice-*\n'
     printf '  config=~/.config/caerice\n'
-    printf '  staging=~/.local/share/caelestia-custom-system\n'
+    printf '  upstream_cache=~/.local/share/caelestia-custom-system/upstream-git\n'
+}
+
+run_python_test() {
+    local relative="$1"
+    require_repo
+    require_file "$ROOT/$relative"
+    printf '==> %s\n' "$relative"
+    python3 "$ROOT/$relative"
+}
+
+run_bash_test() {
+    local relative="$1"
+    require_repo
+    require_file "$ROOT/$relative"
+    printf '==> %s\n' "$relative"
+    bash "$ROOT/$relative"
 }
 
 test_cmd() {
+    require_repo
     local tests=(
         "scripts/features/test-bottom-hub-target.py"
         "scripts/features/test-bottom-hub-v3.py"
@@ -72,39 +170,89 @@ test_cmd() {
         "scripts/features/test-keybinds.py"
         "scripts/features/eval-keybind-editor.py"
         "scripts/features/test-shell-normalizer.py"
+        "caelestia/tests/test-calendar-credentials.py"
+        "caelestia/tests/test-calendar-polish.py"
+        "caelestia/tests/test-pomodoro.py"
+        "caelestia/tests/test-runtime-contract.py"
     )
 
     local test_path
     for test_path in "${tests[@]}"; do
-        require_file "$ROOT/$test_path"
-        printf '==> %s\n' "$test_path"
-        python3 "$ROOT/$test_path"
+        run_python_test "$test_path"
     done
+    run_bash_test "caelestia/tests/test-calendar-readonly.sh"
 
     printf '\nCortetsu repository regressions passed.\n'
 }
 
-verify_cmd() {
-    require_file "$ROOT/caelestia/bin/verify-patches.sh"
-    require_file "$ROOT/scripts/features/validate-sad.py"
+verify_generation() {
+    local label="$1"
+    local link="$2"
+    local resolved
+    resolved="$(resolved_generation "$link")"
+    [[ -n "$resolved" ]] || fail "no existe la generación $label: $link"
 
-    if [[ ! -d /etc/xdg/quickshell/caelestia ]]; then
-        printf 'ERROR: current shell runtime not found at /etc/xdg/quickshell/caelestia\n' >&2
-        exit 3
+    local required
+    for required in \
+        shell.qml \
+        BUILD_ID \
+        BUILD.json \
+        compatibility.json \
+        composition.json \
+        modules/BottomHub.qml \
+        modules/calendar/Content.qml \
+        modules/calendar/Wrapper.qml
+    do
+        require_file "$resolved/$required"
+    done
+
+    python3 - "$resolved/BUILD.json" "$ROOT/caelestia/compatibility.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+build_path, contract_path = map(Path, sys.argv[1:])
+build = json.loads(build_path.read_text(encoding="utf-8"))
+contract = json.loads(contract_path.read_text(encoding="utf-8"))["caelestiaShell"]
+assert build.get("schema") == 1
+assert build.get("upstreamTag") == contract["upstreamTag"]
+assert build.get("upstreamCommit") == contract["upstreamCommit"]
+assert isinstance(build.get("repositoryRevision"), str) and build["repositoryRevision"]
+PY
+
+    printf 'PASS: %s generation %s\n' "$label" "$resolved"
+}
+
+verify_cmd() {
+    require_repo
+    require_file "$ROOT/caelestia/compatibility.json"
+    verify_generation current "$CURRENT"
+
+    if [[ -e "$PREVIOUS" || -L "$PREVIOUS" ]]; then
+        verify_generation previous "$PREVIOUS"
+        local current_resolved previous_resolved
+        current_resolved="$(resolved_generation "$CURRENT")"
+        previous_resolved="$(resolved_generation "$PREVIOUS")"
+        [[ "$current_resolved" != "$previous_resolved" ]] || fail "current y previous apuntan a la misma generación"
     fi
 
-    bash "$ROOT/caelestia/bin/verify-patches.sh"
-    python3 "$ROOT/scripts/features/validate-sad.py"
+    run_python_test "caelestia/tests/test-runtime-contract.py"
+    run_bash_test "caelestia/tests/test-calendar-readonly.sh"
+    printf '\nCortetsu promoted runtime verified.\n'
 }
 
 audit_cmd() {
-    require_file "$ROOT/caelestia/bin/audit.sh"
-    bash "$ROOT/caelestia/bin/audit.sh"
+    require_repo
+    status_cmd
+    printf '\n===== REPOSITORY TESTS =====\n'
+    test_cmd
+    printf '\n===== PROMOTED RUNTIME =====\n'
+    verify_cmd
 }
 
 install_cmd() {
+    require_repo
     require_file "$ROOT/scripts/install-caerice.sh"
-    printf 'Cortetsu: invoking the proven legacy-compatible installer.\n'
+    printf 'Cortetsu: building, validating and promoting a user runtime generation.\n'
     bash "$ROOT/scripts/install-caerice.sh"
 }
 
