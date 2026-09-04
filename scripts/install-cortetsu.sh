@@ -5,6 +5,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${HOME}/.local/bin"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 SYSTEMD_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
+KEEP_AWAKE_UNIT="cortetsu-keep-awake.service"
 
 atomic_symlink() {
     local target="$1"
@@ -29,6 +30,9 @@ while IFS= read -r -d '' source; do
     name="$(basename "$source")"
     install -m 0755 "$source" "$BIN_DIR/$name"
 done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'cortetsu-*' -print0 | sort -z)
+
+mkdir -p "$SYSTEMD_USER_DIR"
+install -m 0644 "$REPO/config/systemd/user/$KEEP_AWAKE_UNIT" "$SYSTEMD_USER_DIR/$KEEP_AWAKE_UNIT"
 
 # Low-level shell rollback remains available for recovery. Normal operation uses
 # `cortetsu rollback`, which reverts the full system generation.
@@ -56,6 +60,15 @@ printf '==> Ownership de tema\n'
 python3 "$REPO/core/theme.py" adopt --repo "$REPO"
 
 systemctl --user daemon-reload >/dev/null 2>&1 || true
+
+# Keep-awake is an explicit user requirement and must survive each promoted
+# generation. The unit is scoped to this user session and uses systemd's
+# inhibitor API, never a global desktop setting.
+if systemctl --user enable --now "$KEEP_AWAKE_UNIT" >/dev/null 2>&1; then
+    printf 'Keep awake: active and enabled\n'
+else
+    printf 'WARN: no se pudo activar %s\n' "$KEEP_AWAKE_UNIT" >&2
+fi
 
 # Preserve the user's explicit opt-in when migrating the renamed power service.
 if [[ -f "$DATA_ROOT/.power-auto-was-enabled" && -f "$SYSTEMD_USER_DIR/cortetsu-power-auto.service" ]]; then
