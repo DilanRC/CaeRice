@@ -48,6 +48,14 @@ WORKSPACE_COMPONENT = """                            CortetsuWorkspaceDots {
                                 workspaceCount: win.workspaceCount
                                 workspaceOffset: win.workspaceOffset
                                 activeWsId: win.activeWsId
+                                occupiedWorkspaceIds: Hypr.workspaces.values
+                                    .filter(ws => ws.lastIpcObject?.windows > 0)
+                                    .map(ws => ws.id)
+                                onWorkspaceRequested: workspaceId => Hypr.dispatch(
+                                    Hypr.usingLua
+                                        ? `hl.dsp.focus({ workspace = "${workspaceId}" })`
+                                        : `workspace ${workspaceId}`
+                                )
                             }"""
 
 
@@ -74,6 +82,8 @@ def validate(text: str) -> None:
         fail("BottomHub final no delega workspaces al componente Cortetsu first-party")
     if "id: workspaceDot\n" in text:
         fail("BottomHub final todavía contiene el delegate visual de workspaces inline")
+    if "onWorkspaceRequested:" not in text:
+        fail("BottomHub final no conserva el controlador de cambio de workspace fuera de la vista")
 
     for segment_id in SEGMENT_IDS:
         marker = f"id: {segment_id}"
