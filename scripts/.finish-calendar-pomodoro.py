@@ -27,6 +27,14 @@ with tarfile.open(fileobj=io.BytesIO(raw), mode="r:xz") as archive:
     archive.extractall(ROOT)
 
 patcher = ROOT / "scripts/.patch-calendar-qml.py"
+patcher.write_text(
+    patcher.read_text(encoding="utf-8").replace(
+        "ROOT = Path(__file__).resolve().parents[2]",
+        "ROOT = Path(__file__).resolve().parents[1]",
+        1,
+    ),
+    encoding="utf-8",
+)
 subprocess.run([sys.executable, str(patcher)], cwd=ROOT, check=True)
 patcher.unlink()
 shutil.rmtree(PARTS)
