@@ -50,7 +50,7 @@ def qml_block(text: str, component: str, object_id: str) -> str:
 
 
 def retained_overlay_flags(root: Path) -> tuple[str, ...]:
-    """Return retained CaeRice overlays that are actually wired in ScreenState.
+    """Return retained Cortetsu overlays that are actually wired in ScreenState.
 
     ContentWindow is intentionally a shared native surface. Clipboard, Hardware
     Center and Display Manager extend the same overview focus/layer/mask chains.
@@ -180,7 +180,7 @@ def check_regions(root: Path, text: str) -> bool:
 def check_sidebar(root: Path, text: str) -> bool:
     del root
     return has_all(text, (
-        'objectName: "caericeBottomNotificationCenter"',
+        'objectName: "cortetsuBottomNotificationCenter"',
         "readonly property bool shouldBeActive: screenState.sidebar",
         "anchors.bottomMargin: 66 + (-implicitHeight - 5 - 66) * offsetScale",
         "implicitWidth: Math.min(520, parent.width - 16)",

@@ -18,7 +18,7 @@ Item {
 
     readonly property string helperPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-hardware-power"
+        "/.local/bin/cortetsu-hardware-power"
 
     readonly property var profiles: power?.profiles ?? ({})
     readonly property var cpu: power?.cpu ?? ({})

@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Reemplazar el dock y la barra lateral por una barra inferior completa y coherente para Caelestia/CaeRice.
+Reemplazar el dock y la barra lateral por una barra inferior completa y coherente para Caelestia/Cortetsu.
 
 La barra inferior vive en `modules/BottomHub.qml`. Usa superficies translúcidas de `Colours.tPalette`, iconos Material y estados de los servicios nativos de Caelestia. Conserva la lógica útil del antiguo `CustomDock.qml`: favoritas, agrupación por aplicación, ventanas por monitor, clic para lanzar/enfocar, rueda para recorrer ventanas, clic central para cerrar y clic derecho para fijar/quitar favoritas.
 
@@ -69,7 +69,7 @@ Desde el checkout de la rama:
 
 ```bash
 git switch feature/bottom-hub
-bash scripts/install-caerice.sh
+bash scripts/install-cortetsu.sh
 ```
 
 El instalador ejecuta preflight con `patch --dry-run` antes de modificar el runtime. Si algún patch no corresponde a la versión instalada, aborta con `CONFLICT` sin aplicar cambios.
@@ -123,7 +123,7 @@ La rama estable sigue siendo `main`. Si la prueba falla, volver al estado establ
 
 ```bash
 git switch main
-bash scripts/install-caerice.sh
+bash scripts/install-cortetsu.sh
 pkill -TERM -f 'qs -c caelestia'
 sleep 1
 caelestia shell -d
@@ -132,7 +132,7 @@ caelestia shell -d
 `install-patches.sh` crea además un backup previo en:
 
 ```text
-~/.local/share/caelestia-custom-system/reinstall-backups/
+~/.local/share/cortetsu/upstream/reinstall-backups/
 ```
 
 No fusionar `feature/bottom-hub` a `main` hasta comprobar interacción, multimonitor, launcher, notificaciones y touchpad en el runtime real.

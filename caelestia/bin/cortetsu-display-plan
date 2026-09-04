@@ -7,7 +7,7 @@ import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PROBE = HERE / "caerice-display-probe"
+PROBE = HERE / "cortetsu-display-probe"
 ALLOWED_CM = {"auto", "srgb", "dcip3", "dp3", "adobe", "wide", "edid", "hdr", "hdredid"}
 
 
@@ -60,7 +60,7 @@ def proven_10bit(monitor: dict) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate a CaeRice display layout without applying it")
+    parser = argparse.ArgumentParser(description="Validate a Cortetsu display layout without applying it")
     parser.add_argument("--candidate", required=True, help="Candidate JSON object with an outputs array")
     args = parser.parse_args()
 
@@ -144,7 +144,7 @@ def main() -> int:
         if cm not in ALLOWED_CM:
             errors.append(f"{name}: unsupported color-management preset {cm}")
         if cm in {"wide", "hdr", "hdredid"} and bitdepth != 10:
-            errors.append(f"{name}: {cm} requires 10-bit in CaeRice safety policy")
+            errors.append(f"{name}: {cm} requires 10-bit in Cortetsu safety policy")
         if cm in {"hdr", "hdredid"} and monitor.get("hdr_capable") is not True:
             errors.append(f"{name}: HDR requested but EDID support is not established")
         if cm == "wide" and monitor.get("wide_color_capable") is not True:

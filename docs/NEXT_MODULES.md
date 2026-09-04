@@ -18,6 +18,6 @@ Non-goals:
 
 ## Retired modules
 
-Gaming Center and CaeRice Updater were intentionally removed from the product and repository. They must not be installed, wired into `ScreenState`/`Panels`/`ContentWindow`, expose IPC targets, or leave helpers in `~/.local/bin`.
+Gaming Center and Cortetsu Updater were intentionally removed from the product and repository. They must not be installed, wired into `ScreenState`/`Panels`/`ContentWindow`, expose IPC targets, or leave helpers in `~/.local/bin`.
 
-Game configuration and repository/upstream updates are handled manually outside CaeRice's QML runtime.
+Game configuration and repository/upstream updates are handled manually outside Cortetsu's QML runtime.

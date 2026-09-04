@@ -1,4 +1,4 @@
-# CaeRice Display Manager
+# Cortetsu Display Manager
 
 Branch: `feature/display-manager`
 
@@ -19,16 +19,16 @@ Implemented:
 - topology canvas based on candidate logical coordinates;
 - per-output candidate mode, scale and X/Y editing;
 - current workspace, DPMS and GPU/card visibility;
-- `caerice-display-plan`: validates a complete candidate and renders the exact Hyprland monitor commands without executing them;
-- `caerice-display-transaction`: timed live preview with automatic rollback;
+- `cortetsu-display-plan`: validates a complete candidate and renders the exact Hyprland monitor commands without executing them;
+- `cortetsu-display-transaction`: timed live preview with automatic rollback;
 - explicit `Preview 15s`, `Keep` and `Revert` controls;
 - full installer, development updater and validator.
 
 ## Safety model
 
-`caerice-display-probe` is read-only.
+`cortetsu-display-probe` is read-only.
 
-`caerice-display-plan` is dry-run only and always reports `"applied": false`.
+`cortetsu-display-plan` is dry-run only and always reports `"applied": false`.
 
 The preview transaction follows this sequence:
 
@@ -49,9 +49,9 @@ No normal Display Manager action edits EDID data, creates arbitrary modelines, o
 
 ## Files
 
-- `caelestia/bin/caerice-display-probe`
-- `caelestia/bin/caerice-display-plan`
-- `caelestia/bin/caerice-display-transaction`
+- `caelestia/bin/cortetsu-display-probe`
+- `caelestia/bin/cortetsu-display-plan`
+- `caelestia/bin/cortetsu-display-transaction`
 - `caelestia/modules-owned/modules/DisplayController.qml`
 - `caelestia/modules-owned/modules/display/Wrapper.qml`
 - `caelestia/modules-owned/modules/display/Content.qml`
@@ -64,7 +64,7 @@ No normal Display Manager action edits EDID data, creates arbitrary modelines, o
 ## Install
 
 ```fish
-cd ~/CaeRice
+cd ~/Cortetsu
 git switch feature/display-manager
 git pull --ff-only
 bash scripts/features/install-display-manager.sh
@@ -86,8 +86,8 @@ qs -c caelestia ipc call display open
 
 ```fish
 python3 scripts/features/validate-display-manager.py
-~/.local/bin/caerice-display-probe | jq
-~/.local/bin/caerice-display-transaction status | jq
+~/.local/bin/cortetsu-display-probe | jq
+~/.local/bin/cortetsu-display-transaction status | jq
 ```
 
 Before testing a modified layout, first use **Dry run candidate**. Then `Preview 15s` may apply it temporarily. If no confirmation occurs, the watchdog restores the original live layout.
@@ -98,7 +98,7 @@ The next block is persistence and presets:
 
 - convert a confirmed candidate to managed `hl.monitor({...})` entries;
 - snapshot `~/.config/caelestia/hypr-user.lua` before every persistence attempt;
-- replace only a CaeRice-owned monitor block rather than arbitrary user Lua;
+- replace only a Cortetsu-owned monitor block rather than arbitrary user Lua;
 - reload and verify;
 - restore the previous file and live layout if verification fails;
 - named layouts such as Laptop only, Desk dual-monitor and external-display presets;

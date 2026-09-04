@@ -1,6 +1,6 @@
 # Cortetsu
 
-> Dotfiles personal para CachyOS/Arch, Hyprland y un escritorio Quickshell profundamente integrado. Anteriormente conocido como **CaeRice**.
+> Dotfiles personal para CachyOS/Arch, Hyprland y un escritorio Quickshell profundamente integrado. Anteriormente conocido como **Cortetsu**.
 
 **Cortetsu** fusiona mi apellido, **Cortés**, con *tetsu* (鉄, hierro/acero). El nombre representa un entorno personal forjado con disciplina: estética inspirada en el Japón feudal y el samurái, pero sin depender de la identidad de Caelestia ni de otro proyecto.
 
@@ -8,9 +8,9 @@ Cortetsu no pretende ser una colección de archivos para copiar a ciegas. Su obj
 
 ## Estado de la transición
 
-La identidad canónica del proyecto es **Cortetsu**. Durante la migración se conservan temporalmente nombres técnicos heredados como `caerice-*`, `~/.config/caerice` y `scripts/install-caerice.sh`. Renombrarlos de golpe rompería helpers, servicios systemd, rutas de estado e instalaciones existentes.
+La identidad canónica del proyecto es **Cortetsu**. Durante la migración se conservan temporalmente nombres técnicos heredados como `cortetsu-*`, `~/.config/cortetsu` y `scripts/install-cortetsu.sh`. Renombrarlos de golpe rompería helpers, servicios systemd, rutas de estado e instalaciones existentes.
 
-Esos identificadores se retirarán únicamente mediante migraciones idempotentes, con backup, validación y compatibilidad hacia atrás. Los documentos históricos pueden seguir usando el nombre CaeRice cuando describen estados anteriores.
+Esos identificadores se retirarán únicamente mediante migraciones idempotentes, con backup, validación y compatibilidad hacia atrás. Los documentos históricos pueden seguir usando el nombre Cortetsu cuando describen estados anteriores.
 
 ## Base confirmada
 
@@ -20,8 +20,8 @@ Esos identificadores se retirarán únicamente mediante migraciones idempotentes
 - paquete integrado: `caelestia-shell 2.4.0-1`;
 - upstream: `v2.4.0`;
 - commit upstream: `24aa15eefdb146350d2548c0a015b04eddbd1008`;
-- runtime promovido: `~/.config/quickshell/caelestia/current`;
-- runtime anterior recuperable: `~/.config/quickshell/caelestia/previous`;
+- runtime promovido: `~/.config/quickshell/cortetsu/current`;
+- runtime anterior recuperable: `~/.config/quickshell/cortetsu/previous`;
 - árbol del paquete `/etc/xdg/quickshell/caelestia`: referencia de solo lectura.
 
 Caelestia es una dependencia de la implementación actual, no la identidad ni el límite futuro del proyecto.
@@ -39,7 +39,7 @@ Caelestia es una dependencia de la implementación actual, no la identidad ni el
 - temas y esquemas coordinados con el shell;
 - construcción en staging, generaciones versionadas, promoción atómica, rollback y validadores semánticos.
 
-Gaming Center y el antiguo CaeRice Updater permanecen retirados del runtime.
+Gaming Center y el antiguo Cortetsu Updater permanecen retirados del runtime.
 
 ## Dirección del producto
 
@@ -67,7 +67,7 @@ La arquitectura objetivo y sus fases están documentadas en [`docs/CORTETSU_ARCH
 ./scripts/cortetsu install
 ```
 
-`install` conserva por ahora el instalador interno compatible `scripts/install-caerice.sh`. Construye fuera de `/etc`, valida la generación, la promueve de forma atómica e instala todos los helpers requeridos junto con aliases `cortetsu-*`.
+`install` conserva por ahora el instalador interno compatible `scripts/install-cortetsu.sh`. Construye fuera de `/etc`, valida la generación, la promueve de forma atómica e instala todos los helpers requeridos junto con aliases `cortetsu-*`.
 
 ## Estructura actual
 

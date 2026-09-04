@@ -8,9 +8,9 @@ from pathlib import Path
 from types import SimpleNamespace
 
 REPO = Path(__file__).resolve().parents[2]
-HELPER = REPO / "caelestia/bin/caerice-keybinds"
+HELPER = REPO / "caelestia/bin/cortetsu-keybinds"
 
-loader = importlib.machinery.SourceFileLoader("caerice_keybinds", str(HELPER))
+loader = importlib.machinery.SourceFileLoader("cortetsu_keybinds", str(HELPER))
 spec = importlib.util.spec_from_loader(loader.name, loader)
 assert spec is not None
 module = importlib.util.module_from_spec(spec)
@@ -18,7 +18,7 @@ loader.exec_module(module)
 
 
 def main() -> None:
-    with tempfile.TemporaryDirectory(prefix="caerice-keybinds-") as temp:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-keybinds-") as temp:
         root = Path(temp)
         module.DEFAULTS = root / "variables.lua"
         module.OVERRIDES = root / "hypr-vars.lua"
@@ -75,14 +75,14 @@ def main() -> None:
 
         module.add_app("org.example.App", "Example", "example --open", "SUPER + ALT + E")
         user = module.USER.read_text(encoding="utf-8")
-        assert "CaeRice app shortcut: Example" in user
+        assert "Cortetsu app shortcut: Example" in user
         assert "hl.dsp.exec_cmd([[example --open]])" in user
         generated = next(item for item in module.list_bindings() if item.get("appId") == "org.example.App")
         assert generated["appName"] == "Example"
         assert generated["command"] == "example --open"
 
         module.delete_binding(generated["id"])
-        assert "CaeRice app shortcut: Example" not in module.USER.read_text(encoding="utf-8")
+        assert "Cortetsu app shortcut: Example" not in module.USER.read_text(encoding="utf-8")
 
         module.delete_binding("var:kbNextWs:0")
         assert 'kbNextWs = "CTRL + SUPER + Right",' in module.OVERRIDES.read_text(encoding="utf-8")

@@ -56,7 +56,7 @@ Scope {
 
     CustomShortcut {
         name: "displaymanager"
-        description: "Toggle CaeRice Display Manager"
+        description: "Toggle Cortetsu Display Manager"
         onPressed: root.toggle()
     }
 

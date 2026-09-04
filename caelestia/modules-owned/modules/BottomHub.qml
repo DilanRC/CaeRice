@@ -52,12 +52,12 @@ Scope {
 
     Process {
         id: calendarSync
-        command: [Paths.home + "/.local/bin/caerice-calendar", "sync"]
+        command: [Paths.home + "/.local/bin/cortetsu-calendar", "sync"]
     }
 
     Process {
         id: pomodoroOwner
-        command: [Paths.home + "/.local/bin/caerice-pomodoro", "daemon"]
+        command: [Paths.home + "/.local/bin/cortetsu-pomodoro", "daemon"]
         running: true
     }
 

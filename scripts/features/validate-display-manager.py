@@ -47,12 +47,12 @@ qml = [
     "DisplayOutputControls.qml",
 ]
 helpers = [
-    "caerice-display-probe",
-    "caerice-display-plan",
-    "caerice-display-transaction",
-    "caerice-display-persist",
-    "caerice-display-presets",
-    "caerice-display-workspaces",
+    "cortetsu-display-probe",
+    "cortetsu-display-plan",
+    "cortetsu-display-transaction",
+    "cortetsu-display-persist",
+    "cortetsu-display-presets",
+    "cortetsu-display-workspaces",
 ]
 
 req((MODULES / "DisplayController.qml").is_file(), "missing DisplayController.qml")
@@ -94,11 +94,11 @@ for needle in ["Editor", "PreviewControls", "DisplayPresets", "DisplayOutputCont
 preview = (DISPLAY / "PreviewControls.qml").read_text(encoding="utf-8") if (DISPLAY / "PreviewControls.qml").is_file() else ""
 for needle in ["Preview", "Keep", "Save", "Revert", "confirmedCandidateJson === root.currentCandidateJson"]:
     req(needle in preview, f"PreviewControls missing {needle}")
-req("persistPath" in preview and '"persist", "--candidate"' in preview, "PreviewControls is not delegating Save to caerice-display-persist")
+req("persistPath" in preview and '"persist", "--candidate"' in preview, "PreviewControls is not delegating Save to cortetsu-display-persist")
 
-persist_text = (BIN / "caerice-display-persist").read_text(encoding="utf-8") if (BIN / "caerice-display-persist").is_file() else ""
+persist_text = (BIN / "cortetsu-display-persist").read_text(encoding="utf-8") if (BIN / "cortetsu-display-persist").is_file() else ""
 for needle in [
-    'WORKSPACES = HERE / "caerice-display-workspaces"',
+    'WORKSPACES = HERE / "cortetsu-display-workspaces"',
     '"sync", "--candidate"',
     "rollback_plan = plan(original_live)",
     "restore(backup_file, original_live)",
@@ -107,11 +107,11 @@ for needle in [
 ]:
     req(needle in persist_text, f"atomic persistence path missing {needle}")
 
-planner = (BIN / "caerice-display-plan").read_text(encoding="utf-8") if (BIN / "caerice-display-plan").is_file() else ""
+planner = (BIN / "cortetsu-display-plan").read_text(encoding="utf-8") if (BIN / "cortetsu-display-plan").is_file() else ""
 for needle in ["bitdepth", "ALLOWED_CM", "vrr_capable", "hdr_capable", "wide_color_capable"]:
     req(needle in planner, f"planner capability guard missing {needle}")
 
-probe = run_json([sys.executable, str(BIN / "caerice-display-probe")], "probe") if not errors else {}
+probe = run_json([sys.executable, str(BIN / "cortetsu-display-probe")], "probe") if not errors else {}
 monitors = probe.get("hyprland", []) if probe else []
 if probe:
     req(isinstance(monitors, list), "hyprland not list")
@@ -134,7 +134,7 @@ if probe:
             for item in monitors
         ]
         plan = run_json(
-            [sys.executable, str(BIN / "caerice-display-plan"), "--candidate", json.dumps({"outputs": outputs})],
+            [sys.executable, str(BIN / "cortetsu-display-plan"), "--candidate", json.dumps({"outputs": outputs})],
             "plan",
             (0, 3),
         )
@@ -145,17 +145,17 @@ if probe:
                 req(key in normalized, f"normalized candidate missing {key}")
 
 if not errors:
-    tx = run_json([sys.executable, str(BIN / "caerice-display-transaction"), "status"], "transaction")
+    tx = run_json([sys.executable, str(BIN / "cortetsu-display-transaction"), "status"], "transaction")
     req("active" in tx, "transaction status missing active")
 
-    persisted = run_json([sys.executable, str(BIN / "caerice-display-persist"), "status"], "persist")
+    persisted = run_json([sys.executable, str(BIN / "cortetsu-display-persist"), "status"], "persist")
     req("available" in persisted, "persist status missing available")
     req("workspace" in str(persisted.get("atomic_scope", "")).lower(), "persist status does not advertise atomic workspace scope")
 
-    named = run_json([sys.executable, str(BIN / "caerice-display-presets"), "list"], "presets")
+    named = run_json([sys.executable, str(BIN / "cortetsu-display-presets"), "list"], "presets")
     req(isinstance(named.get("presets"), list), "presets list invalid")
 
-    workspace = run_json([sys.executable, str(BIN / "caerice-display-workspaces"), "status"], "workspaces")
+    workspace = run_json([sys.executable, str(BIN / "cortetsu-display-workspaces"), "status"], "workspaces")
     req("managed" in workspace and "display_policy_managed" in workspace, "workspace/output-policy status incomplete")
 
 update = (REPO / "scripts/features/update-display-manager.sh").read_text(encoding="utf-8") if (REPO / "scripts/features/update-display-manager.sh").is_file() else ""

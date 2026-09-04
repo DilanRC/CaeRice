@@ -30,10 +30,10 @@ jobs:
               data = tomllib.load(handle)
 
           assert data["project"]["name"] == "Cortetsu"
-          assert data["project"]["former_name"] == "CaeRice"
+          assert data["project"]["former_name"] == "Cortetsu"
           assert data["identity"]["canonical_command"] == "cortetsu"
           assert data["upstream"]["caelestia"]["tag"] == "v2.4.0"
-          assert data["compatibility"]["legacy_installer"] == "scripts/install-caerice.sh"
+          assert data["compatibility"]["legacy_installer"] == "scripts/install-cortetsu.sh"
           print("manifest: valid")
           PY
 
@@ -69,10 +69,10 @@ jobs:
         run: |
           set -euo pipefail
           test -x scripts/cortetsu
-          test -f scripts/install-caerice.sh
+          test -f scripts/install-cortetsu.sh
           test -f docs/CORTETSU_ARCHITECTURE.md
-          test -f docs/MIGRATION_FROM_CAERICE.md
+          test -f docs/MIGRATION_FROM_CORTETSU.md
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
-          ! grep -R --line-number --exclude-dir=.git --exclude='MIGRATION_FROM_CAERICE.md' 'ShogunRice' README.md docs/CORTETSU_ARCHITECTURE.md docs/IDENTITY.md docs/PROVENANCE.md cortetsu.toml scripts/cortetsu
+          ! grep -R --line-number --exclude-dir=.git --exclude='MIGRATION_FROM_CORTETSU.md' 'ShogunRice' README.md docs/CORTETSU_ARCHITECTURE.md docs/IDENTITY.md docs/PROVENANCE.md cortetsu.toml scripts/cortetsu

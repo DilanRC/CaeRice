@@ -74,7 +74,7 @@ PARTIAL = '''StyledWindow {
 
 
 def main() -> None:
-    with tempfile.TemporaryDirectory(prefix="caerice-contentwindow-overview-") as td:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-contentwindow-overview-") as td:
         root = Path(td)
         content = root / "modules/drawers/ContentWindow.qml"
         screen = root / "components/ScreenState.qml"

@@ -21,8 +21,8 @@ StyledRect {
     property string previewCandidateJson: ""
     property string confirmedCandidateJson: ""
 
-    readonly property string transactionPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-transaction"
-    readonly property string persistPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/caerice-display-persist"
+    readonly property string transactionPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-transaction"
+    readonly property string persistPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-persist"
     readonly property bool active: previewState?.active ?? false
     readonly property real remaining: Number(previewState?.remaining_seconds ?? 0)
     readonly property string currentCandidateJson: JSON.stringify({ outputs: candidateOutputs })

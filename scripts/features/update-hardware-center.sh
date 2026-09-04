@@ -2,22 +2,22 @@
 set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
-[[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de CaeRice" >&2; exit 1; }
+[[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
 
 LIVE="/etc/xdg/quickshell/caelestia"
 SRC="$REPO/caelestia/modules-owned/modules"
-PROBE_SRC="$REPO/caelestia/bin/caerice-hardware-probe"
-PROBE_DST="$HOME/.local/bin/caerice-hardware-probe"
-POWER_SRC="$REPO/caelestia/bin/caerice-hardware-power"
-POWER_DST="$HOME/.local/bin/caerice-hardware-power"
-AUTO_SRC="$REPO/caelestia/bin/caerice-power-auto"
-AUTO_DST="$HOME/.local/bin/caerice-power-auto"
-AUTO_CTL_SRC="$REPO/caelestia/bin/caerice-power-auto-control"
-AUTO_CTL_DST="$HOME/.local/bin/caerice-power-auto-control"
-KEYBINDS_SRC="$REPO/caelestia/bin/caerice-keybinds"
-KEYBINDS_DST="$HOME/.local/bin/caerice-keybinds"
-UNIT_SRC="$REPO/config/systemd/user/caerice-power-auto.service"
-UNIT_DST="$HOME/.config/systemd/user/caerice-power-auto.service"
+PROBE_SRC="$REPO/caelestia/bin/cortetsu-hardware-probe"
+PROBE_DST="$HOME/.local/bin/cortetsu-hardware-probe"
+POWER_SRC="$REPO/caelestia/bin/cortetsu-hardware-power"
+POWER_DST="$HOME/.local/bin/cortetsu-hardware-power"
+AUTO_SRC="$REPO/caelestia/bin/cortetsu-power-auto"
+AUTO_DST="$HOME/.local/bin/cortetsu-power-auto"
+AUTO_CTL_SRC="$REPO/caelestia/bin/cortetsu-power-auto-control"
+AUTO_CTL_DST="$HOME/.local/bin/cortetsu-power-auto-control"
+KEYBINDS_SRC="$REPO/caelestia/bin/cortetsu-keybinds"
+KEYBINDS_DST="$HOME/.local/bin/cortetsu-keybinds"
+UNIT_SRC="$REPO/config/systemd/user/cortetsu-power-auto.service"
+UNIT_DST="$HOME/.config/systemd/user/cortetsu-power-auto.service"
 VALIDATOR="$REPO/scripts/features/validate-hardware-center.py"
 
 [[ -f "$LIVE/modules/HardwareController.qml" ]] || {
@@ -50,8 +50,8 @@ install -m 0644 "$UNIT_SRC" "$UNIT_DST"
 systemctl --user daemon-reload
 
 # Preserve user choice. Updating Hardware Center never enables automation by itself.
-if systemctl --user is-enabled --quiet caerice-power-auto.service 2>/dev/null; then
-    systemctl --user try-restart caerice-power-auto.service >/dev/null 2>&1 || true
+if systemctl --user is-enabled --quiet cortetsu-power-auto.service 2>/dev/null; then
+    systemctl --user try-restart cortetsu-power-auto.service >/dev/null 2>&1 || true
 fi
 
 printf '==> installed helper validation\n'

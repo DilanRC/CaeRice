@@ -132,17 +132,17 @@ def migrate_sidebar(root: Path) -> bool:
     if not path.is_file():
         return False
     before = path.read_text(encoding="utf-8")
-    after = before.replace('objectName: "caericeNativeSidebar"', 'objectName: "caericeBottomNotificationCenter"')
+    after = before.replace('objectName: "cortetsuNativeSidebar"', 'objectName: "cortetsuBottomNotificationCenter"')
     if "objectName:" not in after:
-        after = after.replace("    id: root\n", '    id: root\n    objectName: "caericeBottomNotificationCenter"\n', 1)
+        after = after.replace("    id: root\n", '    id: root\n    objectName: "cortetsuBottomNotificationCenter"\n', 1)
     after = after.replace(
         "readonly property bool shouldBeActive: screenState.sidebar && Config.sidebar.enabled",
         "readonly property bool shouldBeActive: screenState.sidebar",
     )
     if "readonly property bool shouldBeActive:" not in after:
         after = after.replace(
-            '    objectName: "caericeBottomNotificationCenter"\n',
-            '    objectName: "caericeBottomNotificationCenter"\n\n'
+            '    objectName: "cortetsuBottomNotificationCenter"\n',
+            '    objectName: "cortetsuBottomNotificationCenter"\n\n'
             '    readonly property bool shouldBeActive: screenState.sidebar\n',
             1,
         )
@@ -324,7 +324,7 @@ def migrate_interactions(root: Path) -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Migra CaeRice al Bottom Hub sin sidebar visual")
+    parser = argparse.ArgumentParser(description="Migra Cortetsu al Bottom Hub sin sidebar visual")
     parser.add_argument("root", type=Path, help="raíz de Caelestia (real o copia temporal)")
     args = parser.parse_args()
     root = args.root.resolve()

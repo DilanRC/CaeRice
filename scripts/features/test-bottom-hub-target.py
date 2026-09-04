@@ -179,7 +179,7 @@ def run_sidebar_migration() -> None:
         sidebar.write_text(
             "Item {\n"
             "    id: root\n"
-            "    objectName: \"caericeNativeSidebar\"\n"
+            "    objectName: \"cortetsuNativeSidebar\"\n"
             "    visible: offsetScale < 1\n"
             "    anchors.rightMargin: (-implicitWidth - 5) * offsetScale\n"
             "    implicitWidth: Tokens.sizes.sidebar.width\n"

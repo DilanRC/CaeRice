@@ -40,7 +40,7 @@ Scope {
 
     CustomShortcut {
         name: "calendar"
-        description: "Toggle CaeRice calendar"
+        description: "Toggle Cortetsu calendar"
         onPressed: root.toggle()
     }
 

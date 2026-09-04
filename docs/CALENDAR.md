@@ -1,10 +1,10 @@
 # Calendar, Google Calendar y Pomodoro
 
 Cortetsu integra un calendario mensual de solo lectura, agenda diaria y un
-Pomodoro persistente. OAuth y HTTP viven en `caelestia/bin/caerice-calendar`;
+Pomodoro persistente. OAuth y HTTP viven en `caelestia/bin/cortetsu-calendar`;
 QML consume JSON estructurado y ejecuta acciones del helper.
 
-El prefijo `caerice-*` se conserva por compatibilidad. El instalador crea los
+El prefijo `cortetsu-*` se conserva por compatibilidad. El instalador crea los
 aliases canónicos `cortetsu-calendar` y `cortetsu-pomodoro`.
 
 ## Google Calendar: solo lectura
@@ -29,7 +29,7 @@ recordatorios ni invitaciones.
 El flujo usa PKCE, valida un `state` aleatorio, escucha sólo en `127.0.0.1` y
 expira a los cinco minutos. El refresh token se guarda con Secret Service
 (`secret-tool`), nunca en configuración, cache o logs. La entrada heredada
-`caerice-google-calendar` se reconoce para migración compatible.
+`cortetsu-google-calendar` se reconoce para migración compatible.
 
 ## Sincronización
 

@@ -6,9 +6,9 @@ m처dulos en staging, ejecuta validadores y s처lo entonces promueve una generaci�
 
 ```text
 ~/.local/share/cortetsu/builds/<build-id>
-~/.config/quickshell/caelestia/current
-~/.config/quickshell/caelestia/previous
-~/.config/quickshell/caelestia/legacy-previous
+~/.config/quickshell/cortetsu/current
+~/.config/quickshell/cortetsu/previous
+~/.config/quickshell/cortetsu/legacy-previous
 ```
 
 Variables can처nicas:
@@ -19,7 +19,7 @@ CORTETSU_RUNTIME_ROOT
 CORTETSU_UPSTREAM_SOURCE
 ```
 
-Las variables `CAERICE_*` equivalentes siguen como fallback temporal.
+Las variables `CORTETSU_*` equivalentes siguen como fallback temporal.
 
 El flujo verifica que `v2.4.0` resuelva al commit
 `24aa15eefdb146350d2548c0a015b04eddbd1008`, construye en `.staging-*`, genera
@@ -51,7 +51,7 @@ cortetsu-rollback
 ```
 
 El rollback valida ambas generaciones, usa el mismo lock y conmuta los enlaces
-de forma at처mica. El instalador copia todos los helpers `caerice-*` requeridos,
+de forma at처mica. El instalador copia todos los helpers `cortetsu-*` requeridos,
 crea aliases `cortetsu-*`, instala la configuraci처n de Hyprland, el puente de
 temas y las unidades systemd de usuario.
 
@@ -60,5 +60,5 @@ Reinicio:
 ```bash
 pkill -TERM -x qs
 sleep 1
-qs -p ~/.config/quickshell/caelestia/current -n -d
+qs -p ~/.config/quickshell/cortetsu/current -n -d
 ```

@@ -10,10 +10,10 @@ from pathlib import Path
 
 UID = os.getuid()
 RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{UID}"))
-CONFIG_PATH = Path.home() / ".config/caerice/power-auto.json"
-STATE_PATH = RUNTIME / "caerice-power-auto-state.json"
-EVENTS_PATH = Path.home() / ".local/state/caerice/power-auto-events.jsonl"
-SERVICE = "caerice-power-auto.service"
+CONFIG_PATH = Path.home() / ".config/cortetsu/power-auto.json"
+STATE_PATH = RUNTIME / "cortetsu-power-auto-state.json"
+EVENTS_PATH = Path.home() / ".local/state/cortetsu/power-auto-events.jsonl"
+SERVICE = "cortetsu-power-auto.service"
 VALID_PROFILES = {"power-saver", "balanced", "performance"}
 DEFAULTS = {
     "enabled": False,
@@ -198,7 +198,7 @@ def main() -> int:
             return emit({"ok": True, **status()})
 
         if cmd == "apply-now":
-            watcher = Path.home() / ".local/bin/caerice-power-auto"
+            watcher = Path.home() / ".local/bin/cortetsu-power-auto"
             cp = subprocess.run([str(watcher), "--once"], text=True, capture_output=True, timeout=10, check=False)
             payload = {
                 "ok": cp.returncode == 0,

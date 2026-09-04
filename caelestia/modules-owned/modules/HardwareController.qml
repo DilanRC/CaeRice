@@ -57,7 +57,7 @@ Scope {
 
     CustomShortcut {
         name: "hardware"
-        description: "Toggle CaeRice Hardware Center"
+        description: "Toggle Cortetsu Hardware Center"
         onPressed: root.toggle()
     }
 

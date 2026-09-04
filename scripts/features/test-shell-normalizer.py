@@ -27,7 +27,7 @@ def shell_fixture(watch: str) -> str:
 
 
 def case(name: str, watch: str, *, expect_change: bool = True) -> None:
-    with tempfile.TemporaryDirectory(prefix="caerice-shell-normalizer-") as td:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-shell-normalizer-") as td:
         root = Path(td)
         path = root / "shell.qml"
         path.write_text(shell_fixture(watch), encoding="utf-8")
@@ -48,7 +48,7 @@ def case(name: str, watch: str, *, expect_change: bool = True) -> None:
 
 
 def reject_legacy() -> None:
-    with tempfile.TemporaryDirectory(prefix="caerice-shell-legacy-") as td:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-shell-legacy-") as td:
         root = Path(td)
         path = root / "shell.qml"
         path.write_text(

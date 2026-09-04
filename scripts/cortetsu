@@ -3,8 +3,8 @@ set -euo pipefail
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
-DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
-RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
+RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}}"
 CURRENT="$RUNTIME_ROOT/current"
 PREVIOUS="$RUNTIME_ROOT/previous"
 LEGACY_PREVIOUS="$RUNTIME_ROOT/legacy-previous"
@@ -52,7 +52,7 @@ Usage:
   cortetsu help     Show this help
 
 Compatibility:
-  Proven caerice-* helpers and selected legacy paths remain available as aliases
+  Proven cortetsu-* helpers and selected legacy paths remain available as aliases
   until their idempotent migrations are complete.
 EOF
 }
@@ -161,9 +161,9 @@ status_cmd() {
     printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
 
     printf '\nLegacy compatibility retained:\n'
-    printf '  command_prefix=caerice-*\n'
-    printf '  config=~/.config/caerice\n'
-    printf '  upstream_cache=~/.local/share/caelestia-custom-system/upstream-git\n'
+    printf '  command_prefix=cortetsu-*\n'
+    printf '  config=~/.config/cortetsu\n'
+    printf '  upstream_cache=~/.local/share/cortetsu/upstream/upstream-git\n'
 }
 
 run_python_test() {
@@ -277,9 +277,9 @@ audit_cmd() {
 
 install_cmd() {
     require_repo
-    require_file "$ROOT/scripts/install-caerice.sh"
+    require_file "$ROOT/scripts/install-cortetsu.sh"
     printf 'Cortetsu: building, validating and promoting a user runtime generation.\n'
-    bash "$ROOT/scripts/install-caerice.sh"
+    bash "$ROOT/scripts/install-cortetsu.sh"
 }
 
 command_name="${1:-help}"

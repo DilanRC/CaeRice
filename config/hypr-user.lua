@@ -65,7 +65,7 @@ hl.bind(
 -- Dock personalizado
 hl.bind(
     "SUPER + D",
-    hl.dsp.exec_cmd("qs -p ~/.config/quickshell/caelestia/current ipc call customDock toggle")
+    hl.dsp.exec_cmd("qs -p ~/.config/quickshell/cortetsu/current ipc call customDock toggle")
 )
 
 -- Dashboard de Caelestia
@@ -332,13 +332,13 @@ hl.bind(
     hl.dsp.global("caelestia:overview")
 )
 
--- CaeRice app shortcut: The Witcher 3: Wild Hunt (The Witcher 3 Wild Hunt)
+-- Cortetsu app shortcut: The Witcher 3: Wild Hunt (The Witcher 3 Wild Hunt)
 hl.bind(
     "CTRL + End",
     hl.dsp.exec_cmd([[steam steam://rungameid/292030]])
 )
 
--- CaeRice app shortcut: ChatGPT (chatgpt)
+-- Cortetsu app shortcut: ChatGPT (chatgpt)
 hl.bind(
     "CTRL + Down",
     hl.dsp.exec_cmd([[chatgpt]])

@@ -12,8 +12,8 @@ upstream = Path(
     os.environ.get(
         "CORTETSU_UPSTREAM_SOURCE",
         os.environ.get(
-            "CAERICE_UPSTREAM_SOURCE",
-            str(Path.home() / ".local/share/caelestia-custom-system/upstream-git"),
+            "CORTETSU_UPSTREAM_SOURCE",
+            str(Path.home() / ".local/share/cortetsu/upstream/upstream-git"),
         ),
     )
 )

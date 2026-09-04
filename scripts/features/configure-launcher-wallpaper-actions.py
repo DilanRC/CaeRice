@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Remove only CaeRice-replaced wallpaper actions from a Caelestia JSON config."""
+"""Remove only Cortetsu-replaced wallpaper actions from a Caelestia JSON config."""
 from __future__ import annotations
 
 import argparse

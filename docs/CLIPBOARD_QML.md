@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Reemplazar la apertura de Clipse con un drawer nativo de CaeRice integrado en el mismo árbol de interacción que Overview, con nivel visual equivalente o superior al Dock y al launcher personalizado.
+Reemplazar la apertura de Clipse con un drawer nativo de Cortetsu integrado en el mismo árbol de interacción que Overview, con nivel visual equivalente o superior al Dock y al launcher personalizado.
 
 ## Interacción
 
@@ -46,7 +46,7 @@ Clipse sigue siendo el backend de captura de historial mediante `clipse -listen`
 
 Al cerrar el drawer, `Wrapper.qml` destruye el `Loader` del contenido pesado. `FileView`, `ListView`, previews y delegates dejan de existir mientras el Clipboard está cerrado; no se mata el proceso completo de Quickshell porque ese proceso aloja todo Caelestia.
 
-## Diseño CaeRice
+## Diseño Cortetsu
 
 La interfaz sigue el mismo sistema visual que Dock/Launcher:
 

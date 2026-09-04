@@ -13,7 +13,7 @@ from pathlib import Path
 
 UID = os.getuid()
 RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{UID}"))
-STATE_PATH = RUNTIME / "caerice-hardware-probe-state.json"
+STATE_PATH = RUNTIME / "cortetsu-hardware-probe-state.json"
 CLK_TCK = int(os.sysconf("SC_CLK_TCK"))
 PAGE_SIZE = int(os.sysconf("SC_PAGE_SIZE"))
 

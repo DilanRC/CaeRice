@@ -12,13 +12,13 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PROBE = HERE / "caerice-display-probe"
-PLANNER = HERE / "caerice-display-plan"
-WORKSPACES = HERE / "caerice-display-workspaces"
+PROBE = HERE / "cortetsu-display-probe"
+PLANNER = HERE / "cortetsu-display-plan"
+WORKSPACES = HERE / "cortetsu-display-workspaces"
 USERCFG = Path.home() / ".config/caelestia/hypr-user.lua"
-STATE = Path.home() / ".config/caerice/display-persisted.json"
-SNAPSHOT_ROOT = Path.home() / ".local/share/caelestia-custom-system/snapshots"
-MARKER = "-- CAERICE_DISPLAY_MANAGED"
+STATE = Path.home() / ".config/cortetsu/display-persisted.json"
+SNAPSHOT_ROOT = Path.home() / ".local/share/cortetsu/upstream/snapshots"
+MARKER = "-- CORTETSU_DISPLAY_MANAGED"
 
 
 def emit(payload: dict, code: int = 0) -> int:
@@ -354,7 +354,7 @@ def status() -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Persist a verified CaeRice display layout with backup and rollback")
+    parser = argparse.ArgumentParser(description="Persist a verified Cortetsu display layout with backup and rollback")
     sub = parser.add_subparsers(dest="command", required=True)
     persist_parser = sub.add_parser("persist")
     persist_parser.add_argument("--candidate", required=True)

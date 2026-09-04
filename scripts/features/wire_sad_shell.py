@@ -2,7 +2,7 @@
 """Canonical SAD shell wiring.
 
 The retained SAD runtime consists of Hardware Center (prerequisite, wired by
-install-hardware-center.sh) and Display Manager. Gaming Center and CaeRice
+install-hardware-center.sh) and Display Manager. Gaming Center and Cortetsu
 Updater were retired from the product and must not be reintroduced by rebuilds.
 
 Every run first removes legacy Gaming/Updater integration from an older live
@@ -146,7 +146,7 @@ def retire_removed_centers(texts: dict[str, str]) -> bool:
         texts["user"], "SUPER + SHIFT + G", "caelestia:gamingcenter", "Gaming Center QML nativo"
     )
     texts["user"] = _remove_legacy_bind(
-        texts["user"], "SUPER + SHIFT + U", "caelestia:updatercenter", "CaeRice Updater QML nativo"
+        texts["user"], "SUPER + SHIFT + U", "caelestia:updatercenter", "Cortetsu Updater QML nativo"
     )
 
     leftovers = {
@@ -360,7 +360,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--live",
-        default=os.environ.get("CAERICE_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"),
+        default=os.environ.get("CORTETSU_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"),
     )
     parser.add_argument(
         "--usercfg",

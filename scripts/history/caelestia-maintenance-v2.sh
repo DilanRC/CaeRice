@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="$HOME/.local/share/caelestia-custom-system"
+BASE="$HOME/.local/share/cortetsu/upstream"
 LIVE="/etc/xdg/quickshell/caelestia"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BASE/bin" "$BASE/legacy" "$BASE/reinstall-backups" "$BASE/snapshots"
@@ -153,7 +153,7 @@ EOF
 cat > "$BASE/bin/install-patches.sh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-BASE="$HOME/.local/share/caelestia-custom-system"
+BASE="$HOME/.local/share/cortetsu/upstream"
 LIVE="/etc/xdg/quickshell/caelestia"
 PATCHES="$BASE/patches"
 OWNED="$BASE/modules-owned"
@@ -221,7 +221,7 @@ chmod +x "$BASE/bin/install-patches.sh"
 cat > "$BASE/bin/verify-patches.sh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-BASE="$HOME/.local/share/caelestia-custom-system"
+BASE="$HOME/.local/share/cortetsu/upstream"
 LIVE="/etc/xdg/quickshell/caelestia"
 PATCHES="$BASE/patches"
 OWNED="$BASE/modules-owned"
@@ -260,7 +260,7 @@ chmod +x "$BASE/bin/verify-patches.sh"
 cat > "$BASE/bin/sync-owned.sh" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-BASE="$HOME/.local/share/caelestia-custom-system"
+BASE="$HOME/.local/share/cortetsu/upstream"
 LIVE="/etc/xdg/quickshell/caelestia"
 OWNED="$BASE/modules-owned"
 STAMP="$(date +%Y%m%d-%H%M%S)"

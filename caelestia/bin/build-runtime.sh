@@ -2,9 +2,9 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DATA_ROOT="${CORTETSU_DATA_ROOT:-${CAERICE_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
-RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CAERICE_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia}}"
-UPSTREAM="${CORTETSU_UPSTREAM_SOURCE:-${CAERICE_UPSTREAM_SOURCE:-$HOME/.local/share/caelestia-custom-system/upstream-git}}"
+DATA_ROOT="${CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}}"
+RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}}"
+UPSTREAM="${CORTETSU_UPSTREAM_SOURCE:-${CORTETSU_UPSTREAM_SOURCE:-$HOME/.local/share/cortetsu/upstream/upstream-git}}"
 COMPATIBILITY="$REPO/caelestia/compatibility.json"
 BUILD_ROOT="$DATA_ROOT/builds"
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="${HOME}/.local/share/caelestia-custom-system"
+BASE="${HOME}/.local/share/cortetsu/upstream"
 LIVE="/etc/xdg/quickshell/caelestia"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 SNAP="$BASE/snapshots/$STAMP"

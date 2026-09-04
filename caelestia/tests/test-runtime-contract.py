@@ -6,7 +6,7 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 build = (repo / "caelestia/bin/build-runtime.sh").read_text(encoding="utf-8")
-installer = (repo / "scripts/install-caerice.sh").read_text(encoding="utf-8")
+installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
@@ -40,8 +40,8 @@ assert 'cp -a "$PACKAGE_ROOT' not in build
 assert "/etc/xdg/quickshell/caelestia" not in build
 
 for marker in (
-    'find "$REPO/caelestia/bin" -maxdepth 1 -type f -name \'caerice-*\'',
-    'canonical="cortetsu-${name#caerice-}"',
+    'find "$REPO/caelestia/bin" -maxdepth 1 -type f -name \'cortetsu-*\'',
+    'canonical="cortetsu-${name#cortetsu-}"',
     "cortetsu-rollback",
     "install-theme-bridge.py",
     "systemctl --user daemon-reload",

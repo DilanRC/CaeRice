@@ -308,7 +308,7 @@ def ensure_delegate_indices(text: str) -> tuple[str, bool]:
 
 
 def regenerate_app_patch(live_text: str) -> None:
-    with tempfile.TemporaryDirectory(prefix="caerice-shell-") as td:
+    with tempfile.TemporaryDirectory(prefix="cortetsu-shell-") as td:
         root = Path(td) / "shell"
         run(
             "git", "clone", "--quiet", "--depth", "1", "--branch", UPSTREAM_TAG,

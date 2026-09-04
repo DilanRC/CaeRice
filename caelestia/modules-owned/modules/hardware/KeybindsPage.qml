@@ -25,7 +25,7 @@ FocusScope {
 
     readonly property string helperPath:
         StandardPaths.writableLocation(StandardPaths.HomeLocation) +
-        "/.local/bin/caerice-keybinds"
+        "/.local/bin/cortetsu-keybinds"
     readonly property var filteredBindings: bindings.filter(item => {
         const query = bindingFilter.trim().toLowerCase();
         return !query

@@ -73,10 +73,10 @@ a esos mismos singletons, por lo que los dos monitores muestran el mismo estado
 sin duplicar procesos. La anchura se anima a cero al desaparecer el último
 estado; no queda una región visual reservada.
 
-El instalador existente `scripts/install-caerice.sh` aplica los módulos propios
+El instalador existente `scripts/install-cortetsu.sh` aplica los módulos propios
 con preflight y backup. Wallpaper Manager queda fuera de este cambio. Para
 revertir, restaura el backup que el instalador deja en
-`~/.local/share/caelestia-custom-system/reinstall-backups/` y reinicia
+`~/.local/share/cortetsu/upstream/reinstall-backups/` y reinicia
 Caelestia.
 
 ## Archivos tocados

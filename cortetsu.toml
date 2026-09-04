@@ -2,7 +2,7 @@ schema = 1
 
 [project]
 name = "Cortetsu"
-former_name = "CaeRice"
+former_name = "Cortetsu"
 kind = "dotfiles-platform"
 stage = "identity-transition"
 source_of_truth = "git-main"
@@ -27,18 +27,18 @@ package_runtime = "/etc/xdg/quickshell/caelestia"
 
 [runtime]
 mode = "versioned-user-generations"
-current = "~/.config/quickshell/caelestia/current"
-previous = "~/.config/quickshell/caelestia/previous"
+current = "~/.config/quickshell/cortetsu/current"
+previous = "~/.config/quickshell/cortetsu/previous"
 generations = "~/.local/share/cortetsu/builds"
 package_runtime_policy = "read-only"
 
 [compatibility]
 policy = "Preserve legacy identifiers until an idempotent, backed-up and tested migration exists."
-legacy_command_prefix = "caerice-"
-legacy_config_dir = "~/.config/caerice"
-legacy_state_dir = "~/.local/state/caerice"
-legacy_staging_dir = "~/.local/share/caelestia-custom-system"
-legacy_installer = "scripts/install-caerice.sh"
+legacy_command_prefix = "cortetsu-"
+legacy_config_dir = "~/.config/cortetsu"
+legacy_state_dir = "~/.local/state/cortetsu"
+legacy_staging_dir = "~/.local/share/cortetsu/upstream"
+legacy_installer = "scripts/install-cortetsu.sh"
 
 [entrypoints]
 cli = "scripts/cortetsu"
@@ -58,7 +58,7 @@ current_modules = [
   "calendar",
   "pomodoro",
 ]
-retired_modules = ["gaming-center", "caerice-updater"]
+retired_modules = ["gaming-center", "cortetsu-updater"]
 planned_layers = [
   "packages",
   "dotfiles",
