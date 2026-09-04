@@ -49,6 +49,8 @@ jobs:
           bash -n scripts/migrate-cortetsu-v2.sh
       - name: Validate shell quality
         run: python3 scripts/features/test-cortetsu-quality.py
+      - name: Validate migration resilience
+        run: bash scripts/features/test-v2-migration-unreadable.sh
       - name: Validate modern contract
         shell: bash
         run: |
@@ -60,7 +62,7 @@ jobs:
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
-          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
+          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
           ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
