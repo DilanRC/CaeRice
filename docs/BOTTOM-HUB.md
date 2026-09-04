@@ -1,138 +1,146 @@
-# Bottom Hub
+# Cortetsu Bottom Hub
 
-## Objetivo
+## Estado canónico
 
-Reemplazar el dock y la barra lateral por una barra inferior completa y coherente para Caelestia/Cortetsu.
+El Bottom Hub es la barra inferior first-party de Cortetsu. Caelestia 2.4.0 sigue proporcionando temporalmente varios servicios de backend, pero ya no define la presentación del Hub.
 
-La barra inferior vive en `modules/BottomHub.qml`. Usa superficies translúcidas de `Colours.tPalette`, iconos Material y estados de los servicios nativos de Caelestia. Conserva la lógica útil del antiguo `CustomDock.qml`: favoritas, agrupación por aplicación, ventanas por monitor, clic para lanzar/enfocar, rueda para recorrer ventanas, clic central para cerrar y clic derecho para fijar/quitar favoritas.
+La separación es deliberada:
 
-El contenido nativo de notificaciones, Utilities y los popouts se conserva, pero sus wrappers laterales se retiran. `SUPER+N` abre el centro de notificaciones inferior y `SUPER+I` abre Quick Settings. No queda barra visual, hotspot ni activación por hover en el borde izquierdo o derecho.
+- `BottomHub.qml` es el controlador/orquestador. Lee servicios, mantiene IPC, agrupa ventanas, ejecuta acciones de Hyprland y traduce estados de Caelestia a datos simples.
+- `CortetsuBottomHubView.qml` es la raíz de presentación y no importa servicios de Caelestia/Hyprland.
+- Los segmentos visuales reciben propiedades simples y emiten señales; nunca ejecutan acciones del compositor o de los servicios por su cuenta.
+- `native-bottom-hub.py` fue retirado. El runtime copia directamente los módulos first-party versionados en el repositorio.
+
+No existe un camino soportado que escriba directamente en `/etc/xdg/quickshell/caelestia`.
+
+## Componentes first-party
+
+- `BottomHub.qml`: controlador, IPC y adapters de backend.
+- `CortetsuBottomHubView.qml`: composición y geometría general.
+- `CortetsuModeSegment.qml`: launcher, wallpaper y workspaces.
+- `CortetsuWorkspaceDots.qml`: indicador/selector de workspaces.
+- `CortetsuAppRail.qml`: favoritas y aplicaciones abiertas.
+- `CortetsuTraySegment.qml`: bandeja SNI proyectada como datos simples.
+- `CortetsuStatusSegment.qml`: volumen, red, Bluetooth, batería, notificaciones, reloj y sesión.
+- `HubButton.qml`: botón visual Cortetsu reutilizable.
+- `StatusPill.qml`: estados REC/DND/Awake.
+- `CortetsuSurface.qml`: superficie visual base.
+- `CortetsuIcon.qml`: iconografía first-party.
+- `CortetsuText.qml`: texto first-party.
+- `CortetsuDesign.js`: color, espaciado, radio y motion.
+- `CortetsuTypography.js`: tipografía e icon font.
+
+Las vistas no pueden depender de `Hypr`, `SystemTray`, `Audio`, `Nmcli`, `Bluetooth`, `UPower`, `Notifs`, `Recorder`, `DesktopEntries`, `GlobalConfig`, `Apps`, `Wallpapers`, `qs.services`, `Caelestia.Config`, `Colours`, `Tokens`, `StyledRect`, `StyledText`, `MaterialIcon` o `ColouredIcon`. El gate `scripts/features/test-native-bottom-hub.py` hace cumplir esta frontera.
 
 ## Geometría
 
-- Bottom Hub: superficie de 60 px con segmentos funcionales de 52 px.
-- margen inferior: 2 px.
-- popouts, notificaciones y Quick Settings: borde inferior unido a la parte superior del hub, alineados con el segmento de sistema.
-- barra nativa: adaptador no visual de ancho cero, sin loader, input ni zona exclusiva.
-- launcher nativo: `dockOffset = 72`.
-- segmento de aplicaciones: ancho según su contenido, limitado por el espacio simétrico disponible y centrado en la pantalla.
-- bandeja: isla adaptativa independiente entre aplicaciones y sistema.
+El `PanelWindow` ocupa el ancho útil del monitor menos 8 px por lado. `CortetsuBottomHubView` compone cuatro zonas:
 
-## Archivos propios
+1. izquierda: modo/launcher/wallpaper/workspaces;
+2. centro: App Rail, centrado respecto al monitor y limitado por el espacio simétrico disponible;
+3. derecha intermedia: tray adaptativo;
+4. derecha: estado/sistema.
 
-- `caelestia/modules-owned/modules/BottomHub.qml`
-- `caelestia/modules-owned/modules/HubButton.qml`
-- `caelestia/modules-owned/modules/StatusPill.qml`
+Los segmentos visuales usan tamaño explícito derivado de su `implicitWidth`/`implicitHeight`; el App Rail usa `Flickable` únicamente cuando el contenido excede el ancho disponible.
 
-## Status Pill transitorio
+## Contrato de comportamiento
 
-La pastilla está entre los controles del sistema y el reloj. Solo ocupa ancho
-cuando hay un estado relevante. Su orden es fijo: `REC`, `DND`, `Awake`.
+El controlador conserva las capacidades del Hub anterior:
 
-- `REC` enlaza `Recorder.running` y detiene la grabación con `Recorder.stop()`.
-- `DND` enlaza `Notifs.dnd` y alterna el estado real del servidor de
-  notificaciones de Caelestia.
-- `Awake` enlaza `IdleInhibitor.enabled` y alterna el inhibidor Wayland de
-  Caelestia.
+- logo CachyOS → launcher;
+- thumbnail → Wallpaper Manager;
+- click en workspace → cambio de workspace;
+- app sin ventanas → lanzar;
+- app abierta → enfocar; clicks sucesivos o rueda → recorrer ventanas;
+- click central en app → cerrar ventana activa del grupo;
+- click derecho → fijar/quitar de favoritas;
+- tray → activación primaria/secundaria y menú nativo por hover;
+- volumen → mute y rueda de nivel;
+- red/Bluetooth → popout/centro correspondiente;
+- batería → estado real y severidad crítica;
+- notificaciones → centro inferior;
+- `REC`, `DND`, `Awake` → acciones sobre los singletons reales;
+- reloj → Calendar;
+- power → Session;
+- filtrado de ventanas por monitor.
 
-El componente no crea servicios, procesos ni temporizadores. Las instancias del
-hub en cada monitor leen los mismos singletons de Caelestia. Al remover el último
-estado, su ancho y opacidad se animan a cero y no queda un hueco reservado.
+`BottomHub.qml` conserva los IPC targets `bottomHub` y `customDock`. `customDock` es únicamente una compatibilidad de entrada para bindings existentes; no implica que exista un CustomDock visual.
 
-## Patches nativos implicados
+## Tray
 
-- `shell.qml.patch`: carga `BottomHub` en vez de `CustomDock`.
-- `modules__sidebar__Wrapper.qml.patch`: convierte el contenido de notificaciones en un centro inferior acotado.
-- El centro inferior de notificaciones atiende `screenState.sidebar` aunque `Config.sidebar.enabled` esté desactivado; esa opción solo pertenecía a la barra lateral retirada.
-- `modules__bar__BarWrapper.qml.patch`: desactiva por completo la barra lateral visual nativa.
-- `modules__bar__popouts__*.qml.patch`: añade el modo inferior unido para los popouts nativos.
-- `modules__drawers__Interactions.qml.patch`: conserva el popup mientras el puntero pasa del icono al contenido y elimina el Quick Toggles por hover.
-- `modules__utilities__Wrapper.qml.patch`: desacopla Quick Settings del sidebar y lo coloca encima del hub.
-- `modules__drawers__Panels.qml.patch`: centra el launcher y ancla las superficies inferiores a la derecha.
-- `modules__drawers__Regions.qml.patch`: actualiza la máscara de input Wayland.
-- `modules__launcher__Wrapper.qml.patch`: mantiene el launcher encima del hub.
+La vista consume el icono SNI resuelto por el controlador y lo muestra como `Image`. Ya no usa el `ColouredIcon` ni el recolor de Caelestia. Esto elimina una dependencia visual heredada, pero la legibilidad de iconos monocromos debe validarse en la sesión real; si algún icono necesita recolor, debe resolverse con una primitiva Cortetsu first-party y no reintroduciendo `Config.bar.tray.recolour`.
 
-## Compatibilidad
+## Pomodoro
 
-`BottomHub.qml` conserva dos targets IPC:
+El Hub observa el evento canónico:
 
-- `bottomHub`
-- `customDock`
-
-El segundo existe para que el binding actual `SUPER+D` y scripts antiguos sigan funcionando durante la migración.
-
-## Aplicación de prueba
-
-No modificar archivos de `/etc/xdg/quickshell/caelestia` manualmente.
-
-Desde el checkout de la rama:
-
-```bash
-git switch feature/bottom-hub
-bash scripts/install-cortetsu.sh
+```text
+$XDG_STATE_HOME/cortetsu/pomodoro-notification.json
 ```
 
-El instalador ejecuta preflight con `patch --dry-run` antes de modificar el runtime. Si algún patch no corresponde a la versión instalada, aborta con `CONFLICT` sin aplicar cambios.
+No usa el namespace histórico `caelestia` para ese estado.
 
-Después:
+## Build e instalación
 
-```bash
-pkill -TERM -f 'qs -c caelestia'
-sleep 1
-caelestia shell -d
-```
-
-## Verificación manual
-
-1. Bottom Hub visible en la parte inferior de cada monitor.
-2. `SUPER+D` oculta/muestra el hub.
-3. El logo CachyOS abre el launcher nativo encima del hub.
-4. Las esferas cambian al workspace seleccionado y permiten cambiar con clic.
-5. Favoritas y aplicaciones abiertas aparecen centradas y el segmento se contrae cuando hay pocas.
-6. Clic en app: lanza o enfoca.
-7. Rueda sobre una app con varias ventanas: recorre ventanas.
-8. Clic central: cierra la ventana activa de esa app.
-9. Clic derecho: fija/quita de favoritas.
-10. Hover sobre volumen, output, Wifi, Bluetooth o batería abre su popup unido a la barra y permite entrar en él sin que se cierre.
-11. Clic en volumen alterna mute y la rueda ajusta el nivel; output, Wifi y Bluetooth abren su configuración nativa.
-12. Batería muestra el estado real y abre su popup.
-13. La bandeja es una isla separada, prioriza el icono SNI real y abre sus menús nativos por hover.
-14. Clic en fecha/hora abre y cierra Quick Toggles; pasar el mouse por una zona vacía no lo activa.
-15. El botón de notificaciones y `SUPER+N` abren el nuevo centro inferior.
-16. La fecha y `SUPER+I` abren el mismo Quick Settings; launcher, notificaciones y ajustes son excluyentes.
-17. En dos monitores, cada barra muestra solo las ventanas de su monitor.
-18. No existe barra vertical, hotspot lateral, fondo de media pantalla ni animación horizontal de popups.
-
-## Diagnóstico
-
-Para observar errores QML:
+El camino soportado es siempre el runtime inmutable:
 
 ```bash
-journalctl --user -f | grep -Ei 'caelestia|quickshell|qml'
+./scripts/cortetsu test
+cortetsu install
+cortetsu verify
+cortetsu doctor
+cortetsu status
 ```
 
-También puede ejecutarse el shell desde terminal:
+`caelestia/bin/build-runtime.sh` parte de la base exacta declarada en `compatibility.json`, aplica patches en staging, copia los módulos first-party y ejecuta las regresiones antes de promover una generación.
 
-```bash
-caelestia shell -d
-```
+No usar `sudo install` sobre `/etc/xdg/quickshell/caelestia`, no reiniciar mediante `caelestia shell -d` y no editar el paquete del sistema.
+
+## Validación automática
+
+Los gates relevantes comprueban:
+
+- frontera controller/view;
+- ausencia de Material/Caelestia visual dentro de los componentes del Hub;
+- comportamiento App Rail v3;
+- arquitectura Bottom Hub v4;
+- runtime generado idéntico al source first-party;
+- base exacta de Caelestia 2.4.0;
+- dos generaciones aisladas y rollback.
+
+La CI no sustituye una instanciación real de QML en Hyprland. Después de fusionar un cambio del Hub debe validarse visualmente en la máquina.
+
+## Validación real
+
+Comprobar, como mínimo:
+
+1. Hub visible y correctamente dimensionado en cada monitor.
+2. launcher y Wallpaper Manager.
+3. cambio de workspaces por click.
+4. launch/focus/cycle/close/pin del App Rail.
+5. tray: iconos legibles, activación, secundario y menús por hover.
+6. volumen, red, Bluetooth y batería con sus popouts.
+7. contador de notificaciones y centro inferior.
+8. acciones REC/DND/Awake.
+9. reloj → Calendar.
+10. power → Session.
+11. multimonitor y filtrado de ventanas.
+12. un único proceso `qs` supervisado por `cortetsu-shell.service`.
 
 ## Rollback
 
-La rama estable sigue siendo `main`. Si la prueba falla, volver al estado estable del repositorio y reinstalar:
+El rollback soportado es el de generaciones Cortetsu:
 
 ```bash
-git switch main
-bash scripts/install-cortetsu.sh
-pkill -TERM -f 'qs -c caelestia'
-sleep 1
-caelestia shell -d
+cortetsu rollback
+cortetsu verify
+systemctl --user restart cortetsu-shell.service
 ```
 
-`install-patches.sh` crea además un backup previo en:
+Para diagnosticar una carga QML fallida:
 
-```text
-~/.local/share/cortetsu/upstream/reinstall-backups/
+```bash
+journalctl --user -u cortetsu-shell.service -n 120 --no-pager
 ```
 
-No fusionar `feature/bottom-hub` a `main` hasta comprobar interacción, multimonitor, launcher, notificaciones y touchpad en el runtime real.
+El rollback es coordinado con las generaciones de sistema; no se restaura el Hub copiando archivos manualmente desde `/etc`.
