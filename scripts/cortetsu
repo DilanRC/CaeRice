@@ -10,22 +10,13 @@ PREVIOUS="$RUNTIME_ROOT/previous"
 LEGACY_PREVIOUS="$RUNTIME_ROOT/legacy-previous"
 
 find_repo_root() {
-    local candidate=""
-    local git_root=""
+    local candidate="" git_root=""
     local candidates=()
-
-    if [[ -n "${CORTETSU_REPO_ROOT:-}" ]]; then
-        candidates+=("$CORTETSU_REPO_ROOT")
-    fi
+    [[ -z "${CORTETSU_REPO_ROOT:-}" ]] || candidates+=("$CORTETSU_REPO_ROOT")
     candidates+=("$SCRIPT_DIR/..")
-    if [[ -e "$DATA_ROOT/repository" || -L "$DATA_ROOT/repository" ]]; then
-        candidates+=("$DATA_ROOT/repository")
-    fi
+    [[ ! -e "$DATA_ROOT/repository" && ! -L "$DATA_ROOT/repository" ]] || candidates+=("$DATA_ROOT/repository")
     git_root="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || true)"
-    if [[ -n "$git_root" ]]; then
-        candidates+=("$git_root")
-    fi
-
+    [[ -z "$git_root" ]] || candidates+=("$git_root")
     for candidate in "${candidates[@]}"; do
         candidate="$(readlink -f "$candidate" 2>/dev/null || true)"
         if [[ -n "$candidate" && -f "$candidate/cortetsu.toml" && -f "$candidate/scripts/cortetsu" ]]; then
@@ -45,75 +36,42 @@ Cortetsu command entrypoint
 
 Usage:
   cortetsu status   Show repository, upstream and promoted generation state
-  cortetsu test     Run non-destructive repository regressions
+  cortetsu test     Run repository, UX and performance-contract regressions
   cortetsu verify   Verify the promoted user runtime without applying changes
   cortetsu audit    Run status, tests and runtime verification
-  cortetsu install  Build, validate and promote a new runtime generation
+  cortetsu install  Migrate once, build, validate and promote a generation
   cortetsu help     Show this help
-
-Compatibility:
-  Proven cortetsu-* helpers and selected legacy paths remain available as aliases
-  until their idempotent migrations are complete.
 EOF
 }
 
-fail() {
-    printf 'ERROR: %s\n' "$*" >&2
-    exit 1
-}
-
-require_repo() {
-    [[ -n "$ROOT" ]] || fail "no se encontró el repositorio Cortetsu; ejecuta desde el clon o define CORTETSU_REPO_ROOT"
-}
-
-require_file() {
-    [[ -f "$1" ]] || fail "falta archivo requerido: $1"
-}
-
-resolved_generation() {
-    readlink -f "$1" 2>/dev/null || true
-}
+fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+require_repo() { [[ -n "$ROOT" ]] || fail "no se encontró el repositorio Cortetsu; ejecuta desde el clon o define CORTETSU_REPO_ROOT"; }
+require_file() { [[ -f "$1" ]] || fail "falta archivo requerido: $1"; }
+resolved_generation() { readlink -f "$1" 2>/dev/null || true; }
 
 is_managed_generation() {
-    local root="$1"
-    local required
+    local root="$1" required
     [[ -n "$root" ]] || return 1
-
-    for required in \
-        shell.qml \
-        BUILD_ID \
-        BUILD.json \
-        compatibility.json \
-        composition.json \
-        modules/BottomHub.qml \
-        modules/calendar/Content.qml \
-        modules/calendar/Wrapper.qml
-    do
+    for required in shell.qml BUILD_ID BUILD.json compatibility.json composition.json modules/BottomHub.qml modules/calendar/Content.qml modules/calendar/Wrapper.qml; do
         [[ -f "$root/$required" ]] || return 1
     done
 }
 
 show_generation() {
-    local label="$1"
-    local link="$2"
-    local resolved
+    local label="$1" link="$2" resolved
     resolved="$(resolved_generation "$link")"
-
     if [[ -z "$resolved" || ! -f "$resolved/shell.qml" ]]; then
         printf '  %s=missing\n' "$label"
         return
     fi
-
     printf '  %s=%s\n' "$label" "$resolved"
     if ! is_managed_generation "$resolved"; then
-        printf '  %s_metadata=legacy-unmanaged\n' "$label"
+        printf '  %s_metadata=archived-unmanaged\n' "$label"
         return
     fi
-
     printf '  %s_build_id=%s\n' "$label" "$(tr -d '\n' < "$resolved/BUILD_ID")"
     python3 - "$label" "$resolved/BUILD.json" <<'PY'
-import json
-import sys
+import json, sys
 from pathlib import Path
 label, path = sys.argv[1:]
 try:
@@ -127,60 +85,27 @@ PY
 }
 
 status_cmd() {
-    printf 'Cortetsu\n'
-    printf 'Root: %s\n' "${ROOT:-unavailable}"
-    printf 'Stage: versioned-user-runtime\n'
-
+    printf 'Cortetsu\nRoot: %s\nStage: v2-modern\n' "${ROOT:-unavailable}"
     if [[ -n "$BASE_INFO" && -f "$BASE_INFO" ]]; then
-        printf '\nShell base contract:\n'
-        sed 's/^/  /' "$BASE_INFO"
+        printf '\nShell base contract:\n'; sed 's/^/  /' "$BASE_INFO"
     fi
-
     if [[ -n "$ROOT" ]] && git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         local branch revision dirty
         branch="$(git -C "$ROOT" branch --show-current)"
         revision="$(git -C "$ROOT" rev-parse --short HEAD)"
-        if [[ -n "$(git -C "$ROOT" status --porcelain)" ]]; then
-            dirty="yes"
-        else
-            dirty="no"
-        fi
-        printf '\nGit:\n'
-        printf '  branch=%s\n' "${branch:-detached}"
-        printf '  revision=%s\n' "$revision"
-        printf '  dirty=%s\n' "$dirty"
+        [[ -z "$(git -C "$ROOT" status --porcelain)" ]] && dirty=no || dirty=yes
+        printf '\nGit:\n  branch=%s\n  revision=%s\n  dirty=%s\n' "${branch:-detached}" "$revision" "$dirty"
     fi
-
-    printf '\nRuntime generations:\n'
-    printf '  root=%s\n' "$RUNTIME_ROOT"
+    printf '\nRuntime generations:\n  root=%s\n' "$RUNTIME_ROOT"
     show_generation current "$CURRENT"
     show_generation previous "$PREVIOUS"
-    if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then
-        show_generation legacy_previous "$LEGACY_PREVIOUS"
-    fi
+    if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then show_generation archived_previous "$LEGACY_PREVIOUS"; fi
     printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
-
-    printf '\nLegacy compatibility retained:\n'
-    printf '  command_prefix=cortetsu-*\n'
-    printf '  config=~/.config/cortetsu\n'
-    printf '  upstream_cache=~/.local/share/cortetsu/upstream/upstream-git\n'
+    printf '\nCanonical namespace:\n  commands=cortetsu-*\n  config=~/.config/cortetsu\n  state=~/.local/state/cortetsu\n  data=~/.local/share/cortetsu\n'
 }
 
-run_python_test() {
-    local relative="$1"
-    require_repo
-    require_file "$ROOT/$relative"
-    printf '==> %s\n' "$relative"
-    python3 "$ROOT/$relative"
-}
-
-run_bash_test() {
-    local relative="$1"
-    require_repo
-    require_file "$ROOT/$relative"
-    printf '==> %s\n' "$relative"
-    bash "$ROOT/$relative"
-}
+run_python_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; python3 "$ROOT/$relative"; }
+run_bash_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; bash "$ROOT/$relative"; }
 
 test_cmd() {
     require_repo
@@ -194,32 +119,25 @@ test_cmd() {
         "scripts/features/test-keybinds.py"
         "scripts/features/eval-keybind-editor.py"
         "scripts/features/test-shell-normalizer.py"
+        "scripts/features/test-cortetsu-quality.py"
         "caelestia/tests/test-calendar-credentials.py"
         "caelestia/tests/test-calendar-polish.py"
         "caelestia/tests/test-pomodoro.py"
         "caelestia/tests/test-runtime-contract.py"
     )
-
     local test_path
-    for test_path in "${tests[@]}"; do
-        run_python_test "$test_path"
-    done
+    for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
-
     printf '\nCortetsu repository regressions passed.\n'
 }
 
 verify_generation() {
-    local label="$1"
-    local link="$2"
-    local resolved
+    local label="$1" link="$2" resolved
     resolved="$(resolved_generation "$link")"
     [[ -n "$resolved" ]] || fail "no existe la generación $label: $link"
     is_managed_generation "$resolved" || fail "$label no es una generación Cortetsu administrada: $resolved"
-
     python3 - "$resolved/BUILD.json" "$ROOT/caelestia/compatibility.json" <<'PY'
-import json
-import sys
+import json, sys
 from pathlib import Path
 build_path, contract_path = map(Path, sys.argv[1:])
 build = json.loads(build_path.read_text(encoding="utf-8"))
@@ -229,7 +147,6 @@ assert build.get("upstreamTag") == contract["upstreamTag"]
 assert build.get("upstreamCommit") == contract["upstreamCommit"]
 assert isinstance(build.get("repositoryRevision"), str) and build["repositoryRevision"]
 PY
-
     printf 'PASS: %s generation %s\n' "$label" "$resolved"
 }
 
@@ -237,74 +154,36 @@ verify_cmd() {
     require_repo
     require_file "$ROOT/caelestia/compatibility.json"
     verify_generation current "$CURRENT"
-
-    local current_resolved previous_resolved legacy_resolved
+    local current_resolved previous_resolved archived_resolved
     current_resolved="$(resolved_generation "$CURRENT")"
-
     if [[ -e "$PREVIOUS" || -L "$PREVIOUS" ]]; then
         previous_resolved="$(resolved_generation "$PREVIOUS")"
         if is_managed_generation "$previous_resolved"; then
             verify_generation previous "$PREVIOUS"
             [[ "$current_resolved" != "$previous_resolved" ]] || fail "current y previous apuntan a la misma generación"
         elif [[ -n "$previous_resolved" && -f "$previous_resolved/shell.qml" ]]; then
-            printf 'WARN: previous no administrado por Cortetsu; se ignora para rollback: %s\n' "$previous_resolved" >&2
-            printf 'WARN: ejecuta cortetsu install una vez más para moverlo a legacy-previous.\n' >&2
-        else
-            printf 'WARN: el enlace previous está roto y se ignora: %s\n' "$PREVIOUS" >&2
+            printf 'WARN: previous pre-v2 detectado; cortetsu install lo archivará fuera del rollback automático: %s\n' "$previous_resolved" >&2
         fi
     fi
-
     if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then
-        legacy_resolved="$(resolved_generation "$LEGACY_PREVIOUS")"
-        if [[ -n "$legacy_resolved" && -f "$legacy_resolved/shell.qml" ]]; then
-            printf 'INFO: runtime heredado conservado fuera del rollback automático: %s\n' "$legacy_resolved"
-        fi
+        archived_resolved="$(resolved_generation "$LEGACY_PREVIOUS")"
+        [[ -z "$archived_resolved" || ! -f "$archived_resolved/shell.qml" ]] || printf 'INFO: snapshot pre-v2 archivado: %s\n' "$archived_resolved"
     fi
-
+    run_python_test "scripts/features/test-cortetsu-quality.py"
     run_python_test "caelestia/tests/test-runtime-contract.py"
     run_bash_test "caelestia/tests/test-calendar-readonly.sh"
     printf '\nCortetsu promoted runtime verified.\n'
 }
 
-audit_cmd() {
-    require_repo
-    status_cmd
-    printf '\n===== REPOSITORY TESTS =====\n'
-    test_cmd
-    printf '\n===== PROMOTED RUNTIME =====\n'
-    verify_cmd
-}
+audit_cmd() { require_repo; status_cmd; printf '\n===== REPOSITORY TESTS =====\n'; test_cmd; printf '\n===== PROMOTED RUNTIME =====\n'; verify_cmd; }
+install_cmd() { require_repo; require_file "$ROOT/scripts/install-cortetsu.sh"; printf 'Cortetsu: migrating if needed, building and promoting a verified generation.\n'; bash "$ROOT/scripts/install-cortetsu.sh"; }
 
-install_cmd() {
-    require_repo
-    require_file "$ROOT/scripts/install-cortetsu.sh"
-    printf 'Cortetsu: building, validating and promoting a user runtime generation.\n'
-    bash "$ROOT/scripts/install-cortetsu.sh"
-}
-
-command_name="${1:-help}"
-case "$command_name" in
-    status)
-        status_cmd
-        ;;
-    test)
-        test_cmd
-        ;;
-    verify)
-        verify_cmd
-        ;;
-    audit)
-        audit_cmd
-        ;;
-    install)
-        install_cmd
-        ;;
-    help|-h|--help)
-        usage
-        ;;
-    *)
-        printf 'ERROR: unknown command: %s\n\n' "$command_name" >&2
-        usage >&2
-        exit 64
-        ;;
+case "${1:-help}" in
+    status) status_cmd ;;
+    test) test_cmd ;;
+    verify) verify_cmd ;;
+    audit) audit_cmd ;;
+    install) install_cmd ;;
+    help|-h|--help) usage ;;
+    *) printf 'ERROR: unknown command: %s\n\n' "$1" >&2; usage >&2; exit 64 ;;
 esac
