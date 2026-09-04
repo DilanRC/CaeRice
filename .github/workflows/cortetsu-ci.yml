@@ -56,6 +56,8 @@ jobs:
         run: python3 scripts/features/test-cortetsu-quality.py
       - name: Validate native theme
         run: python3 scripts/features/test-native-theme.py
+      - name: Validate legacy theme retirement
+        run: python3 scripts/features/test-theme-retirement.py
       - name: Validate immutable dotfiles
         run: python3 scripts/features/test-dotfiles-platform.py
       - name: Validate unified system generations
@@ -74,15 +76,21 @@ jobs:
           test -x core/doctor.py
           test -f core/theme.py
           test -f core/shell_lifecycle.py
+          test -f core/import_fish.py
+          test -f core/retire_legacy_theme.py
           test -x scripts/features/test-dotfiles-platform.py
           test -x scripts/features/test-system-generations.py
           test -f scripts/features/test-shell-lifecycle.py
           test -f scripts/features/test-native-theme.py
+          test -f scripts/features/test-theme-retirement.py
+          test -f scripts/features/test-fish-import.py
           test -f dotfiles/manifest.toml
           test -f dotfiles/generated/theme/home/.config/kitty/cortetsu-theme.conf
           test -f dotfiles/generated/theme/home/.config/gtk-3.0/cortetsu-colors.css
           test -f dotfiles/generated/theme/home/.config/gtk-4.0/cortetsu-colors.css
           test -f dotfiles/generated/theme/home/.config/kdeglobals
+          test ! -e dotfiles/imported/desktop/home/.config/kitty/caelestia-theme.conf
+          test ! -e scripts/features/install-theme-bridge.py
           test -f profiles/base.toml
           test -f profiles/personal.toml
           test -f packages/arch.toml
@@ -93,15 +101,20 @@ jobs:
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
+          grep -q '^\[group.personal-shell\]' packages/arch.toml
+          grep -q 'packages = \["fish"\]' packages/arch.toml
+          grep -q '"personal-shell"' profiles/personal.toml
           grep -q '"upstreamRepo": "https://github.com/caelestia-dots/shell.git"' caelestia/compatibility.json
           grep -q 'ensure-upstream.sh' caelestia/bin/build-runtime.sh
           grep -q 'core/dotfiles.py' scripts/install-cortetsu.sh
           grep -q 'core/system.py' scripts/install-cortetsu.sh
           grep -q 'core/theme.py' scripts/install-cortetsu.sh
+          grep -q 'core/retire_legacy_theme.py' scripts/install-cortetsu.sh
           grep -q 'core/shell_lifecycle.py' scripts/install-cortetsu.sh
           grep -q 'theme) theme_cmd' scripts/cortetsu
           grep -q 'rollback) rollback_cmd' scripts/cortetsu
           ! grep -q 'install-theme-bridge.py' scripts/install-cortetsu.sh
+          ! grep -q 'caelestia-theme.conf' dotfiles/manifest.toml
           ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!caelestia/bin/ensure-upstream.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
