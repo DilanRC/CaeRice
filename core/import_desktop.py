@@ -24,6 +24,13 @@ SENSITIVE = re.compile(
 )
 PRIVATE_KEY_MARKERS = ("BEGIN OPENSSH PRIVATE KEY", "BEGIN RSA PRIVATE KEY", "BEGIN EC PRIVATE KEY", "BEGIN PRIVATE KEY")
 GROUPS = ("kitty", "zsh", "gtk", "qt")
+THEME_OWNED_TARGETS = {
+    Path(".config/kitty/caelestia-theme.conf"),
+    Path(".config/kitty/cortetsu-theme.conf"),
+    Path(".config/gtk-3.0/cortetsu-colors.css"),
+    Path(".config/gtk-4.0/cortetsu-colors.css"),
+    Path(".config/kdeglobals"),
+}
 DIR_SPECS = (
     ("kitty", "terminal", ".config/kitty"),
     ("zsh", "user-shell", ".config/zsh"),
@@ -108,6 +115,9 @@ def add_candidate(
     rejected: list[tuple[str, Path, str]],
 ) -> None:
     target = path.relative_to(home)
+    if target in THEME_OWNED_TARGETS:
+        rejected.append((group, target, "theme-owned"))
+        return
     if is_backupish(target):
         rejected.append((group, target, "backup/temp"))
         return
@@ -239,6 +249,46 @@ def check_repo_paths_clean(repo: Path) -> None:
         raise ImportError("el área de importación desktop ya tiene cambios locales:\n" + proc.stdout.strip())
 
 
+def normalise_imported_text(candidate: Candidate, text: str) -> str:
+    if candidate.target == Path(".config/kitty/kitty.conf"):
+        kept = []
+        for line in text.splitlines():
+            lowered = line.strip().lower()
+            if lowered.startswith("include ") and (
+                "caelestia-theme.conf" in lowered
+                or "state/caelestia/theme/kitty" in lowered
+                or "kitty-caerice.conf" in lowered
+                or "cortetsu-theme.conf" in lowered
+            ):
+                continue
+            if "caerice:" in lowered or "cortetsu: caelestia active scheme" in lowered:
+                continue
+            kept.append(line)
+        body = "\n".join(kept).strip("\n")
+        return "include cortetsu-theme.conf\n\n" + body + "\n"
+    if candidate.target in {Path(".config/gtk-3.0/gtk.css"), Path(".config/gtk-4.0/gtk.css")}:
+        lines = [
+            line
+            for line in text.splitlines()
+            if not line.lstrip().startswith("@define-color ")
+            and 'cortetsu-colors.css' not in line
+        ]
+        body = "\n".join(lines).strip("\n")
+        return '@import "cortetsu-colors.css";\n' + (body + "\n" if body else "")
+    return text
+
+
+def copy_candidate(candidate: Candidate, out: Path) -> None:
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        text = candidate.source.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        shutil.copy2(candidate.source, out)
+        return
+    out.write_text(normalise_imported_text(candidate, text), encoding="utf-8")
+    shutil.copymode(candidate.source, out)
+
+
 def print_plan(home: Path, candidates: list[Candidate], rejected: list[tuple[str, Path, str]]) -> None:
     print(f"Cortetsu desktop import · home={home}")
     for item in candidates:
@@ -274,8 +324,7 @@ def apply(repo: Path, home: Path, candidates: list[Candidate], rejected: list[tu
         stage_home.mkdir(parents=True)
         for candidate in candidates:
             out = stage_home / candidate.target
-            out.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(candidate.source, out)
+            copy_candidate(candidate, out)
 
         manifest_tmp = manifest.with_name(f"{manifest.name}.tmp.{os.getpid()}")
         manifest_tmp.write_text(updated_manifest, encoding="utf-8")
