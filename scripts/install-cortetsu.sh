@@ -6,6 +6,7 @@ BIN_DIR="${HOME}/.local/bin"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 SYSTEMD_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 KEEP_AWAKE_UNIT="cortetsu-keep-awake.service"
+WALLPAPER_COLOR_UNIT="cortetsu-wallpaper-color.service"
 
 atomic_symlink() {
     local target="$1"
@@ -33,6 +34,7 @@ done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'cortetsu-*' -prin
 
 mkdir -p "$SYSTEMD_USER_DIR"
 install -m 0644 "$REPO/config/systemd/user/$KEEP_AWAKE_UNIT" "$SYSTEMD_USER_DIR/$KEEP_AWAKE_UNIT"
+install -m 0644 "$REPO/config/systemd/user/$WALLPAPER_COLOR_UNIT" "$SYSTEMD_USER_DIR/$WALLPAPER_COLOR_UNIT"
 
 # Low-level shell rollback remains available for recovery. Normal operation uses
 # `cortetsu rollback`, which reverts the full system generation.
@@ -68,6 +70,15 @@ if systemctl --user enable --now "$KEEP_AWAKE_UNIT" >/dev/null 2>&1; then
     printf 'Keep awake: active and enabled\n'
 else
     printf 'WARN: no se pudo activar %s\n' "$KEEP_AWAKE_UNIT" >&2
+fi
+
+if [[ "$(systemctl --user show -p Transient --value "$WALLPAPER_COLOR_UNIT" 2>/dev/null || true)" == "yes" ]]; then
+    systemctl --user stop "$WALLPAPER_COLOR_UNIT" >/dev/null 2>&1 || true
+fi
+if systemctl --user enable --now "$WALLPAPER_COLOR_UNIT" >/dev/null 2>&1; then
+    printf 'Wallpaper colors: active and enabled\n'
+else
+    printf 'WARN: no se pudo activar %s\n' "$WALLPAPER_COLOR_UNIT" >&2
 fi
 
 # Preserve the user's explicit opt-in when migrating the renamed power service.

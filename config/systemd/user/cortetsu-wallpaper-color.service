@@ -1,0 +1,15 @@
+[Unit]
+Description=Cortetsu wallpaper colour synchronization
+After=graphical-session.target
+PartOf=graphical-session.target
+ConditionPathExists=%h/.local/bin/cortetsu-wallpaper-color-daemon
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/cortetsu-wallpaper-color-daemon
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=5
+
+[Install]
+WantedBy=graphical-session.target

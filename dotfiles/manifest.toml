@@ -33,6 +33,11 @@ source = "config/systemd/user/cortetsu-shell.service"
 target = ".config/systemd/user/cortetsu-shell.service"
 tags = ["services"]
 
+[[entry]]
+source = "config/systemd/user/cortetsu-wallpaper-color.service"
+target = ".config/systemd/user/cortetsu-wallpaper-color.service"
+tags = ["services"]
+
 # BEGIN CORTETSU NATIVE THEME
 # Generated artifacts are compiled from ui.toml by core/theme.py.
 

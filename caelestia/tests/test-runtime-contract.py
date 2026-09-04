@@ -11,6 +11,7 @@ installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 migration = (repo / "scripts/migrate-cortetsu-v2.sh").read_text(encoding="utf-8")
 legacy_process_migration = (repo / "core/migrate_legacy_processes.py").read_text(encoding="utf-8")
 wallpaper_daemon = (repo / "caelestia/bin/cortetsu-wallpaper-color-daemon").read_text(encoding="utf-8")
+wallpaper_unit = (repo / "config/systemd/user/cortetsu-wallpaper-color.service").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
@@ -77,6 +78,9 @@ for marker in ("legacy-processes.lock", "DEFERRED", "NO_PROCESS_SIGNALING", "cae
     assert marker in legacy_process_migration, marker
 assert "pkill" not in legacy_process_migration and "killpg" not in legacy_process_migration
 assert "flock -n 9" in wallpaper_daemon and "caelestia-wallpaper-color-daemon" not in wallpaper_daemon
+assert "PartOf=graphical-session.target" in wallpaper_unit
+assert "Restart=on-failure" in wallpaper_unit
+assert "cortetsu-wallpaper-color-daemon" in wallpaper_unit
 apply_wallpaper = (repo / "caelestia/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
 assert "cortetsu-scheme-posthook" not in apply_wallpaper
 
