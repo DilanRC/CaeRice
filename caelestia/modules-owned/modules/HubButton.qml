@@ -1,8 +1,7 @@
 import QtQuick
-import Caelestia.Config
-import qs.components
-import qs.services
+import QtQuick.Controls
 import "CortetsuDesign.js" as CortetsuDesign
+import "CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
@@ -13,7 +12,7 @@ Item {
     property bool active: false
     property string tooltip: ""
     property int buttonSize: 48
-    property font iconFontStyle: Tokens.font.icon.extraLarge
+    property int iconSize: CortetsuTypography.iconMediumPx
     property color activeColor: CortetsuDesign.colorIndigo
     property color hoverColor: Qt.lighter(CortetsuDesign.colorTetsu, 1.18)
     property color iconColor: active || hovered
@@ -53,12 +52,12 @@ Item {
         outlined: root.active
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         anchors.centerIn: parent
         visible: root.imageSource.length === 0
         text: root.icon
         color: root.iconColor
-        fontStyle: root.iconFontStyle
+        iconSize: root.iconSize
 
         Behavior on color {
             ColorAnimation {
@@ -88,6 +87,27 @@ Item {
                 duration: CortetsuDesign.motionFastMs
                 easing.type: Easing.OutCubic
             }
+        }
+    }
+
+    ToolTip {
+        id: tooltipPopup
+
+        parent: root
+        visible: root.tooltip.length > 0 && root.hovered
+        delay: CortetsuDesign.motionDeliberateMs
+        text: root.tooltip
+
+        background: CortetsuSurface {
+            radiusValue: CortetsuDesign.radiusSmall
+            baseColor: CortetsuDesign.colorTetsu
+            outlined: true
+        }
+
+        contentItem: CortetsuText {
+            text: tooltipPopup.text
+            textSize: CortetsuTypography.labelSmallPx
+            color: CortetsuDesign.colorWashi
         }
     }
 
