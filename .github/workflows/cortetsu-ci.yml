@@ -47,6 +47,8 @@ jobs:
           while IFS= read -r -d '' file; do bash -n "$file"; done < <(find scripts caelestia/bin -type f -name '*.sh' -print0)
           bash -n scripts/cortetsu
           bash -n scripts/migrate-cortetsu-v2.sh
+          bash -n caelestia/bin/ensure-upstream.sh
+          bash -n scripts/features/test-upstream-bootstrap.sh
       - name: Validate shell quality
         run: python3 scripts/features/test-cortetsu-quality.py
       - name: Validate migration resilience
@@ -58,11 +60,14 @@ jobs:
           test -x scripts/cortetsu
           test -x scripts/migrate-cortetsu-v2.sh
           test -f scripts/install-cortetsu.sh
+          test -f caelestia/bin/ensure-upstream.sh
           test -f docs/CORTETSU_ARCHITECTURE.md
           test -f docs/IDENTITY.md
           test -f docs/PROVENANCE.md
           grep -q '^# Cortetsu' README.md
-          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
+          grep -q '"upstreamRepo": "https://github.com/caelestia-dots/shell.git"' caelestia/compatibility.json
+          grep -q 'ensure-upstream.sh' caelestia/bin/build-runtime.sh
+          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!caelestia/bin/ensure-upstream.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
           ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
