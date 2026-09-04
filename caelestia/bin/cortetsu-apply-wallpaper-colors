@@ -13,6 +13,3 @@ mkdir -p "$(dirname "$state")"
 # scheme contract. The watcher and ownership are Cortetsu-owned.
 /usr/bin/caelestia wallpaper -p "$image" | jq -e 'if .name == "dynamic" and (.colours.primary | type == "string") then . else error("invalid dynamic scheme") end' > "$tmp"
 install -m 0644 "$tmp" "$state"
-if [[ -x "$HOME/.local/bin/cortetsu-scheme-posthook" ]]; then
-    "$HOME/.local/bin/cortetsu-scheme-posthook"
-fi

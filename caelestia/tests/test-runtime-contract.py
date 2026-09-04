@@ -77,6 +77,8 @@ for marker in ("legacy-processes.lock", "DEFERRED", "NO_PROCESS_SIGNALING", "cae
     assert marker in legacy_process_migration, marker
 assert "pkill" not in legacy_process_migration and "killpg" not in legacy_process_migration
 assert "flock -n 9" in wallpaper_daemon and "caelestia-wallpaper-color-daemon" not in wallpaper_daemon
+apply_wallpaper = (repo / "caelestia/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
+assert "cortetsu-scheme-posthook" not in apply_wallpaper
 
 for marker in (
     "atomic_link", "build.lock", "is_managed_generation", "BUILD.json",
