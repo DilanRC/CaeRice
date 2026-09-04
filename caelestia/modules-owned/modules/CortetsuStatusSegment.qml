@@ -39,6 +39,8 @@ Item {
 
     implicitWidth: statusRow.implicitWidth + CortetsuDesign.spacingCompact
     implicitHeight: 52
+    width: implicitWidth
+    height: implicitHeight
 
     CortetsuSurface {
         anchors.fill: parent
@@ -113,6 +115,8 @@ Item {
         Item {
             implicitWidth: 44
             implicitHeight: 44
+            width: implicitWidth
+            height: implicitHeight
 
             HubButton {
                 anchors.fill: parent
@@ -154,6 +158,8 @@ Item {
         Item {
             implicitWidth: 74
             implicitHeight: 44
+            width: implicitWidth
+            height: implicitHeight
 
             Column {
                 anchors.centerIn: parent
