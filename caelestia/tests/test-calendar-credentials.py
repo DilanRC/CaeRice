@@ -49,7 +49,7 @@ with tempfile.TemporaryDirectory() as directory:
 
     config_home = root / "config"
     cache_home = root / "cache"
-    client_file = config_home / "caelestia/calendar-client.json"
+    client_file = config_home / "cortetsu/calendar-client.json"
     client_file.parent.mkdir(parents=True)
     client_file.write_text(json.dumps({"installed": {"client_secret": "DO-NOT-PRINT"}}), encoding="utf-8")
     result = subprocess.run(
@@ -72,4 +72,4 @@ with tempfile.TemporaryDirectory() as directory:
     )
     assert result.returncode == 3 and "secret_service_unavailable" in result.stdout
 
-print("PASS: Calendar credentials, OAuth state, cache freshness, timezone, and secret errors")
+print("PASS: Calendar credentials, OAuth state, Cortetsu XDG paths, timezone, and secret errors")
