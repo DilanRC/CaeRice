@@ -60,6 +60,16 @@ if compgen -G "$REPO/config/systemd/user/*.service" >/dev/null; then
     systemctl --user daemon-reload >/dev/null 2>&1 || true
 fi
 
+# Preserve the user's explicit opt-in when migrating the renamed power service.
+if [[ -f "$DATA_ROOT/.power-auto-was-enabled" && -f "$SYSTEMD_USER_DIR/cortetsu-power-auto.service" ]]; then
+    if systemctl --user enable --now cortetsu-power-auto.service >/dev/null 2>&1; then
+        rm -f "$DATA_ROOT/.power-auto-was-enabled"
+        printf 'Power automation: opt-in restored\n'
+    else
+        printf 'WARN: no se pudo reactivar cortetsu-power-auto.service; el marcador se conserva\n' >&2
+    fi
+fi
+
 runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
