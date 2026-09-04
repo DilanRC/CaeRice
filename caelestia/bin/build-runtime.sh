@@ -37,6 +37,7 @@ trap cleanup EXIT
 
 require_file "$COMPATIBILITY"
 require_file "$REPO/caelestia/patches/MANIFEST.tsv"
+require_file "$REPO/caelestia/bin/native-bottom-hub.py"
 
 readarray -t upstream_contract < <(
     python3 - "$COMPATIBILITY" <<'PY'
@@ -87,11 +88,14 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/caelestia/modules-owned/modules/." "$STAGING/modules/"
+python3 "$REPO/caelestia/bin/native-bottom-hub.py" "$STAGING/modules/BottomHub.qml"
+python3 "$REPO/caelestia/bin/native-bottom-hub.py" --check "$STAGING/modules/BottomHub.qml"
 python3 "$REPO/caelestia/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/caelestia/composition.json" "$STAGING/composition.json"
 
 printf '==> Regresiones\n'
+python3 "$REPO/scripts/features/test-native-bottom-hub.py" --runtime "$STAGING/modules/BottomHub.qml"
 python3 "$REPO/scripts/features/test-bottom-hub-target.py"
 python3 "$REPO/scripts/features/test-bottom-hub-v3.py"
 python3 "$REPO/scripts/features/test-bottom-hub-v4.py"
