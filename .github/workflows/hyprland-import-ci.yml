@@ -1,0 +1,20 @@
+name: Hyprland import contract
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compile importer
+        run: python3 -m py_compile core/import_hyprland.py scripts/features/test-hyprland-import.py
+      - name: Validate safe Hyprland import
+        run: python3 scripts/features/test-hyprland-import.py
+      - name: Validate helper syntax
+        run: bash -n caelestia/bin/cortetsu-import-hyprland
