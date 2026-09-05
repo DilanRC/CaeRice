@@ -83,7 +83,7 @@ def check_retired() -> None:
             "qs.modules.gaming", "qs.modules.updater", "gamingCenter", "updaterCenter"
         ),
         "ContentWindow.qml": ("gamingCenter", "updaterCenter"),
-        "hypr-user.lua": ("caelestia:gamingcenter", "caelestia:updatercenter"),
+        "hypr-user.lua": ("cortetsu:gamingcenter", "cortetsu:updatercenter"),
     }
     texts = {
         "shell.qml": shell,

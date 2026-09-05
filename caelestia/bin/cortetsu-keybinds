@@ -191,7 +191,7 @@ def user_bindings() -> list[dict]:
         target = ""
         if global_match:
             target = global_match.group(1)
-            detail = target.replace("caelestia:", "Caelestia · ")
+            detail = target.replace("cortetsu:", "Caelestia · ")
         elif command_match:
             command = command_match.group(1) or lua_unescape(command_match.group(2) or "")
             detail = command

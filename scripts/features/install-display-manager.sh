@@ -144,12 +144,12 @@ replace_once(
 
 bind = '''hl.bind(
     "SUPER + SHIFT + O",
-    hl.dsp.global("caelestia:displaymanager")
+    hl.dsp.global("cortetsu:displaymanager")
 )'''
 if bind not in texts["user"]:
     anchor = '''hl.bind(
     "SUPER + H",
-    hl.dsp.global("caelestia:hardware")
+    hl.dsp.global("cortetsu:hardware")
 )'''
     if anchor not in texts["user"]:
         raise SystemExit("PREFLIGHT ERROR [user]: no encontré bind SUPER+H")

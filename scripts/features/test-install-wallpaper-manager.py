@@ -7,7 +7,11 @@ import importlib.util
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-UPSTREAM = Path("/home/dilan/.local/share/cortetsu/upstream/upstream-git")
+REPO = HERE.parents[1]
+UPSTREAM = Path(subprocess.check_output(
+    ["bash", str(REPO / "caelestia/bin/ensure-upstream.sh")],
+    text=True,
+).strip())
 
 spec = importlib.util.spec_from_file_location("install_wallpaper_manager", HERE / "install-wallpaper-manager.py")
 assert spec and spec.loader
@@ -33,9 +37,11 @@ with tempfile.TemporaryDirectory() as tmp:
     (live / "components/ScreenState.qml").write_text("QtObject {\n    property bool hardware\n    property bool dashboard\n}\n")
     (live / "modules/drawers/Panels.qml").write_text("import qs.modules.hardware as Hardware\nimport qs.modules.notifications as Notifications\nItem {\n    readonly property alias hardware: hardware\n    readonly property alias dashboard: dashboard\n    Hardware.Wrapper { id: hardware }\n    Dashboard.Wrapper { id: dashboard }\n}\n")
     (live / "modules/drawers/ContentWindow.qml").write_text("Item {\n    onX: {\n        screenState.hardware = false;\n        panels.popouts.close();\n    }\n    WlrLayershell.layer: screenState.overview || screenState.clipboard || screenState.hardware ? WlrLayer.Overlay : WlrLayer.Top\n    WlrLayershell.keyboardFocus: screenState.overview || screenState.clipboard || screenState.hardware || screenState.launcher ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None\n    mask: screenState.overview || screenState.clipboard || screenState.hardware ? null : regions\n    function f(s) { if (s.overview || s.clipboard || s.hardware)\n                return true; }\n    onY: {\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;\n    }\n}\n")
-    shutil.copy2(UPSTREAM / "services/Wallpapers.qml", live / "services/Wallpapers.qml")
+    (live / "services/Wallpapers.qml").write_bytes(subprocess.check_output(
+        ["git", "-C", str(UPSTREAM), "show", "v2.4.0:services/Wallpapers.qml"]
+    ))
     config = Path(tmp) / "shell.json"; config.write_text(json.dumps({"launcher": {"actions": [{"name": "Wallpaper"}, {"name": "Kept"}]}}))
-    hypr = Path(tmp) / "hypr-user.lua"; hypr.write_text('hl.bind(\n    "SUPER + H",\n    hl.dsp.global("caelestia:hardware")\n)\n'); hypr.chmod(0o600)
+    hypr = Path(tmp) / "hypr-user.lua"; hypr.write_text('hl.bind(\n    "SUPER + H",\n    hl.dsp.global("cortetsu:hardware")\n)\n'); hypr.chmod(0o600)
     original = (live / "services/Wallpapers.qml").read_text()
     before_live = tree(live)
     before_hypr = (hypr.stat().st_mode & 0o777, hypr.read_bytes())
@@ -63,14 +69,17 @@ with tempfile.TemporaryDirectory() as tmp:
     corrupt = Path(tmp) / "corrupt"
     shutil.copytree(live, corrupt)
     corrupt_service = corrupt / "services/Wallpapers.qml"
-    corrupt_service.write_text(corrupt_service.read_text().replace("    property bool pendingPreviewClear", "    property bool pendingPreviewClear\n    property int previewGeneration: 0"))
+    corrupt_service.write_text(corrupt_service.read_text().replace(
+        'Quickshell.execDetached(["caelestia", "wallpaper"',
+        'Quickshell.execDetached(["broken-wallpaper"',
+    ))
     corrupt_config = Path(tmp) / "corrupt-shell.json"; shutil.copy2(config, corrupt_config)
     corrupt_hypr = Path(tmp) / "corrupt-hypr.lua"; shutil.copy2(hypr, corrupt_hypr)
     corrupt_before = tree(corrupt)
     corrupt_mode = corrupt_service.stat().st_mode & 0o777
     corrupt_backups = Path(tmp) / "corrupt-backups"
     rejected = subprocess.run(["python3", str(HERE / "install-wallpaper-manager.py"), "--apply", "--live", str(corrupt), "--usercfg", str(corrupt_config), "--hypr-usercfg", str(corrupt_hypr), "--backup-root", str(corrupt_backups)], text=True, capture_output=True)
-    assert rejected.returncode != 0 and "complete V1 patched state" in rejected.stderr
+    assert rejected.returncode != 0 and "complete V1 patched state" in rejected.stderr, rejected.stdout + rejected.stderr
     assert tree(corrupt) == corrupt_before
     assert corrupt_service.stat().st_mode & 0o777 == corrupt_mode
     assert not corrupt_backups.exists()

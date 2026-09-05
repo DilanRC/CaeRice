@@ -253,17 +253,17 @@ except WiringError as exc:
 
 hardware_bind = '''hl.bind(
     "SUPER + H",
-    hl.dsp.global("caelestia:hardware")
+    hl.dsp.global("cortetsu:hardware")
 )'''
 if hardware_bind not in texts["user"]:
     anchors = [
         '''hl.bind(
     "SUPER + V",
-    hl.dsp.global("caelestia:clipboard")
+    hl.dsp.global("cortetsu:clipboard")
 )''',
         '''hl.bind(
     "SUPER + I",
-    hl.dsp.global("caelestia:nexus")
+    hl.dsp.global("cortetsu:nexus")
 )''',
     ]
     for anchor in anchors:

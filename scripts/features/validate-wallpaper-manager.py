@@ -44,7 +44,7 @@ def main() -> None:
     assert "shouldBeActive && presentationReady" in wrapper_text and "m3scrim, 0.18" in wrapper_text
     require(ROOT / "caelestia/modules-owned/modules/WallpaperController.qml", "wallpaperManager", "CustomShortcut", 'name: "wallpapermanager"')
     require(ROOT / "caelestia/modules-owned/modules/BottomHub.qml", "openWallpaperFor", "Wallpapers.actualCurrent")
-    require(ROOT / "config/hypr-user.lua", "SUPER + SHIFT + W", "caelestia:wallpapermanager")
+    require(ROOT / "config/hypr-user.lua", "SUPER + SHIFT + W", "cortetsu:wallpapermanager")
     with tempfile.TemporaryDirectory(prefix="wallpaper-patch-") as tmp:
         stage = Path(tmp)
         target = stage / "services"

@@ -167,12 +167,12 @@ plan(
 
 clipboard_bind = '''hl.bind(
     "SUPER + V",
-    hl.dsp.global("caelestia:clipboard")
+    hl.dsp.global("cortetsu:clipboard")
 )'''
 if clipboard_bind not in texts["user"]:
     anchor = '''hl.bind(
     "SUPER + I",
-    hl.dsp.global("caelestia:nexus")
+    hl.dsp.global("cortetsu:nexus")
 )'''
     if anchor not in texts["user"]:
         raise SystemExit("PREFLIGHT ERROR [user]: no encontré el bind de SUPER+I")

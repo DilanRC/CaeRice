@@ -71,45 +71,45 @@ hl.bind(
 -- Dashboard de Caelestia
 hl.bind(
     "SUPER + SHIFT + D",
-    hl.dsp.global("caelestia:dashboard")
+    hl.dsp.global("cortetsu:dashboard")
 )
 
 hl.bind(
     "SUPER + Slash",
-    hl.dsp.global("caelestia:utilities")
+    hl.dsp.global("cortetsu:utilities")
 )
 
 hl.bind(
     "SUPER + I",
-    hl.dsp.global("caelestia:nexus")
+    hl.dsp.global("cortetsu:nexus")
 )
 
 -- Clipboard QML nativo
 hl.bind(
     "SUPER + V",
-    hl.dsp.global("caelestia:clipboard")
+    hl.dsp.global("cortetsu:clipboard")
 )
 
 hl.bind(
     "SUPER + H",
-    hl.dsp.global("caelestia:hardware")
+    hl.dsp.global("cortetsu:hardware")
 )
 
 hl.bind(
     "SUPER + SHIFT + C",
-    hl.dsp.global("caelestia:calendar")
+    hl.dsp.global("cortetsu:calendar")
 )
 
 -- Display Manager QML nativo
 hl.bind(
     "SUPER + SHIFT + O",
-    hl.dsp.global("caelestia:displaymanager")
+    hl.dsp.global("cortetsu:displaymanager")
 )
 
 -- Wallpaper Manager QML nativo
 hl.bind(
     "SUPER + SHIFT + W",
-    hl.dsp.global("caelestia:wallpapermanager")
+    hl.dsp.global("cortetsu:wallpapermanager")
 )
 
 
@@ -329,7 +329,7 @@ end
 
 hl.bind(
     "SUPER + TAB",
-    hl.dsp.global("caelestia:overview")
+    hl.dsp.global("cortetsu:overview")
 )
 
 -- Cortetsu app shortcut: The Witcher 3: Wild Hunt (The Witcher 3 Wild Hunt)

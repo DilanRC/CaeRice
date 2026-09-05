@@ -143,10 +143,10 @@ def retire_removed_centers(texts: dict[str, str]) -> bool:
         texts["content"] = texts["content"].replace(f"s.{flag} || ", "")
 
     texts["user"] = _remove_legacy_bind(
-        texts["user"], "SUPER + SHIFT + G", "caelestia:gamingcenter", "Gaming Center QML nativo"
+        texts["user"], "SUPER + SHIFT + G", "cortetsu:gamingcenter", "Gaming Center QML nativo"
     )
     texts["user"] = _remove_legacy_bind(
-        texts["user"], "SUPER + SHIFT + U", "caelestia:updatercenter", "Cortetsu Updater QML nativo"
+        texts["user"], "SUPER + SHIFT + U", "cortetsu:updatercenter", "Cortetsu Updater QML nativo"
     )
 
     leftovers = {
@@ -157,7 +157,7 @@ def retire_removed_centers(texts: dict[str, str]) -> bool:
             "Gaming.Wrapper", "Updater.Wrapper",
         ),
         "content": ("gamingCenter", "updaterCenter"),
-        "user": ("caelestia:gamingcenter", "caelestia:updatercenter"),
+        "user": ("cortetsu:gamingcenter", "cortetsu:updatercenter"),
     }
     for key, markers in leftovers.items():
         present = [marker for marker in markers if marker in texts[key]]
@@ -233,8 +233,8 @@ def _wire_display(texts: dict[str, str]) -> bool:
     )
     changed |= insert_bind(
         texts,
-        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("caelestia:displaymanager")\n)',
-        'hl.bind(\n    "SUPER + H",\n    hl.dsp.global("caelestia:hardware")\n)',
+        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("cortetsu:displaymanager")\n)',
+        'hl.bind(\n    "SUPER + H",\n    hl.dsp.global("cortetsu:hardware")\n)',
         "Display Manager QML nativo",
     )
     return changed
@@ -304,8 +304,8 @@ def _wire_wallpaper(texts: dict[str, str]) -> bool:
     )
     changed |= insert_bind(
         texts,
-        'hl.bind(\n    "SUPER + SHIFT + W",\n    hl.dsp.global("caelestia:wallpapermanager")\n)',
-        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("caelestia:displaymanager")\n)',
+        'hl.bind(\n    "SUPER + SHIFT + W",\n    hl.dsp.global("cortetsu:wallpapermanager")\n)',
+        'hl.bind(\n    "SUPER + SHIFT + O",\n    hl.dsp.global("cortetsu:displaymanager")\n)',
         "Wallpaper Manager QML nativo",
     )
     return changed

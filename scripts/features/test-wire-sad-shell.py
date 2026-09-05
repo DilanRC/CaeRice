@@ -29,7 +29,7 @@ def fixture(root: Path, user: Path) -> None:
         "    function f(s) { if (s.overview || s.clipboard || s.hardware)\n                return true; }\n"
         "    onY: {\n            root.screenState.hardware = false;\n            panels.popouts.hasCurrent = false;\n    }\n}\n"
     )
-    user.write_text('hl.bind(\n    "SUPER + H",\n    hl.dsp.global("caelestia:hardware")\n)\n')
+    user.write_text('hl.bind(\n    "SUPER + H",\n    hl.dsp.global("cortetsu:hardware")\n)\n')
 
 
 with tempfile.TemporaryDirectory() as tmpdir:
@@ -66,11 +66,11 @@ with tempfile.TemporaryDirectory() as tmpdir:
         "shell": "    GamingController {}\n    UpdaterController {}\n",
         "panels": "import qs.modules.gaming as Gaming\nimport qs.modules.updater as Updater\n",
         "content": "screenState.hardware || screenState.gamingCenter || screenState.updaterCenter ? null : regions\n",
-        "user": 'hl.bind(\n    "SUPER + SHIFT + G",\n    hl.dsp.global("caelestia:gamingcenter")\n)\nhl.bind(\n    "SUPER + SHIFT + U",\n    hl.dsp.global("caelestia:updatercenter")\n)\n',
+        "user": 'hl.bind(\n    "SUPER + SHIFT + G",\n    hl.dsp.global("cortetsu:gamingcenter")\n)\nhl.bind(\n    "SUPER + SHIFT + U",\n    hl.dsp.global("cortetsu:updatercenter")\n)\n',
     }
     assert wire.retire_removed_centers(legacy) is True
     joined = "\n".join(legacy.values())
-    for marker in ("gamingCenter", "updaterCenter", "GamingController", "UpdaterController", "caelestia:gamingcenter", "caelestia:updatercenter"):
+    for marker in ("gamingCenter", "updaterCenter", "GamingController", "UpdaterController", "cortetsu:gamingcenter", "cortetsu:updatercenter"):
         assert marker not in joined, marker
 
 print("test-wire-sad-shell: OK")
