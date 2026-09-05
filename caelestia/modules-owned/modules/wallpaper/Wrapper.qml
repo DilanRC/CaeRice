@@ -11,7 +11,7 @@ Item {
     id: root
     required property ShellScreen screen
     required property ScreenState screenState
-    readonly property bool shouldBeActive: screenState.wallpaperManager
+    readonly property bool shouldBeActive: screenState.cortetsuState?.wallpaperManager ?? false
     readonly property bool presentationReady: contentLoader.item?.presentationReady ?? false
     readonly property bool globalOtherOverlayOpen: {
         for (const candidate of Screens.screens) {

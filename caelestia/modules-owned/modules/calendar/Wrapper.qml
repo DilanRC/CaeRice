@@ -7,7 +7,7 @@ import qs.components
 Item {
     id: root
     required property ScreenState screenState
-    readonly property bool shouldBeActive: screenState.calendar
+    readonly property bool shouldBeActive: screenState.cortetsuState?.calendar ?? false
     property real offsetScale: shouldBeActive ? 0 : 1
 
     visible: offsetScale < 1

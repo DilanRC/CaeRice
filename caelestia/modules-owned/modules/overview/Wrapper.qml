@@ -10,7 +10,7 @@ Item {
     required property ShellScreen screen
     required property ScreenState screenState
 
-    readonly property bool shouldBeActive: screenState.overview
+    readonly property bool shouldBeActive: screenState.cortetsuState?.overview ?? false
 
     property real visibilityProgress: shouldBeActive ? 1 : 0
 

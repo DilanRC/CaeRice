@@ -50,4 +50,14 @@ assert 'state.setRetained("calendar"' in hub
 assert 'state.setRetained("wallpaperManager"' in hub
 assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in hub
 assert "readonly property var cortetsuState" in hub
+for wrapper, flag in (
+    ("calendar/Wrapper.qml", "calendar"),
+    ("clipboard/Wrapper.qml", "clipboard"),
+    ("hardware/Wrapper.qml", "hardware"),
+    ("display/Wrapper.qml", "displayManager"),
+    ("overview/Wrapper.qml", "overview"),
+    ("wallpaper/Wrapper.qml", "wallpaperManager"),
+):
+    wrapper_text = (repo / "caelestia/modules-owned/modules" / wrapper).read_text(encoding="utf-8")
+    assert f"screenState.cortetsuState?.{flag}" in wrapper_text, wrapper
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")
