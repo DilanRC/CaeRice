@@ -20,8 +20,8 @@ tags = ["core", "scenes"]
 
 [[entry]]
 source = "config/hypr-user.lua"
-target = ".config/caelestia/hypr-user.lua"
-tags = ["shell-bridge"]
+target = ".config/hypr/hypr-user.lua"
+tags = ["hyprland", "shell-bridge"]
 
 [[entry]]
 source = "config/systemd/user/cortetsu-power-auto.service"

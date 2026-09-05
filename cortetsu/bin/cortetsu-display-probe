@@ -7,7 +7,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-USERCFG = Path.home() / ".config/caelestia/hypr-user.lua"
+USERCFG = Path.home() / ".config/hypr/hypr-user.lua"
 
 
 def read_text(path: Path, default: str = "") -> str:

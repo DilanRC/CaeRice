@@ -6,7 +6,7 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent
 PLANNER=HERE/'cortetsu-display-plan'
 PROBE=HERE/'cortetsu-display-probe'
-CFG=Path.home()/'.config/caelestia/hypr-user.lua'
+CFG=Path.home()/'.config/hypr/hypr-user.lua'
 STATE=Path.home()/'.config/cortetsu/display-workspaces.json'
 SNAPS=Path.home()/'.local/share/cortetsu/upstream/snapshots'
 BEGIN='-- CORTETSU_WORKSPACE_POLICY_BEGIN'

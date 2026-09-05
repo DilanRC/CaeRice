@@ -84,20 +84,16 @@ for _, name in ipairs({ "variables", "env", "general", "execs", "rules", "keybin
     end
 end
 
--- Transitional user overrides.
--- Keep legacy hypr-user.lua usable without putting ~/.config/caelestia back
--- into package.path. This prevents legacy files from becoming a module root.
+-- User overrides. Cortetsu-owned only: the legacy Caelestia user-config path
+-- is no longer read here. All installer scripts (wire_sad_shell.py,
+-- install-*.sh/.py, apply-canonical-sad-wiring.sh) and dotfiles/manifest.toml
+-- write to ~/.config/hypr/hypr-user.lua now. Do not add a legacy fallback
+-- back here -- test-hyprland-self-contained.py gates against it.
 local cortetsu_user = hypr .. "/hypr-user.lua"
-local legacy_user = home .. "/.config/caelestia/hypr-user.lua"
 
 if file_exists(cortetsu_user) then
     local ok, err = pcall(dofile, cortetsu_user)
     if not ok then
         error("[Cortetsu Hyprland] hypr-user.lua failed: " .. tostring(err))
-    end
-elseif file_exists(legacy_user) then
-    local ok, err = pcall(dofile, legacy_user)
-    if not ok then
-        error("[Cortetsu Hyprland] legacy hypr-user.lua failed: " .. tostring(err))
     end
 end

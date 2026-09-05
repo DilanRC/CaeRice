@@ -5,7 +5,7 @@ REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
 
 LIVE="/etc/xdg/quickshell/caelestia"
-USERCFG="$HOME/.config/caelestia/hypr-user.lua"
+USERCFG="$HOME/.config/hypr/hypr-user.lua"
 SRC="$REPO/cortetsu/modules"
 VALIDATOR="$REPO/scripts/features/validate-display-manager.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"

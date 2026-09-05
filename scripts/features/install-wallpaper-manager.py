@@ -140,7 +140,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", type=Path); parser.add_argument("--apply", action="store_true"); parser.add_argument("--rollback", type=Path)
     parser.add_argument("--live", type=Path, default=Path("/etc/xdg/quickshell/caelestia")); parser.add_argument("--usercfg", type=Path, default=Path.home() / ".config/caelestia/shell.json")
-    parser.add_argument("--hypr-usercfg", type=Path, default=Path.home() / ".config/caelestia/hypr-user.lua")
+    parser.add_argument("--hypr-usercfg", type=Path, default=Path.home() / ".config/hypr/hypr-user.lua")
     parser.add_argument("--backup-root", type=Path); parser.add_argument("--production", action="store_true")
     args = parser.parse_args()
     if args.rollback: rollback(args.rollback); print(f"ROLLED_BACK {args.rollback}"); return 0

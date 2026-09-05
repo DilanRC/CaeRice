@@ -17,8 +17,8 @@ from typing import NamedTuple
 
 HOME = Path.home()
 DEFAULTS = HOME / ".config/hypr/variables.lua"
-OVERRIDES = HOME / ".config/caelestia/hypr-vars.lua"
-USER = HOME / ".config/caelestia/hypr-user.lua"
+OVERRIDES = HOME / ".config/hypr/hypr-vars.lua"
+USER = HOME / ".config/hypr/hypr-user.lua"
 SNAPSHOTS = HOME / ".local/share/cortetsu/upstream/snapshots/keybinds"
 
 ENTRY_RE = re.compile(r"(?m)^(\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(\{[^\n]*\}|\"(?:\\.|[^\"])*\")(,?)")

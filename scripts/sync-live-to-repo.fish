@@ -28,8 +28,8 @@ for item in patches modules-owned user-config bin PATCH_BASE_INFO.txt
     end
 end
 
-if test -f "$HOME/.config/caelestia/hypr-user.lua"
-    cp "$HOME/.config/caelestia/hypr-user.lua" "$repo/config/hypr-user.lua"
+if test -f "$HOME/.config/hypr/hypr-user.lua"
+    cp "$HOME/.config/hypr/hypr-user.lua" "$repo/config/hypr-user.lua"
 end
 
 # Conserva también los migradores usados durante esta sesión si siguen en Descargas.

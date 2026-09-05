@@ -50,6 +50,7 @@ Usage:
   cortetsu config migrate         Import functional preferences to ~/.config/cortetsu
   cortetsu screenshot [-r] [-f]   Open the Cortetsu regional screenshot picker
   cortetsu record <action>        status|stop for GPU Screen Recorder
+  cortetsu emoji [-p] [-f]        Emoji/glyph picker (-p) or data refresh (-f)
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -233,6 +234,16 @@ record_cmd() {
     exec cortetsu-record "$action"
 }
 
+emoji_cmd() {
+    for arg in "$@"; do
+        case "$arg" in
+            -p|--picker|-f|--fetch) ;;
+            *) fail "opción de emoji desconocida: $arg" ;;
+        esac
+    done
+    exec cortetsu-emoji "$@"
+}
+
 test_cmd() {
     require_repo
     local tests=(
@@ -263,6 +274,8 @@ test_cmd() {
         "scripts/features/test-hyprland-self-contained.py"
         "scripts/features/test-zero-caelestia-gate.py"
         "scripts/features/test-shortcut-namespace.py"
+        "scripts/features/test-cortetsu-screenshot.py"
+        "scripts/features/test-cortetsu-emoji.py"
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
@@ -349,6 +362,7 @@ case "$command" in
     config) config_cmd "$@" ;;
     screenshot) screenshot_cmd "$@" ;;
     record) record_cmd "$@" ;;
+    emoji) emoji_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
     audit) audit_cmd "$@" ;;

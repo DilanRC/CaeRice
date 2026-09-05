@@ -8,7 +8,7 @@ if [[ -z "$REPO" ]]; then
 fi
 
 LIVE="/etc/xdg/quickshell/caelestia"
-USERCFG="$HOME/.config/caelestia/hypr-user.lua"
+USERCFG="$HOME/.config/hypr/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/clipboard-qml-$STAMP"
 STAGE="$BACKUP/stage"

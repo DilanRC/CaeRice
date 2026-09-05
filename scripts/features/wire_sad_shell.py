@@ -364,7 +364,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--usercfg",
-        default=str(Path.home() / ".config/caelestia/hypr-user.lua"),
+        default=str(Path.home() / ".config/hypr/hypr-user.lua"),
     )
     parser.add_argument("--stage", required=True)
     parser.add_argument(

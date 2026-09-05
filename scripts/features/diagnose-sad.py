@@ -70,7 +70,7 @@ def check_retired() -> None:
     screen = read("components/ScreenState.qml") or ""
     panels = read("modules/drawers/Panels.qml") or ""
     content = read("modules/drawers/ContentWindow.qml") or ""
-    usercfg = Path.home() / ".config/caelestia/hypr-user.lua"
+    usercfg = Path.home() / ".config/hypr/hypr-user.lua"
     try:
         user = usercfg.read_text(encoding="utf-8")
     except OSError:

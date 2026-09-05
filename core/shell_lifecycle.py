@@ -27,6 +27,10 @@ LEGACY_REPLACEMENTS = (
         "caelestia screenshot",
         "cortetsu screenshot",
     ),
+    (
+        "caelestia emoji",
+        "cortetsu emoji",
+    ),
 )
 
 ACTIVE_RELATIVE_FILES = (

@@ -32,6 +32,11 @@ def load_ui(repo: Path) -> dict:
         value = palette.get(name)
         if not isinstance(value, str) or not HEX.fullmatch(value):
             raise ValueError(f"invalid palette.{name}: {value!r}")
+    semantic = palette.get("semantic", {})
+    for name in ("surface_high", "primary_container", "secondary", "secondary_container", "outline_variant", "scrim"):
+        value = semantic.get(name)
+        if not isinstance(value, str) or not HEX.fullmatch(value):
+            raise ValueError(f"invalid palette.semantic.{name}: {value!r}")
     motion = data.get("motion", {})
     for name in ("instant_ms", "fast_ms", "standard_ms", "deliberate_ms"):
         if not isinstance(motion.get(name), int) or motion[name] <= 0:
@@ -82,6 +87,7 @@ def derived(data: dict) -> dict[str, str]:
 
 def render_design(data: dict) -> str:
     p = data["palette"]
+    s = p["semantic"]
     shape = data["shape"]
     spacing = data["spacing"]
     motion = data["motion"]
@@ -95,6 +101,22 @@ var colorWashi = "{p['washi']}"
 var colorIndigo = "{p['indigo']}"
 var colorVermillion = "{p['vermillion']}"
 var colorMuted = "{p['muted']}"
+
+var colorSurface = colorTetsu
+var colorSurfaceHigh = "{s['surface_high']}"
+var colorOnSurface = colorWashi
+var colorOnSurfaceVariant = colorMuted
+var colorPrimary = colorIndigo
+var colorOnPrimary = colorWashi
+var colorPrimaryContainer = "{s['primary_container']}"
+var colorOnPrimaryContainer = colorWashi
+var colorSecondary = "{s['secondary']}"
+var colorSecondaryContainer = "{s['secondary_container']}"
+var colorOnSecondaryContainer = colorWashi
+var colorTertiary = colorVermillion
+var colorOutline = colorMuted
+var colorOutlineVariant = "{s['outline_variant']}"
+var colorScrim = "{s['scrim']}"
 
 var radiusSmall = {shape['radius_small']}
 var radiusMedium = {shape['radius_medium']}
