@@ -11,7 +11,7 @@ backend.
 Run the deterministic gate from the repository root:
 
 ```bash
-caelestia/tests/test-status-pill.sh
+cortetsu/tests/test-status-pill.sh
 ```
 
 The repository installer owns `BottomHub.qml` and `StatusPill.qml` together.

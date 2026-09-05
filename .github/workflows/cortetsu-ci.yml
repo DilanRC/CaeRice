@@ -126,7 +126,7 @@ jobs:
           grep -q 'rollback) rollback_cmd' scripts/cortetsu
           ! grep -q 'install-theme-bridge.py' scripts/install-cortetsu.sh
           ! grep -q 'caelestia-theme.conf' dotfiles/manifest.toml
-          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!cortetsu/bin/ensure-upstream.sh' ':!caelestia/tests/test-runtime-contract.py' ':!.github/workflows/**'
+          ! git grep -n -I -E 'caerice-|CAERICE_|~/.config/caerice|~/.local/state/caerice' -- ':!docs/history/**' ':!docs/PROVENANCE.md' ':!scripts/migrate-cortetsu-v2.sh' ':!scripts/features/test-v2-migration-unreadable.sh' ':!scripts/features/test-upstream-bootstrap.sh' ':!cortetsu/bin/ensure-upstream.sh' ':!cortetsu/tests/test-runtime-contract.py' ':!.github/workflows/**'
           ! git grep -n -I 'sh -c' -- '*.qml'
           ! git grep -n -I 'CORTETSU_DATA_ROOT:-${CORTETSU_DATA_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'
           ! git grep -n -I 'CORTETSU_RUNTIME_ROOT:-${CORTETSU_RUNTIME_ROOT' -- ':!docs/history/**' ':!.github/workflows/**'

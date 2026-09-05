@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-content = (Path(__file__).resolve().parents[1] / "modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
+content = (Path(__file__).resolve().parents[2] / "caelestia/modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
 for expected in (
     'calendar.primary ? qsTr("Personal")',
     'eventsForDay(dayCell.day).slice(0, 3)',

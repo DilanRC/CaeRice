@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-component="$root/modules-owned/modules/StatusPill.qml"
-hub="$root/modules-owned/modules/BottomHub.qml"
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+component="$root/caelestia/modules-owned/modules/StatusPill.qml"
+hub="$root/caelestia/modules-owned/modules/BottomHub.qml"
 
 require() {
     rg -Fq "$1" "$2" || {
@@ -20,7 +20,7 @@ require "width: hasStatus ? pill.implicitWidth : 0" "$component"
 require "visible: hasStatus || width > 0" "$component"
 require "id: tooltipPopup" "$component"
 require "color: Colours.palette.m3inverseSurface" "$component"
-require "recordingActive: Recorder.running" "$hub"
+require "recordingActive: CortetsuRecorder.running" "$hub"
 require "dndActive: CortetsuNotifications.dnd" "$hub"
 require "idleInhibited: CortetsuIdleInhibitor.enabled" "$hub"
 require "StatusPill {" "$hub"

@@ -251,10 +251,10 @@ test_cmd() {
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"
         "scripts/features/test-shell-lifecycle.py"
-        "caelestia/tests/test-calendar-credentials.py"
-        "caelestia/tests/test-calendar-polish.py"
-        "caelestia/tests/test-pomodoro.py"
-        "caelestia/tests/test-runtime-contract.py"
+        "cortetsu/tests/test-calendar-credentials.py"
+        "cortetsu/tests/test-calendar-polish.py"
+        "cortetsu/tests/test-pomodoro.py"
+        "cortetsu/tests/test-runtime-contract.py"
         "scripts/features/test-cortetsu-screen-state.py"
         "scripts/features/test-cortetsu-config.py"
         "scripts/features/test-config-migration.py"
@@ -264,7 +264,7 @@ test_cmd() {
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
     run_bash_test "scripts/features/test-upstream-bootstrap.sh"
-    run_bash_test "caelestia/tests/test-calendar-readonly.sh"
+    run_bash_test "cortetsu/tests/test-calendar-readonly.sh"
     run_bash_test "caelestia/evals/legacy-process-migration-eval.sh"
     printf '\nCortetsu repository regressions passed.\n'
 }
@@ -309,8 +309,8 @@ verify_cmd() {
     fi
     theme_cmd check
     run_python_test "scripts/features/test-cortetsu-quality.py"
-    run_python_test "caelestia/tests/test-runtime-contract.py"
-    run_bash_test "caelestia/tests/test-calendar-readonly.sh"
+    run_python_test "cortetsu/tests/test-runtime-contract.py"
+    run_bash_test "cortetsu/tests/test-calendar-readonly.sh"
     dotfiles_cmd verify
     system_cmd verify
     printf '\nCortetsu promoted system verified.\n'

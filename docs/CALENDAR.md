@@ -51,8 +51,8 @@ Pausa, reanudación, reinicio y salto sobreviven al reinicio del shell. El cálc
 
 ```bash
 cortetsu-calendar disconnect
-bash caelestia/tests/test-calendar-readonly.sh
-python3 caelestia/tests/test-calendar-credentials.py
-python3 caelestia/tests/test-calendar-polish.py
-python3 caelestia/tests/test-pomodoro.py
+bash cortetsu/tests/test-calendar-readonly.sh
+python3 cortetsu/tests/test-calendar-credentials.py
+python3 cortetsu/tests/test-calendar-polish.py
+python3 cortetsu/tests/test-pomodoro.py
 ```
