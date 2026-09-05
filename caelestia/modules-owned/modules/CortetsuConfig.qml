@@ -22,6 +22,9 @@ QtObject {
     property bool smartScheme: true
     property string wallpaperDirectory: "~/Pictures/Wallpapers"
     property bool useTwelveHourClock: false
+    property bool useFahrenheit: false
+    property bool useFahrenheitPerformance: false
+    property string weatherLocation: ""
     property real audioIncrement: 0.1
     property real brightnessIncrement: 0.1
     property real maxVolume: 1.0
@@ -71,6 +74,12 @@ QtObject {
                 wallpaperDirectory = data.wallpaperDirectory;
             if (typeof data.useTwelveHourClock === "boolean")
                 useTwelveHourClock = data.useTwelveHourClock;
+            if (typeof data.useFahrenheit === "boolean")
+                useFahrenheit = data.useFahrenheit;
+            if (typeof data.useFahrenheitPerformance === "boolean")
+                useFahrenheitPerformance = data.useFahrenheitPerformance;
+            if (typeof data.weatherLocation === "string")
+                weatherLocation = data.weatherLocation;
             if (typeof data.audioIncrement === "number")
                 audioIncrement = Math.max(0.01, Math.min(1, data.audioIncrement));
             if (typeof data.brightnessIncrement === "number")
@@ -114,7 +123,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

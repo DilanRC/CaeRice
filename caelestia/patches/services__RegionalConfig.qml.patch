@@ -1,0 +1,38 @@
+--- a/services/Weather.qml
++++ b/services/Weather.qml
+@@ -8,1 +8,2 @@
+ import qs.utils
++import "../modules"
+@@ -30,2 +31,2 @@
+-    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+-    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
++    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), CortetsuConfig.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
++    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), CortetsuConfig.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+@@ -36,1 +37,1 @@
+-        return GlobalConfig.services.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
++        return CortetsuConfig.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
+@@ -40,1 +41,1 @@
+-        const configLocation = GlobalConfig.services.weatherLocation;
++        const configLocation = CortetsuConfig.weatherLocation;
+@@ -58,1 +59,1 @@
+-                if (GlobalConfig.services.weatherLocation)
++                if (CortetsuConfig.weatherLocation)
+@@ -345,1 +346,1 @@
+-        target: GlobalConfig.services
++        target: CortetsuConfig
+--- a/modules/background/DesktopClock.qml
++++ b/modules/background/DesktopClock.qml
+@@ -8,1 +8,2 @@
+ import qs.services
++import ".."
+@@ -107,1 +108,1 @@
+-                    active: GlobalConfig.services.useTwelveHourClock
++                    active: CortetsuConfig.useTwelveHourClock
+--- a/modules/lock/weather/Forecast.qml
++++ b/modules/lock/weather/Forecast.qml
+@@ -7,1 +7,2 @@
+ import qs.services
++import "../.."
+@@ -98,1 +99,1 @@
+-                    text: hour.index === 0 ? qsTr("Now") : Qt.formatDateTime(new Date(hour.cond.timestamp.replace("T", " ")), GlobalConfig.services.useTwelveHourClock ? "ha" : "hh:00")
++                    text: hour.index === 0 ? qsTr("Now") : Qt.formatDateTime(new Date(hour.cond.timestamp.replace("T", " ")), CortetsuConfig.useTwelveHourClock ? "ha" : "hh:00")
