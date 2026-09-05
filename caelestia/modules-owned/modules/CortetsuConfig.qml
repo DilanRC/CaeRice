@@ -21,6 +21,16 @@ QtObject {
     property bool useFuzzyWallpapers: true
     property bool smartScheme: true
     property string wallpaperDirectory: "~/Pictures/Wallpapers"
+    property bool useTwelveHourClock: false
+    property real audioIncrement: 0.1
+    property real brightnessIncrement: 0.1
+    property real maxVolume: 1.0
+    property int visualiserBars: 60
+    property string defaultPlayer: "Spotify"
+    property var playerAliases: [{ from: "com.github.th_ch.youtube_music", to: "YT Music" }]
+    property bool toastAudioOutputChanged: true
+    property bool toastAudioInputChanged: true
+    property bool toastNowPlaying: false
     property bool vimKeybinds: true
     property int workspacesShown: 5
     property bool loaded: false
@@ -52,6 +62,26 @@ QtObject {
                 smartScheme = data.smartScheme;
             if (typeof data.wallpaperDirectory === "string" && data.wallpaperDirectory.length > 0)
                 wallpaperDirectory = data.wallpaperDirectory;
+            if (typeof data.useTwelveHourClock === "boolean")
+                useTwelveHourClock = data.useTwelveHourClock;
+            if (typeof data.audioIncrement === "number")
+                audioIncrement = Math.max(0.01, Math.min(1, data.audioIncrement));
+            if (typeof data.brightnessIncrement === "number")
+                brightnessIncrement = Math.max(0.01, Math.min(1, data.brightnessIncrement));
+            if (typeof data.maxVolume === "number")
+                maxVolume = Math.max(0, Math.min(2, data.maxVolume));
+            if (Number.isInteger(data.visualiserBars))
+                visualiserBars = Math.max(1, Math.min(256, data.visualiserBars));
+            if (typeof data.defaultPlayer === "string")
+                defaultPlayer = data.defaultPlayer;
+            if (Array.isArray(data.playerAliases))
+                playerAliases = data.playerAliases.filter(value => value && typeof value === "object");
+            if (typeof data.toastAudioOutputChanged === "boolean")
+                toastAudioOutputChanged = data.toastAudioOutputChanged;
+            if (typeof data.toastAudioInputChanged === "boolean")
+                toastAudioInputChanged = data.toastAudioInputChanged;
+            if (typeof data.toastNowPlaying === "boolean")
+                toastNowPlaying = data.toastNowPlaying;
             if (typeof data.vimKeybinds === "boolean")
                 vimKeybinds = data.vimKeybinds;
             if (Number.isInteger(data.workspacesShown))
@@ -63,7 +93,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

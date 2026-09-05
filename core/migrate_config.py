@@ -25,6 +25,8 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
     workspaces = bar.get("workspaces", {})
     tray = bar.get("tray", {})
     apps = data.get("general", {}).get("apps", {})
+    services = data.get("services", {})
+    toasts = data.get("utilities", {}).get("toasts", {})
     shown = workspaces.get("shown", 5)
     try:
         shown = max(1, min(20, int(shown)))
@@ -44,6 +46,16 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
         "useFuzzyWallpapers": launcher.get("useFuzzy", {}).get("wallpapers", True) is True,
         "smartScheme": data.get("services", {}).get("smartScheme", True) is True,
         "wallpaperDirectory": data.get("paths", {}).get("wallpaperDir", "~/Pictures/Wallpapers") if isinstance(data.get("paths", {}).get("wallpaperDir", "~/Pictures/Wallpapers"), str) else "~/Pictures/Wallpapers",
+        "useTwelveHourClock": services.get("useTwelveHourClock", False) is True,
+        "audioIncrement": services.get("audioIncrement", 0.1) if isinstance(services.get("audioIncrement", 0.1), (int, float)) else 0.1,
+        "brightnessIncrement": services.get("brightnessIncrement", 0.1) if isinstance(services.get("brightnessIncrement", 0.1), (int, float)) else 0.1,
+        "maxVolume": services.get("maxVolume", 1.0) if isinstance(services.get("maxVolume", 1.0), (int, float)) else 1.0,
+        "visualiserBars": services.get("visualiserBars", 60) if isinstance(services.get("visualiserBars", 60), int) else 60,
+        "defaultPlayer": services.get("defaultPlayer", "Spotify") if isinstance(services.get("defaultPlayer", "Spotify"), str) else "Spotify",
+        "playerAliases": [x for x in services.get("playerAliases", [{"from": "com.github.th_ch.youtube_music", "to": "YT Music"}]) if isinstance(x, dict)],
+        "toastAudioOutputChanged": toasts.get("audioOutputChanged", True) is True,
+        "toastAudioInputChanged": toasts.get("audioInputChanged", True) is True,
+        "toastNowPlaying": toasts.get("nowPlaying", False) is True,
         "vimKeybinds": launcher.get("vimKeybinds", True) is True,
         "workspacesShown": shown,
     }

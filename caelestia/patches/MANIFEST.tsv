@@ -4,6 +4,7 @@ components__ScreenState.qml.patch	components/ScreenState.qml
 services__Hypr.qml.patch	services/Hypr.qml
 services__Wallpapers.qml.patch	services/Wallpapers.qml
 services__Wallpapers__Config.qml.patch	services/Wallpapers.qml,utils/Paths.qml
+services__CoreConfig.qml.patch	services/Time.qml,services/Brightness.qml,services/Audio.qml,services/Players.qml
 utils__NetworkConnection.qml.patch	utils/NetworkConnection.qml
 modules__Shortcuts.qml.patch	modules/Shortcuts.qml
 modules__launcher__AppList.qml.patch	modules/launcher/AppList.qml

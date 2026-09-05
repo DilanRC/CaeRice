@@ -1,0 +1,68 @@
+--- a/services/Time.qml
++++ b/services/Time.qml
+@@ -5,1 +5,2 @@
+ import Caelestia.Config
++import "../modules"
+@@ -14,1 +15,1 @@
+-    readonly property string timeStr: format(GlobalConfig.services.useTwelveHourClock ? "hh:mm:A" : "hh:mm")
++    readonly property string timeStr: format(CortetsuConfig.useTwelveHourClock ? "hh:mm:A" : "hh:mm")
+--- a/services/Brightness.qml
++++ b/services/Brightness.qml
+@@ -7,1 +7,2 @@
+ import Caelestia.Config
++import "../modules"
+@@ -53,1 +54,1 @@
+-            monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
++            monitor.setBrightness(monitor.brightness + CortetsuConfig.brightnessIncrement);
+@@ -59,1 +60,1 @@
+-            monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
++            monitor.setBrightness(monitor.brightness - CortetsuConfig.brightnessIncrement);
+--- a/services/Audio.qml
++++ b/services/Audio.qml
+@@ -9,1 +9,2 @@
+ import Caelestia.Services
++import "../modules"
+@@ -36,1 +37,1 @@
+-            sink.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
++            sink.audio.volume = Math.max(0, Math.min(CortetsuConfig.maxVolume, newVolume));
+@@ -41,1 +42,1 @@
+-        setVolume(volume + (amount || GlobalConfig.services.audioIncrement));
++        setVolume(volume + (amount || CortetsuConfig.audioIncrement));
+@@ -45,1 +46,1 @@
+-        setVolume(volume - (amount || GlobalConfig.services.audioIncrement));
++        setVolume(volume - (amount || CortetsuConfig.audioIncrement));
+@@ -51,1 +52,1 @@
+-            source.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
++            source.audio.volume = Math.max(0, Math.min(CortetsuConfig.maxVolume, newVolume));
+@@ -56,1 +57,1 @@
+-        setSourceVolume(sourceVolume + (amount || GlobalConfig.services.audioIncrement));
++        setSourceVolume(sourceVolume + (amount || CortetsuConfig.audioIncrement));
+@@ -60,1 +61,1 @@
+-        setSourceVolume(sourceVolume - (amount || GlobalConfig.services.audioIncrement));
++        setSourceVolume(sourceVolume - (amount || CortetsuConfig.audioIncrement));
+@@ -83,1 +84,1 @@
+-            stream.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, newVolume));
++            stream.audio.volume = Math.max(0, Math.min(CortetsuConfig.maxVolume, newVolume));
+@@ -135,1 +136,1 @@
+-        if (previousSinkName && previousSinkName !== newSinkName && GlobalConfig.utilities.toasts.audioOutputChanged)
++        if (previousSinkName && previousSinkName !== newSinkName && CortetsuConfig.toastAudioOutputChanged)
+@@ -147,1 +148,1 @@
+-        if (previousSourceName && previousSourceName !== newSourceName && GlobalConfig.utilities.toasts.audioInputChanged)
++        if (previousSourceName && previousSourceName !== newSourceName && CortetsuConfig.toastAudioInputChanged)
+@@ -178,1 +179,1 @@
+-        bars: GlobalConfig.services.visualiserBars
++        bars: CortetsuConfig.visualiserBars
+--- a/services/Players.qml
++++ b/services/Players.qml
+@@ -9,1 +9,2 @@
+ import qs.components.misc
++import "../modules"
+@@ -15,1 +16,1 @@
+-    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === GlobalConfig.services.defaultPlayer) ?? list[0] ?? null
++    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === CortetsuConfig.defaultPlayer) ?? list[0] ?? null
+@@ -24,1 +25,1 @@
+-        const alias = GlobalConfig.services.playerAliases.find(a => a.from === player.identity);
++        const alias = CortetsuConfig.playerAliases.find(a => a.from === player.identity);
+@@ -47,1 +48,1 @@
+-        if (!GlobalConfig.utilities.toasts.nowPlaying)
++        if (!CortetsuConfig.toastNowPlaying)
