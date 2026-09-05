@@ -4,7 +4,6 @@ import QtQuick
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
-import qs.services
 
 Rectangle {
     id: root

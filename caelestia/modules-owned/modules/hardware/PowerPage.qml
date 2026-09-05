@@ -7,7 +7,6 @@ import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell
 import Quickshell.Io
-import qs.services
 
 Item {
     id: root

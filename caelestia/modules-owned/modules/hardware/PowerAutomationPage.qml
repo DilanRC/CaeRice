@@ -6,7 +6,6 @@ import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell.Io
-import qs.services
 
 Item {
     id: root

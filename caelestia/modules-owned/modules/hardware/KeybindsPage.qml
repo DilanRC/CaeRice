@@ -9,7 +9,6 @@ import QtCore
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
-import qs.services
 
 FocusScope {
     id: root
