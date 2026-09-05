@@ -9,7 +9,10 @@ import importlib.util
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path("/home/dilan/.local/share/cortetsu/upstream/upstream-git")
+UPSTREAM = Path(subprocess.check_output(
+    ["bash", str(ROOT / "caelestia/bin/ensure-upstream.sh")],
+    text=True,
+).strip())
 
 spec = importlib.util.spec_from_file_location("install_wallpaper_manager", ROOT / "scripts/features/install-wallpaper-manager.py")
 assert spec and spec.loader
@@ -25,13 +28,12 @@ def require(path: Path, *needles: str) -> None:
 
 def main() -> None:
     content = ROOT / "caelestia/modules-owned/modules/wallpaper/Content.qml"
-    require(content, "Orbit.satellites", "Orbit.prefetch", "Orbit.resolveCurrentIndex", "Orbit.satelliteAngle", "orbitPhase", "Math.min(12", "asynchronous: true", "sourceSize.width", "retainWhileLoading", "cache: true", "presentationReady", "Wallpapers.setRandom()", "Mask { maskSource", "layer.enabled: true", "visible: true", "required property int index", "pendingPreviewPath", "interval: 220", "Orbit.wheelIntent", "heroCrossfade")
+    require(content, "Orbit.satellites", "Orbit.prefetch", "Orbit.resolveCurrentIndex", "Orbit.satelliteAngle", "orbitPhase", "Math.min(12", "asynchronous: true", "sourceSize.width", "retainWhileLoading", "cache: true", "presentationReady", "Wallpapers.setRandom()", "CortetsuMask { maskSource", "layer.enabled: true", "visible: true", "required property int index", "pendingPreviewPath", "interval: 220", "Orbit.wheelIntent", "heroCrossfade")
     content_text = content.read_text(encoding="utf-8")
     assert "GridView" not in content_text and "Quickshell.exec" not in content_text
     assert "Orbit.visible(filteredEntries, currentIndex" not in content_text, "fixed slots would only swap sources"
     assert "source: satellite.modelData.entry.path" in content_text
-    if "Mask {" in content_text:
-        assert "import qs.components.effects" in content_text, "Mask requires qs.components.effects"
+    assert "import qs.components.effects" not in content_text
     assert "previewCurrent" not in content_text
     open_start = content_text.index("function openManager(): void")
     open_end = content_text.index("function closeManager", open_start)
@@ -41,15 +43,19 @@ def main() -> None:
     assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content_text
     assert "Item {\n        id: panel" in content_text and 'color: "black"' not in content_text
     wrapper_text = (ROOT / "caelestia/modules-owned/modules/wallpaper/Wrapper.qml").read_text(encoding="utf-8")
-    assert "shouldBeActive && presentationReady" in wrapper_text and "m3scrim, 0.18" in wrapper_text
-    require(ROOT / "caelestia/modules-owned/modules/WallpaperController.qml", "wallpaperManager", "CustomShortcut", 'name: "wallpapermanager"')
+    assert "shouldBeActive && presentationReady" in wrapper_text
+    assert "Qt.alpha(CortetsuDesign.colorScrim, 0.18)" in wrapper_text
+    require(ROOT / "caelestia/modules-owned/modules/WallpaperController.qml", "wallpaperManager", "CortetsuShortcut", 'name: "wallpapermanager"')
     require(ROOT / "caelestia/modules-owned/modules/BottomHub.qml", "openWallpaperFor", "Wallpapers.actualCurrent")
     require(ROOT / "config/hypr-user.lua", "SUPER + SHIFT + W", "cortetsu:wallpapermanager")
     with tempfile.TemporaryDirectory(prefix="wallpaper-patch-") as tmp:
         stage = Path(tmp)
         target = stage / "services"
         target.mkdir()
-        source = SOURCE / "services/Wallpapers.qml"
+        source = stage / "upstream-Wallpapers.qml"
+        source.write_bytes(subprocess.check_output(
+            ["git", "-C", str(UPSTREAM), "show", "v2.4.0:services/Wallpapers.qml"]
+        ))
         patch = ROOT / "caelestia/patches/services__Wallpapers.qml.patch"
         shutil.copy2(source, target / "Wallpapers.qml")
         result = subprocess.run(["patch", "--batch", "--forward", "--dry-run", "-p1", "-d", str(stage)], input=patch.read_text(encoding="utf-8"), text=True, capture_output=True)
@@ -60,7 +66,10 @@ def main() -> None:
         shutil.copy2(target / "Wallpapers.qml", v1_source)
         assert installer.prepare_wallpapers_service(v1_source, target / "Wallpapers.qml", patch, stage) == "already-patched"
         partial = stage / "partial.qml"
-        partial.write_text(source.read_text().replace("    property bool pendingPreviewClear", "    property bool pendingPreviewClear\n    property int previewGeneration: 0"))
+        partial.write_text(source.read_text().replace(
+            'Quickshell.execDetached(["caelestia", "wallpaper"',
+            'Quickshell.execDetached(["broken-wallpaper"',
+        ))
         try:
             installer.prepare_wallpapers_service(partial, target / "Wallpapers.qml", patch, stage)
         except RuntimeError:

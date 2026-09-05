@@ -3,9 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import qs.components.misc
-import qs.services
 import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
@@ -13,7 +10,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of CortetsuScreens.screens) {
-            if (ShellState.forScreen(screen)?.cortetsuState?.wallpaperManager)
+            if (CortetsuShellState.forScreen(screen)?.cortetsuState?.wallpaperManager)
                 return true;
         }
         return false;
@@ -21,7 +18,7 @@ Scope {
 
     function closeAll(): void {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen)?.cortetsuState;
+            const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("wallpaperManager", false);
         }
@@ -29,11 +26,11 @@ Scope {
 
     function closeOtherPanels(): void {
         for (const screen of CortetsuScreens.screens)
-            OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
+            OverlayPolicy.closeForWallpaper(CortetsuShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
     function open(): void {
-        const state = ShellState.forActive()?.cortetsuState;
+        const state = CortetsuShellState.forActive()?.cortetsuState;
         if (!state)
             return;
         closeAll();
@@ -44,7 +41,7 @@ Scope {
     function close(): void { closeAll(); }
     function toggle(): void { anyOpen() ? closeAll() : open(); }
 
-    CustomShortcut {
+    CortetsuShortcut {
         name: "wallpapermanager"
         description: "Toggle native wallpaper manager"
         onPressed: root.toggle()

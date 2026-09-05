@@ -62,8 +62,8 @@ assert "OverlayPolicy.closeOtherPanels" in controller and "for (const screen of 
 assert "OverlayPolicy.closeForWallpaper" in wallpaper_controller and "for (const screen of CortetsuScreens.screens)" in wallpaper_controller
 assert "OverlayPolicy.closeOtherPanels(state);" in hub
 assert "toggleSidebarFor" in hub and "state.sidebar = !wasOpen;" in hub
-assert "const state = ShellState.forActive()?.cortetsuState;" in wallpaper_controller
-assert "ShellState.forActive()?.modelData" not in wallpaper_controller
+assert "const state = CortetsuShellState.forActive()?.cortetsuState;" in wallpaper_controller
+assert "CortetsuShellState.forActive()?.modelData" not in wallpaper_controller
 assert "closeOtherPanels();\n        state.setRetained(\"wallpaperManager\", true);" in wallpaper_controller
 
 # V2 visual and native-service contracts.

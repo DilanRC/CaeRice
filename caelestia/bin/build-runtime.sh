@@ -114,6 +114,7 @@ python3 "$REPO/scripts/features/test-cortetsu-config.py"
 python3 "$REPO/scripts/features/test-config-migration.py"
 python3 "$REPO/scripts/features/test-zero-caelestia-gate.py"
 python3 "$REPO/scripts/features/test-shortcut-namespace.py"
+python3 "$REPO/scripts/features/test-controller-boundaries.py"
 python3 "$REPO/scripts/features/test-calendar-controller-state.py"
 python3 "$REPO/scripts/features/test-legacy-process-migration.py"
 bash -n "$REPO/caelestia/bin/cortetsu-wallpaper-color-daemon"
@@ -138,6 +139,8 @@ for required in \
     modules/CortetsuHypr.qml \
     modules/CortetsuScreens.qml \
     modules/CortetsuConfig.qml \
+    modules/CortetsuShortcut.qml \
+    modules/CortetsuShellState.qml \
     modules/CortetsuMask.qml \
     compatibility.json \
     composition.json

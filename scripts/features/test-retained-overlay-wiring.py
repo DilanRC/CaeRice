@@ -148,7 +148,7 @@ def main() -> None:
     assert "for (const candidate of CortetsuScreens.screens)" in wrapper
     assert "onGlobalOtherOverlayOpenChanged" in wrapper
     assert "closeCompetingPanels();" in wrapper
-    assert "CustomShortcut" in controller and "OverlayPolicy.closeForWallpaper" in controller
+    assert "CortetsuShortcut" in controller and "OverlayPolicy.closeForWallpaper" in controller
     print("PASS direct-shortcut-and-two-monitor-exclusivity")
 
     print("Retained overlay wiring tests: OK")

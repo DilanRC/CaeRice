@@ -3,9 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import qs.components.misc
-import qs.services
 import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
@@ -13,7 +10,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen)?.cortetsuState;
+            const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
             if (state?.clipboard)
                 return true;
         }
@@ -23,7 +20,7 @@ Scope {
 
     function closeAll(): void {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen)?.cortetsuState;
+            const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("clipboard", false);
         }
@@ -31,11 +28,11 @@ Scope {
 
     function closeOtherPanels(): void {
         for (const screen of CortetsuScreens.screens)
-            OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
+            OverlayPolicy.closeOtherPanels(CortetsuShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
     function open(): void {
-        const state = ShellState.forActive()?.cortetsuState;
+        const state = CortetsuShellState.forActive()?.cortetsuState;
         if (!state)
             return;
 
@@ -60,7 +57,7 @@ Scope {
     }
 
     // qmllint disable unresolved-type
-    CustomShortcut {
+    CortetsuShortcut {
         // qmllint enable unresolved-type
         name: "clipboard"
         description: "Toggle native clipboard manager"

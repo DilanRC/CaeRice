@@ -37,17 +37,17 @@ assert "cortetsuState" in calendar
 assert 'state.setRetained("calendar", false)' in calendar
 assert 'state.setRetained("calendar", true)' in calendar
 assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in calendar
-assert "ShellState.forScreen(screen)?.calendar" not in calendar
+assert "CortetsuShellState.forScreen(screen)?.calendar" not in calendar
 assert "cortetsuState" in clipboard
 assert 'state.setRetained("clipboard", false)' in clipboard
 assert 'state.setRetained("clipboard", true)' in clipboard
-assert "ShellState.forActive()?.cortetsuState" in clipboard
-assert "OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen)?.cortetsuState?.legacyState)" in clipboard
-assert "ShellState.forScreen(screen)?.clipboard" not in clipboard
+assert "CortetsuShellState.forActive()?.cortetsuState" in clipboard
+assert "OverlayPolicy.closeOtherPanels(CortetsuShellState.forScreen(screen)?.cortetsuState?.legacyState)" in clipboard
+assert "CortetsuShellState.forScreen(screen)?.clipboard" not in clipboard
 for flag, controller in controllers.items():
     assert "cortetsuState" in controller, flag
     assert f'setRetained("{flag}"' in controller, flag
-    assert f"ShellState.forScreen(screen)?.{flag}" not in controller, flag
+    assert f"CortetsuShellState.forScreen(screen)?.{flag}" not in controller, flag
 assert "OverlayPolicy.close" in controller, flag
 assert 'state.setRetained("calendar"' in hub
 assert 'state.setRetained("wallpaperManager"' in hub

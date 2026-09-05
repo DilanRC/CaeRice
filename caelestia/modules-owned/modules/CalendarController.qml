@@ -3,9 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import qs.components.misc
-import qs.services
 import "OverlayPolicy.js" as OverlayPolicy
 
 Scope {
@@ -13,7 +10,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of CortetsuScreens.screens) {
-            if (ShellState.forScreen(screen)?.cortetsuState?.calendar)
+            if (CortetsuShellState.forScreen(screen)?.cortetsuState?.calendar)
                 return true;
         }
         return false;
@@ -21,14 +18,14 @@ Scope {
 
     function close(): void {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen)?.cortetsuState;
+            const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("calendar", false);
         }
     }
 
     function open(): void {
-        const state = ShellState.forActive()?.cortetsuState;
+        const state = CortetsuShellState.forActive()?.cortetsuState;
         if (!state)
             return;
         close();
@@ -38,7 +35,7 @@ Scope {
 
     function toggle(): void { anyOpen() ? close() : open(); }
 
-    CustomShortcut {
+    CortetsuShortcut {
         name: "calendar"
         description: "Toggle Cortetsu calendar"
         onPressed: root.toggle()
