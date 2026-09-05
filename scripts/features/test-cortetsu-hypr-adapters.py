@@ -11,7 +11,12 @@ for marker in ("toplevels", "workspaces", "monitors", "activeToplevel", "focused
     assert marker in hypr, marker
 assert "readonly property var screens" in screens
 assert "function monitorFor(screen)" in screens
-assert "Hypr.monitorFor(screen)" in screens
+assert "CortetsuHypr.monitorFor(screen)" in screens
+assert "import qs.services" not in hypr + screens
+assert "import Quickshell.Hyprland" in hypr
+assert "Hyprland.dispatch(request)" in hypr
+assert "Hyprland.monitorFor(screen)" in hypr
+assert "Quickshell.screens" in screens
 
 for path in modules.rglob("*.qml"):
     if path.name in {"CortetsuHypr.qml", "CortetsuScreens.qml"}:
