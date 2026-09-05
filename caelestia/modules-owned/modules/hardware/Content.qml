@@ -1,19 +1,19 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
 import qs.services
 
 FocusScope {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property bool hardwareVisible
 
     property var snapshot: ({})
@@ -158,7 +158,7 @@ FocusScope {
         }
     }
 
-    StyledRect {
+    Rectangle {
         id: panel
 
         width: Math.min(1260, parent.width - 96)
@@ -166,18 +166,18 @@ FocusScope {
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
         radius: 30
-        color: Colours.palette.m3surfaceContainerHigh
+        color: CortetsuDesign.colorSurfaceHigh
         border.width: 1
-        border.color: Colours.palette.m3outlineVariant
+        border.color: CortetsuDesign.colorOutlineVariant
         clip: true
 
-        StyledRect {
+        Rectangle {
             anchors.fill: parent
             anchors.margins: 1
             radius: panel.radius - 1
             color: "transparent"
             border.width: 1
-            border.color: Qt.alpha(Colours.palette.m3primary, 0.18)
+            border.color: Qt.alpha(CortetsuDesign.colorPrimary, 0.18)
         }
 
         Column {
@@ -191,18 +191,17 @@ FocusScope {
                 height: 58
                 spacing: 14
 
-                StyledRect {
+                Rectangle {
                     width: 52
                     height: 52
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3primaryContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorPrimaryContainer
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "monitor_heart"
-                        fill: 1
-                        color: Colours.palette.m3onPrimaryContainer
-                        fontStyle: Tokens.font.icon.extraLarge
+                        color: CortetsuDesign.colorOnPrimaryContainer
+                        iconSize: CortetsuTypography.iconExtraLargePx
                     }
                 }
 
@@ -211,73 +210,73 @@ FocusScope {
                     width: parent.width - 52 - refreshButton.width - closeButton.width - 42
                     spacing: 0
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("Hardware Center")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.large
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleLargePx
                         elide: Text.ElideRight
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text:
                             `${root.snapshot?.host ?? "Cortetsu"} · ` +
                             `${root.snapshot?.kernel ?? ""} · ` +
                             `${root.uptimeText(root.snapshot?.uptime_sec)}`
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                         elide: Text.ElideRight
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: root.statusText
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         elide: Text.ElideRight
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     id: refreshButton
                     anchors.verticalCenter: parent.verticalCenter
                     width: 46
                     height: 46
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHighest
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         radius: parent.radius
                         onClicked: root.refresh()
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: probe.running ? "progress_activity" : "refresh"
-                        color: Colours.palette.m3primary
-                        fontStyle: Tokens.font.icon.large
+                        color: CortetsuDesign.colorPrimary
+                        iconSize: CortetsuTypography.iconLargePx
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     id: closeButton
                     anchors.verticalCenter: parent.verticalCenter
                     width: 46
                     height: 46
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHighest
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         radius: parent.radius
                         onClicked: root.closeHardware()
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "close"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.large
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        iconSize: CortetsuTypography.iconLargePx
                     }
                 }
             }
@@ -301,19 +300,19 @@ FocusScope {
                         { label: qsTr("Keybinds"), icon: "keyboard" }
                     ]
 
-                    delegate: StyledRect {
+                    delegate: Rectangle {
                         required property var modelData
                         required property int index
                         width: Math.min(132, (tabs.width - tabs.spacing * 8) / 9)
                         height: 42
-                        radius: Tokens.rounding.large
+                        radius: CortetsuDesign.radiusMedium
                         color: root.currentPage === index
-                            ? Colours.palette.m3secondaryContainer
-                            : Colours.palette.m3surfaceContainer
+                            ? CortetsuDesign.colorSecondaryContainer
+                            : CortetsuDesign.colorSurface
                         border.width: root.currentPage === index ? 1 : 0
-                        border.color: Colours.palette.m3primary
+                        border.color: CortetsuDesign.colorPrimary
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.currentPage = index
                         }
@@ -322,20 +321,20 @@ FocusScope {
                             anchors.centerIn: parent
                             spacing: 6
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: modelData.icon
                                 color: root.currentPage === index
-                                    ? Colours.palette.m3onSecondaryContainer
-                                    : Colours.palette.m3onSurfaceVariant
-                                fontStyle: Tokens.font.icon.small
+                                    ? CortetsuDesign.colorOnSecondaryContainer
+                                    : CortetsuDesign.colorOnSurfaceVariant
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 text: `${index + 1}  ${modelData.label}`
                                 color: root.currentPage === index
-                                    ? Colours.palette.m3onSecondaryContainer
-                                    : Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                    ? CortetsuDesign.colorOnSecondaryContainer
+                                    : CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                             }
                         }
                     }

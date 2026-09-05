@@ -1,7 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
 Item {
@@ -92,8 +94,8 @@ Item {
             seriesB: root.showSwapHistory ? root.swapUsedHistory : root.memoryCacheHistory
             maxValue: Math.max(1, Number(root.memory?.total_gb ?? 1))
             unit: "GiB"
-            colourA: Colours.palette.m3primary
-            colourB: root.showSwapHistory ? Colours.palette.m3tertiary : Colours.palette.m3secondary
+            colourA: CortetsuDesign.colorPrimary
+            colourB: root.showSwapHistory ? CortetsuDesign.colorTertiary : CortetsuDesign.colorSecondary
             actionLabel: root.showSwapHistory ? qsTr("Swap") : qsTr("Cache")
             onActionRequested: root.showSwapHistory = !root.showSwapHistory
         }
@@ -110,8 +112,8 @@ Item {
             seriesA: root.networkRxHistory
             seriesB: root.networkTxHistory
             unit: "Mb/s"
-            colourA: Colours.palette.m3primary
-            colourB: Colours.palette.m3tertiary
+            colourA: CortetsuDesign.colorPrimary
+            colourB: CortetsuDesign.colorTertiary
         }
 
         HistoryGraph {
@@ -126,8 +128,8 @@ Item {
             seriesA: root.diskReadHistory
             seriesB: root.diskWriteHistory
             unit: "MiB/s"
-            colourA: Colours.palette.m3secondary
-            colourB: Colours.palette.m3tertiary
+            colourA: CortetsuDesign.colorSecondary
+            colourB: CortetsuDesign.colorTertiary
         }
 
         HistoryGraph {
@@ -143,7 +145,7 @@ Item {
             seriesA: root.gpu0History
             maxValue: 100
             unit: "%"
-            colourA: Colours.palette.m3primary
+            colourA: CortetsuDesign.colorPrimary
         }
 
         HistoryGraph {
@@ -159,7 +161,7 @@ Item {
             seriesA: root.gpu1History
             maxValue: 100
             unit: "%"
-            colourA: Colours.palette.m3tertiary
+            colourA: CortetsuDesign.colorTertiary
         }
     }
 }

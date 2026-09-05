@@ -1,13 +1,14 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import QtQuick.Layouts
 import QtCore
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
-import Caelestia.Config
-import qs.components
 import qs.services
 
 FocusScope {
@@ -241,41 +242,41 @@ FocusScope {
         anchors.fill: parent
         spacing: 14
 
-        StyledRect {
+        Rectangle {
             Layout.preferredWidth: Math.min(390, root.width * 0.34)
             Layout.fillHeight: true
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 16
                 spacing: 10
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Create app shortcut")
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.medium
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleMediumPx
                 }
 
-                StyledRect {
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHigh
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
                     border.width: appSearch.activeFocus ? 1 : 0
-                    border.color: Colours.palette.m3primary
+                    border.color: CortetsuDesign.colorPrimary
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.left: parent.left
                         anchors.leftMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
                         text: "search"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        iconSize: CortetsuTypography.iconMediumPx
                     }
 
                     TextInput {
@@ -284,21 +285,21 @@ FocusScope {
                         anchors.leftMargin: 42
                         anchors.rightMargin: 10
                         verticalAlignment: TextInput.AlignVCenter
-                        color: Colours.palette.m3onSurface
-                        selectionColor: Colours.palette.m3primary
+                        color: CortetsuDesign.colorOnSurface
+                        selectionColor: CortetsuDesign.colorPrimary
                         font.pixelSize: 15
                         text: root.appFilter
                         onTextChanged: root.appFilter = text
                     }
 
-                    StyledText {
+                    CortetsuText {
                         anchors.left: parent.left
                         anchors.leftMargin: 42
                         anchors.verticalCenter: parent.verticalCenter
                         visible: appSearch.text.length === 0
                         text: qsTr("Search installed applications")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.body.medium
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.bodyPx
                     }
                 }
 
@@ -311,16 +312,16 @@ FocusScope {
                     spacing: 4
                     clip: true
 
-                    delegate: StyledRect {
+                    delegate: Rectangle {
                         required property DesktopEntry modelData
                         width: appResults.width
                         height: 48
-                        radius: Tokens.rounding.medium
+                        radius: CortetsuDesign.radiusSmall
                         color: root.selectedApp?.id === modelData.id
-                            ? Colours.palette.m3secondaryContainer
+                            ? CortetsuDesign.colorSecondaryContainer
                             : "transparent"
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: {
                                 root.selectedApp = parent.modelData;
@@ -339,23 +340,23 @@ FocusScope {
                                 source: Quickshell.iconPath(parent.parent.modelData.icon, "image-missing")
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.fillWidth: true
                                 text: parent.parent.modelData.name
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.body.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.bodyPx
                                 elide: Text.ElideRight
                             }
                         }
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: root.selectedApp ? 106 : 0
                     visible: root.selectedApp
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHigh
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
 
                     RowLayout {
                         anchors.fill: parent
@@ -371,42 +372,42 @@ FocusScope {
                             Layout.fillWidth: true
                             spacing: 2
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.fillWidth: true
                                 text: root.selectedApp?.name ?? ""
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.small
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleSmallPx
                                 elide: Text.ElideRight
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.fillWidth: true
                                 text: root.selectedApp?.execString ?? ""
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideMiddle
                             }
 
-                            StyledRect {
+                            Rectangle {
                                 Layout.preferredWidth: shortcutText.implicitWidth + 24
                                 Layout.preferredHeight: 34
-                                radius: Tokens.rounding.medium
+                                radius: CortetsuDesign.radiusSmall
                                 color: root.captureNewApp
-                                    ? Colours.palette.m3primaryContainer
-                                    : Colours.palette.m3secondaryContainer
+                                    ? CortetsuDesign.colorPrimaryContainer
+                                    : CortetsuDesign.colorSecondaryContainer
 
-                                StateLayer {
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.busy
                                     onClicked: root.beginCapture("", true)
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     id: shortcutText
                                     anchors.centerIn: parent
                                     text: root.captureNewApp ? qsTr("Press keys…") : qsTr("Set shortcut")
-                                    color: Colours.palette.m3onSecondaryContainer
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorOnSecondaryContainer
+                                    textSize: CortetsuTypography.labelMediumPx
                                 }
                             }
                         }
@@ -417,13 +418,13 @@ FocusScope {
             }
         }
 
-        StyledRect {
+        Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             ColumnLayout {
                 anchors.fill: parent
@@ -433,36 +434,36 @@ FocusScope {
                 RowLayout {
                     Layout.fillWidth: true
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("All shortcuts")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.medium
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleMediumPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: root.statusText
                         color: root.statusText.includes("already") || root.statusText.includes("could not")
-                            ? Colours.palette.m3error
-                            : Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                            ? CortetsuDesign.colorVermillion
+                            : CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         elide: Text.ElideRight
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 42
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHigh
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.left: parent.left
                         anchors.leftMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
                         text: "filter_list"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        iconSize: CortetsuTypography.iconMediumPx
                     }
 
                     TextInput {
@@ -470,8 +471,8 @@ FocusScope {
                         anchors.leftMargin: 42
                         anchors.rightMargin: 10
                         verticalAlignment: TextInput.AlignVCenter
-                        color: Colours.palette.m3onSurface
-                        selectionColor: Colours.palette.m3primary
+                        color: CortetsuDesign.colorOnSurface
+                        selectionColor: CortetsuDesign.colorPrimary
                         font.pixelSize: 15
                         onTextChanged: root.bindingFilter = text
                     }
@@ -485,14 +486,14 @@ FocusScope {
                     spacing: 5
                     clip: true
 
-                    delegate: StyledRect {
+                    delegate: Rectangle {
                         id: bindingRow
                         required property var modelData
                         readonly property var appEntry: root.appForBinding(modelData)
                         width: bindingList.width
                         height: 48
-                        radius: Tokens.rounding.medium
-                        color: Colours.palette.m3surfaceContainerHigh
+                        radius: CortetsuDesign.radiusSmall
+                        color: CortetsuDesign.colorSurfaceHigh
 
                         RowLayout {
                             anchors.fill: parent
@@ -508,77 +509,77 @@ FocusScope {
                                     : ""
                             }
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 visible: bindingRow.appEntry === null
                                 text: modelData.command ? "terminal" : "keyboard"
-                                color: Colours.palette.m3secondary
-                                fontStyle: Tokens.font.icon.medium
+                                color: CortetsuDesign.colorSecondary
+                                iconSize: CortetsuTypography.iconMediumPx
                             }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: 0
 
-                                StyledText {
+                                CortetsuText {
                                     Layout.fillWidth: true
                                     text: bindingRow.appEntry?.name ?? modelData.appName ?? modelData.label
-                                    color: Colours.palette.m3onSurface
-                                    font: Tokens.font.body.medium
+                                    color: CortetsuDesign.colorOnSurface
+                                    textSize: CortetsuTypography.bodyPx
                                     elide: Text.ElideRight
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     text: modelData.description
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                     elide: Text.ElideMiddle
                                 }
                             }
 
-                            StyledRect {
+                            Rectangle {
                                 Layout.preferredWidth: Math.max(118, chordLabel.implicitWidth + 24)
                                 Layout.preferredHeight: 34
-                                radius: Tokens.rounding.medium
+                                radius: CortetsuDesign.radiusSmall
                                 color: root.captureId === modelData.id
-                                    ? Colours.palette.m3primaryContainer
-                                    : Colours.palette.m3secondaryContainer
+                                    ? CortetsuDesign.colorPrimaryContainer
+                                    : CortetsuDesign.colorSecondaryContainer
 
-                                StateLayer {
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.busy
                                     onClicked: root.beginCapture(parent.parent.parent.modelData.id, false)
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     id: chordLabel
                                     anchors.centerIn: parent
                                     text: root.captureId === modelData.id ? qsTr("Press keys…") : modelData.chord
-                                    color: Colours.palette.m3onSecondaryContainer
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorOnSecondaryContainer
+                                    textSize: CortetsuTypography.labelMediumPx
                                 }
                             }
 
-                            StyledRect {
+                            Rectangle {
                                 Layout.preferredWidth: 34
                                 Layout.preferredHeight: 34
-                                radius: Tokens.rounding.medium
+                                radius: CortetsuDesign.radiusSmall
                                 color: root.pendingDeleteId === modelData.id
-                                    ? Colours.palette.m3errorContainer
+                                    ? Qt.darker(CortetsuDesign.colorVermillion, 1.5)
                                     : "transparent"
 
-                                StateLayer {
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.busy
                                     onClicked: root.requestDelete(bindingRow.modelData.id)
                                 }
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     anchors.centerIn: parent
                                     text: "delete"
                                     color: root.pendingDeleteId === bindingRow.modelData.id
-                                        ? Colours.palette.m3onErrorContainer
-                                        : Colours.palette.m3onSurfaceVariant
-                                    fontStyle: Tokens.font.icon.medium
+                                        ? CortetsuDesign.colorOnSurface
+                                        : CortetsuDesign.colorOnSurfaceVariant
+                                    iconSize: CortetsuTypography.iconMediumPx
                                 }
                             }
                         }

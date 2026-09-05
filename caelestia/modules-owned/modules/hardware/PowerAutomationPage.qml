@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
 import qs.services
 
 Item {
@@ -152,36 +152,35 @@ Item {
         anchors.fill: parent
         spacing: 12
 
-        StyledRect {
+        Rectangle {
             width: parent.width
             height: 126
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             Row {
                 anchors.fill: parent
                 anchors.margins: 16
                 spacing: 18
 
-                StyledRect {
+                Rectangle {
                     width: 52
                     height: 52
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: Tokens.rounding.extraLarge
+                    radius: CortetsuDesign.radiusLarge
                     color: config?.enabled
-                        ? Colours.palette.m3primaryContainer
-                        : Colours.palette.m3surfaceContainerHighest
+                        ? CortetsuDesign.colorPrimaryContainer
+                        : CortetsuDesign.colorSurfaceHigh
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: root.actionBusy ? "progress_activity" : "auto_mode"
-                        fill: config?.enabled ? 1 : 0
                         color: config?.enabled
-                            ? Colours.palette.m3onPrimaryContainer
-                            : Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.extraLarge
+                            ? CortetsuDesign.colorOnPrimaryContainer
+                            : CortetsuDesign.colorOnSurfaceVariant
+                        iconSize: CortetsuTypography.iconExtraLargePx
                     }
                 }
 
@@ -190,43 +189,43 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 3
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Automatic power profiles")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.medium
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleMediumPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("AC, battery and low-battery rules. Disabled means no background watcher is running.")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.small
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.bodySmallPx
                         wrapMode: Text.WordWrap
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: root.statusText
-                        color: service?.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: service?.active ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         elide: Text.ElideRight
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     id: toggleButton
                     width: 142
                     height: 48
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: Tokens.rounding.large
+                    radius: CortetsuDesign.radiusMedium
                     color: config?.enabled
-                        ? Colours.palette.m3secondaryContainer
-                        : Colours.palette.m3surfaceContainerHighest
+                        ? CortetsuDesign.colorSecondaryContainer
+                        : CortetsuDesign.colorSurfaceHigh
                     border.width: config?.enabled ? 1 : 0
-                    border.color: Colours.palette.m3primary
+                    border.color: CortetsuDesign.colorPrimary
                     opacity: root.actionBusy ? 0.55 : 1
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         radius: parent.radius
                         enabled: !root.actionBusy
                         onClicked: root.runControl(
@@ -238,19 +237,19 @@ Item {
                     Row {
                         anchors.centerIn: parent
                         spacing: 7
-                        MaterialIcon {
+                        CortetsuIcon {
                             text: config?.enabled ? "toggle_on" : "toggle_off"
                             color: config?.enabled
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.palette.m3onSurfaceVariant
-                            fontStyle: Tokens.font.icon.medium
+                                ? CortetsuDesign.colorOnSecondaryContainer
+                                : CortetsuDesign.colorOnSurfaceVariant
+                            iconSize: CortetsuTypography.iconMediumPx
                         }
-                        StyledText {
+                        CortetsuText {
                             text: config?.enabled ? qsTr("Enabled") : qsTr("Disabled")
                             color: config?.enabled
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.medium
+                                ? CortetsuDesign.colorOnSecondaryContainer
+                                : CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.labelMediumPx
                         }
                     }
                 }
@@ -282,15 +281,15 @@ Item {
                     }
                 ]
 
-                delegate: StyledRect {
+                delegate: Rectangle {
                     id: scenarioCard
                     required property var modelData
                     width: (scenarioGrid.width - 12) / 2
                     height: scenarioGrid.height
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3surfaceContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorSurface
                     border.width: 1
-                    border.color: Colours.palette.m3outlineVariant
+                    border.color: CortetsuDesign.colorOutlineVariant
 
                     Column {
                         anchors.fill: parent
@@ -301,16 +300,16 @@ Item {
                             width: parent.width
                             spacing: 10
 
-                            StyledRect {
+                            Rectangle {
                                 width: 42
                                 height: 42
-                                radius: Tokens.rounding.large
-                                color: Colours.palette.m3secondaryContainer
-                                MaterialIcon {
+                                radius: CortetsuDesign.radiusMedium
+                                color: CortetsuDesign.colorSecondaryContainer
+                                CortetsuIcon {
                                     anchors.centerIn: parent
                                     text: scenarioCard.modelData.icon
-                                    color: Colours.palette.m3onSecondaryContainer
-                                    fontStyle: Tokens.font.icon.large
+                                    color: CortetsuDesign.colorOnSecondaryContainer
+                                    iconSize: CortetsuTypography.iconLargePx
                                 }
                             }
 
@@ -318,16 +317,16 @@ Item {
                                 width: parent.width - 52
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: 1
-                                StyledText {
+                                CortetsuText {
                                     text: scenarioCard.modelData.title
-                                    color: Colours.palette.m3onSurface
-                                    font: Tokens.font.title.small
+                                    color: CortetsuDesign.colorOnSurface
+                                    textSize: CortetsuTypography.titleSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width
                                     text: scenarioCard.modelData.subtitle
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                     elide: Text.ElideRight
                                 }
                             }
@@ -340,20 +339,20 @@ Item {
                             Repeater {
                                 model: ["power-saver", "balanced", "performance"]
 
-                                delegate: StyledRect {
+                                delegate: Rectangle {
                                     id: profileChoice
                                     required property string modelData
                                     readonly property bool active: modelData === scenarioCard.modelData.value
                                     width: (parent.width - 16) / 3
                                     height: 78
-                                    radius: Tokens.rounding.large
+                                    radius: CortetsuDesign.radiusMedium
                                     color: active
-                                        ? Colours.palette.m3secondaryContainer
-                                        : Colours.palette.m3surfaceContainerHigh
+                                        ? CortetsuDesign.colorSecondaryContainer
+                                        : CortetsuDesign.colorSurfaceHigh
                                     border.width: active ? 1 : 0
-                                    border.color: Colours.palette.m3primary
+                                    border.color: CortetsuDesign.colorPrimary
 
-                                    StateLayer {
+                                    CortetsuStateLayer {
                                         radius: parent.radius
                                         enabled: !root.actionBusy
                                         onClicked: root.setProfile(scenarioCard.modelData.slot, profileChoice.modelData)
@@ -362,22 +361,21 @@ Item {
                                     Column {
                                         anchors.centerIn: parent
                                         spacing: 5
-                                        MaterialIcon {
+                                        CortetsuIcon {
                                             anchors.horizontalCenter: parent.horizontalCenter
                                             text: root.profileIcon(profileChoice.modelData)
-                                            fill: profileChoice.active ? 1 : 0
                                             color: profileChoice.active
-                                                ? Colours.palette.m3onSecondaryContainer
-                                                : Colours.palette.m3onSurfaceVariant
-                                            fontStyle: Tokens.font.icon.medium
+                                                ? CortetsuDesign.colorOnSecondaryContainer
+                                                : CortetsuDesign.colorOnSurfaceVariant
+                                            iconSize: CortetsuTypography.iconMediumPx
                                         }
-                                        StyledText {
+                                        CortetsuText {
                                             anchors.horizontalCenter: parent.horizontalCenter
                                             text: root.profileLabel(profileChoice.modelData)
                                             color: profileChoice.active
-                                                ? Colours.palette.m3onSecondaryContainer
-                                                : Colours.palette.m3onSurfaceVariant
-                                            font: Tokens.font.label.small
+                                                ? CortetsuDesign.colorOnSecondaryContainer
+                                                : CortetsuDesign.colorOnSurfaceVariant
+                                            textSize: CortetsuTypography.labelSmallPx
                                         }
                                     }
                                 }
@@ -394,13 +392,13 @@ Item {
             columns: 2
             columnSpacing: 12
 
-            StyledRect {
+            Rectangle {
                 width: (parent.width - 12) / 2
                 height: parent.height
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -413,29 +411,29 @@ Item {
                         Column {
                             width: parent.width - lowToggle.width - 12
                             spacing: 2
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Low battery override")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.small
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: qsTr("A separate profile can take over below the selected threshold.")
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 wrapMode: Text.WordWrap
                             }
                         }
 
-                        StyledRect {
+                        Rectangle {
                             id: lowToggle
                             width: 90
                             height: 38
-                            radius: Tokens.rounding.large
+                            radius: CortetsuDesign.radiusMedium
                             color: config?.low_battery_enabled
-                                ? Colours.palette.m3secondaryContainer
-                                : Colours.palette.m3surfaceContainerHigh
-                            StateLayer {
+                                ? CortetsuDesign.colorSecondaryContainer
+                                : CortetsuDesign.colorSurfaceHigh
+                            CortetsuStateLayer {
                                 radius: parent.radius
                                 enabled: !root.actionBusy
                                 onClicked: root.runControl(
@@ -443,13 +441,13 @@ Item {
                                     qsTr("Updating low-battery rule…")
                                 )
                             }
-                            StyledText {
+                            CortetsuText {
                                 anchors.centerIn: parent
                                 text: config?.low_battery_enabled ? qsTr("Enabled") : qsTr("Off")
                                 color: config?.low_battery_enabled
-                                    ? Colours.palette.m3onSecondaryContainer
-                                    : Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                    ? CortetsuDesign.colorOnSecondaryContainer
+                                    : CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                             }
                         }
                     }
@@ -459,39 +457,39 @@ Item {
                         height: 46
                         spacing: 8
 
-                        StyledRect {
+                        Rectangle {
                             width: 46
                             height: 46
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3surfaceContainerHigh
-                            StateLayer { radius: parent.radius; enabled: !root.actionBusy; onClicked: root.threshold(-5) }
-                            MaterialIcon { anchors.centerIn: parent; text: "remove"; color: Colours.palette.m3onSurfaceVariant }
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSurfaceHigh
+                            CortetsuStateLayer { radius: parent.radius; enabled: !root.actionBusy; onClicked: root.threshold(-5) }
+                            CortetsuIcon { anchors.centerIn: parent; text: "remove"; color: CortetsuDesign.colorOnSurfaceVariant }
                         }
                         Column {
                             width: parent.width - 108
                             anchors.verticalCenter: parent.verticalCenter
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: `${Number(config?.low_battery_threshold ?? 25)}%`
-                                color: Colours.palette.m3primary
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorPrimary
+                                textSize: CortetsuTypography.titleMediumPx
                                 horizontalAlignment: Text.AlignHCenter
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: qsTr("low-battery threshold")
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 horizontalAlignment: Text.AlignHCenter
                             }
                         }
-                        StyledRect {
+                        Rectangle {
                             width: 46
                             height: 46
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3surfaceContainerHigh
-                            StateLayer { radius: parent.radius; enabled: !root.actionBusy; onClicked: root.threshold(5) }
-                            MaterialIcon { anchors.centerIn: parent; text: "add"; color: Colours.palette.m3onSurfaceVariant }
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSurfaceHigh
+                            CortetsuStateLayer { radius: parent.radius; enabled: !root.actionBusy; onClicked: root.threshold(5) }
+                            CortetsuIcon { anchors.centerIn: parent; text: "add"; color: CortetsuDesign.colorOnSurfaceVariant }
                         }
                     }
 
@@ -500,37 +498,37 @@ Item {
                         spacing: 8
                         Repeater {
                             model: ["power-saver", "balanced", "performance"]
-                            delegate: StyledRect {
+                            delegate: Rectangle {
                                 id: lowChoice
                                 required property string modelData
                                 readonly property bool active: modelData === (config?.low_battery_profile ?? "power-saver")
                                 width: (parent.width - 16) / 3
                                 height: 54
-                                radius: Tokens.rounding.large
-                                color: active ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHigh
-                                StateLayer {
+                                radius: CortetsuDesign.radiusMedium
+                                color: active ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurfaceHigh
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.actionBusy
                                     onClicked: root.setProfile("low", lowChoice.modelData)
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.centerIn: parent
                                     text: root.profileLabel(lowChoice.modelData)
                                     color: lowChoice.active
-                                        ? Colours.palette.m3onSecondaryContainer
-                                        : Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                        ? CortetsuDesign.colorOnSecondaryContainer
+                                        : CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         width: parent.width
                         height: 42
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3primaryContainer
-                        StateLayer {
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorPrimaryContainer
+                        CortetsuStateLayer {
                             radius: parent.radius
                             enabled: !root.actionBusy
                             onClicked: root.runControl(["apply-now"], qsTr("Applying current rule once…"))
@@ -538,36 +536,36 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 7
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: "play_arrow"
-                                color: Colours.palette.m3onPrimaryContainer
-                                fontStyle: Tokens.font.icon.small
+                                color: CortetsuDesign.colorOnPrimaryContainer
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Apply current rule once")
-                                color: Colours.palette.m3onPrimaryContainer
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnPrimaryContainer
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("Apply once works even while automation is disabled; it does not enable the watcher.")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         wrapMode: Text.WordWrap
                     }
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: (parent.width - 12) / 2
                 height: parent.height
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -577,50 +575,50 @@ Item {
                     Row {
                         width: parent.width
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width - eventActions.width - 10
                             text: qsTr("Automation status & events")
-                            color: Colours.palette.m3onSurface
-                            font: Tokens.font.title.small
+                            color: CortetsuDesign.colorOnSurface
+                            textSize: CortetsuTypography.titleSmallPx
                         }
 
                         Row {
                             id: eventActions
                             spacing: 6
 
-                            StyledRect {
+                            Rectangle {
                                 width: 76
                                 height: 32
-                                radius: Tokens.rounding.medium
-                                color: Colours.palette.m3surfaceContainerHigh
-                                StateLayer {
+                                radius: CortetsuDesign.radiusSmall
+                                color: CortetsuDesign.colorSurfaceHigh
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.actionBusy
                                     onClicked: root.runControl(["reset-defaults"], qsTr("Restoring rule defaults…"))
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.centerIn: parent
                                     text: qsTr("Defaults")
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
                             }
 
-                            StyledRect {
+                            Rectangle {
                                 width: 68
                                 height: 32
-                                radius: Tokens.rounding.medium
-                                color: Colours.palette.m3surfaceContainerHigh
-                                StateLayer {
+                                radius: CortetsuDesign.radiusSmall
+                                color: CortetsuDesign.colorSurfaceHigh
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     enabled: !root.actionBusy
                                     onClicked: root.runControl(["clear-events"], qsTr("Clearing event history…"))
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.centerIn: parent
                                     text: qsTr("Clear")
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
                             }
                         }
@@ -638,72 +636,72 @@ Item {
                             required property var modelData
                             width: parent.width
                             height: 22
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.38
                                 text: modelData.label
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.62
                                 text: modelData.value
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 horizontalAlignment: Text.AlignRight
                                 elide: Text.ElideLeft
                             }
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Recent profile events")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                     }
 
                     Repeater {
                         model: Array.from(root.events ?? []).slice(0, 5)
 
-                        delegate: StyledRect {
+                        delegate: Rectangle {
                             required property var modelData
                             width: parent.width
                             height: 34
-                            radius: Tokens.rounding.medium
-                            color: Colours.palette.m3surfaceContainerHigh
+                            radius: CortetsuDesign.radiusSmall
+                            color: CortetsuDesign.colorSurfaceHigh
 
                             Row {
                                 anchors.fill: parent
                                 anchors.leftMargin: 9
                                 anchors.rightMargin: 9
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.18
                                     text: root.timeText(modelData?.timestamp)
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.17
                                     text: root.sourceLabel(modelData)
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.29
                                     text: root.profileLabel(modelData?.profile ?? modelData?.desired_profile ?? "")
-                                    color: modelData?.ok === false ? Colours.palette.m3error : Colours.palette.m3primary
-                                    font: Tokens.font.label.small
+                                    color: modelData?.ok === false ? CortetsuDesign.colorVermillion : CortetsuDesign.colorPrimary
+                                    textSize: CortetsuTypography.labelSmallPx
                                     elide: Text.ElideRight
                                 }
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.36
                                     text: modelData?.reason ?? modelData?.error ?? "—"
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                     horizontalAlignment: Text.AlignRight
                                     elide: Text.ElideLeft
                                 }
@@ -711,11 +709,11 @@ Item {
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         visible: root.events.length === 0
                         text: qsTr("No automatic profile events recorded yet.")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.body.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.bodySmallPx
                     }
                 }
             }

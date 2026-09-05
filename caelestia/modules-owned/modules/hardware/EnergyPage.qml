@@ -1,10 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
 import qs.services
 
 Item {
@@ -136,32 +137,32 @@ Item {
                     }
                 ]
 
-                delegate: StyledRect {
+                delegate: Rectangle {
                     required property var modelData
                     width: (summaryGrid.width - 24) / 3
                     height: summaryGrid.height
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3surfaceContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorSurface
                     border.width: 1
-                    border.color: Colours.palette.m3outlineVariant
+                    border.color: CortetsuDesign.colorOutlineVariant
 
                     Row {
                         anchors.fill: parent
                         anchors.margins: 16
                         spacing: 12
 
-                        StyledRect {
+                        Rectangle {
                             width: 44
                             height: 44
                             anchors.verticalCenter: parent.verticalCenter
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3secondaryContainer
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSecondaryContainer
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 anchors.centerIn: parent
                                 text: modelData.icon
-                                color: Colours.palette.m3onSecondaryContainer
-                                fontStyle: Tokens.font.icon.large
+                                color: CortetsuDesign.colorOnSecondaryContainer
+                                iconSize: CortetsuTypography.iconLargePx
                             }
                         }
 
@@ -170,25 +171,25 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 2
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: modelData.title
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: modelData.value
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.small
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleSmallPx
                                 elide: Text.ElideRight
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: modelData.detail
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
                         }
@@ -214,7 +215,7 @@ Item {
                 legendA: qsTr("Battery flow")
                 seriesA: root.batteryPowerHistory
                 unit: "W"
-                colourA: Colours.palette.m3primary
+                colourA: CortetsuDesign.colorPrimary
             }
 
             HistoryGraph {
@@ -229,7 +230,7 @@ Item {
                 legendA: qsTr("CPU package")
                 seriesA: root.cpuPowerHistory
                 unit: "W"
-                colourA: Colours.palette.m3secondary
+                colourA: CortetsuDesign.colorSecondary
             }
 
             HistoryGraph {
@@ -242,7 +243,7 @@ Item {
                 legendA: qsTr("AMD GPU")
                 seriesA: root.amdPowerHistory
                 unit: "W"
-                colourA: Colours.palette.m3primary
+                colourA: CortetsuDesign.colorPrimary
             }
 
             HistoryGraph {
@@ -255,7 +256,7 @@ Item {
                 legendA: qsTr("NVIDIA GPU")
                 seriesA: root.nvidiaPowerHistory
                 unit: "W"
-                colourA: Colours.palette.m3tertiary
+                colourA: CortetsuDesign.colorTertiary
             }
         }
     }

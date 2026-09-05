@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
 Item {
@@ -29,14 +30,14 @@ Item {
         anchors.fill: parent
         spacing: 12
 
-        StyledRect {
+        Rectangle {
             id: coresCard
             width: parent.width * 0.56
             height: parent.height
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             Column {
                 anchors.fill: parent
@@ -50,17 +51,17 @@ Item {
                         width: parent.width * 0.68
                         spacing: 2
 
-                        StyledText {
+                        CortetsuText {
                             text: qsTr("CPU cores")
-                            color: Colours.palette.m3onSurface
-                            font: Tokens.font.title.medium
+                            color: CortetsuDesign.colorOnSurface
+                            textSize: CortetsuTypography.titleMediumPx
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: root.cpu?.model ?? "CPU"
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.labelSmallPx
                             elide: Text.ElideRight
                         }
                     }
@@ -69,19 +70,19 @@ Item {
                         width: parent.width * 0.32
                         spacing: 2
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: `${root.number(root.cpu?.temp_c, 1)} °C`
-                            color: Colours.palette.m3primary
-                            font: Tokens.font.title.medium
+                            color: CortetsuDesign.colorPrimary
+                            textSize: CortetsuTypography.titleMediumPx
                             horizontalAlignment: Text.AlignRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: `${root.number(root.cpu?.freq_mhz, 0)} MHz`
-                            color: Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.labelSmallPx
                             horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -97,13 +98,13 @@ Item {
                     Repeater {
                         model: root.cpu?.per_core ?? []
 
-                        delegate: StyledRect {
+                        delegate: Rectangle {
                             required property var modelData
                             required property int index
                             width: (coreGrid.width - coreGrid.columnSpacing * 2) / 3
                             height: 74
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3surfaceContainerHigh
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSurfaceHigh
 
                             Column {
                                 anchors.fill: parent
@@ -113,33 +114,33 @@ Item {
                                 Row {
                                     width: parent.width
 
-                                    StyledText {
+                                    CortetsuText {
                                         width: parent.width * 0.55
                                         text: `CPU ${index}`
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font: Tokens.font.label.small
+                                        color: CortetsuDesign.colorOnSurfaceVariant
+                                        textSize: CortetsuTypography.labelSmallPx
                                     }
 
-                                    StyledText {
+                                    CortetsuText {
                                         width: parent.width * 0.45
                                         text: `${Number(modelData ?? 0).toFixed(0)}%`
-                                        color: Colours.palette.m3onSurface
-                                        font: Tokens.font.label.medium
+                                        color: CortetsuDesign.colorOnSurface
+                                        textSize: CortetsuTypography.labelMediumPx
                                         horizontalAlignment: Text.AlignRight
                                     }
                                 }
 
-                                StyledRect {
+                                Rectangle {
                                     width: parent.width
                                     height: 8
-                                    radius: Tokens.rounding.full
-                                    color: Colours.palette.m3surfaceContainerHighest
+                                    radius: 999
+                                    color: CortetsuDesign.colorSurfaceHigh
 
-                                    StyledRect {
+                                    Rectangle {
                                         width: parent.width * Math.max(0, Math.min(1, Number(modelData ?? 0) / 100))
                                         height: parent.height
                                         radius: parent.radius
-                                        color: Colours.palette.m3primary
+                                        color: CortetsuDesign.colorPrimary
                                     }
                                 }
                             }
@@ -154,23 +155,23 @@ Item {
             height: parent.height
             spacing: 12
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: (parent.height - 24) / 3
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
                     anchors.margins: 16
                     spacing: 9
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Cooling")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleSmallPx
                     }
 
                     Repeater {
@@ -181,50 +182,50 @@ Item {
                             width: parent.width
                             height: 23
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.66
                                 text: modelData?.name ?? qsTr("Fan")
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.34
                                 text: `${modelData?.rpm ?? "—"} RPM`
-                                color: Colours.palette.m3primary
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorPrimary
+                                textSize: CortetsuTypography.labelMediumPx
                                 horizontalAlignment: Text.AlignRight
                             }
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         visible: root.fans.length === 0
                         text: qsTr("No fan telemetry exposed by hwmon")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.body.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.bodySmallPx
                     }
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: (parent.height - 24) / 3
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
                     anchors.margins: 16
                     spacing: 7
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Thermals & power")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleSmallPx
                     }
 
                     Repeater {
@@ -239,18 +240,18 @@ Item {
                             width: parent.width
                             height: 24
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.38
                                 text: modelData.label
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.62
                                 text: modelData.value
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelMediumPx
                                 horizontalAlignment: Text.AlignRight
                                 elide: Text.ElideLeft
                             }
@@ -259,47 +260,47 @@ Item {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: (parent.height - 24) / 3
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
                     anchors.margins: 16
                     spacing: 8
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Battery")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleSmallPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: root.battery?.present
                             ? `${root.number(root.battery?.percent, 0)}% · ${root.battery?.status ?? "—"}`
                             : qsTr("No battery detected")
-                        color: Colours.palette.m3primary
-                        font: Tokens.font.title.medium
+                        color: CortetsuDesign.colorPrimary
+                        textSize: CortetsuTypography.titleMediumPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: root.battery?.present
                             ? `${qsTr("Current draw")}: ${root.number(root.battery?.power_w, 1)} W`
                             : ""
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: root.battery?.present
                             ? qsTr("Battery and fan values come directly from kernel power_supply/hwmon interfaces.")
                             : qsTr("Sensor data is read only while Hardware Center is open.")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         wrapMode: Text.WordWrap
                         width: parent.width
                     }

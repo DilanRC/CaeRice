@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
-import qs.components.controls
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
-StyledRect {
+Rectangle {
     id: root
 
     property string title: ""
@@ -20,8 +20,8 @@ StyledRect {
     property var seriesA: []
     property var seriesB: []
     property real maxValue: 0
-    property color colourA: Colours.palette.m3primary
-    property color colourB: Colours.palette.m3tertiary
+    property color colourA: CortetsuDesign.colorPrimary
+    property color colourB: CortetsuDesign.colorTertiary
 
     signal actionRequested()
 
@@ -75,10 +75,10 @@ StyledRect {
         return `${v.toFixed(digits)}${suffix}`;
     }
 
-    radius: Tokens.rounding.extraLarge
-    color: Colours.palette.m3surfaceContainer
+    radius: CortetsuDesign.radiusLarge
+    color: CortetsuDesign.colorSurface
     border.width: 1
-    border.color: Colours.palette.m3outlineVariant
+    border.color: CortetsuDesign.colorOutlineVariant
 
     onSeriesAChanged: graph.requestPaint()
     onSeriesBChanged: graph.requestPaint()
@@ -97,18 +97,17 @@ StyledRect {
         height: 42
         spacing: 11
 
-        StyledRect {
+        Rectangle {
             width: 38
             height: 38
-            radius: Tokens.rounding.large
-            color: Colours.palette.m3secondaryContainer
+            radius: CortetsuDesign.radiusMedium
+            color: CortetsuDesign.colorSecondaryContainer
 
-            MaterialIcon {
+            CortetsuIcon {
                 anchors.centerIn: parent
                 text: root.icon
-                fill: 1
-                color: Colours.palette.m3onSecondaryContainer
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuDesign.colorOnSecondaryContainer
+                iconSize: CortetsuTypography.iconLargePx
             }
         }
 
@@ -119,53 +118,53 @@ StyledRect {
             Row {
                 width: parent.width
 
-                StyledText {
+                CortetsuText {
                     width: parent.width * 0.56
                     text: root.title
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.medium
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelMediumPx
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     width: parent.width * 0.44
                     text: root.headline
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideLeft
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
                 text: root.subtitle
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: CortetsuDesign.colorOutline
+                textSize: CortetsuTypography.labelSmallPx
                 elide: Text.ElideRight
             }
         }
 
-        StyledRect {
+        Rectangle {
             id: actionButton
             visible: root.actionLabel.length > 0
             width: Math.max(46, actionText.implicitWidth + 18)
             height: 34
             anchors.verticalCenter: parent.verticalCenter
-            radius: Tokens.rounding.large
-            color: Colours.palette.m3surfaceContainerHigh
+            radius: CortetsuDesign.radiusMedium
+            color: CortetsuDesign.colorSurfaceHigh
 
-            StateLayer {
+            CortetsuStateLayer {
                 radius: parent.radius
                 onClicked: root.actionRequested()
             }
 
-            StyledText {
+            CortetsuText {
                 id: actionText
                 anchors.centerIn: parent
                 text: root.actionLabel
-                color: Colours.palette.m3primary
-                font: Tokens.font.label.small
+                color: CortetsuDesign.colorPrimary
+                textSize: CortetsuTypography.labelSmallPx
             }
         }
     }
@@ -217,7 +216,7 @@ StyledRect {
                 ctx.clearRect(0, 0, width, height);
 
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = Qt.alpha(Colours.palette.m3outlineVariant, 0.34);
+                ctx.strokeStyle = Qt.alpha(CortetsuDesign.colorOutlineVariant, 0.34);
                 for (let row = 0; row <= 4; ++row) {
                     const y = height * row / 4;
                     ctx.beginPath();
@@ -247,12 +246,12 @@ StyledRect {
                     width: parent.width
                     height: scaleLabels.height / 5
 
-                    StyledText {
+                    CortetsuText {
                         anchors.right: parent.right
                         anchors.top: parent.top
                         text: root.formatValue(root.effectiveMax * Number(modelData))
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                     }
                 }
             }
@@ -285,10 +284,10 @@ StyledRect {
                     color: root.colourA
                 }
 
-                StyledText {
+                CortetsuText {
                     text: root.legendA
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                 }
             }
 
@@ -304,19 +303,19 @@ StyledRect {
                     color: root.colourB
                 }
 
-                StyledText {
+                CortetsuText {
                     text: root.legendB
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                 }
             }
         }
 
-        StyledText {
+        CortetsuText {
             width: parent.width * 0.52
             text: `min ${root.formatValue(root.minValue)}  ·  avg ${root.formatValue(root.averageValue)}  ·  max ${root.formatValue(root.peakValue)}`
-            color: Colours.palette.m3outline
-            font: Tokens.font.label.small
+            color: CortetsuDesign.colorOutline
+            textSize: CortetsuTypography.labelSmallPx
             horizontalAlignment: Text.AlignRight
             elide: Text.ElideLeft
         }

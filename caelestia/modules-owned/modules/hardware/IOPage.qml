@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
 Item {
@@ -38,13 +39,13 @@ Item {
             height: parent.height
             spacing: 12
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: (parent.height - 12) * 0.54
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -55,17 +56,17 @@ Item {
                         width: parent.width
                         spacing: 12
 
-                        StyledRect {
+                        Rectangle {
                             width: 46
                             height: 46
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3secondaryContainer
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSecondaryContainer
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 anchors.centerIn: parent
                                 text: "hard_drive"
-                                color: Colours.palette.m3onSecondaryContainer
-                                fontStyle: Tokens.font.icon.large
+                                color: CortetsuDesign.colorOnSecondaryContainer
+                                iconSize: CortetsuTypography.iconLargePx
                             }
                         }
 
@@ -76,43 +77,43 @@ Item {
                             Row {
                                 width: parent.width
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.58
                                     text: qsTr("Storage / root")
-                                    color: Colours.palette.m3onSurface
-                                    font: Tokens.font.title.medium
+                                    color: CortetsuDesign.colorOnSurface
+                                    textSize: CortetsuTypography.titleMediumPx
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.42
                                     text: `${root.number(root.disk?.usage, 1)}%`
-                                    color: Colours.palette.m3primary
-                                    font: Tokens.font.title.medium
+                                    color: CortetsuDesign.colorPrimary
+                                    textSize: CortetsuTypography.titleMediumPx
                                     horizontalAlignment: Text.AlignRight
                                 }
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: `${root.diskIo?.model ?? root.diskIo?.device ?? "root"}`
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         width: parent.width
                         height: 10
-                        radius: Tokens.rounding.full
-                        color: Colours.palette.m3surfaceContainerHighest
+                        radius: 999
+                        color: CortetsuDesign.colorSurfaceHigh
 
-                        StyledRect {
+                        Rectangle {
                             width: parent.width * Math.max(0, Math.min(1, Number(root.disk?.usage ?? 0) / 100))
                             height: parent.height
                             radius: parent.radius
-                            color: Colours.palette.m3primary
+                            color: CortetsuDesign.colorPrimary
                         }
                     }
 
@@ -139,17 +140,17 @@ Item {
                                 width: (parent.width - 20) / 2
                                 height: 22
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.5
                                     text: modelData.label
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.5
                                     text: modelData.value
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelMediumPx
                                     horizontalAlignment: Text.AlignRight
                                     elide: Text.ElideLeft
                                 }
@@ -159,13 +160,13 @@ Item {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: parent.height - parent.children[0].height - 12
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -175,18 +176,18 @@ Item {
                     Row {
                         width: parent.width
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width * 0.6
                             text: qsTr("Detected block devices")
-                            color: Colours.palette.m3onSurface
-                            font: Tokens.font.title.small
+                            color: CortetsuDesign.colorOnSurface
+                            textSize: CortetsuTypography.titleSmallPx
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width * 0.4
                             text: `${root.disks.length} ${qsTr("devices")}`
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.labelSmallPx
                             horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -194,12 +195,12 @@ Item {
                     Repeater {
                         model: root.disks.length ? root.disks : [root.diskIo]
 
-                        delegate: StyledRect {
+                        delegate: Rectangle {
                             required property var modelData
                             width: parent.width
                             height: 52
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3surfaceContainerHigh
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSurfaceHigh
 
                             Row {
                                 anchors.fill: parent
@@ -211,35 +212,35 @@ Item {
                                     width: parent.width * 0.54
                                     spacing: 1
 
-                                    StyledText {
+                                    CortetsuText {
                                         text: modelData?.device ?? qsTr("root")
-                                        color: Colours.palette.m3onSurface
-                                        font: Tokens.font.label.medium
+                                        color: CortetsuDesign.colorOnSurface
+                                        textSize: CortetsuTypography.labelMediumPx
                                     }
-                                    StyledText {
+                                    CortetsuText {
                                         width: parent.width
                                         text: modelData?.model ?? modelData?.serial ?? ""
-                                        color: Colours.palette.m3outline
-                                        font: Tokens.font.label.small
+                                        color: CortetsuDesign.colorOutline
+                                        textSize: CortetsuTypography.labelSmallPx
                                         elide: Text.ElideRight
                                     }
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.23
                                     text: `${root.number(modelData?.read_mib_s, 2)} R`
-                                    color: Colours.palette.m3primary
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorPrimary
+                                    textSize: CortetsuTypography.labelMediumPx
                                     horizontalAlignment: Text.AlignRight
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.verticalCenter: parent.verticalCenter
                                     width: parent.width * 0.23
                                     text: `${root.number(modelData?.write_mib_s, 2)} W`
-                                    color: Colours.palette.m3tertiary
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorTertiary
+                                    textSize: CortetsuTypography.labelMediumPx
                                     horizontalAlignment: Text.AlignRight
                                 }
                             }
@@ -254,13 +255,13 @@ Item {
             height: parent.height
             spacing: 12
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: (parent.height - 12) * 0.58
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -271,17 +272,17 @@ Item {
                         width: parent.width
                         spacing: 12
 
-                        StyledRect {
+                        Rectangle {
                             width: 46
                             height: 46
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3secondaryContainer
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorSecondaryContainer
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 anchors.centerIn: parent
                                 text: "wifi"
-                                color: Colours.palette.m3onSecondaryContainer
-                                fontStyle: Tokens.font.icon.large
+                                color: CortetsuDesign.colorOnSecondaryContainer
+                                iconSize: CortetsuTypography.iconLargePx
                             }
                         }
 
@@ -289,19 +290,19 @@ Item {
                             width: parent.width - 58
                             spacing: 2
 
-                            StyledText {
+                            CortetsuText {
                                 text: root.network?.interface ?? qsTr("No active interface")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleMediumPx
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: root.network?.ssid
                                     ? `${root.network.ssid} · ${root.network?.ipv4 ?? ""}`
                                     : (root.network?.ipv4 ?? qsTr("Active network path"))
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
                         }
@@ -330,17 +331,17 @@ Item {
                                 width: (parent.width - 20) / 2
                                 height: 24
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.46
                                     text: modelData.label
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.54
                                     text: modelData.value
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelMediumPx
                                     horizontalAlignment: Text.AlignRight
                                     elide: Text.ElideLeft
                                 }
@@ -350,45 +351,45 @@ Item {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: parent.height - parent.children[0].height - 12
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
                     anchors.margins: 18
                     spacing: 10
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Throughput summary")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleSmallPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("The I/O page uses kernel counters and only samples while Hardware Center is open.")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.body.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.bodySmallPx
                         wrapMode: Text.WordWrap
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: `${qsTr("Disk")}: ${root.number(root.diskIo?.read_mib_s, 2)} R / ${root.number(root.diskIo?.write_mib_s, 2)} W MiB/s`
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: `${qsTr("Network")}: ${root.number(root.network?.rx_mbps, 2)} ↓ / ${root.number(root.network?.tx_mbps, 2)} ↑ Mb/s`
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                     }
                 }
             }

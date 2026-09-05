@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import Quickshell
-import Caelestia.Config
-import qs.components
-import qs.components.controls
 import qs.services
 
 Item {
@@ -119,14 +119,14 @@ Item {
         anchors.fill: parent
         spacing: 12
 
-        StyledRect {
+        Rectangle {
             id: listCard
             width: parent.width * 0.66
             height: parent.height
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             Column {
                 anchors.fill: parent
@@ -138,31 +138,31 @@ Item {
                     height: 42
                     spacing: 9
 
-                    StyledRect {
+                    Rectangle {
                         width: parent.width - sortControls.width - pauseButton.width - unitsButton.width - 27
                         height: 42
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3surfaceContainerHigh
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSurfaceHigh
                         border.width: searchInput.activeFocus ? 1 : 0
-                        border.color: Colours.palette.m3primary
+                        border.color: CortetsuDesign.colorPrimary
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             anchors.left: parent.left
                             anchors.leftMargin: 12
                             anchors.verticalCenter: parent.verticalCenter
                             text: "search"
-                            color: Colours.palette.m3onSurfaceVariant
-                            fontStyle: Tokens.font.icon.medium
+                            color: CortetsuDesign.colorOnSurfaceVariant
+                            iconSize: CortetsuTypography.iconMediumPx
                         }
 
-                        StyledText {
+                        CortetsuText {
                             anchors.left: parent.left
                             anchors.leftMargin: 42
                             anchors.verticalCenter: parent.verticalCenter
                             visible: searchInput.text.length === 0
                             text: qsTr("Filter processes…")
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.body.medium
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.bodyPx
                         }
 
                         TextInput {
@@ -174,9 +174,9 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             height: parent.height
                             verticalAlignment: TextInput.AlignVCenter
-                            color: Colours.palette.m3onSurface
-                            selectionColor: Colours.palette.m3primary
-                            selectedTextColor: Colours.palette.m3onPrimary
+                            color: CortetsuDesign.colorOnSurface
+                            selectionColor: CortetsuDesign.colorPrimary
+                            selectedTextColor: CortetsuDesign.colorOnPrimary
                             font.pixelSize: 15
                             text: root.filterText
                             onTextChanged: root.filterText = text
@@ -194,76 +194,76 @@ Item {
                                 { label: "PID", key: "pid" }
                             ]
 
-                            delegate: StyledRect {
+                            delegate: Rectangle {
                                 required property var modelData
                                 width: 54
                                 height: 42
-                                radius: Tokens.rounding.large
+                                radius: CortetsuDesign.radiusMedium
                                 color: root.sortKey === modelData.key
-                                    ? Colours.palette.m3secondaryContainer
-                                    : Colours.palette.m3surfaceContainerHigh
+                                    ? CortetsuDesign.colorSecondaryContainer
+                                    : CortetsuDesign.colorSurfaceHigh
 
-                                StateLayer {
+                                CortetsuStateLayer {
                                     radius: parent.radius
                                     onClicked: root.setSort(modelData.key)
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.centerIn: parent
                                     text: `${modelData.label}${root.sortKey === modelData.key ? (root.sortDescending ? " ↓" : " ↑") : ""}`
                                     color: root.sortKey === modelData.key
-                                        ? Colours.palette.m3onSecondaryContainer
-                                        : Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                        ? CortetsuDesign.colorOnSecondaryContainer
+                                        : CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         id: unitsButton
                         width: 48
                         height: 42
-                        radius: Tokens.rounding.large
+                        radius: CortetsuDesign.radiusMedium
                         color: root.numericMode
-                            ? Colours.palette.m3secondaryContainer
-                            : Colours.palette.m3surfaceContainerHigh
+                            ? CortetsuDesign.colorSecondaryContainer
+                            : CortetsuDesign.colorSurfaceHigh
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.numericMode = !root.numericMode
                         }
 
-                        StyledText {
+                        CortetsuText {
                             anchors.centerIn: parent
                             text: root.numericMode ? "123" : "%"
                             color: root.numericMode
-                                ? Colours.palette.m3onSecondaryContainer
-                                : Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.medium
+                                ? CortetsuDesign.colorOnSecondaryContainer
+                                : CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.labelMediumPx
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         id: pauseButton
                         width: 44
                         height: 42
-                        radius: Tokens.rounding.large
+                        radius: CortetsuDesign.radiusMedium
                         color: root.paused
-                            ? Colours.palette.m3tertiaryContainer
-                            : Colours.palette.m3surfaceContainerHigh
+                            ? CortetsuDesign.colorSecondaryContainer
+                            : CortetsuDesign.colorSurfaceHigh
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.togglePause()
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             anchors.centerIn: parent
                             text: root.paused ? "play_arrow" : "pause"
                             color: root.paused
-                                ? Colours.palette.m3onTertiaryContainer
-                                : Colours.palette.m3onSurfaceVariant
+                                ? CortetsuDesign.colorOnSurface
+                                : CortetsuDesign.colorOnSurfaceVariant
                         }
                     }
                 }
@@ -272,37 +272,37 @@ Item {
                     width: parent.width
                     height: 26
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width * 0.43
                         text: qsTr("Process")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width * 0.17
                         text: qsTr("User")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width * 0.12
                         text: qsTr("PID")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         horizontalAlignment: Text.AlignRight
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width * 0.14
                         text: root.numericMode ? qsTr("CPU cores") : qsTr("CPU %")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         horizontalAlignment: Text.AlignRight
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width * 0.14
                         text: root.numericMode ? qsTr("RAM") : qsTr("RAM %")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         horizontalAlignment: Text.AlignRight
                     }
                 }
@@ -316,20 +316,20 @@ Item {
                     boundsBehavior: Flickable.StopAtBounds
                     model: root.visibleProcesses
 
-                    delegate: StyledRect {
+                    delegate: Rectangle {
                         id: processRow
                         required property var modelData
                         required property int index
                         width: processList.width
                         height: 36
-                        radius: Tokens.rounding.medium
+                        radius: CortetsuDesign.radiusSmall
                         color: Number(modelData?.pid) === root.selectedPid
-                            ? Colours.palette.m3secondaryContainer
+                            ? CortetsuDesign.colorSecondaryContainer
                             : (index % 2 === 0
-                                ? Colours.palette.m3surfaceContainerLow
-                                : Colours.palette.m3surfaceContainer)
+                                ? CortetsuDesign.colorSurface
+                                : CortetsuDesign.colorSurface)
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.selectedPid = Number(processRow.modelData?.pid ?? -1)
                         }
@@ -339,47 +339,47 @@ Item {
                             anchors.leftMargin: 9
                             anchors.rightMargin: 9
 
-                            StyledText {
+                            CortetsuText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.43
                                 text: processRow.modelData?.name ?? "—"
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.body.small
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.bodySmallPx
                                 elide: Text.ElideRight
                             }
-                            StyledText {
+                            CortetsuText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.17
                                 text: processRow.modelData?.user ?? "—"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
-                            StyledText {
+                            CortetsuText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.12
                                 text: String(processRow.modelData?.pid ?? "—")
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 horizontalAlignment: Text.AlignRight
                             }
-                            StyledText {
+                            CortetsuText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.14
                                 text: root.cpuText(processRow.modelData)
                                 color: Number(processRow.modelData?.cpu ?? 0) >= 50
-                                    ? Colours.palette.m3primary
-                                    : Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                    ? CortetsuDesign.colorPrimary
+                                    : CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 horizontalAlignment: Text.AlignRight
                                 elide: Text.ElideLeft
                             }
-                            StyledText {
+                            CortetsuText {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width * 0.14
                                 text: root.ramText(processRow.modelData)
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelSmallPx
                                 horizontalAlignment: Text.AlignRight
                                 elide: Text.ElideLeft
                             }
@@ -389,14 +389,14 @@ Item {
             }
         }
 
-        StyledRect {
+        Rectangle {
             id: details
             width: parent.width - listCard.width - 12
             height: parent.height
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             Column {
                 id: detailsBody
@@ -412,17 +412,17 @@ Item {
                     width: parent.width
                     spacing: 10
 
-                    StyledRect {
+                    Rectangle {
                         width: 44
                         height: 44
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3primaryContainer
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorPrimaryContainer
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             anchors.centerIn: parent
                             text: "terminal"
-                            color: Colours.palette.m3onPrimaryContainer
-                            fontStyle: Tokens.font.icon.large
+                            color: CortetsuDesign.colorOnPrimaryContainer
+                            iconSize: CortetsuTypography.iconLargePx
                         }
                     }
 
@@ -430,37 +430,37 @@ Item {
                         width: parent.width - 54
                         spacing: 1
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: root.selectedProcess?.name ?? qsTr("No process selected")
-                            color: Colours.palette.m3onSurface
-                            font: Tokens.font.title.medium
+                            color: CortetsuDesign.colorOnSurface
+                            textSize: CortetsuTypography.titleMediumPx
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: root.selectedProcess?.pid
                                 ? `PID ${root.selectedProcess.pid} · ${root.selectedProcess?.user ?? "—"}`
                                 : ""
-                            color: Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.medium
+                            color: CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.labelMediumPx
                         }
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     width: parent.width
                     height: 104
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHigh
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
 
-                    StyledText {
+                    CortetsuText {
                         anchors.fill: parent
                         anchors.margins: 12
                         text: root.selectedProcess?.command ?? qsTr("Select a process to inspect its command line.")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.small
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.bodySmallPx
                         wrapMode: Text.WrapAnywhere
                         elide: Text.ElideRight
                         maximumLineCount: 5
@@ -482,18 +482,18 @@ Item {
                         width: parent.width
                         height: 23
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width * 0.46
                             text: modelData.label
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.labelSmallPx
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width * 0.54
                             text: modelData.value
-                            color: Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.labelSmallPx
                             horizontalAlignment: Text.AlignRight
                             elide: Text.ElideLeft
                         }
@@ -511,12 +511,12 @@ Item {
                 anchors.bottomMargin: 18
                 spacing: 8
 
-                StyledText {
+                CortetsuText {
                     width: parent.width
                     visible: root.actionStatus.length > 0
                     text: root.actionStatus
-                    color: Colours.palette.m3primary
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorPrimary
+                    textSize: CortetsuTypography.labelSmallPx
                     elide: Text.ElideRight
                 }
 
@@ -526,13 +526,13 @@ Item {
                     columnSpacing: 8
                     rowSpacing: 8
 
-                    StyledRect {
+                    Rectangle {
                         width: (parent.width - 8) / 2
                         height: 40
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3secondaryContainer
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSecondaryContainer
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.toggleSelectedPause()
                         }
@@ -540,26 +540,26 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 6
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: root.selectedStopped ? "play_arrow" : "pause"
-                                color: Colours.palette.m3onSecondaryContainer
-                                fontStyle: Tokens.font.icon.small
+                                color: CortetsuDesign.colorOnSecondaryContainer
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: root.selectedStopped ? qsTr("Resume") : qsTr("Pause")
-                                color: Colours.palette.m3onSecondaryContainer
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSecondaryContainer
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         width: (parent.width - 8) / 2
                         height: 40
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3surfaceContainerHigh
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSurfaceHigh
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.sendSignal("INT")
                         }
@@ -567,26 +567,26 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 6
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: "cancel"
-                                color: Colours.palette.m3onSurfaceVariant
-                                fontStyle: Tokens.font.icon.small
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Interrupt")
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         width: (parent.width - 8) / 2
                         height: 40
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3tertiaryContainer
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSecondaryContainer
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.sendSignal("TERM")
                         }
@@ -594,26 +594,26 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 6
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: "power_settings_new"
-                                color: Colours.palette.m3onTertiaryContainer
-                                fontStyle: Tokens.font.icon.small
+                                color: CortetsuDesign.colorOnSurface
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Terminate")
-                                color: Colours.palette.m3onTertiaryContainer
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }
 
-                    StyledRect {
+                    Rectangle {
                         width: (parent.width - 8) / 2
                         height: 40
-                        radius: Tokens.rounding.large
-                        color: Colours.palette.m3errorContainer
+                        radius: CortetsuDesign.radiusMedium
+                        color: Qt.darker(CortetsuDesign.colorVermillion, 1.5)
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             onClicked: root.sendSignal("KILL")
                         }
@@ -621,15 +621,15 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 6
-                            MaterialIcon {
+                            CortetsuIcon {
                                 text: "dangerous"
-                                color: Colours.palette.m3onErrorContainer
-                                fontStyle: Tokens.font.icon.small
+                                color: CortetsuDesign.colorOnSurface
+                                iconSize: CortetsuTypography.iconSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Force kill")
-                                color: Colours.palette.m3onErrorContainer
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }

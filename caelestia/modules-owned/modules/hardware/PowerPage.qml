@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
 import qs.services
 
 Item {
@@ -133,13 +133,13 @@ Item {
         anchors.fill: parent
         spacing: 12
 
-        StyledRect {
+        Rectangle {
             width: parent.width
             height: 158
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusLarge
+            color: CortetsuDesign.colorSurface
             border.width: 1
-            border.color: Colours.palette.m3outlineVariant
+            border.color: CortetsuDesign.colorOutlineVariant
 
             Row {
                 anchors.fill: parent
@@ -154,18 +154,17 @@ Item {
                     Row {
                         spacing: 10
 
-                        StyledRect {
+                        Rectangle {
                             width: 44
                             height: 44
-                            radius: Tokens.rounding.large
-                            color: Colours.palette.m3primaryContainer
+                            radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorPrimaryContainer
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 anchors.centerIn: parent
                                 text: "bolt"
-                                fill: 1
-                                color: Colours.palette.m3onPrimaryContainer
-                                fontStyle: Tokens.font.icon.large
+                                color: CortetsuDesign.colorOnPrimaryContainer
+                                iconSize: CortetsuTypography.iconLargePx
                             }
                         }
 
@@ -173,25 +172,25 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 0
 
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Power profile")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleMediumPx
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 text: root.profileLabel(root.profiles?.current ?? "")
-                                color: Colours.palette.m3primary
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorPrimary
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: root.statusText
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         wrapMode: Text.WordWrap
                     }
                 }
@@ -205,7 +204,7 @@ Item {
                     Repeater {
                         model: ["power-saver", "balanced", "performance"]
 
-                        delegate: StyledRect {
+                        delegate: Rectangle {
                             id: profileButton
                             required property string modelData
                             readonly property bool supported: root.profileAvailable(modelData)
@@ -214,15 +213,15 @@ Item {
 
                             width: (profileButtons.width - profileButtons.spacing * 2) / 3
                             height: 108
-                            radius: Tokens.rounding.extraLarge
+                            radius: CortetsuDesign.radiusLarge
                             color: active
-                                ? Colours.palette.m3secondaryContainer
-                                : Colours.palette.m3surfaceContainerHigh
+                                ? CortetsuDesign.colorSecondaryContainer
+                                : CortetsuDesign.colorSurfaceHigh
                             border.width: active ? 1 : 0
-                            border.color: Colours.palette.m3primary
+                            border.color: CortetsuDesign.colorPrimary
                             opacity: supported ? 1 : 0.45
 
-                            StateLayer {
+                            CortetsuStateLayer {
                                 radius: parent.radius
                                 enabled: profileButton.supported && root.profiles?.can_set && root.pendingProfile.length === 0
                                 onClicked: root.requestProfile(profileButton.modelData)
@@ -232,34 +231,33 @@ Item {
                                 anchors.centerIn: parent
                                 spacing: 7
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     text: profileButton.pending ? "progress_activity" : root.profileIcon(profileButton.modelData)
-                                    fill: profileButton.active ? 1 : 0
                                     color: profileButton.active
-                                        ? Colours.palette.m3onSecondaryContainer
-                                        : Colours.palette.m3onSurfaceVariant
-                                    fontStyle: Tokens.font.icon.large
+                                        ? CortetsuDesign.colorOnSecondaryContainer
+                                        : CortetsuDesign.colorOnSurfaceVariant
+                                    iconSize: CortetsuTypography.iconLargePx
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     text: root.profileLabel(profileButton.modelData)
                                     color: profileButton.active
-                                        ? Colours.palette.m3onSecondaryContainer
-                                        : Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.medium
+                                        ? CortetsuDesign.colorOnSecondaryContainer
+                                        : CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelMediumPx
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     text: profileButton.supported
                                         ? (profileButton.active ? qsTr("Active") : qsTr("Available"))
                                         : qsTr("Unavailable")
                                     color: profileButton.active
-                                        ? Colours.palette.m3onSecondaryContainer
-                                        : Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                        ? CortetsuDesign.colorOnSecondaryContainer
+                                        : CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
                             }
                         }
@@ -276,13 +274,13 @@ Item {
             columnSpacing: 12
             rowSpacing: 12
 
-            StyledRect {
+            Rectangle {
                 width: (powerGrid.width - 12) / 2
                 height: (powerGrid.height - 12) / 2
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -296,27 +294,27 @@ Item {
                             width: parent.width * 0.7
                             spacing: 2
 
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("CPU policy")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleMediumPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width
                                 text: root.cpu?.driver ?? qsTr("Unknown driver")
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                                 elide: Text.ElideRight
                             }
                         }
 
-                        StyledText {
+                        CortetsuText {
                             width: parent.width * 0.3
                             text: root.cpu?.current_mhz
                                 ? `${root.number(Number(root.cpu.current_mhz) / 1000, 2)} GHz`
                                 : "—"
-                            color: Colours.palette.m3primary
-                            font: Tokens.font.title.small
+                            color: CortetsuDesign.colorPrimary
+                            textSize: CortetsuTypography.titleSmallPx
                             horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -334,42 +332,42 @@ Item {
                             width: parent.width
                             height: 25
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.43
                                 text: modelData.label
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.57
                                 text: modelData.value
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelMediumPx
                                 horizontalAlignment: Text.AlignRight
                                 elide: Text.ElideLeft
                             }
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: root.cpu?.epp_choices?.length
                             ? `${qsTr("EPP exposed")}: ${root.cpu.epp_choices.join(" · ")}`
                             : qsTr("EPP choices are not exposed by the active CPU driver.")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         wrapMode: Text.WordWrap
                     }
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: (powerGrid.width - 12) / 2
                 height: (powerGrid.height - 12) / 2
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Column {
                     anchors.fill: parent
@@ -383,23 +381,23 @@ Item {
                             width: parent.width * 0.7
                             spacing: 2
 
-                            StyledText {
+                            CortetsuText {
                                 text: qsTr("Power source")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleMediumPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 text: root.ac?.online ? qsTr("AC adapter connected") : qsTr("Running on battery")
-                                color: root.ac?.online ? Colours.palette.m3primary : Colours.palette.m3tertiary
-                                font: Tokens.font.label.medium
+                                color: root.ac?.online ? CortetsuDesign.colorPrimary : CortetsuDesign.colorTertiary
+                                textSize: CortetsuTypography.labelMediumPx
                             }
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             width: parent.width * 0.3
                             text: root.ac?.online ? "power" : "battery_5_bar"
-                            color: root.ac?.online ? Colours.palette.m3primary : Colours.palette.m3tertiary
-                            fontStyle: Tokens.font.icon.extraLarge
+                            color: root.ac?.online ? CortetsuDesign.colorPrimary : CortetsuDesign.colorTertiary
+                            iconSize: CortetsuTypography.iconExtraLargePx
                             horizontalAlignment: Text.AlignRight
                         }
                     }
@@ -417,17 +415,17 @@ Item {
                             width: parent.width
                             height: 25
 
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.48
                                 text: modelData.label
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuDesign.colorOutline
+                                textSize: CortetsuTypography.labelSmallPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.52
                                 text: modelData.value
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorOnSurfaceVariant
+                                textSize: CortetsuTypography.labelMediumPx
                                 horizontalAlignment: Text.AlignRight
                             }
                         }
@@ -438,15 +436,15 @@ Item {
             Repeater {
                 model: [root.gpuAt(0), root.gpuAt(1)]
 
-                delegate: StyledRect {
+                delegate: Rectangle {
                     required property var modelData
                     required property int index
                     width: (powerGrid.width - 12) / 2
                     height: (powerGrid.height - 12) / 2
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3surfaceContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorSurface
                     border.width: 1
-                    border.color: Colours.palette.m3outlineVariant
+                    border.color: CortetsuDesign.colorOutlineVariant
 
                     Column {
                         anchors.fill: parent
@@ -456,17 +454,17 @@ Item {
                         Row {
                             width: parent.width
 
-                            StyledRect {
+                            Rectangle {
                                 width: 42
                                 height: 42
-                                radius: Tokens.rounding.large
-                                color: Colours.palette.m3secondaryContainer
+                                radius: CortetsuDesign.radiusMedium
+                                color: CortetsuDesign.colorSecondaryContainer
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     anchors.centerIn: parent
                                     text: index === 0 ? "view_in_ar" : "sports_esports"
-                                    color: Colours.palette.m3onSecondaryContainer
-                                    fontStyle: Tokens.font.icon.large
+                                    color: CortetsuDesign.colorOnSecondaryContainer
+                                    iconSize: CortetsuTypography.iconLargePx
                                 }
                             }
 
@@ -475,21 +473,21 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: 1
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width
                                     text: modelData?.vendor
                                         ? `${modelData.vendor} ${qsTr("GPU power")}`
                                         : qsTr("GPU power")
-                                    color: Colours.palette.m3onSurface
-                                    font: Tokens.font.title.small
+                                    color: CortetsuDesign.colorOnSurface
+                                    textSize: CortetsuTypography.titleSmallPx
                                     elide: Text.ElideRight
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width
                                     text: modelData?.name ?? modelData?.card ?? qsTr("No telemetry")
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                     elide: Text.ElideRight
                                 }
                             }
@@ -515,17 +513,17 @@ Item {
                                 width: parent.width
                                 height: 24
 
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.48
                                     text: modelData.label
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuDesign.colorOutline
+                                    textSize: CortetsuTypography.labelSmallPx
                                 }
-                                StyledText {
+                                CortetsuText {
                                     width: parent.width * 0.52
                                     text: modelData.value
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.medium
+                                    color: CortetsuDesign.colorOnSurfaceVariant
+                                    textSize: CortetsuTypography.labelMediumPx
                                     horizontalAlignment: Text.AlignRight
                                     elide: Text.ElideLeft
                                 }

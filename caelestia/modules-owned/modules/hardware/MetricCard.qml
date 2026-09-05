@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
-import qs.components.controls
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
-StyledRect {
+Rectangle {
     id: root
 
     property string title: ""
@@ -20,10 +20,10 @@ StyledRect {
     signal modeRequested()
 
     implicitHeight: 190
-    radius: Tokens.rounding.extraLarge
-    color: Colours.palette.m3surfaceContainer
+    radius: CortetsuDesign.radiusLarge
+    color: CortetsuDesign.colorSurface
     border.width: 1
-    border.color: Colours.palette.m3outlineVariant
+    border.color: CortetsuDesign.colorOutlineVariant
 
     Row {
         id: header
@@ -36,18 +36,17 @@ StyledRect {
         height: 56
         spacing: 12
 
-        StyledRect {
+        Rectangle {
             width: 42
             height: 42
-            radius: Tokens.rounding.large
-            color: Colours.palette.m3secondaryContainer
+            radius: CortetsuDesign.radiusMedium
+            color: CortetsuDesign.colorSecondaryContainer
 
-            MaterialIcon {
+            CortetsuIcon {
                 anchors.centerIn: parent
                 text: root.icon
-                fill: 1
-                color: Colours.palette.m3onSecondaryContainer
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuDesign.colorOnSecondaryContainer
+                iconSize: CortetsuTypography.iconLargePx
             }
         }
 
@@ -58,36 +57,36 @@ StyledRect {
             Row {
                 width: parent.width
 
-                StyledText {
+                CortetsuText {
                     width: parent.width * 0.52
                     text: root.title
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.medium
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelMediumPx
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     width: parent.width * 0.48
                     text: root.headline
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideLeft
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
                 visible: text.length > 0
                 text: root.subtitle
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.small
+                color: CortetsuDesign.colorOutline
+                textSize: CortetsuTypography.bodySmallPx
                 elide: Text.ElideRight
             }
         }
     }
 
-    StyledRect {
+    Rectangle {
         id: modeButton
         visible: root.modeLabel.length > 0
         anchors.top: parent.top
@@ -96,26 +95,26 @@ StyledRect {
         anchors.rightMargin: 16
         width: 42
         height: 26
-        radius: Tokens.rounding.full
-        color: Colours.palette.m3surfaceContainerHighest
+        radius: 999
+        color: CortetsuDesign.colorSurfaceHigh
         border.width: 1
-        border.color: Colours.palette.m3outlineVariant
+        border.color: CortetsuDesign.colorOutlineVariant
         z: 3
 
-        StateLayer {
+        CortetsuStateLayer {
             radius: parent.radius
             onClicked: root.modeRequested()
         }
 
-        StyledText {
+        CortetsuText {
             anchors.centerIn: parent
             text: root.modeLabel
-            color: Colours.palette.m3primary
-            font: Tokens.font.label.small
+            color: CortetsuDesign.colorPrimary
+            textSize: CortetsuTypography.labelSmallPx
         }
     }
 
-    StyledRect {
+    Rectangle {
         id: progressTrack
         visible: root.progress >= 0
         anchors.left: parent.left
@@ -125,14 +124,14 @@ StyledRect {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         height: 8
-        radius: Tokens.rounding.full
-        color: Colours.palette.m3surfaceContainerHighest
+        radius: 999
+        color: CortetsuDesign.colorSurfaceHigh
 
-        StyledRect {
+        Rectangle {
             width: parent.width * Math.max(0, Math.min(1, root.progress))
             height: parent.height
             radius: parent.radius
-            color: Colours.palette.m3primary
+            color: CortetsuDesign.colorPrimary
         }
     }
 
@@ -157,21 +156,21 @@ StyledRect {
                 height: 19
                 spacing: 8
 
-                StyledText {
+                CortetsuText {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * 0.52
                     text: String(modelData?.label ?? "")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOutline
+                    textSize: CortetsuTypography.labelSmallPx
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width * 0.48 - 8
                     text: String(modelData?.value ?? "—")
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideLeft
                 }

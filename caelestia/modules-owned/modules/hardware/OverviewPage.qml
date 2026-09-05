@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import qs.services
 
 Item {
@@ -170,16 +171,16 @@ Item {
         }
     }
 
-    StyledRect {
+    Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: cards.bottom
         anchors.topMargin: 12
         height: 80
-        radius: Tokens.rounding.extraLarge
-        color: Colours.palette.m3surfaceContainer
+        radius: CortetsuDesign.radiusLarge
+        color: CortetsuDesign.colorSurface
         border.width: 1
-        border.color: Colours.palette.m3outlineVariant
+        border.color: CortetsuDesign.colorOutlineVariant
 
         Row {
             anchors.fill: parent
@@ -191,18 +192,18 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Cooling")
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                 }
 
-                StyledText {
+                CortetsuText {
                     text: root.fans.length > 0
                         ? root.fans.map(f => `${f.name} ${f.rpm} RPM`).join(" · ")
                         : qsTr("No fan telemetry exposed")
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                     elide: Text.ElideRight
                     width: parent.width
                 }
@@ -213,18 +214,18 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("System load")
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                 }
 
-                StyledText {
+                CortetsuText {
                     text: root.snapshot?.load?.length
                         ? `${root.number(root.snapshot.load[0], 2)} · ${root.number(root.snapshot.load[1], 2)} · ${root.number(root.snapshot.load[2], 2)}`
                         : "—"
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                 }
             }
 
@@ -233,16 +234,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Network totals")
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                 }
 
-                StyledText {
+                CortetsuText {
                     text: `${qsTr("RX")} ${root.gb(root.network?.rx_total_gb)} · ${qsTr("TX")} ${root.gb(root.network?.tx_total_gb)}`
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                 }
             }
 
@@ -251,16 +252,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("CPU cores")
-                    color: Colours.palette.m3onSurface
-                    font: Tokens.font.title.small
+                    color: CortetsuDesign.colorOnSurface
+                    textSize: CortetsuTypography.titleSmallPx
                 }
 
-                StyledText {
+                CortetsuText {
                     text: `${root.cpu?.cores ?? 0} ${qsTr("logical threads")}`
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.label.small
+                    color: CortetsuDesign.colorOnSurfaceVariant
+                    textSize: CortetsuTypography.labelSmallPx
                 }
             }
         }
