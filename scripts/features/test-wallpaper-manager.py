@@ -50,7 +50,7 @@ assert "previewTimer.stop();" in body("apply") and "Wallpapers.previewColourLock
 assert "cancelPreview();" in body("random") and "Wallpapers.setRandom();" in body("random")
 assert "closeManager();" in wrapper and "Wallpapers.stopPreview();" in wrapper
 assert "globalOtherOverlayOpen" in wrapper and "onGlobalOtherOverlayOpenChanged" in wrapper
-assert "for (const candidate of Screens.screens)" in wrapper
+assert "for (const candidate of CortetsuScreens.screens)" in wrapper
 assert "OverlayPolicy.hasCompetingPanel" in wrapper and "closeCompetingPanels();" in wrapper
 
 # One policy covers both orders, including notification/sidebar and all retained overlays.
@@ -58,8 +58,8 @@ for other in ("launcher", "session", "dashboard", "utilities", "sidebar", "overv
     assert other in policy, f"policy does not exclude {other}"
 for controller_file in ("OverviewController.qml", "ClipboardController.qml", "HardwareController.qml", "DisplayController.qml"):
     controller = (MODULES / controller_file).read_text(encoding="utf-8")
-    assert "OverlayPolicy.closeOtherPanels" in controller and "for (const screen of Screens.screens)" in controller
-assert "OverlayPolicy.closeForWallpaper" in wallpaper_controller and "for (const screen of Screens.screens)" in wallpaper_controller
+assert "OverlayPolicy.closeOtherPanels" in controller and "for (const screen of CortetsuScreens.screens)" in controller
+assert "OverlayPolicy.closeForWallpaper" in wallpaper_controller and "for (const screen of CortetsuScreens.screens)" in wallpaper_controller
 assert "OverlayPolicy.closeOtherPanels(state);" in hub
 assert "toggleSidebarFor" in hub and "state.sidebar = !wasOpen;" in hub
 assert "const state = ShellState.forActive()?.cortetsuState;" in wallpaper_controller

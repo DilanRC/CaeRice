@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import ".."
 import QtQuick
 import Quickshell
 import QtQuick.Controls
@@ -18,8 +19,8 @@ FocusScope {
 
     readonly property var clients: {
         const values =
-            Hypr.toplevels.values.filter(c => {
-                if (!Hypr.isTaskbarToplevel(c))
+            CortetsuHypr.toplevels.values.filter(c => {
+                if (!CortetsuHypr.isTaskbarToplevel(c))
                     return false;
 
                 const ws = c.workspace;
@@ -58,7 +59,7 @@ FocusScope {
             : null
 
     readonly property int monitorCount:
-        Screens.screens.length
+        CortetsuScreens.screens.length
 
     readonly property string windowCountText:
         clients.length === 1
@@ -170,7 +171,7 @@ FocusScope {
     }
 
     function workspaceIdsForScreen(shellScreen, fallbackIndex): var {
-        const mon = Hypr.monitorFor(shellScreen);
+        const mon = CortetsuScreens.monitorFor(shellScreen);
         const name = mon?.name ?? "";
 
         let start = fallbackIndex * 10 + 1;
@@ -210,7 +211,7 @@ FocusScope {
         }
 
         const activeAddress =
-            addressOf(Hypr.activeToplevel);
+            addressOf(CortetsuHypr.activeToplevel);
 
         const idx =
             clients.findIndex(
@@ -255,13 +256,13 @@ FocusScope {
 
         Qt.callLater(() => {
             if (ws) {
-                if (Hypr.usingLua) {
+                if (CortetsuHypr.usingLua) {
                     const workspaceValue =
                         ws.name?.startsWith("special:")
                             ? `"${ws.name}"`
                             : ws.id;
 
-                    Hypr.dispatch(
+                    CortetsuHypr.dispatch(
                         `hl.dsp.focus({ workspace = ${workspaceValue} })`
                     );
                 } else {
@@ -270,15 +271,15 @@ FocusScope {
                             ? ws.name
                             : ws.id;
 
-                    Hypr.dispatch(
+                    CortetsuHypr.dispatch(
                         `workspace ${target}`
                     );
                 }
             }
 
             if (selector) {
-                Hypr.dispatch(
-                    Hypr.usingLua
+                CortetsuHypr.dispatch(
+                    CortetsuHypr.usingLua
                         ? `hl.dsp.focus({ window = "${selector}" })`
                         : `focuswindow ${selector}`
                 );
@@ -290,8 +291,8 @@ FocusScope {
         screenState.cortetsuState?.setRetained("overview", false);
 
         Qt.callLater(() => {
-            Hypr.dispatch(
-                Hypr.usingLua
+            CortetsuHypr.dispatch(
+                CortetsuHypr.usingLua
                     ? `hl.dsp.focus({ workspace = ${id} })`
                     : `workspace ${id}`
             );
@@ -305,8 +306,8 @@ FocusScope {
         if (!selector)
             return;
 
-        Hypr.dispatch(
-            Hypr.usingLua
+        CortetsuHypr.dispatch(
+            CortetsuHypr.usingLua
                 ? `hl.dsp.window.close({ window = "${selector}" })`
                 : `closewindow ${selector}`
         );
@@ -319,8 +320,8 @@ FocusScope {
         if (!selector)
             return;
 
-        Hypr.dispatch(
-            Hypr.usingLua
+        CortetsuHypr.dispatch(
+            CortetsuHypr.usingLua
                 ? `hl.dsp.window.float({ action = "toggle", window = "${selector}" })`
                 : `togglefloating ${selector}`
         );
@@ -333,8 +334,8 @@ FocusScope {
         if (!selector || workspaceId <= 0)
             return;
 
-        Hypr.dispatch(
-            Hypr.usingLua
+        CortetsuHypr.dispatch(
+            CortetsuHypr.usingLua
                 ? `hl.dsp.window.move({ workspace = ${workspaceId}, follow = false, window = "${selector}" })`
                 : `movetoworkspacesilent ${workspaceId},${selector}`
         );
@@ -664,7 +665,7 @@ FocusScope {
                 spacing: 10
 
                 Repeater {
-                    model: Screens.screens
+                    model: CortetsuScreens.screens
 
                     StyledRect {
                         id: monitorBox
@@ -673,7 +674,7 @@ FocusScope {
                         required property int index
 
                         readonly property var monitor:
-                            Hypr.monitorFor(modelData)
+                            CortetsuScreens.monitorFor(modelData)
 
                         readonly property var workspaceIds:
                             root.workspaceIdsForScreen(

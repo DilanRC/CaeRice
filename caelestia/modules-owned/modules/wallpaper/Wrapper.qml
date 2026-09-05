@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import ".."
 import QtQuick
 import Quickshell
 import Caelestia
@@ -14,7 +15,7 @@ Item {
     readonly property bool shouldBeActive: screenState.cortetsuState?.wallpaperManager ?? false
     readonly property bool presentationReady: contentLoader.item?.presentationReady ?? false
     readonly property bool globalOtherOverlayOpen: {
-        for (const candidate of Screens.screens) {
+        for (const candidate of CortetsuScreens.screens) {
             if (OverlayPolicy.hasCompetingPanel(ShellState.forScreen(candidate)))
                 return true;
         }
@@ -22,7 +23,7 @@ Item {
     }
 
     function closeCompetingPanels(): void {
-        for (const candidate of Screens.screens)
+        for (const candidate of CortetsuScreens.screens)
             OverlayPolicy.closeForWallpaper(ShellState.forScreen(candidate));
     }
 

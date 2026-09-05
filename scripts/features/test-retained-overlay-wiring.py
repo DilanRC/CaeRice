@@ -145,7 +145,7 @@ def main() -> None:
         assert flag in policy, flag
     assert "function closeForWallpaper" in policy and "function hasCompetingPanel" in policy
     assert "globalOtherOverlayOpen" in wrapper
-    assert "for (const candidate of Screens.screens)" in wrapper
+    assert "for (const candidate of CortetsuScreens.screens)" in wrapper
     assert "onGlobalOtherOverlayOpenChanged" in wrapper
     assert "closeCompetingPanels();" in wrapper
     assert "CustomShortcut" in controller and "OverlayPolicy.closeForWallpaper" in controller

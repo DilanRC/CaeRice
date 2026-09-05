@@ -12,7 +12,7 @@ Scope {
     id: root
 
     function anyOpen(): bool {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             if (ShellState.forScreen(screen)?.cortetsuState?.calendar)
                 return true;
         }
@@ -20,7 +20,7 @@ Scope {
     }
 
     function close(): void {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("calendar", false);

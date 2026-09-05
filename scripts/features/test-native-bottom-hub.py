@@ -24,7 +24,7 @@ FIRST_PARTY_FILES = (
 )
 
 FORBIDDEN_VIEW_TOKENS = (
-    "Hypr.",
+    "Hyprland.",
     "SystemTray.",
     "Audio.",
     "Nmcli.",
@@ -93,7 +93,7 @@ def assert_controller(text: str) -> None:
         "GlobalConfig.launcher.favouriteApps",
         "SystemTray.items.values",
         "Apps.launch(item.entry)",
-        "Hypr.dispatch(",
+        "CortetsuHypr.dispatch(",
         "Audio.incrementVolume()",
         "Audio.decrementVolume()",
         "Nmcli.activeEthernet",

@@ -109,6 +109,7 @@ python3 "$REPO/caelestia/tests/test-calendar-polish.py"
 python3 "$REPO/caelestia/tests/test-pomodoro.py"
 python3 "$REPO/caelestia/tests/test-runtime-contract.py"
 python3 "$REPO/scripts/features/test-cortetsu-screen-state.py"
+python3 "$REPO/scripts/features/test-cortetsu-hypr-adapters.py"
 python3 "$REPO/scripts/features/test-calendar-controller-state.py"
 python3 "$REPO/scripts/features/test-legacy-process-migration.py"
 bash -n "$REPO/caelestia/bin/cortetsu-wallpaper-color-daemon"
@@ -130,6 +131,8 @@ for required in \
     modules/calendar/Wrapper.qml \
     modules/CortetsuScreenState.qml \
     modules/CortetsuOverlayPolicy.js \
+    modules/CortetsuHypr.qml \
+    modules/CortetsuScreens.qml \
     compatibility.json \
     composition.json
 do

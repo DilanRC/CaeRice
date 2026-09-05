@@ -20,7 +20,7 @@ Scope {
     property bool shown: true
 
     function closeAllLaunchers(): void {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen);
             if (state)
                 state.launcher = false;
@@ -28,7 +28,7 @@ Scope {
     }
 
     function closeAllPanels(): void {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen);
             OverlayPolicy.closeOtherPanels(state);
         }
@@ -127,7 +127,7 @@ Scope {
     }
 
     function openWallpaperFor(screen): void {
-        for (const candidate of Screens.screens) {
+        for (const candidate of CortetsuScreens.screens) {
             const state = ShellState.forScreen(candidate)?.cortetsuState;
             if (!state)
                 continue;
@@ -206,18 +206,18 @@ Scope {
     }
 
     Variants {
-        model: Screens.screens
+        model: CortetsuScreens.screens
 
         PanelWindow {
             id: win
 
             required property ShellScreen modelData
 
-            readonly property var monitor: Hypr.monitorFor(modelData)
+            readonly property var monitor: CortetsuScreens.monitorFor(modelData)
             readonly property var screenState: ShellState.forScreen(modelData)
             readonly property var cortetsuState: screenState?.cortetsuState
             readonly property string activeAddress:
-                Hypr.activeToplevel?.lastIpcObject?.address ?? ""
+                CortetsuHypr.activeToplevel?.lastIpcObject?.address ?? ""
             readonly property bool panelActive:
                 (screenState?.launcher ?? false)
                 || (cortetsuState?.overview ?? false)
@@ -225,10 +225,10 @@ Scope {
                 || (screenState?.session ?? false)
                 || (cortetsuState?.calendar ?? false)
             readonly property int hubMargin: 8
-            readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
+            readonly property int activeWsId: monitor?.activeWorkspace?.id ?? CortetsuHypr.activeWsId
             readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
             readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
-            readonly property var occupiedWorkspaceIds: Hypr.workspaces.values
+            readonly property var occupiedWorkspaceIds: CortetsuHypr.workspaces.values
                 .filter(ws => ws.lastIpcObject?.windows > 0)
                 .map(ws => ws.id)
 
@@ -263,8 +263,8 @@ Scope {
             property var pendingFocusClient: null
 
             readonly property var dockItems: {
-                const clients = Hypr.toplevels.values.filter(client => {
-                    if (!Hypr.isTaskbarToplevel(client))
+                const clients = CortetsuHypr.toplevels.values.filter(client => {
+                    if (!CortetsuHypr.isTaskbarToplevel(client))
                         return false;
 
                     const clientMonitor = client.lastIpcObject?.monitor;
@@ -372,8 +372,8 @@ Scope {
                     return;
 
                 const selector = `address:${address}`;
-                Hypr.dispatch(
-                    Hypr.usingLua
+                CortetsuHypr.dispatch(
+                    CortetsuHypr.usingLua
                         ? `hl.dsp.focus({ window = \"${selector}\" })`
                         : `focuswindow ${selector}`
                 );
@@ -396,8 +396,8 @@ Scope {
                     return;
 
                 const selector = `address:${address}`;
-                Hypr.dispatch(
-                    Hypr.usingLua
+                CortetsuHypr.dispatch(
+                    CortetsuHypr.usingLua
                         ? `hl.dsp.window.close({ window = \"${selector}\" })`
                         : `closewindow ${selector}`
                 );
@@ -550,10 +550,10 @@ Scope {
                 property int restoreY: 0
 
                 onTriggered: {
-                    if (Hypr.usingLua)
-                        Hypr.dispatch(`hl.dsp.cursor.move({ x = ${restoreX}, y = ${restoreY} })`);
+                    if (CortetsuHypr.usingLua)
+                        CortetsuHypr.dispatch(`hl.dsp.cursor.move({ x = ${restoreX}, y = ${restoreY} })`);
                     else
-                        Hypr.dispatch(`movecursor ${restoreX} ${restoreY}`);
+                        CortetsuHypr.dispatch(`movecursor ${restoreX} ${restoreY}`);
                 }
             }
 
@@ -614,8 +614,8 @@ Scope {
 
                 onLauncherRequested: hubRoot.toggleLauncherFor(win.modelData)
                 onWallpaperRequested: hubRoot.openWallpaperFor(win.modelData)
-                onWorkspaceRequested: workspaceId => Hypr.dispatch(
-                    Hypr.usingLua
+                onWorkspaceRequested: workspaceId => CortetsuHypr.dispatch(
+                    CortetsuHypr.usingLua
                         ? `hl.dsp.focus({ workspace = \"${workspaceId}\" })`
                         : `workspace ${workspaceId}`
                 )

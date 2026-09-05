@@ -12,7 +12,7 @@ Scope {
     id: root
 
     function anyOpen(): bool {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             if (ShellState.forScreen(screen)?.cortetsuState?.wallpaperManager)
                 return true;
         }
@@ -20,7 +20,7 @@ Scope {
     }
 
     function closeAll(): void {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("wallpaperManager", false);
@@ -28,7 +28,7 @@ Scope {
     }
 
     function closeOtherPanels(): void {
-        for (const screen of Screens.screens)
+        for (const screen of CortetsuScreens.screens)
             OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 

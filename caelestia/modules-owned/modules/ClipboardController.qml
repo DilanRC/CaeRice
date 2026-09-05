@@ -12,7 +12,7 @@ Scope {
     id: root
 
     function anyOpen(): bool {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state?.clipboard)
                 return true;
@@ -22,7 +22,7 @@ Scope {
     }
 
     function closeAll(): void {
-        for (const screen of Screens.screens) {
+        for (const screen of CortetsuScreens.screens) {
             const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
                 state.setRetained("clipboard", false);
@@ -30,7 +30,7 @@ Scope {
     }
 
     function closeOtherPanels(): void {
-        for (const screen of Screens.screens)
+        for (const screen of CortetsuScreens.screens)
             OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
