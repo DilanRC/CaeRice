@@ -47,6 +47,7 @@ Usage:
   cortetsu theme <action>          check|compile|adopt native desktop theme
   cortetsu shell <action>          status|adopt|reconcile|restart|disable|logs
   cortetsu legacy-processes <action> scan|migrate
+  cortetsu config migrate         Import functional preferences to ~/.config/cortetsu
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -201,6 +202,13 @@ legacy_processes_cmd() {
     python3 "$ROOT/core/migrate_legacy_processes.py" "$action"
 }
 
+config_cmd() {
+    require_repo
+    [[ "${1:-}" == "migrate" ]] || fail "acción config inválida: migrate"
+    require_file "$ROOT/core/migrate_config.py"
+    python3 "$ROOT/core/migrate_config.py"
+}
+
 test_cmd() {
     require_repo
     local tests=(
@@ -224,6 +232,8 @@ test_cmd() {
         "caelestia/tests/test-pomodoro.py"
         "caelestia/tests/test-runtime-contract.py"
         "scripts/features/test-cortetsu-screen-state.py"
+        "scripts/features/test-cortetsu-config.py"
+        "scripts/features/test-config-migration.py"
         "scripts/features/test-legacy-process-migration.py"
     )
     local test_path
@@ -308,6 +318,7 @@ case "$command" in
     theme) theme_cmd "$@" ;;
     shell) shell_cmd "$@" ;;
     legacy-processes) legacy_processes_cmd "$@" ;;
+    config) config_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
     audit) audit_cmd "$@" ;;
