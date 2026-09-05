@@ -5,23 +5,24 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
 import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
     focus: true
-    required property ScreenState screenState
+    required property var screenState
     property var payload: ({})
     property var selection: ({})
     property var pomodoro: ({})
     property date selectedDate: new Date()
     property double nowMs: Date.now()
     property string syncStatus: ""
-    readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/caelestia/calendar-events.json`
-    readonly property string selectionPath: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/caelestia/calendar-selection.json`
-    readonly property string pomodoroPath: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/caelestia/pomodoro.json`
+    readonly property string cachePath: `${Quickshell.env("XDG_CACHE_HOME") || `${Quickshell.env("HOME")}/.cache`}/cortetsu/calendar-events.json`
+    readonly property string selectionPath: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/cortetsu/calendar-selection.json`
+    readonly property string pomodoroPath: `${Quickshell.env("XDG_STATE_HOME") || `${Quickshell.env("HOME")}/.local/state`}/cortetsu/pomodoro.json`
     readonly property string calendarHelperPath: `${Quickshell.env("HOME")}/.local/bin/cortetsu-calendar`
     readonly property string pomodoroHelperPath: `${Quickshell.env("HOME")}/.local/bin/cortetsu-pomodoro`
     readonly property var selectedEvents: (payload.events || []).filter(event => eventOccursOnDate(event, selectedDate))
@@ -130,14 +131,14 @@ Item {
         calendarSync.running = true;
     }
 
-    component FocusButton: StyledRect {
+    component FocusButton: CortetsuSurface { outlined: false;
         required property string label
         signal clicked()
-        implicitWidth: buttonLabel.implicitWidth + Tokens.padding.medium * 2
+        implicitWidth: buttonLabel.implicitWidth + CortetsuDesign.spacingStandard * 2
         implicitHeight: 30
-        radius: Tokens.rounding.small
-        color: buttonMouse.containsMouse ? Colours.palette.m3secondary : Colours.palette.m3surfaceContainerHigh
-        StyledText { id: buttonLabel; anchors.centerIn: parent; text: parent.label; color: Colours.palette.m3onSurface; font: Tokens.font.label.medium }
+        radius: CortetsuDesign.radiusSmall
+        color: buttonMouse.containsMouse ? CortetsuDesign.colorSecondary : CortetsuDesign.colorSurfaceHigh
+        CortetsuText { id: buttonLabel; anchors.centerIn: parent; text: parent.label; color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.labelMediumPx }
         MouseArea { id: buttonMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: parent.clicked() }
     }
 
@@ -186,41 +187,41 @@ Item {
     Timer { interval: 1000; repeat: true; running: root.isActivePhase(pomodoro.phase); onTriggered: root.nowMs = Date.now() }
     Keys.onEscapePressed: root.screenState.cortetsuState?.setRetained("calendar", false)
 
-    StyledRect {
+    CortetsuSurface { outlined: false;
         anchors.fill: parent
-        radius: Tokens.rounding.large
-        color: Colours.palette.m3surfaceContainer
+        radius: CortetsuDesign.radiusLarge
+        color: CortetsuDesign.colorSurface
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            spacing: Tokens.spacing.medium
+            anchors.margins: CortetsuDesign.spacingComfortable
+            spacing: CortetsuDesign.spacingStandard
 
             RowLayout {
                 Layout.fillWidth: true
-                StyledText { Layout.fillWidth: true; text: qsTr("Calendar"); font: Tokens.font.title.large; color: Colours.palette.m3onSurface }
-                StyledText { visible: root.syncStatus.length > 0; text: root.syncStatus; font: Tokens.font.label.small; color: Colours.palette.m3onSurfaceVariant }
-                Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: calendarSync.running ? "sync" : "refresh"; color: Colours.palette.m3onSurfaceVariant } MouseArea { anchors.fill: parent; enabled: !calendarSync.running; cursorShape: Qt.PointingHandCursor; onClicked: root.requestCalendarSync(true) } }
-                Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.screenState.cortetsuState?.setRetained("calendar", false) } }
+                CortetsuText { Layout.fillWidth: true; text: qsTr("Calendar"); textSize: CortetsuTypography.titleLargePx; color: CortetsuDesign.colorOnSurface }
+                CortetsuText { visible: root.syncStatus.length > 0; text: root.syncStatus; textSize: CortetsuTypography.labelSmallPx; color: CortetsuDesign.colorOnSurfaceVariant }
+                Item { implicitWidth: 32; implicitHeight: 32; CortetsuIcon { anchors.centerIn: parent; text: calendarSync.running ? "sync" : "refresh"; color: CortetsuDesign.colorOnSurfaceVariant } MouseArea { anchors.fill: parent; enabled: !calendarSync.running; cursorShape: Qt.PointingHandCursor; onClicked: root.requestCalendarSync(true) } }
+                Item { implicitWidth: 32; implicitHeight: 32; CortetsuIcon { anchors.centerIn: parent; text: "close"; color: CortetsuDesign.colorOnSurfaceVariant } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.screenState.cortetsuState?.setRetained("calendar", false) } }
             }
 
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: Tokens.spacing.large
+                spacing: CortetsuDesign.spacingComfortable
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.preferredWidth: 430
-                    spacing: Tokens.spacing.small
+                    spacing: CortetsuDesign.spacingCompact
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: "chevron_left"; color: Colours.palette.m3onSurface } MouseArea { anchors.fill: parent; onClicked: root.changeMonth(-1) } }
-                        StyledText { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(root.selectedDate, "MMMM yyyy"); font: Tokens.font.title.medium; color: Colours.palette.m3onSurface }
+                        Item { implicitWidth: 32; implicitHeight: 32; CortetsuIcon { anchors.centerIn: parent; text: "chevron_left"; color: CortetsuDesign.colorOnSurface } MouseArea { anchors.fill: parent; onClicked: root.changeMonth(-1) } }
+                        CortetsuText { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: Qt.formatDate(root.selectedDate, "MMMM yyyy"); textSize: CortetsuTypography.titleMediumPx; color: CortetsuDesign.colorOnSurface }
                         Button { text: qsTr("Today"); flat: true; onClicked: root.selectedDate = new Date() }
-                        Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: "chevron_right"; color: Colours.palette.m3onSurface } MouseArea { anchors.fill: parent; onClicked: root.changeMonth(1) } }
+                        Item { implicitWidth: 32; implicitHeight: 32; CortetsuIcon { anchors.centerIn: parent; text: "chevron_right"; color: CortetsuDesign.colorOnSurface } MouseArea { anchors.fill: parent; onClicked: root.changeMonth(1) } }
                     }
 
                     GridLayout {
@@ -228,7 +229,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.preferredHeight: 290
                         columns: 7
-                        Repeater { model: [qsTr("Mo"), qsTr("Tu"), qsTr("We"), qsTr("Th"), qsTr("Fr"), qsTr("Sa"), qsTr("Su")]; delegate: StyledText { required property var modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small } }
+                        Repeater { model: [qsTr("Mo"), qsTr("Tu"), qsTr("We"), qsTr("Th"), qsTr("Fr"), qsTr("Sa"), qsTr("Su")]; delegate: CortetsuText { required property var modelData; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: modelData; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx } }
                         Repeater {
                             model: 42
                             delegate: Item {
@@ -236,15 +237,15 @@ Item {
                                 required property int index
                                 Layout.fillWidth: true; Layout.fillHeight: true
                                 readonly property int day: { const value = index - root.firstOffset(root.selectedDate) + 1; return value > 0 && value <= root.daysInMonth(root.selectedDate) ? value : 0; }
-                                StyledRect { anchors.centerIn: parent; width: 34; height: 34; radius: 17; color: root.isSelected(parent.day) ? Colours.palette.m3primary : (root.isToday(parent.day) ? Colours.palette.m3primaryContainer : "transparent") }
-                                StyledText { anchors.centerIn: parent; text: parent.day || ""; color: root.isSelected(parent.day) ? Colours.palette.m3onPrimary : (root.isToday(parent.day) ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface); font: Tokens.font.label.medium }
+                                CortetsuSurface { outlined: false; anchors.centerIn: parent; width: 34; height: 34; radius: 17; color: root.isSelected(parent.day) ? CortetsuDesign.colorPrimary : (root.isToday(parent.day) ? CortetsuDesign.colorPrimaryContainer : "transparent") }
+                                CortetsuText { anchors.centerIn: parent; text: parent.day || ""; color: root.isSelected(parent.day) ? CortetsuDesign.colorOnPrimary : (root.isToday(parent.day) ? CortetsuDesign.colorOnPrimaryContainer : CortetsuDesign.colorOnSurface); textSize: CortetsuTypography.labelMediumPx }
                                 Row {
                                     anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; spacing: 2
                                     Repeater {
                                         model: dayCell.day ? root.eventsForDay(dayCell.day).slice(0, 3) : []
-                                        delegate: Rectangle { required property var modelData; width: 4; height: 4; radius: 2; color: modelData.calendarColor || Colours.palette.m3tertiary }
+                                        delegate: Rectangle { required property var modelData; width: 4; height: 4; radius: 2; color: modelData.calendarColor || CortetsuDesign.colorTertiary }
                                     }
-                                    StyledText { visible: dayCell.day && root.eventsForDay(dayCell.day).length > 3; text: "+"; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                                    CortetsuText { visible: dayCell.day && root.eventsForDay(dayCell.day).length > 3; text: "+"; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
                                 }
                                 MouseArea { anchors.fill: parent; enabled: parent.day > 0; hoverEnabled: true; onClicked: root.selectedDate = new Date(root.selectedDate.getFullYear(), root.selectedDate.getMonth(), parent.day) }
                             }
@@ -253,19 +254,19 @@ Item {
 
                     Flow {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.small
+                        spacing: CortetsuDesign.spacingCompact
                         Repeater {
                             model: root.payload.calendars || []
-                            delegate: StyledRect {
+                            delegate: CortetsuSurface { outlined: false;
                                 required property var modelData
                                 readonly property bool enabled: (root.selection.enabled || []).includes(modelData.calendarId)
-                                implicitWidth: chipRow.implicitWidth + Tokens.padding.medium * 2; implicitHeight: 30; radius: Tokens.rounding.full
-                                color: enabled ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHigh
+                                implicitWidth: chipRow.implicitWidth + CortetsuDesign.spacingStandard * 2; implicitHeight: 30; radius: 999
+                                color: enabled ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurfaceHigh
                                 RowLayout {
-                                    id: chipRow; anchors.centerIn: parent; spacing: Tokens.spacing.small
-                                    Rectangle { implicitWidth: 8; implicitHeight: 8; radius: 4; color: modelData.calendarColor || Colours.palette.m3secondary }
-                                    StyledText { text: root.friendlyName(modelData); color: parent.parent.enabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.medium }
-                                    StyledText { text: parent.parent.enabled ? "✓" : "+"; color: parent.parent.enabled ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.medium }
+                                    id: chipRow; anchors.centerIn: parent; spacing: CortetsuDesign.spacingCompact
+                                    Rectangle { implicitWidth: 8; implicitHeight: 8; radius: 4; color: modelData.calendarColor || CortetsuDesign.colorSecondary }
+                                    CortetsuText { text: root.friendlyName(modelData); color: parent.parent.enabled ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelMediumPx }
+                                    CortetsuText { text: parent.parent.enabled ? "✓" : "+"; color: parent.parent.enabled ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelMediumPx }
                                 }
                                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { selectionProcess.command = [Quickshell.env("HOME") + "/.local/bin/cortetsu-calendar", "set-selection", modelData.calendarId, parent.enabled ? "false" : "true"]; selectionProcess.running = true; } }
                             }
@@ -277,51 +278,51 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.preferredWidth: 350
-                    spacing: Tokens.spacing.medium
+                    spacing: CortetsuDesign.spacingStandard
 
-                    StyledRect {
+                    CortetsuSurface { outlined: false;
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        radius: Tokens.rounding.medium
-                        color: Colours.palette.m3surfaceContainerHigh
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSurfaceHigh
                         ColumnLayout {
-                            anchors.fill: parent; anchors.margins: Tokens.padding.medium; spacing: Tokens.spacing.small
-                            StyledText { Layout.fillWidth: true; text: Qt.formatDate(root.selectedDate, "dddd, MMMM d"); font: Tokens.font.title.medium; color: Colours.palette.m3onSurface }
-                            StyledText { text: root.selectedEvents.length ? `${root.selectedEvents.length} ${root.selectedEvents.length === 1 ? qsTr("event") : qsTr("events")}` : qsTr("Your day is clear"); color: Colours.palette.m3primary; font: Tokens.font.label.medium }
+                            anchors.fill: parent; anchors.margins: CortetsuDesign.spacingStandard; spacing: CortetsuDesign.spacingCompact
+                            CortetsuText { Layout.fillWidth: true; text: Qt.formatDate(root.selectedDate, "dddd, MMMM d"); textSize: CortetsuTypography.titleMediumPx; color: CortetsuDesign.colorOnSurface }
+                            CortetsuText { text: root.selectedEvents.length ? `${root.selectedEvents.length} ${root.selectedEvents.length === 1 ? qsTr("event") : qsTr("events")}` : qsTr("Your day is clear"); color: CortetsuDesign.colorPrimary; textSize: CortetsuTypography.labelMediumPx }
                             ColumnLayout {
-                                visible: !root.selectedEvents.length; Layout.fillWidth: true; Layout.fillHeight: true; spacing: Tokens.spacing.small
+                                visible: !root.selectedEvents.length; Layout.fillWidth: true; Layout.fillHeight: true; spacing: CortetsuDesign.spacingCompact
                                 Item { Layout.fillHeight: true }
-                                MaterialIcon { Layout.alignment: Qt.AlignHCenter; text: "event_available"; color: Colours.palette.m3onSurfaceVariant; fontStyle: Tokens.font.icon.large }
-                                StyledText { Layout.alignment: Qt.AlignHCenter; text: qsTr("No events"); color: Colours.palette.m3onSurface; font: Tokens.font.title.small }
-                                StyledText { Layout.alignment: Qt.AlignHCenter; text: qsTr("Take the time for yourself."); color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.body.small }
+                                CortetsuIcon { Layout.alignment: Qt.AlignHCenter; text: "event_available"; color: CortetsuDesign.colorOnSurfaceVariant; iconSize: CortetsuTypography.iconLargePx }
+                                CortetsuText { Layout.alignment: Qt.AlignHCenter; text: qsTr("No events"); color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+                                CortetsuText { Layout.alignment: Qt.AlignHCenter; text: qsTr("Take the time for yourself."); color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.bodySmallPx }
                                 Item { Layout.fillHeight: true }
                             }
                             ListView {
-                                visible: root.selectedEvents.length > 0; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: Tokens.spacing.small; model: root.selectedEvents
+                                visible: root.selectedEvents.length > 0; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: CortetsuDesign.spacingCompact; model: root.selectedEvents
                                 delegate: RowLayout {
-                                    required property var modelData; width: parent.width; spacing: Tokens.spacing.small
-                                    Rectangle { implicitWidth: 5; implicitHeight: eventDetails.implicitHeight; radius: 3; color: modelData.calendarColor || Colours.palette.m3primary }
+                                    required property var modelData; width: parent.width; spacing: CortetsuDesign.spacingCompact
+                                    Rectangle { implicitWidth: 5; implicitHeight: eventDetails.implicitHeight; radius: 3; color: modelData.calendarColor || CortetsuDesign.colorPrimary }
                                     ColumnLayout {
                                         id: eventDetails; Layout.fillWidth: true; spacing: 1
-                                        StyledText { Layout.fillWidth: true; text: modelData.title; elide: Text.ElideRight; color: Colours.palette.m3onSurface; font: Tokens.font.body.large }
-                                        StyledText { Layout.fillWidth: true; text: `${root.eventTime(modelData)}  ·  ${root.friendlyName(modelData)}`; elide: Text.ElideRight; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
-                                        StyledText { visible: !!modelData.location; Layout.fillWidth: true; text: modelData.location; elide: Text.ElideRight; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                                        CortetsuText { Layout.fillWidth: true; text: modelData.title; elide: Text.ElideRight; color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.bodyLargePx }
+                                        CortetsuText { Layout.fillWidth: true; text: `${root.eventTime(modelData)}  ·  ${root.friendlyName(modelData)}`; elide: Text.ElideRight; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
+                                        CortetsuText { visible: !!modelData.location; Layout.fillWidth: true; text: modelData.location; elide: Text.ElideRight; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
                                     }
                                 }
                             }
                         }
                     }
 
-                    StyledRect {
+                    CortetsuSurface { outlined: false;
                         Layout.fillWidth: true
                         Layout.preferredHeight: 154
-                        radius: Tokens.rounding.medium
-                        color: Colours.palette.m3secondaryContainer
+                        radius: CortetsuDesign.radiusMedium
+                        color: CortetsuDesign.colorSecondaryContainer
                         ColumnLayout {
-                            anchors.fill: parent; anchors.margins: Tokens.padding.medium; spacing: Tokens.spacing.small
-                            RowLayout { Layout.fillWidth: true; StyledText { Layout.fillWidth: true; text: root.phaseLabel(); color: Colours.palette.m3onSecondaryContainer; font: Tokens.font.label.large } StyledText { text: qsTr("%1 sessions").arg(Number(pomodoro.completedSessions || 0)); color: Colours.palette.m3onSecondaryContainer; font: Tokens.font.label.small } }
-                            StyledText { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: root.timeLeft(); color: Colours.palette.m3onSecondaryContainer; font: Tokens.font.title.large }
-                            Rectangle { Layout.fillWidth: true; implicitHeight: 5; radius: 3; color: Colours.palette.m3secondary; Rectangle { height: parent.height; width: parent.width * root.progress(); radius: 3; color: Colours.palette.m3onSecondaryContainer; Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } } } }
+                            anchors.fill: parent; anchors.margins: CortetsuDesign.spacingStandard; spacing: CortetsuDesign.spacingCompact
+                            RowLayout { Layout.fillWidth: true; CortetsuText { Layout.fillWidth: true; text: root.phaseLabel(); color: CortetsuDesign.colorOnSecondaryContainer; textSize: CortetsuTypography.labelLargePx } CortetsuText { text: qsTr("%1 sessions").arg(Number(pomodoro.completedSessions || 0)); color: CortetsuDesign.colorOnSecondaryContainer; textSize: CortetsuTypography.labelSmallPx } }
+                            CortetsuText { Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter; text: root.timeLeft(); color: CortetsuDesign.colorOnSecondaryContainer; textSize: CortetsuTypography.titleLargePx }
+                            Rectangle { Layout.fillWidth: true; implicitHeight: 5; radius: 3; color: CortetsuDesign.colorSecondary; Rectangle { height: parent.height; width: parent.width * root.progress(); radius: 3; color: CortetsuDesign.colorOnSecondaryContainer; Behavior on width { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } } } }
                             RowLayout { Layout.fillWidth: true; Item { Layout.fillWidth: true } FocusButton { visible: root.isBreakPhase(pomodoro.phase); label: qsTr("Skip break"); onClicked: root.runPomodoro("skip") } FocusButton { label: root.isActivePhase(pomodoro.phase) ? qsTr("Pause") : pomodoro.phase === "PAUSED" ? qsTr("Resume") : qsTr("Start"); onClicked: root.runPomodoro(root.isActivePhase(pomodoro.phase) ? "pause" : pomodoro.phase === "PAUSED" ? "resume" : "start") } FocusButton { label: qsTr("Reset"); onClicked: root.runPomodoro("reset") } }
                         }
                     }

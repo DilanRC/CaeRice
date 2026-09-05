@@ -5,7 +5,7 @@ content = (Path(__file__).resolve().parents[1] / "modules-owned/modules/calendar
 for expected in (
     'calendar.primary ? qsTr("Personal")',
     'eventsForDay(dayCell.day).slice(0, 3)',
-    'modelData.calendarColor || Colours.palette.m3tertiary',
+    'modelData.calendarColor || CortetsuDesign.colorTertiary',
     'label: qsTr("Skip break")',
     'root.runPomodoro("skip")',
     'text: qsTr("No events")',
@@ -13,7 +13,7 @@ for expected in (
     'root.eventTime(modelData)',
     'modelData.location',
     'implicitWidth: chipRow.implicitWidth',
-    'component FocusButton: StyledRect',
+    'component FocusButton: CortetsuSurface',
     'onClicked: parent.clicked()',
     'root.pomodoro = JSON.parse(text.trim())',
     'function runPomodoro(command: string)',
@@ -26,7 +26,9 @@ for expected in (
     'eventOccursOnDate',
 ):
     assert expected in content, expected
-assert 'Tokens.font.title.large' in content
+assert 'CortetsuTypography.titleLargePx' in content
 assert 'Tokens.font.display.small' not in content
+for legacy in ('Caelestia.Config', 'qs.components', 'Colours.', 'Tokens.', 'StyledRect', 'StyledText', 'MaterialIcon'):
+    assert legacy not in content, legacy
 assert "delegate: CheckBox" not in content
 print("PASS: Calendar lifecycle sync, event design, and full Pomodoro phases are wired")

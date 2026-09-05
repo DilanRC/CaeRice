@@ -9,6 +9,20 @@ var colorIndigo = "#334E68"
 var colorVermillion = "#D64B32"
 var colorMuted = "#8A919B"
 
+var colorSurface = colorTetsu
+var colorSurfaceHigh = "#222831"
+var colorOnSurface = colorWashi
+var colorOnSurfaceVariant = colorMuted
+var colorPrimary = colorIndigo
+var colorOnPrimary = colorWashi
+var colorPrimaryContainer = "#263E53"
+var colorOnPrimaryContainer = colorWashi
+var colorSecondary = "#526D82"
+var colorSecondaryContainer = "#293B4A"
+var colorOnSecondaryContainer = colorWashi
+var colorTertiary = colorVermillion
+var colorOutline = colorMuted
+
 var radiusSmall = 8
 var radiusMedium = 14
 var radiusLarge = 22
