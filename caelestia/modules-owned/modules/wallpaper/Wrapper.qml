@@ -15,7 +15,7 @@ Item {
     readonly property bool presentationReady: contentLoader.item?.presentationReady ?? false
     readonly property bool globalOtherOverlayOpen: {
         for (const candidate of CortetsuScreens.screens) {
-            if (OverlayPolicy.hasCompetingPanel(ShellState.forScreen(candidate)))
+            if (OverlayPolicy.hasCompetingPanel(CortetsuShellState.forScreen(candidate)))
                 return true;
         }
         return false;
@@ -23,7 +23,7 @@ Item {
 
     function closeCompetingPanels(): void {
         for (const candidate of CortetsuScreens.screens)
-            OverlayPolicy.closeForWallpaper(ShellState.forScreen(candidate));
+            OverlayPolicy.closeForWallpaper(CortetsuShellState.forScreen(candidate));
     }
 
     visible: opacity > 0.001
