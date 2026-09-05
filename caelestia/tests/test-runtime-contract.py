@@ -13,7 +13,6 @@ legacy_process_migration = (repo / "core/migrate_legacy_processes.py").read_text
 wallpaper_daemon = (repo / "caelestia/bin/cortetsu-wallpaper-color-daemon").read_text(encoding="utf-8")
 wallpaper_unit = (repo / "config/systemd/user/cortetsu-wallpaper-color.service").read_text(encoding="utf-8")
 rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
-wrapper = (repo / "caelestia/bin/caelestia").read_text(encoding="utf-8")
 composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
 content = (repo / "caelestia/modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
 cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
@@ -64,6 +63,8 @@ assert "install-theme-bridge.py" not in installer
 assert "canonical=" not in installer
 assert "sudo " not in installer
 assert "legacy-processes) legacy_processes_cmd" in cli
+assert "screenshot) screenshot_cmd" in cli
+assert "/usr/bin/caelestia" not in cli
 
 for marker in (
     'calendar-client.json" "$CONFIG_HOME/cortetsu/calendar-client.json"',
@@ -98,9 +99,6 @@ for marker in (
     assert marker in rollback, marker
 assert "ln -sfn" not in rollback
 
-assert 'runtime="$runtime_root/current"' in wrapper
-assert "/quickshell/cortetsu" in wrapper
-assert "exec /usr/bin/caelestia" in wrapper
 assert "required_imports" in composer and "invalid composed marker count" in composer
 
 for marker in (

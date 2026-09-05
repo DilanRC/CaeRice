@@ -84,7 +84,8 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-shell-lifecycle-") as tmp:
     assert "systemctl --user start cortetsu-shell.service" in keybinds_text
     assert "systemctl --user stop cortetsu-shell.service" in keybinds_text
     assert "systemctl --user restart cortetsu-shell.service" in keybinds_text
-    assert "caelestia screenshot" in keybinds_text
+    assert "caelestia screenshot" not in keybinds_text
+    assert "cortetsu screenshot" in keybinds_text
     assert stale_backup.read_text(encoding="utf-8") == "caelestia shell -d\n"
 
     backups = list((data / "migrations").glob("*/hypr-shell-lifecycle/.config/hypr/hyprland/execs.lua"))

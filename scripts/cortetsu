@@ -48,6 +48,7 @@ Usage:
   cortetsu shell <action>          status|adopt|reconcile|restart|disable|logs
   cortetsu legacy-processes <action> scan|migrate
   cortetsu config migrate         Import functional preferences to ~/.config/cortetsu
+  cortetsu screenshot [-r] [-f]   Open the Cortetsu regional screenshot picker
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -209,6 +210,22 @@ config_cmd() {
     python3 "$ROOT/core/migrate_config.py"
 }
 
+screenshot_cmd() {
+    local freeze=false arg
+    for arg in "$@"; do
+        case "$arg" in
+            -r|--region) ;;
+            -f|--freeze) freeze=true ;;
+            *) fail "opción de screenshot desconocida: $arg" ;;
+        esac
+    done
+    [[ -f "$CURRENT/shell.qml" ]] || fail "no hay un runtime Cortetsu promovido"
+    if "$freeze"; then
+        exec qs -p "$CURRENT" ipc call picker openFreeze
+    fi
+    exec qs -p "$CURRENT" ipc call picker open
+}
+
 test_cmd() {
     require_repo
     local tests=(
@@ -319,6 +336,7 @@ case "$command" in
     shell) shell_cmd "$@" ;;
     legacy-processes) legacy_processes_cmd "$@" ;;
     config) config_cmd "$@" ;;
+    screenshot) screenshot_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
     audit) audit_cmd "$@" ;;

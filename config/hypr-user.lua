@@ -131,7 +131,7 @@ hl.bind(
 
 hl.bind(
     "Print",
-    hl.dsp.exec_cmd("caelestia screenshot -r -f")
+    hl.dsp.exec_cmd("cortetsu screenshot -r -f")
 )
 
 

@@ -23,6 +23,10 @@ LEGACY_REPLACEMENTS = (
         "caelestia shell -d",
         "systemctl --user start cortetsu-shell.service",
     ),
+    (
+        "caelestia screenshot",
+        "cortetsu screenshot",
+    ),
 )
 
 ACTIVE_RELATIVE_FILES = (
