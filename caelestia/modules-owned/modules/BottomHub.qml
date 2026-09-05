@@ -7,7 +7,6 @@ import Quickshell.Io
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
-import Caelestia.Config
 import qs.services
 import qs.services as Services
 import qs.utils
@@ -21,7 +20,7 @@ Scope {
 
     function closeAllLaunchers(): void {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = CortetsuShellState.forScreen(screen);
             if (state)
                 state.launcher = false;
         }
@@ -29,7 +28,7 @@ Scope {
 
     function closeAllPanels(): void {
         for (const screen of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = CortetsuShellState.forScreen(screen);
             OverlayPolicy.closeOtherPanels(state);
         }
     }
@@ -78,7 +77,7 @@ Scope {
     function openCalendarFor(screen): void {
         closeAllLaunchers();
         closeAllPanels();
-        const state = ShellState.forScreen(screen)?.cortetsuState;
+        const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
         if (state)
             state.setRetained("calendar", !(state.calendar ?? false));
         if (state?.calendar && !calendarSync.running)
@@ -87,7 +86,7 @@ Scope {
     }
 
     function toggleLauncherFor(screen): void {
-        const state = ShellState.forScreen(screen);
+        const state = CortetsuShellState.forScreen(screen);
         if (!state)
             return;
 
@@ -100,7 +99,7 @@ Scope {
     }
 
     function toggleSidebarFor(screen): void {
-        const state = ShellState.forScreen(screen);
+        const state = CortetsuShellState.forScreen(screen);
         if (!state)
             return;
 
@@ -114,7 +113,7 @@ Scope {
     }
 
     function toggleUtilitiesFor(screen): void {
-        const state = ShellState.forScreen(screen);
+        const state = CortetsuShellState.forScreen(screen);
         if (!state)
             return;
 
@@ -128,7 +127,7 @@ Scope {
 
     function openWallpaperFor(screen): void {
         for (const candidate of CortetsuScreens.screens) {
-            const state = ShellState.forScreen(candidate)?.cortetsuState;
+            const state = CortetsuShellState.forScreen(candidate)?.cortetsuState;
             if (!state)
                 continue;
             OverlayPolicy.closeOtherPanels(state.legacyState);
@@ -138,7 +137,7 @@ Scope {
     }
 
     function toggleDetachedControlFor(screen, mode): void {
-        const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
+        const popouts = CortetsuShellState.componentsFor(screen)?.panels?.popouts;
         if (!popouts)
             return;
 
@@ -155,7 +154,7 @@ Scope {
     }
 
     function showAttachedControlFor(screen, mode, anchorCenter = -1): void {
-        const popouts = ShellState.componentsFor(screen)?.panels?.popouts;
+        const popouts = CortetsuShellState.componentsFor(screen)?.panels?.popouts;
         if (!popouts)
             return;
 
@@ -176,16 +175,16 @@ Scope {
         function hide(): void { hubRoot.setShown(false); }
         function isShown(): bool { return hubRoot.shown; }
         function launcher(): void {
-            const state = ShellState.forActive();
+            const state = CortetsuShellState.forActive();
             if (!state)
                 return;
             hubRoot.toggleLauncherFor(state.modelData);
         }
         function notifications(): void {
-            hubRoot.toggleSidebarFor(ShellState.forActive()?.modelData);
+            hubRoot.toggleSidebarFor(CortetsuShellState.forActive()?.modelData);
         }
         function quickSettings(): void {
-            hubRoot.toggleUtilitiesFor(ShellState.forActive()?.modelData);
+            hubRoot.toggleUtilitiesFor(CortetsuShellState.forActive()?.modelData);
         }
     }
 
@@ -198,7 +197,7 @@ Scope {
         function hide(): void { hubRoot.setShown(false); }
         function isShown(): bool { return hubRoot.shown; }
         function launcher(): void {
-            const state = ShellState.forActive();
+            const state = CortetsuShellState.forActive();
             if (!state)
                 return;
             hubRoot.toggleLauncherFor(state.modelData);
@@ -214,7 +213,7 @@ Scope {
             required property ShellScreen modelData
 
             readonly property var monitor: CortetsuScreens.monitorFor(modelData)
-            readonly property var screenState: ShellState.forScreen(modelData)
+            readonly property var screenState: CortetsuShellState.forScreen(modelData)
             readonly property var cortetsuState: screenState?.cortetsuState
             readonly property string activeAddress:
                 CortetsuHypr.activeToplevel?.lastIpcObject?.address ?? ""
