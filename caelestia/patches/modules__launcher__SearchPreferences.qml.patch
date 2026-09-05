@@ -9,6 +9,9 @@
 @@ -19,1 +20,1 @@
 -    useFuzzy: GlobalConfig.launcher.useFuzzy.actions
 +    useFuzzy: CortetsuConfig.useFuzzyApps
+@@ -24,1 +25,1 @@
+-        model: GlobalConfig.launcher.actions.filter(a => (a.enabled ?? true) && (GlobalConfig.launcher.enableDangerousActions || !(a.dangerous ?? false)))
++        model: CortetsuConfig.actions.filter(a => (a.enabled ?? true) && (CortetsuConfig.enableDangerousActions || !(a.dangerous ?? false)))
 @@ -43,1 +44,1 @@
 -                list.search.text = `${GlobalConfig.launcher.actionPrefix}${command[1]} `;
 +                list.search.text = `${CortetsuConfig.actionPrefix}${command[1]} `;
