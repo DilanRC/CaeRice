@@ -87,6 +87,9 @@ assert "cortetsu-scheme-posthook" not in apply_wallpaper
 preview_patch = (repo / "caelestia/patches/services__Wallpapers.qml.patch").read_text(encoding="utf-8")
 assert '"cortetsu-wallpaper-colours", queuedPreviewPath' in preview_patch
 assert '+        getPreviewColoursProc.command = ["caelestia", "wallpaper", "-p"' not in preview_patch
+assert '"cortetsu-wallpaper-select", path' in preview_patch
+assert '"cortetsu-wallpaper-select", "--random", Paths.wallsdir' in preview_patch
+assert '"cortetsu-wallpaper-select", root.fallback' in preview_patch
 
 for marker in (
     "atomic_link", "build.lock", "is_managed_generation", "BUILD.json",

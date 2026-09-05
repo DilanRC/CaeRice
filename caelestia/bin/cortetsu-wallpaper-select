@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+state="${XDG_STATE_HOME:-$HOME/.local/state}/caelestia/wallpaper/path.txt"
+valid_image() {
+    [[ -f "$1" ]] || return 1
+    case "${1,,}" in
+        *.jpg|*.jpeg|*.png|*.webp|*.tif|*.tiff|*.gif) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+set_wallpaper() {
+    local path tmp
+    path="$(realpath "$1")"
+    valid_image "$path" || { echo "not a supported wallpaper: $1" >&2; return 1; }
+    mkdir -p "$(dirname "$state")"
+    tmp="$(mktemp "${state}.tmp.XXXXXX")"
+    trap 'rm -f "$tmp"' RETURN
+    printf '%s\n' "$path" > "$tmp"
+    install -m 0644 "$tmp" "$state"
+}
+if [[ "${1:-}" == "--random" ]]; then
+    directory="${2:-}"
+    [[ -d "$directory" ]] || { echo "usage: cortetsu-wallpaper-select --random /path/to/wallpapers" >&2; exit 2; }
+    current=""
+    [[ -f "$state" ]] && current="$(tr -d '\n' < "$state")"
+    mapfile -t candidates < <(find "$directory" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.tif' -o -iname '*.tiff' -o -iname '*.gif' \) -print | while IFS= read -r path; do [[ "$path" != "$current" ]] && printf '%s\n' "$path"; done)
+    ((${#candidates[@]})) || { echo "no alternate wallpapers found" >&2; exit 1; }
+    set_wallpaper "${candidates[RANDOM % ${#candidates[@]}]}"
+else
+    [[ $# -eq 1 ]] || { echo "usage: cortetsu-wallpaper-select /path/to/image" >&2; exit 2; }
+    set_wallpaper "$1"
+fi
