@@ -13,7 +13,8 @@ QtObject {
     property list<string> hiddenApps: []
     property list<string> hiddenTrayIcons: []
     property list<string> terminalCommand: ["kitty"]
-    readonly property string actionPrefix: ">"
+    property string actionPrefix: ">"
+    property string specialPrefix: "@"
     property var actions: []
     property bool enableDangerousActions: true
     property bool useFuzzyApps: true
@@ -34,6 +35,10 @@ QtObject {
                 terminalCommand = data.terminalCommand.filter(value => typeof value === "string");
             if (Array.isArray(data.actions))
                 actions = data.actions.filter(value => value && typeof value === "object");
+            if (typeof data.actionPrefix === "string" && data.actionPrefix.length > 0)
+                actionPrefix = data.actionPrefix;
+            if (typeof data.specialPrefix === "string" && data.specialPrefix.length > 0)
+                specialPrefix = data.specialPrefix;
             if (typeof data.enableDangerousActions === "boolean")
                 enableDangerousActions = data.enableDangerousActions;
             if (typeof data.useFuzzyApps === "boolean")
@@ -49,7 +54,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, enableDangerousActions, useFuzzyApps, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

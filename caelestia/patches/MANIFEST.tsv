@@ -13,6 +13,7 @@ modules__launcher__services__Apps.qml.patch	modules/launcher/services/Apps.qml
 modules__launcher__CortetsuConfig.qml.patch	modules/launcher/AppList.qml
 modules__launcher__CortetsuConfigMore.qml.patch	modules/launcher/ContentList.qml,modules/launcher/items/CalcItem.qml
 modules__launcher__SearchPreferences.qml.patch	modules/launcher/services/Actions.qml,modules/launcher/services/Schemes.qml,modules/launcher/services/M3Variants.qml
+modules__launcher__RemainingConfig.qml.patch	modules/launcher/Content.qml,modules/launcher/items/AppItem.qml
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
 modules__bar__BarWrapper.qml.patch	modules/bar/BarWrapper.qml
 modules__bar__popouts__Wrapper.qml.patch	modules/bar/popouts/Wrapper.qml

@@ -37,6 +37,8 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
         "hiddenTrayIcons": [x for x in tray.get("hiddenIcons", []) if isinstance(x, str)],
         "terminalCommand": [x for x in apps.get("terminal", ["kitty"]) if isinstance(x, str)],
         "actions": [x for x in launcher.get("actions", []) if isinstance(x, dict)],
+        "actionPrefix": launcher.get("actionPrefix", ">") if isinstance(launcher.get("actionPrefix", ">"), str) else ">",
+        "specialPrefix": launcher.get("specialPrefix", "@") if isinstance(launcher.get("specialPrefix", "@"), str) else "@",
         "enableDangerousActions": launcher.get("enableDangerousActions", True) is True,
         "useFuzzyApps": launcher.get("useFuzzy", {}).get("apps", True) is True,
         "vimKeybinds": launcher.get("vimKeybinds", True) is True,

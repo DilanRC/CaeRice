@@ -33,6 +33,12 @@
  import Caelestia.Models
  import qs.utils
 +import "../.."
+@@ -57,1 +58,1 @@
+-            root.launchInScope(entry, [...GlobalConfig.general.apps.terminal, `${Quickshell.shellDir}/assets/wrap_term_launch.sh`, ...entry.command]);
++            root.launchInScope(entry, [...CortetsuConfig.terminalCommand, `${Quickshell.shellDir}/assets/wrap_term_launch.sh`, ...entry.command]);
+@@ -63,1 +64,1 @@
+-        const prefix = GlobalConfig.launcher.specialPrefix;
++        const prefix = CortetsuConfig.specialPrefix;
 @@ -104,1 +105,1 @@
 -    useFuzzy: GlobalConfig.launcher.useFuzzy.apps
 +    useFuzzy: CortetsuConfig.useFuzzyApps
