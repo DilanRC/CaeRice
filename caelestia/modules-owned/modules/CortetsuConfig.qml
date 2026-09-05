@@ -48,8 +48,7 @@ QtObject {
         save();
     }
 
-    FileView {
-        id: storage
+    property var storage: FileView {
         path: root.path
         watchChanges: true
         printErrors: false
