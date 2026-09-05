@@ -60,4 +60,7 @@ for wrapper, flag in (
 ):
     wrapper_text = (repo / "caelestia/modules-owned/modules" / wrapper).read_text(encoding="utf-8")
     assert f"screenState.cortetsuState?.{flag}" in wrapper_text, wrapper
+for content_file, flag in (("calendar/Content.qml", "calendar"), ("overview/Content.qml", "overview")):
+    content_text = (repo / "caelestia/modules-owned/modules" / content_file).read_text(encoding="utf-8")
+    assert f'cortetsuState?.setRetained("{flag}", false)' in content_text, content_file
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")

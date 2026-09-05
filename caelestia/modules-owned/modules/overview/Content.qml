@@ -251,7 +251,7 @@ FocusScope {
         const ws =
             client.workspace;
 
-        screenState.overview = false;
+        screenState.cortetsuState?.setRetained("overview", false);
 
         Qt.callLater(() => {
             if (ws) {
@@ -287,7 +287,7 @@ FocusScope {
     }
 
     function activateWorkspace(id): void {
-        screenState.overview = false;
+        screenState.cortetsuState?.setRetained("overview", false);
 
         Qt.callLater(() => {
             Hypr.dispatch(
@@ -423,7 +423,7 @@ FocusScope {
     focus: true
 
     Keys.onEscapePressed:
-        screenState.overview = false
+        screenState.cortetsuState?.setRetained("overview", false)
 
     Keys.onLeftPressed:
         moveSelection(-1)
@@ -486,7 +486,7 @@ FocusScope {
         anchors.fill: parent
 
         onClicked:
-            root.screenState.overview = false
+            root.screenState.cortetsuState?.setRetained("overview", false)
     }
 
     Column {

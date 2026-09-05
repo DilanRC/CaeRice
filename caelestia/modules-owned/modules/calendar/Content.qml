@@ -143,12 +143,12 @@ Item {
 
     Component.onCompleted: {
         load();
-        if (screenState.calendar) requestCalendarSync();
+        if (screenState.cortetsuState?.calendar) requestCalendarSync();
     }
     Connections {
-        target: root.screenState
+        target: root.screenState.cortetsuState
         function onCalendarChanged(): void {
-            if (root.screenState.calendar) root.requestCalendarSync();
+            if (root.screenState.cortetsuState?.calendar) root.requestCalendarSync();
         }
     }
     FileView { id: cache; path: root.cachePath; watchChanges: true; printErrors: false; onLoaded: root.loadCalendar(); onFileChanged: root.loadCalendar() }
@@ -184,7 +184,7 @@ Item {
     }
     Timer { id: pomodoroReload; interval: 60; repeat: false; onTriggered: root.loadPomodoro() }
     Timer { interval: 1000; repeat: true; running: root.isActivePhase(pomodoro.phase); onTriggered: root.nowMs = Date.now() }
-    Keys.onEscapePressed: root.screenState.calendar = false
+    Keys.onEscapePressed: root.screenState.cortetsuState?.setRetained("calendar", false)
 
     StyledRect {
         anchors.fill: parent
@@ -201,7 +201,7 @@ Item {
                 StyledText { Layout.fillWidth: true; text: qsTr("Calendar"); font: Tokens.font.title.large; color: Colours.palette.m3onSurface }
                 StyledText { visible: root.syncStatus.length > 0; text: root.syncStatus; font: Tokens.font.label.small; color: Colours.palette.m3onSurfaceVariant }
                 Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: calendarSync.running ? "sync" : "refresh"; color: Colours.palette.m3onSurfaceVariant } MouseArea { anchors.fill: parent; enabled: !calendarSync.running; cursorShape: Qt.PointingHandCursor; onClicked: root.requestCalendarSync(true) } }
-                Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.screenState.calendar = false } }
+                Item { implicitWidth: 32; implicitHeight: 32; MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant } MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.screenState.cortetsuState?.setRetained("calendar", false) } }
             }
 
             RowLayout {
