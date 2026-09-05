@@ -1,12 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
-import qs.components.controls
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
-StyledRect {
+Rectangle {
     id: root
 
     required property var editorItem
@@ -21,10 +20,10 @@ StyledRect {
     readonly property string cm: String(candidate?.cm ?? "srgb")
     readonly property int vrr: Number(candidate?.vrr ?? (monitor?.vrr ? 1 : 0))
 
-    radius: Tokens.rounding.extraLarge
-    color: Colours.palette.m3surfaceContainerHigh
+    radius: CortetsuDesign.radiusLarge
+    color: CortetsuDesign.colorSurfaceHigh
     border.width: 1
-    border.color: Colours.palette.m3outlineVariant
+    border.color: CortetsuDesign.colorOutlineVariant
 
     function setColor(bitdepth, cm): void {
         editorItem.updateSelected("bitdepth", bitdepth)
@@ -49,8 +48,8 @@ StyledRect {
         Row {
             width: parent.width
             height: 22
-            StyledText { width: parent.width * 0.58; text: qsTr("Color & VRR"); color: Colours.palette.m3onSurface; font: Tokens.font.title.small }
-            StyledText { width: parent.width * 0.42; text: `${root.monitor?.current_format ?? "—"}`; color: Colours.palette.m3outline; font: Tokens.font.label.small; horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft }
+            CortetsuText { width: parent.width * 0.58; text: qsTr("Color & VRR"); color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+            CortetsuText { width: parent.width * 0.42; text: `${root.monitor?.current_format ?? "—"}`; color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx; horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft }
         }
 
         Row {
@@ -64,41 +63,41 @@ StyledRect {
                     { label: qsTr("Wide"), enabled: root.wideProven, active: root.bitdepth === 10 && root.cm === "wide", action: () => root.setColor(10, "wide") },
                     { label: qsTr("HDR"), enabled: root.hdrProven, active: root.bitdepth === 10 && (root.cm === "hdr" || root.cm === "hdredid"), action: () => root.setColor(10, "hdredid") }
                 ]
-                delegate: StyledRect {
+                delegate: Rectangle {
                     required property var modelData
                     width: (parent.width - 15) / 4
                     height: 35
-                    radius: Tokens.rounding.medium
+                    radius: CortetsuDesign.radiusSmall
                     enabled: modelData.enabled
                     opacity: enabled ? 1 : 0.45
-                    color: modelData.active ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainer
-                    StateLayer { radius: parent.radius; onClicked: modelData.action() }
-                    StyledText { anchors.centerIn: parent; text: modelData.label; color: modelData.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                    color: modelData.active ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurface
+                    CortetsuStateLayer { radius: parent.radius; onClicked: modelData.action() }
+                    CortetsuText { anchors.centerIn: parent; text: modelData.label; color: modelData.active ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
                 }
             }
         }
 
-        StyledRect {
+        Rectangle {
             width: parent.width
             height: 35
-            radius: Tokens.rounding.medium
-            color: root.vrr > 0 && root.vrrProven ? Colours.palette.m3tertiaryContainer : Colours.palette.m3surfaceContainer
+            radius: CortetsuDesign.radiusSmall
+            color: root.vrr > 0 && root.vrrProven ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurface
             enabled: root.vrrProven
             opacity: enabled ? 1 : 0.5
-            StateLayer { radius: parent.radius; onClicked: root.toggleVrr() }
+            CortetsuStateLayer { radius: parent.radius; onClicked: root.toggleVrr() }
             Row {
                 anchors.fill: parent
                 anchors.margins: 8
-                StyledText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: qsTr("VRR"); color: Colours.palette.m3outline; font: Tokens.font.label.small }
-                StyledText { width: parent.width * 0.64; anchors.verticalCenter: parent.verticalCenter; text: root.vrrLabel(); color: root.vrr > 0 ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small; horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft }
+                CortetsuText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: qsTr("VRR"); color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx }
+                CortetsuText { width: parent.width * 0.64; anchors.verticalCenter: parent.verticalCenter; text: root.vrrLabel(); color: root.vrr > 0 ? CortetsuDesign.colorOnSurface : CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx; horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft }
             }
         }
 
-        StyledText {
+        CortetsuText {
             width: parent.width
             text: qsTr("10-bit/HDR/Wide/VRR unlock only when DRM/EDID establishes support. Unknown stays disabled.")
-            color: Colours.palette.m3outline
-            font: Tokens.font.label.small
+            color: CortetsuDesign.colorOutline
+            textSize: CortetsuTypography.labelSmallPx
             wrapMode: Text.WordWrap
             maximumLineCount: 2
             elide: Text.ElideRight

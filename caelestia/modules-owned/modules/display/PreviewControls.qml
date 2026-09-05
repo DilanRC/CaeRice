@@ -4,12 +4,11 @@ import QtQuick
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
-StyledRect {
+Rectangle {
     id: root
 
     required property var candidateOutputs
@@ -28,10 +27,10 @@ StyledRect {
     readonly property string currentCandidateJson: JSON.stringify({ outputs: candidateOutputs })
     readonly property bool canPersist: !root.active && (root.lastResult?.confirmed ?? false) && root.confirmedCandidateJson.length > 0 && root.confirmedCandidateJson === root.currentCandidateJson
 
-    radius: Tokens.rounding.extraLarge
-    color: Colours.palette.m3surfaceContainerHigh
+    radius: CortetsuDesign.radiusLarge
+    color: CortetsuDesign.colorSurfaceHigh
     border.width: 1
-    border.color: root.active ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
+    border.color: root.active ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOutlineVariant
 
     function refresh(): void { if (!statusProbe.running) statusProbe.running = true; }
     function runTool(path, args): void {
@@ -115,16 +114,16 @@ StyledRect {
         anchors.fill: parent; anchors.margins: 12; spacing: 7
         Row {
             width: parent.width; height: 24
-            StyledText { width: parent.width * 0.58; text: qsTr("Preview & save"); color: Colours.palette.m3onSurface; font: Tokens.font.title.small }
-            StyledText { width: parent.width * 0.42; text: root.active ? qsTr("%1 s").arg(root.remaining.toFixed(1)) : qsTr("rollback protected"); color: root.active ? Colours.palette.m3primary : Colours.palette.m3outline; font: Tokens.font.label.small; horizontalAlignment: Text.AlignRight }
+            CortetsuText { width: parent.width * 0.58; text: qsTr("Preview & save"); color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+            CortetsuText { width: parent.width * 0.42; text: root.active ? qsTr("%1 s").arg(root.remaining.toFixed(1)) : qsTr("rollback protected"); color: root.active ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx; horizontalAlignment: Text.AlignRight }
         }
-        StyledText { width: parent.width; height: 34; text: root.statusText; color: root.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small; wrapMode: Text.WordWrap; elide: Text.ElideRight }
+        CortetsuText { width: parent.width; height: 34; text: root.statusText; color: root.active ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx; wrapMode: Text.WordWrap; elide: Text.ElideRight }
         Row {
             width: parent.width; height: 42; spacing: 7
-            StyledRect { width:(parent.width-21)/4; height:42; radius:Tokens.rounding.large; color:root.active?Colours.palette.m3surfaceContainerHighest:Colours.palette.m3primaryContainer; enabled:!root.active&&!action.running; opacity:enabled?1:0.55; StateLayer{radius:parent.radius;onClicked:root.startPreview()} StyledText{anchors.centerIn:parent;text:qsTr("Preview");color:root.active?Colours.palette.m3onSurfaceVariant:Colours.palette.m3onPrimaryContainer;font:Tokens.font.label.medium} }
-            StyledRect { width:(parent.width-21)/4; height:42; radius:Tokens.rounding.large; color:root.active?Colours.palette.m3secondaryContainer:Colours.palette.m3surfaceContainerHighest; enabled:root.active&&!action.running; opacity:enabled?1:0.55; StateLayer{radius:parent.radius;onClicked:root.confirm()} StyledText{anchors.centerIn:parent;text:qsTr("Keep");color:root.active?Colours.palette.m3onSecondaryContainer:Colours.palette.m3outline;font:Tokens.font.label.medium} }
-            StyledRect { width:(parent.width-21)/4; height:42; radius:Tokens.rounding.large; color:root.canPersist?Colours.palette.m3tertiaryContainer:Colours.palette.m3surfaceContainerHighest; enabled:root.canPersist&&!action.running; opacity:enabled?1:0.55; StateLayer{radius:parent.radius;onClicked:root.persist()} StyledText{anchors.centerIn:parent;text:qsTr("Save");color:root.canPersist?Colours.palette.m3onTertiaryContainer:Colours.palette.m3outline;font:Tokens.font.label.medium} }
-            StyledRect { width:(parent.width-21)/4; height:42; radius:Tokens.rounding.large; color:root.active?Colours.palette.m3errorContainer:Colours.palette.m3surfaceContainerHighest; enabled:root.active&&!action.running; opacity:enabled?1:0.55; StateLayer{radius:parent.radius;onClicked:root.revert()} StyledText{anchors.centerIn:parent;text:qsTr("Revert");color:root.active?Colours.palette.m3onErrorContainer:Colours.palette.m3outline;font:Tokens.font.label.medium} }
+            Rectangle { width:(parent.width-21)/4; height:42; radius:CortetsuDesign.radiusMedium; color:root.active?CortetsuDesign.colorSurfaceHigh:CortetsuDesign.colorPrimaryContainer; enabled:!root.active&&!action.running; opacity:enabled?1:0.55; CortetsuStateLayer{radius:parent.radius;onClicked:root.startPreview()} CortetsuText{anchors.centerIn:parent;text:qsTr("Preview");color:root.active?CortetsuDesign.colorOnSurfaceVariant:CortetsuDesign.colorOnPrimaryContainer;textSize: CortetsuTypography.labelMediumPx} }
+            Rectangle { width:(parent.width-21)/4; height:42; radius:CortetsuDesign.radiusMedium; color:root.active?CortetsuDesign.colorSecondaryContainer:CortetsuDesign.colorSurfaceHigh; enabled:root.active&&!action.running; opacity:enabled?1:0.55; CortetsuStateLayer{radius:parent.radius;onClicked:root.confirm()} CortetsuText{anchors.centerIn:parent;text:qsTr("Keep");color:root.active?CortetsuDesign.colorOnSecondaryContainer:CortetsuDesign.colorOutline;textSize: CortetsuTypography.labelMediumPx} }
+            Rectangle { width:(parent.width-21)/4; height:42; radius:CortetsuDesign.radiusMedium; color:root.canPersist?CortetsuDesign.colorSecondaryContainer:CortetsuDesign.colorSurfaceHigh; enabled:root.canPersist&&!action.running; opacity:enabled?1:0.55; CortetsuStateLayer{radius:parent.radius;onClicked:root.persist()} CortetsuText{anchors.centerIn:parent;text:qsTr("Save");color:root.canPersist?CortetsuDesign.colorOnSurface:CortetsuDesign.colorOutline;textSize: CortetsuTypography.labelMediumPx} }
+            Rectangle { width:(parent.width-21)/4; height:42; radius:CortetsuDesign.radiusMedium; color:root.active?Qt.darker(CortetsuDesign.colorVermillion, 1.5):CortetsuDesign.colorSurfaceHigh; enabled:root.active&&!action.running; opacity:enabled?1:0.55; CortetsuStateLayer{radius:parent.radius;onClicked:root.revert()} CortetsuText{anchors.centerIn:parent;text:qsTr("Revert");color:root.active?CortetsuDesign.colorOnSurface:CortetsuDesign.colorOutline;textSize: CortetsuTypography.labelMediumPx} }
         }
     }
 }

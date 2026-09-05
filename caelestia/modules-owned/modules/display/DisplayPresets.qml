@@ -4,12 +4,11 @@ import QtQuick
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
-StyledRect {
+Rectangle {
     id: root
     required property var candidateOutputs
     signal candidateLoaded(var candidate)
@@ -20,10 +19,10 @@ StyledRect {
     property string actionKind: ""
     readonly property string helperPath: StandardPaths.writableLocation(StandardPaths.HomeLocation) + "/.local/bin/cortetsu-display-presets"
 
-    radius: Tokens.rounding.extraLarge
-    color: Colours.palette.m3surfaceContainerHigh
+    radius: CortetsuDesign.radiusLarge
+    color: CortetsuDesign.colorSurfaceHigh
     border.width: 1
-    border.color: Colours.palette.m3outlineVariant
+    border.color: CortetsuDesign.colorOutlineVariant
 
     function run(kind, args): void {
         if (worker.running) return;
@@ -58,37 +57,37 @@ StyledRect {
         anchors.fill: parent; anchors.margins: 12; spacing: 7
         Row {
             width: parent.width; height: 28
-            StyledText { width: parent.width * 0.55; text: qsTr("Saved layouts"); color: Colours.palette.m3onSurface; font: Tokens.font.title.small }
-            StyledText { width: parent.width * 0.45; text: root.statusText; color: Colours.palette.m3outline; font: Tokens.font.label.small; horizontalAlignment: Text.AlignRight; elide: Text.ElideRight }
+            CortetsuText { width: parent.width * 0.55; text: qsTr("Saved layouts"); color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+            CortetsuText { width: parent.width * 0.45; text: root.statusText; color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx; horizontalAlignment: Text.AlignRight; elide: Text.ElideRight }
         }
         Row {
             width: parent.width; height: 38; spacing: 6
-            StyledRect {
-                width: parent.width - 82; height: 38; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainer
-                StyledText { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; visible: nameInput.text.length===0; text: qsTr("name this layout"); color: Colours.palette.m3outline; font: Tokens.font.label.small }
-                TextInput { id:nameInput; anchors.fill: parent; anchors.leftMargin:10; anchors.rightMargin:10; verticalAlignment:TextInput.AlignVCenter; text:root.presetName; onTextChanged:root.presetName=text; color:Colours.palette.m3onSurface; selectionColor:Colours.palette.m3primary }
+            Rectangle {
+                width: parent.width - 82; height: 38; radius: CortetsuDesign.radiusSmall; color: CortetsuDesign.colorSurface
+                CortetsuText { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; visible: nameInput.text.length===0; text: qsTr("name this layout"); color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx }
+                TextInput { id:nameInput; anchors.fill: parent; anchors.leftMargin:10; anchors.rightMargin:10; verticalAlignment:TextInput.AlignVCenter; text:root.presetName; onTextChanged:root.presetName=text; color:CortetsuDesign.colorOnSurface; selectionColor:CortetsuDesign.colorPrimary }
             }
-            StyledRect {
+            Rectangle {
                 width: 76
                 height: 38
-                radius: Tokens.rounding.medium
-                color: Colours.palette.m3primaryContainer
+                radius: CortetsuDesign.radiusSmall
+                color: CortetsuDesign.colorPrimaryContainer
                 enabled: !worker.running
-                StateLayer { radius: parent.radius; onClicked: root.save() }
-                StyledText { anchors.centerIn: parent; text: qsTr("Save"); color: Colours.palette.m3onPrimaryContainer; font: Tokens.font.label.small }
+                CortetsuStateLayer { radius: parent.radius; onClicked: root.save() }
+                CortetsuText { anchors.centerIn: parent; text: qsTr("Save"); color: CortetsuDesign.colorOnPrimaryContainer; textSize: CortetsuTypography.labelSmallPx }
             }
         }
         Row {
             width: parent.width; height: 38; spacing: 5
             Repeater {
                 model: Array.from(root.presets ?? []).slice(0,3)
-                delegate: StyledRect {
+                delegate: Rectangle {
                     required property var modelData
-                    width:(parent.width-10)/3; height:38; radius:Tokens.rounding.medium; color:Colours.palette.m3secondaryContainer
-                    StateLayer { radius:parent.radius; onClicked:root.loadPreset(modelData?.name ?? "") }
+                    width:(parent.width-10)/3; height:38; radius:CortetsuDesign.radiusSmall; color:CortetsuDesign.colorSecondaryContainer
+                    CortetsuStateLayer { radius:parent.radius; onClicked:root.loadPreset(modelData?.name ?? "") }
                     Row { anchors.fill:parent; anchors.margins:7; spacing:3
-                        StyledText { width:parent.width-24; anchors.verticalCenter:parent.verticalCenter; text:modelData?.name ?? ""; color:Colours.palette.m3onSecondaryContainer; font:Tokens.font.label.small; elide:Text.ElideRight }
-                        MaterialIcon { anchors.verticalCenter:parent.verticalCenter; text:"close"; color:Colours.palette.m3onSecondaryContainer; fontStyle:Tokens.font.icon.small; MouseArea { anchors.fill:parent; onClicked:mouse => { mouse.accepted=true; root.deletePreset(modelData?.name ?? ""); } } }
+                        CortetsuText { width:parent.width-24; anchors.verticalCenter:parent.verticalCenter; text:modelData?.name ?? ""; color:CortetsuDesign.colorOnSecondaryContainer; textSize: CortetsuTypography.labelSmallPx; elide:Text.ElideRight }
+                        CortetsuIcon { anchors.verticalCenter:parent.verticalCenter; text:"close"; color:CortetsuDesign.colorOnSecondaryContainer; iconSize: CortetsuTypography.iconSmallPx; MouseArea { anchors.fill:parent; onClicked:mouse => { mouse.accepted=true; root.deletePreset(modelData?.name ?? ""); } } }
                     }
                 }
             }

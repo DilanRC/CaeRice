@@ -4,16 +4,15 @@ import QtQuick
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.components.controls
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
 FocusScope {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property bool displayVisible
 
     property var snapshot: ({})
@@ -310,16 +309,16 @@ FocusScope {
         }
     }
 
-    StyledRect {
+    Rectangle {
         id: panel
         width: Math.min(1260, parent.width - 96)
         height: Math.min(900, parent.height - 64)
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
         radius: 30
-        color: Colours.palette.m3surfaceContainerHigh
+        color: CortetsuDesign.colorSurfaceHigh
         border.width: 1
-        border.color: Colours.palette.m3outlineVariant
+        border.color: CortetsuDesign.colorOutlineVariant
         clip: true
 
         Column {
@@ -332,17 +331,16 @@ FocusScope {
                 height: 58
                 spacing: 12
 
-                StyledRect {
+                Rectangle {
                     width: 52
                     height: 52
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3primaryContainer
-                    MaterialIcon {
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorPrimaryContainer
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "desktop_windows"
-                        fill: 1
-                        color: Colours.palette.m3onPrimaryContainer
-                        fontStyle: Tokens.font.icon.extraLarge
+                        color: CortetsuDesign.colorOnPrimaryContainer
+                        iconSize: CortetsuTypography.iconExtraLargePx
                     }
                 }
 
@@ -350,54 +348,54 @@ FocusScope {
                     width: parent.width - 52 - refreshButton.width - resetButton.width - closeButton.width - 48
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 0
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("Display Manager")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.large
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleLargePx
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: root.statusText
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.medium
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        textSize: CortetsuTypography.labelMediumPx
                         elide: Text.ElideRight
                     }
-                    StyledText {
+                    CortetsuText {
                         width: parent.width
                         text: qsTr("Edit safely · P validates · Preview is temporary · Keep confirms · Save persists")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuDesign.colorOutline
+                        textSize: CortetsuTypography.labelSmallPx
                         elide: Text.ElideRight
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     id: refreshButton
                     width: 44; height: 44
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHighest
-                    StateLayer { radius: parent.radius; onClicked: root.refresh() }
-                    MaterialIcon { anchors.centerIn: parent; text: probe.running ? "progress_activity" : "refresh"; color: Colours.palette.m3primary }
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
+                    CortetsuStateLayer { radius: parent.radius; onClicked: root.refresh() }
+                    CortetsuIcon { anchors.centerIn: parent; text: probe.running ? "progress_activity" : "refresh"; color: CortetsuDesign.colorPrimary }
                 }
-                StyledRect {
+                Rectangle {
                     id: resetButton
                     width: 44; height: 44
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHighest
-                    StateLayer { radius: parent.radius; onClicked: root.resetCandidate() }
-                    MaterialIcon { anchors.centerIn: parent; text: "restart_alt"; color: Colours.palette.m3onSurfaceVariant }
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
+                    CortetsuStateLayer { radius: parent.radius; onClicked: root.resetCandidate() }
+                    CortetsuIcon { anchors.centerIn: parent; text: "restart_alt"; color: CortetsuDesign.colorOnSurfaceVariant }
                 }
-                StyledRect {
+                Rectangle {
                     id: closeButton
                     width: 44; height: 44
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: Tokens.rounding.large
-                    color: Colours.palette.m3surfaceContainerHighest
-                    StateLayer { radius: parent.radius; onClicked: root.closeDisplayManager() }
-                    MaterialIcon { anchors.centerIn: parent; text: "close"; color: Colours.palette.m3onSurfaceVariant }
+                    radius: CortetsuDesign.radiusMedium
+                    color: CortetsuDesign.colorSurfaceHigh
+                    CortetsuStateLayer { radius: parent.radius; onClicked: root.closeDisplayManager() }
+                    CortetsuIcon { anchors.centerIn: parent; text: "close"; color: CortetsuDesign.colorOnSurfaceVariant }
                 }
             }
 
@@ -406,22 +404,22 @@ FocusScope {
                 height: 320
                 spacing: 12
 
-                StyledRect {
+                Rectangle {
                     id: topologyCard
                     width: parent.width * 0.60
                     height: parent.height
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3surfaceContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorSurface
                     border.width: 1
-                    border.color: Colours.palette.m3outlineVariant
+                    border.color: CortetsuDesign.colorOutlineVariant
 
-                    StyledText {
+                    CortetsuText {
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.margins: 14
                         text: qsTr("Topology candidate")
-                        color: Colours.palette.m3onSurface
-                        font: Tokens.font.title.small
+                        color: CortetsuDesign.colorOnSurface
+                        textSize: CortetsuTypography.titleSmallPx
                     }
 
                     Item {
@@ -434,7 +432,7 @@ FocusScope {
 
                         Repeater {
                             model: root.candidateOutputs
-                            delegate: StyledRect {
+                            delegate: Rectangle {
                                 id: outputRect
                                 required property var modelData
                                 required property int index
@@ -446,28 +444,28 @@ FocusScope {
                                 width: Math.max(90, logicalWidth * topologyCanvas.factor)
                                 height: Math.max(54, logicalHeight * topologyCanvas.factor)
                                 visible: modelData?.enabled ?? true
-                                radius: Tokens.rounding.large
-                                color: root.selectedIndex === index ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                                radius: CortetsuDesign.radiusMedium
+                                color: root.selectedIndex === index ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurfaceHigh
                                 border.width: root.selectedIndex === index ? 2 : 1
-                                border.color: root.selectedIndex === index ? Colours.palette.m3primary : Colours.palette.m3outlineVariant
-                                StateLayer { radius: parent.radius; onClicked: root.selectedIndex = outputRect.index }
+                                border.color: root.selectedIndex === index ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOutlineVariant
+                                CortetsuStateLayer { radius: parent.radius; onClicked: root.selectedIndex = outputRect.index }
                                 Column {
                                     anchors.centerIn: parent
                                     width: parent.width - 16
                                     spacing: 2
-                                    StyledText {
+                                    CortetsuText {
                                         width: parent.width
                                         text: outputRect.modelData?.name ?? ""
-                                        color: root.selectedIndex === outputRect.index ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                                        font: Tokens.font.label.medium
+                                        color: root.selectedIndex === outputRect.index ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOnSurface
+                                        textSize: CortetsuTypography.labelMediumPx
                                         horizontalAlignment: Text.AlignHCenter
                                         elide: Text.ElideRight
                                     }
-                                    StyledText {
+                                    CortetsuText {
                                         width: parent.width
                                         text: String(outputRect.modelData?.mode ?? "")
-                                        color: Colours.palette.m3onSurfaceVariant
-                                        font: Tokens.font.label.small
+                                        color: CortetsuDesign.colorOnSurfaceVariant
+                                        textSize: CortetsuTypography.labelSmallPx
                                         horizontalAlignment: Text.AlignHCenter
                                         elide: Text.ElideRight
                                     }
@@ -477,13 +475,13 @@ FocusScope {
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     width: parent.width - topologyCard.width - 12
                     height: parent.height
-                    radius: Tokens.rounding.extraLarge
-                    color: Colours.palette.m3surfaceContainer
+                    radius: CortetsuDesign.radiusLarge
+                    color: CortetsuDesign.colorSurface
                     border.width: 1
-                    border.color: Colours.palette.m3outlineVariant
+                    border.color: CortetsuDesign.colorOutlineVariant
 
                     Column {
                         anchors.fill: parent
@@ -492,25 +490,25 @@ FocusScope {
 
                         Row {
                             width: parent.width
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.70
                                 text: root.selectedCandidate?.name ?? qsTr("No output")
-                                color: Colours.palette.m3onSurface
-                                font: Tokens.font.title.medium
+                                color: CortetsuDesign.colorOnSurface
+                                textSize: CortetsuTypography.titleMediumPx
                             }
-                            StyledText {
+                            CortetsuText {
                                 width: parent.width * 0.30
                                 text: root.selectedLive?.gpu_vendor ?? "—"
-                                color: Colours.palette.m3primary
-                                font: Tokens.font.label.medium
+                                color: CortetsuDesign.colorPrimary
+                                textSize: CortetsuTypography.labelMediumPx
                                 horizontalAlignment: Text.AlignRight
                             }
                         }
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: root.selectedLive?.description ?? ""
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.labelSmallPx
                             elide: Text.ElideRight
                         }
 
@@ -524,33 +522,33 @@ FocusScope {
                                     { label: qsTr("Dual"), action: () => root.applyDualPreset() },
                                     { label: qsTr("External"), action: () => root.applyExternalPreset() }
                                 ]
-                                delegate: StyledRect {
+                                delegate: Rectangle {
                                     required property var modelData
                                     width: (parent.width - 14) / 3
                                     height: 34
-                                    radius: Tokens.rounding.medium
-                                    color: Colours.palette.m3surfaceContainerHigh
-                                    StateLayer { radius: parent.radius; onClicked: modelData.action() }
-                                    StyledText { anchors.centerIn: parent; text: modelData.label; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                                    radius: CortetsuDesign.radiusSmall
+                                    color: CortetsuDesign.colorSurfaceHigh
+                                    CortetsuStateLayer { radius: parent.radius; onClicked: modelData.action() }
+                                    CortetsuText { anchors.centerIn: parent; text: modelData.label; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
                                 }
                             }
                         }
 
                         Row {
                             width: parent.width; height: 42; spacing: 8
-                            StyledRect {
-                                width: 42; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
-                                StateLayer { radius: parent.radius; onClicked: root.cycleMode(-1) }
-                                MaterialIcon { anchors.centerIn: parent; text: "chevron_left"; color: Colours.palette.m3onSurfaceVariant }
+                            Rectangle {
+                                width: 42; height: 42; radius: CortetsuDesign.radiusMedium; color: CortetsuDesign.colorSurfaceHigh
+                                CortetsuStateLayer { radius: parent.radius; onClicked: root.cycleMode(-1) }
+                                CortetsuIcon { anchors.centerIn: parent; text: "chevron_left"; color: CortetsuDesign.colorOnSurfaceVariant }
                             }
-                            StyledRect {
-                                width: parent.width - 92; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
-                                StyledText { anchors.centerIn: parent; width: parent.width - 12; text: root.selectedCandidate?.mode ?? "—"; color: Colours.palette.m3onSurface; font: Tokens.font.label.medium; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideMiddle }
+                            Rectangle {
+                                width: parent.width - 92; height: 42; radius: CortetsuDesign.radiusMedium; color: CortetsuDesign.colorSurfaceHigh
+                                CortetsuText { anchors.centerIn: parent; width: parent.width - 12; text: root.selectedCandidate?.mode ?? "—"; color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.labelMediumPx; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideMiddle }
                             }
-                            StyledRect {
-                                width: 42; height: 42; radius: Tokens.rounding.large; color: Colours.palette.m3surfaceContainerHigh
-                                StateLayer { radius: parent.radius; onClicked: root.cycleMode(1) }
-                                MaterialIcon { anchors.centerIn: parent; text: "chevron_right"; color: Colours.palette.m3onSurfaceVariant }
+                            Rectangle {
+                                width: 42; height: 42; radius: CortetsuDesign.radiusMedium; color: CortetsuDesign.colorSurfaceHigh
+                                CortetsuStateLayer { radius: parent.radius; onClicked: root.cycleMode(1) }
+                                CortetsuIcon { anchors.centerIn: parent; text: "chevron_right"; color: CortetsuDesign.colorOnSurfaceVariant }
                             }
                         }
 
@@ -564,32 +562,32 @@ FocusScope {
                             delegate: Row {
                                 required property var modelData
                                 width: parent.width; height: 31; spacing: 7
-                                StyledText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: Colours.palette.m3outline; font: Tokens.font.label.small }
-                                StyledRect {
-                                    width: 30; height: 30; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
-                                    StateLayer { radius: parent.radius; onClicked: modelData.minus() }
-                                    MaterialIcon { anchors.centerIn: parent; text: "remove"; color: Colours.palette.m3onSurfaceVariant; fontStyle: Tokens.font.icon.small }
+                                CortetsuText { width: parent.width * 0.36; anchors.verticalCenter: parent.verticalCenter; text: modelData.label; color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx }
+                                Rectangle {
+                                    width: 30; height: 30; radius: CortetsuDesign.radiusSmall; color: CortetsuDesign.colorSurfaceHigh
+                                    CortetsuStateLayer { radius: parent.radius; onClicked: modelData.minus() }
+                                    CortetsuIcon { anchors.centerIn: parent; text: "remove"; color: CortetsuDesign.colorOnSurfaceVariant; iconSize: CortetsuTypography.iconSmallPx }
                                 }
-                                StyledText { width: parent.width * 0.28; anchors.verticalCenter: parent.verticalCenter; text: modelData.value; color: Colours.palette.m3onSurface; font: Tokens.font.label.medium; horizontalAlignment: Text.AlignHCenter }
-                                StyledRect {
-                                    width: 30; height: 30; radius: Tokens.rounding.medium; color: Colours.palette.m3surfaceContainerHigh
-                                    StateLayer { radius: parent.radius; onClicked: modelData.plus() }
-                                    MaterialIcon { anchors.centerIn: parent; text: "add"; color: Colours.palette.m3onSurfaceVariant; fontStyle: Tokens.font.icon.small }
+                                CortetsuText { width: parent.width * 0.28; anchors.verticalCenter: parent.verticalCenter; text: modelData.value; color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.labelMediumPx; horizontalAlignment: Text.AlignHCenter }
+                                Rectangle {
+                                    width: 30; height: 30; radius: CortetsuDesign.radiusSmall; color: CortetsuDesign.colorSurfaceHigh
+                                    CortetsuStateLayer { radius: parent.radius; onClicked: modelData.plus() }
+                                    CortetsuIcon { anchors.centerIn: parent; text: "add"; color: CortetsuDesign.colorOnSurfaceVariant; iconSize: CortetsuTypography.iconSmallPx }
                                 }
                             }
                         }
 
-                        StyledRect {
+                        Rectangle {
                             width: parent.width
                             height: 32
-                            radius: Tokens.rounding.medium
-                            color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
-                            StateLayer { radius: parent.radius; onClicked: root.toggleSelectedEnabled() }
+                            radius: CortetsuDesign.radiusSmall
+                            color: (root.selectedCandidate?.enabled ?? true) ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurfaceHigh
+                            CortetsuStateLayer { radius: parent.radius; onClicked: root.toggleSelectedEnabled() }
                             Row {
                                 anchors.centerIn: parent
                                 spacing: 7
-                                MaterialIcon { text: (root.selectedCandidate?.enabled ?? true) ? "toggle_on" : "toggle_off"; color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3outline }
-                                StyledText { text: (root.selectedCandidate?.enabled ?? true) ? qsTr("Output enabled") : qsTr("Output disabled"); color: (root.selectedCandidate?.enabled ?? true) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3outline; font: Tokens.font.label.small }
+                                CortetsuIcon { text: (root.selectedCandidate?.enabled ?? true) ? "toggle_on" : "toggle_off"; color: (root.selectedCandidate?.enabled ?? true) ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOutline }
+                                CortetsuText { text: (root.selectedCandidate?.enabled ?? true) ? qsTr("Output enabled") : qsTr("Output disabled"); color: (root.selectedCandidate?.enabled ?? true) ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx }
                             }
                         }
                     }
@@ -603,37 +601,37 @@ FocusScope {
 
                 Repeater {
                     model: root.candidateOutputs
-                    delegate: StyledRect {
+                    delegate: Rectangle {
                         id: outputCard
                         required property var modelData
                         required property int index
                         width: Math.max(220, (parent.width - 10 * Math.max(0, root.candidateOutputs.length - 1)) / Math.max(1, root.candidateOutputs.length))
                         height: parent.height
-                        radius: Tokens.rounding.extraLarge
-                        color: root.selectedIndex === index ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainer
+                        radius: CortetsuDesign.radiusLarge
+                        color: root.selectedIndex === index ? CortetsuDesign.colorSecondaryContainer : CortetsuDesign.colorSurface
                         border.width: root.selectedIndex === index ? 1 : 0
-                        border.color: Colours.palette.m3primary
+                        border.color: CortetsuDesign.colorPrimary
                         opacity: outputCard.modelData?.enabled ?? true ? 1 : 0.58
-                        StateLayer { radius: parent.radius; onClicked: root.selectedIndex = outputCard.index }
+                        CortetsuStateLayer { radius: parent.radius; onClicked: root.selectedIndex = outputCard.index }
                         Column {
                             anchors.fill: parent; anchors.margins: 13; spacing: 5
-                            StyledText { text: outputCard.modelData?.name ?? ""; color: root.selectedIndex === outputCard.index ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface; font: Tokens.font.title.small }
-                            StyledText { width: parent.width; text: String(outputCard.modelData?.mode ?? ""); color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small; elide: Text.ElideRight }
-                            StyledText { text: `${outputCard.modelData?.x ?? 0} × ${outputCard.modelData?.y ?? 0} · scale ${Number(outputCard.modelData?.scale ?? 1).toFixed(2)} · transform ${outputCard.modelData?.transform ?? 0}`; color: Colours.palette.m3outline; font: Tokens.font.label.small }
-                            StyledText { text: `${root.liveByName(outputCard.modelData?.name)?.gpu_vendor ?? "—"} · ${root.liveByName(outputCard.modelData?.name)?.drm_card ?? "—"}`; color: Colours.palette.m3primary; font: Tokens.font.label.small }
-                            StyledText { text: `${root.liveByName(outputCard.modelData?.name)?.workspace?.name ?? qsTr("no workspace")} · ${(outputCard.modelData?.enabled ?? true) ? qsTr("enabled") : qsTr("disabled")}`; color: Colours.palette.m3onSurfaceVariant; font: Tokens.font.label.small }
+                            CortetsuText { text: outputCard.modelData?.name ?? ""; color: root.selectedIndex === outputCard.index ? CortetsuDesign.colorOnSecondaryContainer : CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+                            CortetsuText { width: parent.width; text: String(outputCard.modelData?.mode ?? ""); color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx; elide: Text.ElideRight }
+                            CortetsuText { text: `${outputCard.modelData?.x ?? 0} × ${outputCard.modelData?.y ?? 0} · scale ${Number(outputCard.modelData?.scale ?? 1).toFixed(2)} · transform ${outputCard.modelData?.transform ?? 0}`; color: CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelSmallPx }
+                            CortetsuText { text: `${root.liveByName(outputCard.modelData?.name)?.gpu_vendor ?? "—"} · ${root.liveByName(outputCard.modelData?.name)?.drm_card ?? "—"}`; color: CortetsuDesign.colorPrimary; textSize: CortetsuTypography.labelSmallPx }
+                            CortetsuText { text: `${root.liveByName(outputCard.modelData?.name)?.workspace?.name ?? qsTr("no workspace")} · ${(outputCard.modelData?.enabled ?? true) ? qsTr("enabled") : qsTr("disabled")}`; color: CortetsuDesign.colorOnSurfaceVariant; textSize: CortetsuTypography.labelSmallPx }
                         }
                     }
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 width: parent.width
                 height: parent.height - 58 - 320 - 168 - 36
-                radius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3surfaceContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorSurface
                 border.width: 1
-                border.color: Colours.palette.m3outlineVariant
+                border.color: CortetsuDesign.colorOutlineVariant
 
                 Row {
                     anchors.fill: parent
@@ -644,16 +642,16 @@ FocusScope {
                         width: parent.width * 0.66
                         height: parent.height
                         spacing: 5
-                        StyledText { text: qsTr("Dry-run plan"); color: Colours.palette.m3onSurface; font: Tokens.font.title.small }
-                        StyledText { width: parent.width; text: root.planStatus; color: root.planResult?.ok ? Colours.palette.m3primary : Colours.palette.m3outline; font: Tokens.font.label.medium; elide: Text.ElideRight }
-                        StyledText {
+                        CortetsuText { text: qsTr("Dry-run plan"); color: CortetsuDesign.colorOnSurface; textSize: CortetsuTypography.titleSmallPx }
+                        CortetsuText { width: parent.width; text: root.planStatus; color: root.planResult?.ok ? CortetsuDesign.colorPrimary : CortetsuDesign.colorOutline; textSize: CortetsuTypography.labelMediumPx; elide: Text.ElideRight }
+                        CortetsuText {
                             width: parent.width
                             height: parent.height - 46
                             text: root.planResult?.ok
                                 ? (root.planResult?.hypr_lines ?? []).join("\n")
                                 : ((root.planResult?.errors ?? []).concat(root.planResult?.warnings ?? [])).join("\n")
-                            color: Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.body.small
+                            color: CortetsuDesign.colorOnSurfaceVariant
+                            textSize: CortetsuTypography.bodySmallPx
                             wrapMode: Text.WrapAnywhere
                             elide: Text.ElideRight
                         }
@@ -663,20 +661,20 @@ FocusScope {
                         width: parent.width * 0.34 - 14
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 9
-                        StyledRect {
-                            width: parent.width; height: 46; radius: Tokens.rounding.large
-                            color: Colours.palette.m3primaryContainer
-                            StateLayer { radius: parent.radius; onClicked: root.runPlan() }
+                        Rectangle {
+                            width: parent.width; height: 46; radius: CortetsuDesign.radiusMedium
+                            color: CortetsuDesign.colorPrimaryContainer
+                            CortetsuStateLayer { radius: parent.radius; onClicked: root.runPlan() }
                             Row { anchors.centerIn: parent; spacing: 7
-                                MaterialIcon { text: "fact_check"; color: Colours.palette.m3onPrimaryContainer }
-                                StyledText { text: planner.running ? qsTr("Validating…") : qsTr("Dry run candidate"); color: Colours.palette.m3onPrimaryContainer; font: Tokens.font.label.medium }
+                                CortetsuIcon { text: "fact_check"; color: CortetsuDesign.colorOnPrimaryContainer }
+                                CortetsuText { text: planner.running ? qsTr("Validating…") : qsTr("Dry run candidate"); color: CortetsuDesign.colorOnPrimaryContainer; textSize: CortetsuTypography.labelMediumPx }
                             }
                         }
-                        StyledText {
+                        CortetsuText {
                             width: parent.width
                             text: qsTr("Dry run never changes outputs. Use Preview for a timed live test, Keep to confirm it, then Save to persist with backup/rollback.")
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.body.small
+                            color: CortetsuDesign.colorOutline
+                            textSize: CortetsuTypography.bodySmallPx
                             wrapMode: Text.WordWrap
                             horizontalAlignment: Text.AlignHCenter
                         }

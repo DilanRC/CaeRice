@@ -2,13 +2,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.components
 
 FocusScope {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property bool displayVisible
 
     readonly property real panelWidth: Math.min(1260, parent.width - 96)
