@@ -2,13 +2,13 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.components
+import "../CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
 
     readonly property bool shouldBeActive: screenState.cortetsuState?.overview ?? false
 
@@ -20,8 +20,9 @@ Item {
     transformOrigin: Item.Center
 
     Behavior on visibilityProgress {
-        Anim {
-            type: Anim.StandardLarge
+        NumberAnimation {
+            duration: CortetsuDesign.motionStandardMs
+            easing.type: Easing.OutCubic
         }
     }
 
