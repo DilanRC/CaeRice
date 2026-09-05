@@ -78,9 +78,9 @@ Scope {
     function openCalendarFor(screen): void {
         closeAllLaunchers();
         closeAllPanels();
-        const state = ShellState.forScreen(screen);
+        const state = ShellState.forScreen(screen)?.cortetsuState;
         if (state)
-            state.calendar = !(state.calendar ?? false);
+            state.setRetained("calendar", !(state.calendar ?? false));
         if (state?.calendar && !calendarSync.running)
             calendarSync.running = true;
         shown = true;
@@ -128,11 +128,11 @@ Scope {
 
     function openWallpaperFor(screen): void {
         for (const candidate of Screens.screens) {
-            const state = ShellState.forScreen(candidate);
+            const state = ShellState.forScreen(candidate)?.cortetsuState;
             if (!state)
                 continue;
-            OverlayPolicy.closeOtherPanels(state);
-            state.wallpaperManager = candidate === screen;
+            OverlayPolicy.closeOtherPanels(state.legacyState);
+            state.setRetained("wallpaperManager", candidate === screen);
         }
         shown = true;
     }
@@ -215,14 +215,15 @@ Scope {
 
             readonly property var monitor: Hypr.monitorFor(modelData)
             readonly property var screenState: ShellState.forScreen(modelData)
+            readonly property var cortetsuState: screenState?.cortetsuState
             readonly property string activeAddress:
                 Hypr.activeToplevel?.lastIpcObject?.address ?? ""
             readonly property bool panelActive:
                 (screenState?.launcher ?? false)
-                || (screenState?.overview ?? false)
+                || (cortetsuState?.overview ?? false)
                 || (screenState?.sidebar ?? false)
                 || (screenState?.session ?? false)
-                || (screenState?.calendar ?? false)
+                || (cortetsuState?.calendar ?? false)
             readonly property int hubMargin: 8
             readonly property int activeWsId: monitor?.activeWorkspace?.id ?? Hypr.activeWsId
             readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
@@ -585,7 +586,7 @@ Scope {
                 height: implicitHeight
 
                 launcherActive: win.screenState?.launcher ?? false
-                wallpaperActive: win.screenState?.wallpaperManager ?? false
+                wallpaperActive: win.cortetsuState?.wallpaperManager ?? false
                 wallpaperSource: Wallpapers.actualCurrent
                 workspaceCount: win.workspaceCount
                 workspaceOffset: win.workspaceOffset

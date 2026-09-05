@@ -13,6 +13,7 @@ controllers = {
     "wallpaperManager": (repo / "caelestia/modules-owned/modules/WallpaperController.qml").read_text(encoding="utf-8"),
     "overview": (repo / "caelestia/modules-owned/modules/OverviewController.qml").read_text(encoding="utf-8"),
 }
+hub = (repo / "caelestia/modules-owned/modules/BottomHub.qml").read_text(encoding="utf-8")
 
 for flag in ("overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"):
     assert f"property bool {flag}" in state, flag
@@ -45,4 +46,8 @@ for flag, controller in controllers.items():
     assert f'setRetained("{flag}"' in controller, flag
     assert f"ShellState.forScreen(screen)?.{flag}" not in controller, flag
     assert "OverlayPolicy.close" in controller, flag
+assert 'state.setRetained("calendar"' in hub
+assert 'state.setRetained("wallpaperManager"' in hub
+assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in hub
+assert "readonly property var cortetsuState" in hub
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")
