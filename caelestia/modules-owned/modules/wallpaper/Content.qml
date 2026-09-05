@@ -168,18 +168,18 @@ FocusScope {
         } else {
             cancelPreview();
         }
-        screenState.wallpaperManager = false;
+        screenState.cortetsuState?.setRetained("wallpaperManager", false);
     }
 
     function cancel(): void {
         cancelPreview();
-        screenState.wallpaperManager = false;
+        screenState.cortetsuState?.setRetained("wallpaperManager", false);
     }
 
     function random(): void {
         cancelPreview();
         Wallpapers.setRandom();
-        screenState.wallpaperManager = false;
+        screenState.cortetsuState?.setRetained("wallpaperManager", false);
     }
 
     function openManager(): void {
@@ -204,7 +204,7 @@ FocusScope {
                 return;
             }
             if (Orbit.previewEligible(root.pendingPreviewPath, root.currentPath,
-                                     root.screenState.wallpaperManager, root.animating, root.queuedDirection)) {
+                                     root.screenState.cortetsuState?.wallpaperManager ?? false, root.animating, root.queuedDirection)) {
                 Wallpapers.preview(root.pendingPreviewPath);
                 root.previewActive = true;
             }

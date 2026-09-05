@@ -233,7 +233,7 @@ FocusScope {
         }
 
         statusText = qsTr("Copied");
-        screenState.clipboard = false;
+        screenState.cortetsuState?.setRetained("clipboard", false);
     }
 
     function deleteEntry(entry): void {
@@ -323,7 +323,7 @@ FocusScope {
     }
 
     Keys.onEscapePressed:
-        screenState.clipboard = false
+        screenState.cortetsuState?.setRetained("clipboard", false)
 
     Keys.onUpPressed:
         moveSelection(-1)
@@ -367,7 +367,7 @@ FocusScope {
     MouseArea {
         anchors.fill: parent
         onClicked:
-            root.screenState.clipboard = false
+            root.screenState.cortetsuState?.setRetained("clipboard", false)
     }
 
     /*
@@ -702,7 +702,7 @@ FocusScope {
                         root.copyEntry(root.selectedEntry)
 
                     Keys.onEscapePressed:
-                        root.screenState.clipboard = false
+                        root.screenState.cortetsuState?.setRetained("clipboard", false)
 
                     Keys.onDeletePressed: {
                         if (

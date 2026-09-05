@@ -5,6 +5,7 @@ repo = Path(__file__).resolve().parents[2]
 state = (repo / "caelestia/modules-owned/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
 policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
+content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 calendar = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
 clipboard = (repo / "caelestia/modules-owned/modules/ClipboardController.qml").read_text(encoding="utf-8")
 controllers = {
@@ -45,7 +46,7 @@ for flag, controller in controllers.items():
     assert "cortetsuState" in controller, flag
     assert f'setRetained("{flag}"' in controller, flag
     assert f"ShellState.forScreen(screen)?.{flag}" not in controller, flag
-    assert "OverlayPolicy.close" in controller, flag
+assert "OverlayPolicy.close" in controller, flag
 assert 'state.setRetained("calendar"' in hub
 assert 'state.setRetained("wallpaperManager"' in hub
 assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in hub
@@ -61,6 +62,17 @@ for wrapper, flag in (
     wrapper_text = (repo / "caelestia/modules-owned/modules" / wrapper).read_text(encoding="utf-8")
     assert f"screenState.cortetsuState?.{flag}" in wrapper_text, wrapper
 for content_file, flag in (("calendar/Content.qml", "calendar"), ("overview/Content.qml", "overview")):
+    content_text = (repo / "caelestia/modules-owned/modules" / content_file).read_text(encoding="utf-8")
+    assert f'cortetsuState?.setRetained("{flag}", false)' in content_text, content_file
+for marker in ("closeRetainedOverlays", "requiresWindowKeyboardFocus", "requiresFullInputMask", "retainedOverlayOpen"):
+    assert marker in content_window_patch, marker
+for content_file, flag in (
+    ("clipboard/Content.qml", "clipboard"),
+    ("hardware/Content.qml", "hardware"),
+    ("display/Editor.qml", "displayManager"),
+    ("wallpaper/Content.qml", "wallpaperManager"),
+    ("wallpaper/Wrapper.qml", "wallpaperManager"),
+):
     content_text = (repo / "caelestia/modules-owned/modules" / content_file).read_text(encoding="utf-8")
     assert f'cortetsuState?.setRetained("{flag}", false)' in content_text, content_file
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")

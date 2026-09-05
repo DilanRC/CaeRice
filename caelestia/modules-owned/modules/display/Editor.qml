@@ -245,7 +245,7 @@ FocusScope {
     }
 
     function closeDisplayManager(): void {
-        screenState.displayManager = false;
+        screenState.cortetsuState?.setRetained("displayManager", false);
     }
 
     Keys.onEscapePressed: closeDisplayManager()

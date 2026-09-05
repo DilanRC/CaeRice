@@ -98,7 +98,7 @@ FocusScope {
     }
 
     function closeHardware(): void {
-        root.screenState.hardware = false;
+        root.screenState.cortetsuState?.setRetained("hardware", false);
     }
 
     Keys.onEscapePressed: root.closeHardware()

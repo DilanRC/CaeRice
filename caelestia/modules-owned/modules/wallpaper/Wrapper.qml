@@ -61,7 +61,7 @@ Item {
 
     onGlobalOtherOverlayOpenChanged: {
         if (shouldBeActive && globalOtherOverlayOpen) {
-            screenState.wallpaperManager = false;
+            screenState.cortetsuState?.setRetained("wallpaperManager", false);
             Wallpapers.stopPreview();
         }
     }
