@@ -1,0 +1,8 @@
+--- a/modules/drawers/Panels.qml
++++ b/modules/drawers/Panels.qml
+@@ -12,0 +13 @@
++import ".."
+@@ -204,0 +206,3 @@ Item {
++    Component.onCompleted: CortetsuShellState.registerComponents(screen, root)
++    Component.onDestruction: CortetsuShellState.unregisterComponents(screen, root)
++

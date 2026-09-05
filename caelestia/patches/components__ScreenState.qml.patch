@@ -21,3 +21,6 @@
 +    readonly property bool requiresOverlayLayer: retainedOverlayOpen || launcher || session
 +    readonly property bool requiresFullInputMask: overview || calendar || clipboard || hardware || displayManager || wallpaperManager
 +    readonly property bool requiresWindowKeyboardFocus: requiresFullInputMask || launcher || session
++
++    Component.onCompleted: CortetsuShellState.registerState(modelData, root)
++    Component.onDestruction: CortetsuShellState.unregisterState(modelData, root)

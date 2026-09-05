@@ -19,7 +19,8 @@ for controller in controllers:
 shortcut = (modules / "CortetsuShortcut.qml").read_text()
 state = (modules / "CortetsuShellState.qml").read_text()
 assert 'appid: "cortetsu"' in shortcut
-assert "import qs.services" in state
-assert "ShellState.forScreen" in state and "ShellState.forActive" in state
+assert "import qs.services" not in state
+assert "ShellState.forScreen" not in state and "ShellState.forActive" not in state
+assert "registerState" in state and "CortetsuHypr.focusedMonitor" in state
 
 print("PASS: controllers use Cortetsu shortcut and shell-state boundaries")

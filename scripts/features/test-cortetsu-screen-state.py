@@ -5,6 +5,8 @@ repo = Path(__file__).resolve().parents[2]
 state = (repo / "caelestia/modules-owned/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
 policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
+panels_patch = (repo / "caelestia/patches/modules__drawers__Panels__cortetsu-shell-state.qml.patch").read_text(encoding="utf-8")
+shell_state = (repo / "caelestia/modules-owned/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
@@ -33,6 +35,11 @@ assert "function closeOtherRetained(state, exceptFlag)" in policy
 assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects" in policy
 assert 'import "../modules"' in patch
 assert "cortetsuState" in patch
+assert "CortetsuShellState.registerState(modelData, root)" in patch
+assert "CortetsuShellState.registerComponents(screen, root)" in panels_patch
+assert "import qs.services" not in shell_state
+for marker in ("registerState", "unregisterState", "registerComponents", "unregisterComponents", "CortetsuHypr.focusedMonitor"):
+    assert marker in shell_state, marker
 assert "cortetsuState" in calendar
 assert 'state.setRetained("calendar", false)' in calendar
 assert 'state.setRetained("calendar", true)' in calendar
