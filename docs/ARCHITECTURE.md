@@ -44,7 +44,7 @@ Wallpaper Manager sigue el límite `ScreenState -> WallpaperController -> Conten
 Después de actualizar Caelestia:
 
 ```bash
-bash ~/.local/share/cortetsu/upstream/bin/verify-patches.sh
+cortetsu verify
 ```
 
 - `APPLIED`: el patch literal está presente.

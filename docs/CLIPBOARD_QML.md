@@ -67,4 +67,4 @@ La referencia visual es el mock-up premium generado durante el desarrollo, pero 
 
 ## Criterio de terminado
 
-El módulo se considera estable cuando funciona con teclado y touchpad, conserva historial entre reinicios, no roba foco después de cerrar, descarga el contenido pesado al cerrarse, no rompe Overview/Dock/Launcher, responde correctamente a `qs -c caelestia ipc call clipboard ...`, y `verify-patches.sh` reporta el estado esperado.
+El módulo se considera estable cuando funciona con teclado y touchpad, conserva historial entre reinicios, no roba foco después de cerrar, descarga el contenido pesado al cerrarse, no rompe Overview/Dock/Launcher, responde correctamente al IPC del runtime Cortetsu y `cortetsu verify` reporta el estado esperado.

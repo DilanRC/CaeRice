@@ -16,6 +16,9 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-zero-gate-") as directory:
     history = root / "caelestia/history"
     history.mkdir(parents=True)
     (history / "old.qml").write_text("GlobalConfig.foo\n")
+    maintenance = root / "scripts/maintenance"
+    maintenance.mkdir(parents=True)
+    (maintenance / "old.sh").write_text("caelestia shell -d\n")
     patches = root / "caelestia/patches"
     patches.mkdir(parents=True)
     (patches / "change.patch").write_text("--- a/x.qml\n+++ b/x.qml\n-GlobalConfig.old\n+Item {}\n")

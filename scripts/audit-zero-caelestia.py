@@ -31,7 +31,7 @@ ACTIVE_ROOTS = (
     "scripts",
 )
 
-EXCLUDED_PARTS = {"tests", "evals", "history", "historical", "recovery", "__pycache__"}
+EXCLUDED_PARTS = {"tests", "evals", "history", "historical", "recovery", "maintenance", "__pycache__"}
 TEXT_SUFFIXES = {"", ".qml", ".js", ".py", ".sh", ".fish", ".service", ".tsv", ".json", ".patch", ".conf"}
 
 
