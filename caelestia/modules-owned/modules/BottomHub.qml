@@ -226,7 +226,7 @@ Scope {
                 || (cortetsuState?.calendar ?? false)
             readonly property int hubMargin: 8
             readonly property int activeWsId: monitor?.activeWorkspace?.id ?? CortetsuHypr.activeWsId
-            readonly property int workspaceCount: Math.max(1, GlobalConfig.bar.workspaces.shown)
+            readonly property int workspaceCount: CortetsuConfig.workspacesShown
             readonly property int workspaceOffset: Math.floor((activeWsId - 1) / workspaceCount) * workspaceCount
             readonly property var occupiedWorkspaceIds: CortetsuHypr.workspaces.values
                 .filter(ws => ws.lastIpcObject?.windows > 0)
@@ -293,7 +293,7 @@ Scope {
 
                 const result = [];
                 const pinnedEntries = DesktopEntries.applications.values.filter(entry =>
-                    Strings.testRegexList(GlobalConfig.launcher.favouriteApps, entry.id)
+                    Strings.testRegexList(CortetsuConfig.favouriteApps, entry.id)
                 );
 
                 for (const entry of pinnedEntries) {
@@ -334,7 +334,7 @@ Scope {
             }))
 
             readonly property var trayViewItems: SystemTray.items.values
-                .filter(item => !GlobalConfig.bar.tray.hiddenIcons.includes(item.id))
+                .filter(item => !CortetsuConfig.hiddenTrayIcons.includes(item.id))
                 .map(item => ({
                     id: item.id,
                     iconSource: item.icon || Icons.getTrayIcon(item.id, item.icon)
@@ -354,12 +354,12 @@ Scope {
                     return;
 
                 const id = entry.id;
-                const apps = GlobalConfig.launcher.favouriteApps;
+                const apps = CortetsuConfig.favouriteApps;
 
                 if (apps.includes(id)) {
-                    GlobalConfig.launcher.favouriteApps = apps.filter(app => app !== id);
+                    CortetsuConfig.setFavouriteApps(apps.filter(app => app !== id));
                 } else if (!Strings.testRegexList(apps, id)) {
-                    GlobalConfig.launcher.favouriteApps = [...apps, id];
+                    CortetsuConfig.setFavouriteApps([...apps, id]);
                 }
             }
 

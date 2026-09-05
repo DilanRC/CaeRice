@@ -90,7 +90,7 @@ def assert_controller(text: str) -> None:
         "function showTrayMenu(itemId, centerX): void",
         "function activateTrayItem(itemId, secondary = false): void",
         "function toggleSession(): void",
-        "GlobalConfig.launcher.favouriteApps",
+        "CortetsuConfig.favouriteApps",
         "SystemTray.items.values",
         "Apps.launch(item.entry)",
         "CortetsuHypr.dispatch(",
