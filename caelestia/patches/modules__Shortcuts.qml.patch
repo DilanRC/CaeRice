@@ -22,6 +22,6 @@
 +            const open = !(screenState.sidebar || screenState.utilities);
 +            screenState.sidebar = open;
 +            screenState.utilities = open;
-+            screenState.wallpaperManager = false;
++            screenState.cortetsuState?.setRetained("wallpaperManager", false);
          }
      }
