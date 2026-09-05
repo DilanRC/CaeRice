@@ -7,6 +7,12 @@ policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").rea
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
 calendar = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
 clipboard = (repo / "caelestia/modules-owned/modules/ClipboardController.qml").read_text(encoding="utf-8")
+controllers = {
+    "hardware": (repo / "caelestia/modules-owned/modules/HardwareController.qml").read_text(encoding="utf-8"),
+    "displayManager": (repo / "caelestia/modules-owned/modules/DisplayController.qml").read_text(encoding="utf-8"),
+    "wallpaperManager": (repo / "caelestia/modules-owned/modules/WallpaperController.qml").read_text(encoding="utf-8"),
+    "overview": (repo / "caelestia/modules-owned/modules/OverviewController.qml").read_text(encoding="utf-8"),
+}
 
 for flag in ("overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"):
     assert f"property bool {flag}" in state, flag
@@ -15,8 +21,11 @@ for derived in ("retainedOverlayOpen", "requiresOverlayLayer", "requiresFullInpu
     assert derived in state and derived in patch, derived
 assert "required property QtObject legacyState" in state
 assert "function closeRetainedOverlays" in state
+assert "function closeRetainedOverlaysExcept(exceptFlag: string): void" in state
 assert "function setRetained(flag: string, value: bool): bool" in state
 assert "function openExclusive" in policy
+assert "function isRetainedFlag(flag)" in policy
+assert "function closeOtherRetained(state, exceptFlag)" in policy
 assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects" in policy
 assert 'import "../modules"' in patch
 assert "cortetsuState" in patch
@@ -31,4 +40,9 @@ assert 'state.setRetained("clipboard", true)' in clipboard
 assert "ShellState.forActive()?.cortetsuState" in clipboard
 assert "OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen)?.cortetsuState?.legacyState)" in clipboard
 assert "ShellState.forScreen(screen)?.clipboard" not in clipboard
+for flag, controller in controllers.items():
+    assert "cortetsuState" in controller, flag
+    assert f'setRetained("{flag}"' in controller, flag
+    assert f"ShellState.forScreen(screen)?.{flag}" not in controller, flag
+    assert "OverlayPolicy.close" in controller, flag
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")

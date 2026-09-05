@@ -28,6 +28,13 @@ QtObject {
         legacyState.wallpaperManager = false;
     }
 
+    function closeRetainedOverlaysExcept(exceptFlag: string): void {
+        for (const flag of ["overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"]) {
+            if (flag !== exceptFlag)
+                setRetained(flag, false);
+        }
+    }
+
     function setRetained(flag: string, value: bool): bool {
         if (flag !== "overview" && flag !== "calendar" && flag !== "clipboard"
                 && flag !== "hardware" && flag !== "displayManager" && flag !== "wallpaperManager")

@@ -4,6 +4,10 @@
 // popouts, tray ownership and wallpaper side effects stay in their callers.
 const retainedFlags = ["overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"];
 
+function isRetainedFlag(flag) {
+    return retainedFlags.indexOf(flag) >= 0;
+}
+
 function closeRetained(state) {
     if (!state)
         return;
@@ -11,6 +15,16 @@ function closeRetained(state) {
         if (state[flag] !== undefined)
             state[flag] = false;
     }
+}
+
+function closeOtherRetained(state, exceptFlag) {
+    if (!state || !isRetainedFlag(exceptFlag))
+        return false;
+    for (const flag of retainedFlags) {
+        if (flag !== exceptFlag && state[flag] !== undefined)
+            state[flag] = false;
+    }
+    return true;
 }
 
 function closeAll(state) {
@@ -24,7 +38,7 @@ function closeAll(state) {
 }
 
 function openExclusive(state, flag) {
-    if (!state || retainedFlags.indexOf(flag) < 0)
+    if (!state || !isRetainedFlag(flag))
         return false;
     closeAll(state);
     state[flag] = true;

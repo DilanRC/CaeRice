@@ -13,7 +13,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of Screens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state?.displayManager)
                 return true;
         }
@@ -22,24 +22,24 @@ Scope {
 
     function closeAll(): void {
         for (const screen of Screens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
-                state.displayManager = false;
+                state.setRetained("displayManager", false);
         }
     }
 
     function closeOtherPanels(): void {
         for (const screen of Screens.screens)
-            OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen));
+            OverlayPolicy.closeOtherPanels(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
     function open(): void {
-        const state = ShellState.forActive();
+        const state = ShellState.forActive()?.cortetsuState;
         if (!state)
             return;
         closeAll();
         closeOtherPanels();
-        state.displayManager = true;
+        state.setRetained("displayManager", true);
     }
 
     function close(): void {

@@ -15,7 +15,7 @@ checks = {
     "bounded_to_12": "Math.min(12, count)" in helper,
     "selected_excluded_from_satellites": "function satellites" in helper and "index !== selectedIndex" in helper and "Orbit.satellites" in content,
     "actual_path_alias_resolution": "function resolveCurrentIndex" in helper and "Orbit.resolveCurrentIndex" in content,
-    "active_screen_open": "const state = ShellState.forActive();" in controller and "ShellState.forActive()?.modelData" not in controller,
+    "active_screen_open": "const state = ShellState.forActive()?.cortetsuState;" in controller and "ShellState.forActive()?.modelData" not in controller,
     "wrap_safe_empty": "if (count <= 0)" in helper,
     "unicode_paths_untouched": "entries.filter" in helper and "encode" not in helper,
     "no_second_backend": "execDetached" not in content and "Quickshell.exec" not in content,

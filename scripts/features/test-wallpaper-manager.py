@@ -62,9 +62,9 @@ for controller_file in ("OverviewController.qml", "ClipboardController.qml", "Ha
 assert "OverlayPolicy.closeForWallpaper" in wallpaper_controller and "for (const screen of Screens.screens)" in wallpaper_controller
 assert "OverlayPolicy.closeOtherPanels(state);" in hub
 assert "toggleSidebarFor" in hub and "state.sidebar = !wasOpen;" in hub
-assert "const state = ShellState.forActive();" in wallpaper_controller
+assert "const state = ShellState.forActive()?.cortetsuState;" in wallpaper_controller
 assert "ShellState.forActive()?.modelData" not in wallpaper_controller
-assert "closeOtherPanels();\n        state.wallpaperManager = true;" in wallpaper_controller
+assert "closeOtherPanels();\n        state.setRetained(\"wallpaperManager\", true);" in wallpaper_controller
 
 # V2 visual and native-service contracts.
 for needle in ("Orbit.satellites", "Math.min(12", "Math.cos(angle)", "Math.sin(angle)", "depth", "scale:", "opacity:", "z:", "Mask { maskSource", "outgoingHeroPath", "heroCrossfade", "TextButton", "IconTextButton"):

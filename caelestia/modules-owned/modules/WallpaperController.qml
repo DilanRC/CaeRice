@@ -13,7 +13,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of Screens.screens) {
-            if (ShellState.forScreen(screen)?.wallpaperManager)
+            if (ShellState.forScreen(screen)?.cortetsuState?.wallpaperManager)
                 return true;
         }
         return false;
@@ -21,24 +21,24 @@ Scope {
 
     function closeAll(): void {
         for (const screen of Screens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
-                state.wallpaperManager = false;
+                state.setRetained("wallpaperManager", false);
         }
     }
 
     function closeOtherPanels(): void {
         for (const screen of Screens.screens)
-            OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen));
+            OverlayPolicy.closeForWallpaper(ShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
     function open(): void {
-        const state = ShellState.forActive();
+        const state = ShellState.forActive()?.cortetsuState;
         if (!state)
             return;
         closeAll();
         closeOtherPanels();
-        state.wallpaperManager = true;
+        state.setRetained("wallpaperManager", true);
     }
 
     function close(): void { closeAll(); }
