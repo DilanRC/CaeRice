@@ -51,8 +51,8 @@ assert "duration: 110" not in hub
 
 # Canonical state belongs to Cortetsu, while Caelestia paths are allowed only
 # where they are genuine upstream configuration contracts.
-calendar = (repo / "caelestia/bin/cortetsu-calendar").read_text(encoding="utf-8")
-pomodoro = (repo / "caelestia/bin/cortetsu-pomodoro").read_text(encoding="utf-8")
+calendar = (repo / "cortetsu/bin/cortetsu-calendar").read_text(encoding="utf-8")
+pomodoro = (repo / "cortetsu/bin/cortetsu-pomodoro").read_text(encoding="utf-8")
 assert '/ "cortetsu"' in calendar
 assert 'state_home / "cortetsu/pomodoro.json"' in pomodoro
 

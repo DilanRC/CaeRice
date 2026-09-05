@@ -10,7 +10,7 @@ MODULES = REPO / "caelestia/modules-owned/modules"
 
 spec = importlib.util.spec_from_file_location(
     "bottom_hub_target",
-    REPO / "caelestia/bin/check-bottom-hub-target.py",
+    REPO / "cortetsu/bin/check-bottom-hub-target.py",
 )
 assert spec and spec.loader
 bottom_hub_target = importlib.util.module_from_spec(spec)

@@ -92,7 +92,7 @@ cortetsu doctor
 cortetsu status
 ```
 
-`caelestia/bin/build-runtime.sh` parte de la base exacta declarada en `compatibility.json`, aplica patches en staging, copia los módulos first-party y ejecuta las regresiones antes de promover una generación.
+`cortetsu/bin/build-runtime.sh` parte de la base exacta declarada en `compatibility.json`, aplica patches en staging, copia los módulos first-party y ejecuta las regresiones antes de promover una generación.
 
 No usar `sudo install` sobre `/etc/xdg/quickshell/caelestia`, no reiniciar mediante `caelestia shell -d` y no editar el paquete del sistema.
 

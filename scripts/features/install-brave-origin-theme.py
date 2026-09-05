@@ -12,7 +12,7 @@ from pathlib import Path
 
 HOME = Path.home()
 REPO = Path(__file__).resolve().parents[2]
-SOURCE_HOOK = REPO / "caelestia/bin/cortetsu-scheme-posthook"
+SOURCE_HOOK = REPO / "cortetsu/bin/cortetsu-scheme-posthook"
 TARGET_HOOK = HOME / ".local/bin/caelestia-scheme-posthook"
 LEGACY_HOOK = HOME / ".local/bin/caelestia-scheme-posthook.legacy"
 CLI_JSON = HOME / ".config/caelestia/cli.json"

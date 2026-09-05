@@ -10,7 +10,7 @@ import tempfile
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-helper = Path(__file__).resolve().parents[1] / "bin/cortetsu-pomodoro"
+helper = Path(__file__).resolve().parents[2] / "cortetsu/bin/cortetsu-pomodoro"
 spec = importlib.util.spec_from_loader("pomodoro", SourceFileLoader("pomodoro", str(helper)))
 module = importlib.util.module_from_spec(spec)
 assert spec.loader is not None

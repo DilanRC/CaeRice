@@ -49,9 +49,9 @@ No normal Display Manager action edits EDID data, creates arbitrary modelines, o
 
 ## Files
 
-- `caelestia/bin/cortetsu-display-probe`
-- `caelestia/bin/cortetsu-display-plan`
-- `caelestia/bin/cortetsu-display-transaction`
+- `cortetsu/bin/cortetsu-display-probe`
+- `cortetsu/bin/cortetsu-display-plan`
+- `cortetsu/bin/cortetsu-display-transaction`
 - `caelestia/modules-owned/modules/DisplayController.qml`
 - `caelestia/modules-owned/modules/display/Wrapper.qml`
 - `caelestia/modules-owned/modules/display/Content.qml`

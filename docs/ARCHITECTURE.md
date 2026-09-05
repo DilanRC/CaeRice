@@ -19,7 +19,7 @@ El shell real continúa instalado bajo:
 
 `/etc/xdg/quickshell/caelestia`
 
-Cortetsu es la fuente versionada. El runtime se valida/aplica mediante los scripts guardados en `caelestia/bin` después de sincronizar el estado real.
+Cortetsu es la fuente versionada. El runtime se valida/aplica mediante los scripts guardados en `cortetsu/bin` después de sincronizar el estado real.
 
 ## Superficies e input
 

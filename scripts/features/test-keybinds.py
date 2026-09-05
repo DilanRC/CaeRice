@@ -8,7 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 REPO = Path(__file__).resolve().parents[2]
-HELPER = REPO / "caelestia/bin/cortetsu-keybinds"
+HELPER = REPO / "cortetsu/bin/cortetsu-keybinds"
 
 loader = importlib.machinery.SourceFileLoader("cortetsu_keybinds", str(HELPER))
 spec = importlib.util.spec_from_loader(loader.name, loader)

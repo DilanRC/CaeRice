@@ -8,7 +8,7 @@ echo "==> Display Manager"
 bash "$REPO/scripts/features/install-display-manager.sh"
 mkdir -p "$HOME/.local/bin"
 for helper in cortetsu-display-presets cortetsu-display-workspaces; do
-    install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"
+    install -m 0755 "$REPO/cortetsu/bin/$helper" "$HOME/.local/bin/$helper"
 done
 
 echo "==> Remove retired Gaming/Updater remnants + synchronize"

@@ -18,7 +18,7 @@ for qml in "$REPO/caelestia/modules-owned/modules/display/"*.qml; do
 done
 mkdir -p "$HOME/.local/bin"
 for helper in cortetsu-display-probe cortetsu-display-plan cortetsu-display-transaction cortetsu-display-persist cortetsu-display-presets cortetsu-display-workspaces; do
-    install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"
+    install -m 0755 "$REPO/cortetsu/bin/$helper" "$HOME/.local/bin/$helper"
 done
 
 bash "$REPO/scripts/features/purge-retired-centers.sh"

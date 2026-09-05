@@ -59,7 +59,7 @@ También coinciden con el repo:
 - `~/.config/systemd/user/caerice-power-auto.service`;
 - `~/.config/caelestia/templates/kitty-caerice.conf`.
 
-`caelestia/bin/caerice-scheme-posthook` está versionado pero no instalado. Se
+`cortetsu/bin/caerice-scheme-posthook` está versionado pero no instalado. Se
 clasifica `OWNED/MISSING`; instalarlo solo corresponde si se activa ese flujo.
 
 `~/.config/caelestia/shell.json`, `cli.json` y `~/.config/kitty/kitty.conf` son

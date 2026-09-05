@@ -11,7 +11,7 @@ import tempfile
 import time
 from pathlib import Path
 
-helper_path = Path(__file__).resolve().parents[1] / "bin/cortetsu-calendar"
+helper_path = Path(__file__).resolve().parents[2] / "cortetsu/bin/cortetsu-calendar"
 loader = importlib.machinery.SourceFileLoader("calendar_helper", str(helper_path))
 spec = importlib.util.spec_from_loader(loader.name, loader)
 module = importlib.util.module_from_spec(spec)

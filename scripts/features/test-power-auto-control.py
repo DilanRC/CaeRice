@@ -10,7 +10,7 @@ from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULE_PATH = REPO / "caelestia/bin/cortetsu-power-auto-control"
+MODULE_PATH = REPO / "cortetsu/bin/cortetsu-power-auto-control"
 PROFILES = ("power-saver", "balanced", "performance")
 
 

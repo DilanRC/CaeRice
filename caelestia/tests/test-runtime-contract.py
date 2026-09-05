@@ -5,15 +5,15 @@ import json
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-build = (repo / "caelestia/bin/build-runtime.sh").read_text(encoding="utf-8")
-ensure_upstream = (repo / "caelestia/bin/ensure-upstream.sh").read_text(encoding="utf-8")
+build = (repo / "cortetsu/bin/build-runtime.sh").read_text(encoding="utf-8")
+ensure_upstream = (repo / "cortetsu/bin/ensure-upstream.sh").read_text(encoding="utf-8")
 installer = (repo / "scripts/install-cortetsu.sh").read_text(encoding="utf-8")
 migration = (repo / "scripts/migrate-cortetsu-v2.sh").read_text(encoding="utf-8")
 legacy_process_migration = (repo / "core/migrate_legacy_processes.py").read_text(encoding="utf-8")
-wallpaper_daemon = (repo / "caelestia/bin/cortetsu-wallpaper-color-daemon").read_text(encoding="utf-8")
+wallpaper_daemon = (repo / "cortetsu/bin/cortetsu-wallpaper-color-daemon").read_text(encoding="utf-8")
 wallpaper_unit = (repo / "config/systemd/user/cortetsu-wallpaper-color.service").read_text(encoding="utf-8")
-rollback = (repo / "caelestia/bin/rollback-runtime.sh").read_text(encoding="utf-8")
-composer = (repo / "caelestia/bin/compose-panels.py").read_text(encoding="utf-8")
+rollback = (repo / "cortetsu/bin/rollback-runtime.sh").read_text(encoding="utf-8")
+composer = (repo / "cortetsu/bin/compose-panels.py").read_text(encoding="utf-8")
 content = (repo / "caelestia/modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
 cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
 compatibility = json.loads((repo / "caelestia/compatibility.json").read_text(encoding="utf-8"))
@@ -50,7 +50,7 @@ for marker in (
 
 for marker in (
     "scripts/migrate-cortetsu-v2.sh",
-    'find "$REPO/caelestia/bin" -maxdepth 1 -type f -name \'cortetsu-*\'',
+    'find "$REPO/cortetsu/bin" -maxdepth 1 -type f -name \'cortetsu-*\'',
     "cortetsu-rollback",
     'core/theme.py" check',
     'core/theme.py" adopt',
@@ -83,7 +83,7 @@ assert "wallpaper-engine=active" in wallpaper_daemon and "wallpaper-engine=inact
 assert "PartOf=graphical-session.target" in wallpaper_unit
 assert "Restart=on-failure" in wallpaper_unit
 assert "cortetsu-wallpaper-color-daemon" in wallpaper_unit
-apply_wallpaper = (repo / "caelestia/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
+apply_wallpaper = (repo / "cortetsu/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
 assert "cortetsu-scheme-posthook" not in apply_wallpaper
 wallpaper_service = (repo / "caelestia/modules-owned/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
 assert '"cortetsu-wallpaper-colours", path' in wallpaper_service

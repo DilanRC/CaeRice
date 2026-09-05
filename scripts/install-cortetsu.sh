@@ -22,15 +22,15 @@ if [[ -x "$REPO/scripts/migrate-cortetsu-v2.sh" ]]; then
 fi
 
 printf '==> Cortetsu: validación y construcción aislada\n'
-"$REPO/caelestia/bin/check-package-updates.sh" || true
-"$REPO/caelestia/bin/build-runtime.sh"
+"$REPO/cortetsu/bin/check-package-updates.sh" || true
+"$REPO/cortetsu/bin/build-runtime.sh"
 
 printf '==> Helpers Cortetsu\n'
 mkdir -p "$BIN_DIR" "$DATA_ROOT"
 while IFS= read -r -d '' source; do
     name="$(basename "$source")"
     install -m 0755 "$source" "$BIN_DIR/$name"
-done < <(find "$REPO/caelestia/bin" -maxdepth 1 -type f -name 'cortetsu-*' -print0 | sort -z)
+done < <(find "$REPO/cortetsu/bin" -maxdepth 1 -type f -name 'cortetsu-*' -print0 | sort -z)
 
 mkdir -p "$SYSTEMD_USER_DIR"
 install -m 0644 "$REPO/config/systemd/user/$KEEP_AWAKE_UNIT" "$SYSTEMD_USER_DIR/$KEEP_AWAKE_UNIT"
@@ -38,7 +38,7 @@ install -m 0644 "$REPO/config/systemd/user/$WALLPAPER_COLOR_UNIT" "$SYSTEMD_USER
 
 # Low-level shell rollback remains available for recovery. Normal operation uses
 # `cortetsu rollback`, which reverts the full system generation.
-install -m 0755 "$REPO/caelestia/bin/rollback-runtime.sh" "$BIN_DIR/cortetsu-rollback"
+install -m 0755 "$REPO/cortetsu/bin/rollback-runtime.sh" "$BIN_DIR/cortetsu-rollback"
 
 if [[ -x "$REPO/scripts/cortetsu" ]]; then
     atomic_symlink "$REPO" "$DATA_ROOT/repository"

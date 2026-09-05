@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
-UPSTREAM="$(bash "$REPO/caelestia/bin/ensure-upstream.sh")"
+UPSTREAM="$(bash "$REPO/cortetsu/bin/ensure-upstream.sh")"
 COMPATIBILITY="$REPO/caelestia/compatibility.json"
 BUILD_ROOT="$DATA_ROOT/builds"
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
@@ -89,7 +89,7 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/caelestia/modules-owned/modules/." "$STAGING/modules/"
-python3 "$REPO/caelestia/bin/compose-panels.py" "$STAGING"
+python3 "$REPO/cortetsu/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/caelestia/composition.json" "$STAGING/composition.json"
 
@@ -129,11 +129,11 @@ python3 "$REPO/scripts/features/test-hardware-design.py"
 python3 "$REPO/scripts/features/test-wallpaper-service.py"
 python3 "$REPO/scripts/features/test-calendar-controller-state.py"
 python3 "$REPO/scripts/features/test-legacy-process-migration.py"
-bash -n "$REPO/caelestia/bin/cortetsu-wallpaper-color-daemon"
-bash -n "$REPO/caelestia/bin/cortetsu-apply-wallpaper-colors"
-bash -n "$REPO/caelestia/bin/cortetsu-wallpaper-select"
-python3 -m py_compile "$REPO/caelestia/bin/cortetsu-wallpaper-colours"
-bash -n "$REPO/caelestia/bin/cortetsu-apply-wallpaper-colors"
+bash -n "$REPO/cortetsu/bin/cortetsu-wallpaper-color-daemon"
+bash -n "$REPO/cortetsu/bin/cortetsu-apply-wallpaper-colors"
+bash -n "$REPO/cortetsu/bin/cortetsu-wallpaper-select"
+python3 -m py_compile "$REPO/cortetsu/bin/cortetsu-wallpaper-colours"
+bash -n "$REPO/cortetsu/bin/cortetsu-apply-wallpaper-colors"
 
 for required in \
     shell.qml \

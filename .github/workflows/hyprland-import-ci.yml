@@ -17,4 +17,4 @@ jobs:
       - name: Validate safe Hyprland import
         run: python3 scripts/features/test-hyprland-import.py
       - name: Validate helper syntax
-        run: bash -n caelestia/bin/cortetsu-import-hyprland
+        run: bash -n cortetsu/bin/cortetsu-import-hyprland

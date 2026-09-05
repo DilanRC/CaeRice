@@ -15,7 +15,7 @@ sudo install -m 0644 "$SRC/DisplayController.qml" "$LIVE/modules/DisplayControll
 sudo mkdir -p "$LIVE/modules/display"
 for qml in "$SRC/display/"*.qml; do sudo install -m 0644 "$qml" "$LIVE/modules/display/$(basename "$qml")"; done
 mkdir -p "$HOME/.local/bin"
-for helper in cortetsu-display-probe cortetsu-display-plan cortetsu-display-transaction cortetsu-display-persist cortetsu-display-presets cortetsu-display-workspaces; do install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"; done
+for helper in cortetsu-display-probe cortetsu-display-plan cortetsu-display-transaction cortetsu-display-persist cortetsu-display-presets cortetsu-display-workspaces; do install -m 0755 "$REPO/cortetsu/bin/$helper" "$HOME/.local/bin/$helper"; done
 pkill -TERM -x qs 2>/dev/null || true
 sleep 1
 caelestia shell -d

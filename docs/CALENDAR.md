@@ -1,6 +1,6 @@
 # Calendar, Google Calendar y Focus/Pomodoro
 
-Cortetsu integra calendario mensual de solo lectura, agenda diaria y Pomodoro persistente. OAuth y HTTP viven en `caelestia/bin/cortetsu-calendar`; QML consume JSON estructurado y ejecuta acciones explícitas del helper.
+Cortetsu integra calendario mensual de solo lectura, agenda diaria y Pomodoro persistente. OAuth y HTTP viven en `cortetsu/bin/cortetsu-calendar`; QML consume JSON estructurado y ejecuta acciones explícitas del helper.
 
 ## Google Calendar: solo lectura
 

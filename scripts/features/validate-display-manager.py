@@ -10,7 +10,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 MODULES = REPO / "caelestia/modules-owned/modules"
 DISPLAY = MODULES / "display"
-BIN = REPO / "caelestia/bin"
+BIN = REPO / "cortetsu/bin"
 errors: list[str] = []
 
 
@@ -59,7 +59,7 @@ req((MODULES / "DisplayController.qml").is_file(), "missing DisplayController.qm
 for name in qml:
     req((DISPLAY / name).is_file(), f"missing display/{name}")
 for name in helpers:
-    req((BIN / name).is_file(), f"missing caelestia/bin/{name}")
+    req((BIN / name).is_file(), f"missing cortetsu/bin/{name}")
 
 for name in helpers:
     path = BIN / name

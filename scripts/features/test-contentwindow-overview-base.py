@@ -7,8 +7,8 @@ from pathlib import Path
 import sys
 
 REPO = Path(__file__).resolve().parents[2]
-NORMALIZER = REPO / "caelestia/bin/normalize-contentwindow-overview-24.py"
-CHECKER = REPO / "caelestia/bin/check-bottom-hub-target.py"
+NORMALIZER = REPO / "cortetsu/bin/normalize-contentwindow-overview-24.py"
+CHECKER = REPO / "cortetsu/bin/check-bottom-hub-target.py"
 sys.path.insert(0, str(REPO / "scripts/features"))
 
 from wire_sad_shell import ensure_or_member, ensure_statement

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-helper="$root/bin/cortetsu-calendar"
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+helper="$root/cortetsu/bin/cortetsu-calendar"
 python3 - "$helper" <<'PY'
 from __future__ import annotations
 import ast

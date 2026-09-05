@@ -10,7 +10,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 MODULES = REPO / "caelestia/modules-owned/modules"
 HARDWARE = MODULES / "hardware"
-BIN = REPO / "caelestia/bin"
+BIN = REPO / "cortetsu/bin"
 
 QML_REQUIRED = [
     "Wrapper.qml",
@@ -68,7 +68,7 @@ require((MODULES / "HardwareController.qml").is_file(), "falta HardwareControlle
 for name in QML_REQUIRED:
     require((HARDWARE / name).is_file(), f"falta hardware/{name}")
 for name in HELPERS:
-    require((BIN / name).is_file(), f"falta caelestia/bin/{name}")
+    require((BIN / name).is_file(), f"falta cortetsu/bin/{name}")
 require((REPO / "config/systemd/user/cortetsu-power-auto.service").is_file(), "falta cortetsu-power-auto.service")
 
 for path in [HARDWARE / name for name in QML_REQUIRED if (HARDWARE / name).exists()]:

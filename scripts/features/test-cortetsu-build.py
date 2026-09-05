@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
         CORTETSU_UPSTREAM_SOURCE=str(upstream),
     )
 
-    build = repo / "caelestia/bin/build-runtime.sh"
+    build = repo / "cortetsu/bin/build-runtime.sh"
     dotfiles = repo / "core/dotfiles.py"
     system = repo / "core/system.py"
     cli = repo / "scripts/cortetsu"

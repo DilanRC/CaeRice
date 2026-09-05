@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-HELPER="$REPO/caelestia/bin/ensure-upstream.sh"
+HELPER="$REPO/cortetsu/bin/ensure-upstream.sh"
 SOURCE="${CORTETSU_UPSTREAM_TEST_SOURCE:-}"
 EXPECTED_TAG="v2.4.0"
 EXPECTED_COMMIT="24aa15eefdb146350d2548c0a015b04eddbd1008"

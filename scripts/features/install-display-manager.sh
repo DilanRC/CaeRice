@@ -25,7 +25,7 @@ for f in "$LIVE/shell.qml" "$LIVE/components/ScreenState.qml" "$LIVE/modules/dra
 done
 [[ -f "$SRC/DisplayController.qml" ]] || { echo "ERROR: falta DisplayController.qml" >&2; exit 3; }
 for qml in "$SRC/display/"*.qml; do [[ -f "$qml" ]] || { echo "ERROR: falta $qml" >&2; exit 3; }; done
-for helper in "${HELPERS[@]}"; do [[ -f "$REPO/caelestia/bin/$helper" ]] || { echo "ERROR: falta $helper" >&2; exit 3; }; done
+for helper in "${HELPERS[@]}"; do [[ -f "$REPO/cortetsu/bin/$helper" ]] || { echo "ERROR: falta $helper" >&2; exit 3; }; done
 [[ -f "$VALIDATOR" ]] || { echo "ERROR: falta validator" >&2; exit 3; }
 
 python3 "$VALIDATOR"
@@ -181,7 +181,7 @@ for qml in "$SRC/display/"*.qml; do
 done
 mkdir -p "$HOME/.local/bin"
 for helper in "${HELPERS[@]}"; do
-    install -m 0755 "$REPO/caelestia/bin/$helper" "$HOME/.local/bin/$helper"
+    install -m 0755 "$REPO/cortetsu/bin/$helper" "$HOME/.local/bin/$helper"
 done
 
 hyprctl reload >/dev/null

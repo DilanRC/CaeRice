@@ -204,7 +204,7 @@ controller, views = load_source_contract()
 assert_controller(controller)
 assert_view_contract(views)
 
-compiler = repo / "caelestia/bin/native-bottom-hub.py"
+compiler = repo / "cortetsu/bin/native-bottom-hub.py"
 assert not compiler.exists(), "transitional native-bottom-hub.py compiler must be retired"
 
 if args.runtime:
