@@ -6,6 +6,7 @@ state = (repo / "caelestia/modules-owned/modules/CortetsuScreenState.qml").read_
 policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
+scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
 calendar = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
 clipboard = (repo / "caelestia/modules-owned/modules/ClipboardController.qml").read_text(encoding="utf-8")
@@ -68,6 +69,7 @@ for content_file, flag in (("calendar/Content.qml", "calendar"), ("overview/Cont
 for marker in ("closeRetainedOverlays", "requiresWindowKeyboardFocus", "requiresFullInputMask", "retainedOverlayOpen"):
     assert marker in content_window_patch, marker
 assert 'screenState.cortetsuState?.setRetained("wallpaperManager", false)' in shortcuts_patch
+assert "root.screenState.cortetsuState?.overview ? 0.58" in scrim_patch
 for content_file, flag in (
     ("clipboard/Content.qml", "clipboard"),
     ("hardware/Content.qml", "hardware"),

@@ -20,3 +20,4 @@ modules__drawers__Regions.qml.patch	modules/drawers/Regions.qml
 modules__drawers__Panels.qml.patch	modules/drawers/Panels.qml
 modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml
 modules__drawers__ContentWindow__adapter.qml.patch	modules/drawers/ContentWindow.qml
+modules__drawers__ContentWindow__scrim-adapter.qml.patch	modules/drawers/ContentWindow.qml
