@@ -2,7 +2,11 @@
 +++ b/modules/drawers/Panels.qml
 @@ -12,0 +13 @@
 +import ".."
-@@ -204,0 +206,3 @@ Item {
+@@ -207,4 +207,7 @@ Item {
+         anchors.right: root.screenState.utilities ? utilities.left : parent.right
+         anchors.rightMargin: root.screenState.utilities ? Tokens.padding.medium : 0
+     }
++
 +    Component.onCompleted: CortetsuShellState.registerComponents(screen, root)
 +    Component.onDestruction: CortetsuShellState.unregisterComponents(screen, root)
-+
+ }
