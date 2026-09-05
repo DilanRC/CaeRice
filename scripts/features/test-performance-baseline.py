@@ -12,5 +12,5 @@ assert "nmcli monitor" in baseline
 assert "does not attribute" in baseline
 assert "60-second idle period" in baseline
 assert "40 open/close cycles" in baseline
-assert "no subprocesses recurrentes" in contract
+assert "shell idle" in contract and "sin subprocesses recurrentes" in contract
 print("PASS: performance baseline records measurable shell metrics without blaming nmcli")
