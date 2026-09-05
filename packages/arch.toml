@@ -7,7 +7,7 @@ commands = ["git", "python3", "bash", "flock", "systemctl"]
 
 [group.shell]
 required = true
-packages = ["hyprland", "caelestia-shell", "quickshell-git"]
+packages = ["hyprland", "quickshell-git"]
 commands = ["hyprctl", "qs"]
 
 [group.personal-shell]
