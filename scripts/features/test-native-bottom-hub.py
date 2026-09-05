@@ -99,7 +99,7 @@ def assert_controller(text: str) -> None:
         "Bluetooth.devices.values",
         "UPower.displayDevice",
         "Recorder.stop()",
-        "Notifs.dnd = !Notifs.dnd",
+        "CortetsuNotifications.dnd = !CortetsuNotifications.dnd",
         "CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled",
         "hubRoot.toggleLauncherFor(win.modelData)",
         "hubRoot.openWallpaperFor(win.modelData)",

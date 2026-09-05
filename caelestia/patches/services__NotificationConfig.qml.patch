@@ -5,18 +5,54 @@
 @@ -12,1 +11,2 @@
  import qs.utils
 +import "../modules"
+@@ -18,1 +18,2 @@ Singleton {
+-    property alias dnd: props.dnd
++    property bool dnd: false
++    property bool dndLoaded: false
 @@ -24,1 +24,1 @@ Singleton {
 -        for (const monitor of Hypr.monitors.values) {
 +        for (const monitor of CortetsuHypr.monitors.values) {
 @@ -32,1 +32,1 @@ Singleton {
 -        if (props.dnd || ShellState.anySidebarOpen())
-+        if (props.dnd || CortetsuShellState.anySidebarOpen())
++        if (dnd || CortetsuShellState.anySidebarOpen())
 @@ -35,1 +36,1 @@
 -        if (GlobalConfig.notifs.fullscreen === NotifsFullscreen.Off && hasFullscreen())
 +        if (CortetsuConfig.suppressNotificationsInFullscreen && hasFullscreen())
 @@ -41,1 +42,1 @@
 -        if (!GlobalConfig.utilities.toasts.dndChanged)
 +        if (!CortetsuConfig.toastDndChanged)
+@@ -46,3 +48,6 @@ Singleton {
+         else
+             Toaster.toast(qsTr("Do not disturb disabled"), qsTr("Popup notifications are now enabled"), "do_not_disturb_off");
++
++        if (dndLoaded)
++            dndStorage.setText(JSON.stringify({ dnd }));
+     }
+@@ -65,7 +69,18 @@ Singleton {
+-    PersistentProperties {
+-        id: props
+-
+-        property bool dnd
+-
+-        reloadableId: "notifs"
++    FileView {
++        id: dndStorage
++
++        path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/cortetsu/notification-status.json`
++        watchChanges: true
++        printErrors: false
++        onLoaded: {
++            try { root.dnd = JSON.parse(text()).dnd === true; } catch (_) { root.dnd = false; }
++            root.dndLoaded = true;
++        }
++        onFileChanged: {
++            try { root.dnd = JSON.parse(text()).dnd === true; } catch (_) { root.dnd = false; }
++        }
++        onLoadFailed: {
++            root.dndLoaded = true;
++            setText(JSON.stringify({ dnd: false }));
++        }
+     }
 --- a/services/NotifData.qml
 +++ b/services/NotifData.qml
 @@ -9,1 +9,2 @@

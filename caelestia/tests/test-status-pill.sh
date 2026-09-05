@@ -21,7 +21,7 @@ require "visible: hasStatus || width > 0" "$component"
 require "id: tooltipPopup" "$component"
 require "color: Colours.palette.m3inverseSurface" "$component"
 require "recordingActive: Recorder.running" "$hub"
-require "dndActive: Notifs.dnd" "$hub"
+require "dndActive: CortetsuNotifications.dnd" "$hub"
 require "idleInhibited: CortetsuIdleInhibitor.enabled" "$hub"
 require "StatusPill {" "$hub"
 

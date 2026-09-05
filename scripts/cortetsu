@@ -49,6 +49,7 @@ Usage:
   cortetsu legacy-processes <action> scan|migrate
   cortetsu config migrate         Import functional preferences to ~/.config/cortetsu
   cortetsu screenshot [-r] [-f]   Open the Cortetsu regional screenshot picker
+  cortetsu record <action>        status|stop for GPU Screen Recorder
   cortetsu test                    Run repository, UX and transaction regressions
   cortetsu verify                  Verify the complete promoted Cortetsu system
   cortetsu audit                   Run status, doctor, tests and verification
@@ -226,6 +227,12 @@ screenshot_cmd() {
     exec qs -p "$CURRENT" ipc call picker open
 }
 
+record_cmd() {
+    local action="${1:-status}"
+    [[ "$action" == "status" || "$action" == "stop" ]] || fail "acción record inválida: $action"
+    exec cortetsu-record "$action"
+}
+
 test_cmd() {
     require_repo
     local tests=(
@@ -337,6 +344,7 @@ case "$command" in
     legacy-processes) legacy_processes_cmd "$@" ;;
     config) config_cmd "$@" ;;
     screenshot) screenshot_cmd "$@" ;;
+    record) record_cmd "$@" ;;
     test) test_cmd "$@" ;;
     verify) verify_cmd "$@" ;;
     audit) audit_cmd "$@" ;;

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-status}" in
+    status)
+        pidof gpu-screen-recorder >/dev/null
+        ;;
+    stop)
+        mapfile -t pids < <(pidof gpu-screen-recorder 2>/dev/null | tr ' ' '\n' || true)
+        for pid in "${pids[@]}"; do
+            [[ "$pid" =~ ^[0-9]+$ ]] || continue
+            kill -INT "$pid"
+        done
+        ;;
+    *)
+        echo "usage: cortetsu-record [status|stop]" >&2
+        exit 64
+        ;;
+esac

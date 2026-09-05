@@ -7,7 +7,6 @@ import Quickshell.Io
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
-import qs.services
 import qs.utils
 import qs.modules.launcher.services
 import "OverlayPolicy.js" as OverlayPolicy
@@ -602,10 +601,10 @@ Scope {
                 batteryIcon: win.batteryIcon
                 batteryCritical: win.batteryCritical
                 batteryTooltip: win.batteryTooltip
-                notificationCount: Notifs.notClosed.length
+                notificationCount: CortetsuNotifications.count
                 sidebarActive: win.screenState?.sidebar ?? false
-                recordingActive: Recorder.running
-                dndActive: Notifs.dnd
+                recordingActive: CortetsuRecorder.running
+                dndActive: CortetsuNotifications.dnd
                 idleInhibited: CortetsuIdleInhibitor.enabled
                 now: win.now
                 sessionActive: win.screenState?.session ?? false
@@ -641,8 +640,8 @@ Scope {
                         CortetsuAudio.decrementVolume();
                 }
                 onNotificationsRequested: hubRoot.toggleSidebarFor(win.modelData)
-                onStopRecordingRequested: Recorder.stop()
-                onToggleDndRequested: Notifs.dnd = !Notifs.dnd
+                onStopRecordingRequested: CortetsuRecorder.stop()
+                onToggleDndRequested: CortetsuNotifications.dnd = !CortetsuNotifications.dnd
                 onToggleIdleInhibitorRequested: CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled
                 onCalendarRequested: hubRoot.openCalendarFor(win.modelData)
                 onSessionRequested: win.toggleSession()
