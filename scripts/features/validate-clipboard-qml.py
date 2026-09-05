@@ -6,14 +6,12 @@ repo = Path(__file__).resolve().parents[2]
 qml_dir = repo / "caelestia/modules-owned/modules/clipboard"
 
 errors = []
+legacy = ("Caelestia", "qs.components", "qs.services", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon")
 for path in sorted(qml_dir.glob("*.qml")):
     text = path.read_text(encoding="utf-8")
-
-    if "Colours." in text and "import qs.services" not in text:
-        errors.append(f"{path.relative_to(repo)}: usa Colours pero no importa qs.services")
-
-    if "Tokens." in text and "import Caelestia.Config" not in text:
-        errors.append(f"{path.relative_to(repo)}: usa Tokens pero no importa Caelestia.Config")
+    for symbol in legacy:
+        if symbol in text:
+            errors.append(f"{path.relative_to(repo)}: dependencia legacy {symbol}")
 
 if errors:
     print("VALIDATION FAILED")

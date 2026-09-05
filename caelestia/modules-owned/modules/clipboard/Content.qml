@@ -5,15 +5,15 @@ import QtQuick.Controls
 import QtCore
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
 FocusScope {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property bool clipboardVisible
 
     property var history: []
@@ -25,47 +25,14 @@ FocusScope {
     readonly property url historyPath:
         StandardPaths.writableLocation(StandardPaths.ConfigLocation) + "/clipse/clipboard_history.json"
 
-    /*
-     * Clipboard is deliberately dark even when the global Caelestia scheme is
-     * light. We still inherit the scheme hue/accent, but use inverse Material
-     * surfaces in light mode so wallpaper readability is deterministic.
-     *
-     * Do NOT use Colours.tPalette for primary surfaces here: tPalette follows
-     * Caelestia's user transparency setting and made the fullscreen overlay
-     * behave like a wireframe over bright wallpapers.
-     */
-    readonly property color panelSurface:
-        Colours.light
-            ? Colours.palette.m3inverseSurface
-            : Colours.palette.m3surfaceContainerHigh
-
-    readonly property color elevatedSurface:
-        Colours.light
-            ? Qt.lighter(panelSurface, 1.08)
-            : Colours.palette.m3surfaceContainerHighest
-
-    readonly property color cardSurface:
-        Colours.light
-            ? Qt.lighter(panelSurface, 1.12)
-            : Colours.palette.m3surfaceContainer
-
-    readonly property color hoverSurface:
-        Colours.light
-            ? Qt.lighter(panelSurface, 1.20)
-            : Colours.palette.m3surfaceContainerHighest
-
-    readonly property color textPrimary:
-        Colours.light
-            ? Colours.palette.m3inverseOnSurface
-            : Colours.palette.m3onSurface
-
-    readonly property color textMuted:
-        Colours.light
-            ? Qt.alpha(Colours.palette.m3inverseOnSurface, 0.68)
-            : Colours.palette.m3onSurfaceVariant
-
-    readonly property color accent:
-        Colours.palette.m3primaryFixedDim
+    // Opaque first-party surfaces keep clipboard content readable over any wallpaper.
+    readonly property color panelSurface: CortetsuDesign.colorSurfaceHigh
+    readonly property color elevatedSurface: Qt.lighter(panelSurface, 1.08)
+    readonly property color cardSurface: CortetsuDesign.colorSurface
+    readonly property color hoverSurface: Qt.lighter(cardSurface, 1.12)
+    readonly property color textPrimary: CortetsuDesign.colorOnSurface
+    readonly property color textMuted: CortetsuDesign.colorOnSurfaceVariant
+    readonly property color accent: CortetsuDesign.colorPrimary
 
     readonly property color accentSoft:
         Qt.alpha(accent, 0.14)
@@ -374,16 +341,16 @@ FocusScope {
      * One soft shadow + one accent halo. The actual panel surface below is
      * fully opaque; only these decorative layers use alpha.
      */
-    StyledRect {
+    Rectangle {
         x: panel.x + 2
         y: panel.y + 12
         width: panel.width
         height: panel.height
         radius: panel.radius
-        color: Qt.alpha(Colours.palette.m3shadow, 0.44)
+        color: Qt.alpha(CortetsuDesign.colorScrim, 0.44)
     }
 
-    StyledRect {
+    Rectangle {
         x: panel.x - 3
         y: panel.y - 3
         width: panel.width + 6
@@ -394,13 +361,13 @@ FocusScope {
         border.color: Qt.alpha(root.accent, 0.22)
     }
 
-    StyledRect {
+    Rectangle {
         id: panel
 
         width: Math.min(910, parent.width - 88)
         height: Math.min(770, parent.height - 96)
 
-        // True monitor center. Do not compensate for the Caelestia side bar:
+        // True monitor center. The host already spans the monitor, so no side offset is needed.
         // ContentWindow already spans the monitor and the previous -105px bias
         // is exactly what pushed Clipboard to the left.
         x: Math.round((parent.width - width) / 2)
@@ -434,21 +401,20 @@ FocusScope {
                 height: 62
                 spacing: 14
 
-                StyledRect {
+                Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 54
                     height: 54
-                    radius: Tokens.rounding.extraLarge
+                    radius: CortetsuDesign.radiusLarge
                     color: root.accentSoft
                     border.width: 1
                     border.color: Qt.alpha(root.accent, 0.26)
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "content_paste_search"
                         color: root.accent
-                        fill: 1
-                        fontStyle: Tokens.font.icon.extraLarge
+                        iconSize: CortetsuTypography.iconExtraLargePx
                     }
                 }
 
@@ -462,28 +428,28 @@ FocusScope {
                     )
                     spacing: 0
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Clipboard")
                         color: root.textPrimary
-                        font: Tokens.font.title.large
+                        textSize: CortetsuTypography.titleLargePx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text:
                             qsTr("%1 items · Clipse backend")
                                 .arg(root.filteredEntries.length)
                         color: root.textMuted
-                        font: Tokens.font.label.medium
+                        textSize: CortetsuTypography.labelMediumPx
                     }
                 }
 
-                StyledRect {
+                Rectangle {
                     id: filterBar
 
                     anchors.verticalCenter: parent.verticalCenter
                     width: filterRow.implicitWidth + 12
                     height: 42
-                    radius: Tokens.rounding.full
+                    radius: 999
                     color: root.cardSurface
                     border.width: 1
                     border.color: Qt.alpha(root.textMuted, 0.18)
@@ -494,10 +460,10 @@ FocusScope {
                         anchors.centerIn: parent
                         spacing: 4
 
-                        StyledRect {
+                        Rectangle {
                             width: 66
                             height: 32
-                            radius: Tokens.rounding.full
+                            radius: 999
                             color:
                                 !root.pinnedOnly
                                     ? root.accentSoft
@@ -507,14 +473,14 @@ FocusScope {
                             border.color:
                                 Qt.alpha(root.accent, 0.62)
 
-                            StyledText {
+                            CortetsuText {
                                 anchors.centerIn: parent
                                 text: qsTr("All")
                                 color:
                                     !root.pinnedOnly
                                         ? root.accent
                                         : root.textMuted
-                                font: Tokens.font.label.medium
+                                textSize: CortetsuTypography.labelMediumPx
                             }
 
                             MouseArea {
@@ -527,10 +493,10 @@ FocusScope {
                             }
                         }
 
-                        StyledRect {
+                        Rectangle {
                             width: 100
                             height: 32
-                            radius: Tokens.rounding.full
+                            radius: 999
                             color:
                                 root.pinnedOnly
                                     ? root.accentSoft
@@ -544,24 +510,22 @@ FocusScope {
                                 anchors.centerIn: parent
                                 spacing: 6
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     text: "keep"
-                                    fill: root.pinnedOnly ? 1 : 0
                                     color:
                                         root.pinnedOnly
                                             ? root.accent
                                             : root.textMuted
-                                    fontStyle:
-                                        Tokens.font.icon.small
+                                    iconSize: CortetsuTypography.iconSmallPx
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     text: qsTr("Pinned")
                                     color:
                                         root.pinnedOnly
                                             ? root.accent
                                             : root.textMuted
-                                    font: Tokens.font.label.medium
+                                    textSize: CortetsuTypography.labelMediumPx
                                 }
                             }
 
@@ -582,14 +546,14 @@ FocusScope {
                             color: Qt.alpha(root.textMuted, 0.20)
                         }
 
-                        StyledRect {
+                        Rectangle {
                             width: 86
                             height: 32
-                            radius: Tokens.rounding.full
+                            radius: 999
                             color:
                                 clearMouse.containsMouse
                                     ? Qt.alpha(
-                                        Colours.palette.m3error,
+                                        CortetsuDesign.colorVermillion,
                                         0.12
                                     )
                                     : "transparent"
@@ -598,23 +562,22 @@ FocusScope {
                                 anchors.centerIn: parent
                                 spacing: 6
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     text: "delete_sweep"
                                     color:
                                         clearMouse.containsMouse
-                                            ? Colours.palette.m3error
+                                            ? CortetsuDesign.colorVermillion
                                             : root.textMuted
-                                    fontStyle:
-                                        Tokens.font.icon.small
+                                    iconSize: CortetsuTypography.iconSmallPx
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     text: qsTr("Clear")
                                     color:
                                         clearMouse.containsMouse
-                                            ? Colours.palette.m3error
+                                            ? CortetsuDesign.colorVermillion
                                             : root.textMuted
-                                    font: Tokens.font.label.medium
+                                    textSize: CortetsuTypography.labelMediumPx
                                 }
                             }
 
@@ -633,12 +596,12 @@ FocusScope {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 id: searchHost
 
                 width: parent.width
                 height: 52
-                radius: Tokens.rounding.extraLarge
+                radius: CortetsuDesign.radiusLarge
                 color: root.cardSurface
                 border.width: searchInput.activeFocus ? 2 : 1
                 border.color:
@@ -652,7 +615,7 @@ FocusScope {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: searchIcon
 
                     anchors.left: parent.left
@@ -663,7 +626,7 @@ FocusScope {
                         searchInput.activeFocus
                             ? root.accent
                             : root.textMuted
-                    fontStyle: Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 TextInput {
@@ -682,7 +645,7 @@ FocusScope {
                     color: root.textPrimary
                     selectionColor: Qt.alpha(root.accent, 0.34)
                     selectedTextColor: root.textPrimary
-                    font: Tokens.font.body.large
+                    font.pixelSize: CortetsuTypography.bodyLargePx
 
                     onTextChanged: {
                         if (root.query !== text)
@@ -714,16 +677,16 @@ FocusScope {
                     }
                 }
 
-                StyledText {
+                CortetsuText {
                     visible: searchInput.text.length === 0
                     anchors.left: searchInput.left
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("Search clipboard…")
                     color: root.textMuted
-                    font: Tokens.font.body.large
+                    textSize: CortetsuTypography.bodyLargePx
                 }
 
-                StyledRect {
+                Rectangle {
                     id: searchShortcut
 
                     anchors.right: parent.right
@@ -731,18 +694,18 @@ FocusScope {
                     anchors.verticalCenter: parent.verticalCenter
                     width: shortcutLabel.implicitWidth + 18
                     height: 28
-                    radius: Tokens.rounding.large
+                    radius: CortetsuDesign.radiusMedium
                     color: root.elevatedSurface
                     border.width: 1
                     border.color: Qt.alpha(root.textMuted, 0.18)
 
-                    StyledText {
+                    CortetsuText {
                         id: shortcutLabel
 
                         anchors.centerIn: parent
                         text: "Ctrl+F"
                         color: root.textMuted
-                        font: Tokens.font.label.small
+                        textSize: CortetsuTypography.labelSmallPx
                     }
                 }
             }
@@ -812,13 +775,13 @@ FocusScope {
                 height: 36
                 spacing: 14
 
-                StyledText {
+                CortetsuText {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: root.statusText.length > 0
                     width: visible ? Math.min(180, implicitWidth) : 0
                     text: root.statusText
                     color: root.accent
-                    font: Tokens.font.label.medium
+                    textSize: CortetsuTypography.labelMediumPx
                     elide: Text.ElideRight
                 }
 
@@ -837,30 +800,30 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 7
 
-                        StyledRect {
+                        Rectangle {
                             width: keyLabel.implicitWidth + 16
                             height: 28
-                            radius: Tokens.rounding.large
+                            radius: CortetsuDesign.radiusMedium
                             color: root.elevatedSurface
                             border.width: 1
                             border.color:
                                 Qt.alpha(root.accent, 0.26)
 
-                            StyledText {
+                            CortetsuText {
                                 id: keyLabel
 
                                 anchors.centerIn: parent
                                 text: modelData.key
                                 color: root.accent
-                                font: Tokens.font.label.small
+                                textSize: CortetsuTypography.labelSmallPx
                             }
                         }
 
-                        StyledText {
+                        CortetsuText {
                             anchors.verticalCenter: parent.verticalCenter
                             text: modelData.label
                             color: root.textMuted
-                            font: Tokens.font.label.small
+                            textSize: CortetsuTypography.labelSmallPx
                         }
                     }
                 }
@@ -873,17 +836,17 @@ FocusScope {
             height: 110
             visible: root.filteredEntries.length === 0
 
-            MaterialIcon {
+            CortetsuIcon {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text:
                     root.query.length > 0
                         ? "search_off"
                         : "content_paste_off"
                 color: root.accent
-                fontStyle: Tokens.font.icon.extraLarge
+                iconSize: CortetsuTypography.iconExtraLargePx
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.verticalCenter
                 anchors.topMargin: 12
@@ -892,7 +855,7 @@ FocusScope {
                         ? qsTr("No matching clipboard entries")
                         : qsTr("Clipboard history is empty")
                 color: root.textMuted
-                font: Tokens.font.body.medium
+                textSize: CortetsuTypography.bodyPx
             }
         }
     }

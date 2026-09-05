@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Config
-import qs.components
-import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
-StyledRect {
+Rectangle {
     id: root
 
     required property var entry
@@ -75,28 +75,11 @@ StyledRect {
         return text;
     }
 
-    readonly property color surfaceColour:
-        Colours.light
-            ? Qt.lighter(Colours.palette.m3inverseSurface, 1.12)
-            : Colours.palette.m3surfaceContainer
-
-    readonly property color hoverColour:
-        Colours.light
-            ? Qt.lighter(Colours.palette.m3inverseSurface, 1.20)
-            : Colours.palette.m3surfaceContainerHighest
-
-    readonly property color textPrimary:
-        Colours.light
-            ? Colours.palette.m3inverseOnSurface
-            : Colours.palette.m3onSurface
-
-    readonly property color textMuted:
-        Colours.light
-            ? Qt.alpha(Colours.palette.m3inverseOnSurface, 0.66)
-            : Colours.palette.m3onSurfaceVariant
-
-    readonly property color accent:
-        Colours.palette.m3primaryFixedDim
+    readonly property color surfaceColour: CortetsuDesign.colorSurface
+    readonly property color hoverColour: CortetsuDesign.colorSurfaceHigh
+    readonly property color textPrimary: CortetsuDesign.colorOnSurface
+    readonly property color textMuted: CortetsuDesign.colorOnSurfaceVariant
+    readonly property color accent: CortetsuDesign.colorPrimary
 
     readonly property color accentSoft:
         Qt.alpha(accent, selected ? 0.18 : 0.11)
@@ -104,7 +87,7 @@ StyledRect {
     implicitHeight:
         isImage ? 106 : 92
 
-    radius: Tokens.rounding.extraLarge
+    radius: CortetsuDesign.radiusLarge
 
     color:
         selected
@@ -196,7 +179,7 @@ StyledRect {
         anchors.bottomMargin: 10
         spacing: 14
 
-        StyledRect {
+        Rectangle {
             id: previewBox
 
             anchors.verticalCenter: parent.verticalCenter
@@ -209,8 +192,8 @@ StyledRect {
 
             radius:
                 root.isImage
-                    ? Tokens.rounding.large
-                    : Tokens.rounding.extraLarge
+                    ? CortetsuDesign.radiusMedium
+                    : CortetsuDesign.radiusLarge
 
             color: root.accentSoft
 
@@ -235,13 +218,12 @@ StyledRect {
                 mipmap: true
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 visible: !root.isImage
                 anchors.centerIn: parent
                 text: root.iconName
                 color: root.accent
-                fill: root.looksCommand ? 1 : 0
-                fontStyle: Tokens.font.icon.large
+                iconSize: CortetsuTypography.iconLargePx
             }
         }
 
@@ -260,7 +242,7 @@ StyledRect {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 7
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
 
                 text:
@@ -279,10 +261,10 @@ StyledRect {
                         ? root.accent
                         : root.textPrimary
 
-                font: Tokens.font.body.medium
+                textSize: CortetsuTypography.bodyPx
             }
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
 
                 text:
@@ -293,7 +275,7 @@ StyledRect {
                 maximumLineCount: 1
                 elide: Text.ElideRight
                 color: root.textMuted
-                font: Tokens.font.label.small
+                textSize: CortetsuTypography.labelSmallPx
             }
         }
 
@@ -307,9 +289,9 @@ StyledRect {
                 width: 36
                 height: 36
 
-                StyledRect {
+                Rectangle {
                     anchors.fill: parent
-                    radius: Tokens.rounding.large
+                    radius: CortetsuDesign.radiusMedium
 
                     color:
                         pinMouse.containsMouse
@@ -317,7 +299,7 @@ StyledRect {
                             : "transparent"
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
 
                     text:
@@ -325,15 +307,12 @@ StyledRect {
                             ? "keep"
                             : "keep_off"
 
-                    fill:
-                        root.pinned ? 1 : 0
-
                     color:
                         root.pinned || pinMouse.containsMouse
                             ? root.accent
                             : root.textMuted
 
-                    fontStyle: Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 MouseArea {
@@ -354,9 +333,9 @@ StyledRect {
                 width: 36
                 height: 36
 
-                StyledRect {
+                Rectangle {
                     anchors.fill: parent
-                    radius: Tokens.rounding.large
+                    radius: CortetsuDesign.radiusMedium
 
                     color:
                         copyMouse.containsMouse
@@ -364,7 +343,7 @@ StyledRect {
                             : "transparent"
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
                     text: "content_copy"
 
@@ -373,7 +352,7 @@ StyledRect {
                             ? root.accent
                             : root.textMuted
 
-                    fontStyle: Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 MouseArea {
@@ -394,29 +373,29 @@ StyledRect {
                 width: 36
                 height: 36
 
-                StyledRect {
+                Rectangle {
                     anchors.fill: parent
-                    radius: Tokens.rounding.large
+                    radius: CortetsuDesign.radiusMedium
 
                     color:
                         deleteMouse.containsMouse
                             ? Qt.alpha(
-                                Colours.palette.m3error,
+                                CortetsuDesign.colorVermillion,
                                 0.12
                             )
                             : "transparent"
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
                     text: "delete"
 
                     color:
                         deleteMouse.containsMouse
-                            ? Colours.palette.m3error
+                            ? CortetsuDesign.colorVermillion
                             : root.textMuted
 
-                    fontStyle: Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 MouseArea {
