@@ -67,12 +67,12 @@ assert "ShellState.forActive()?.modelData" not in wallpaper_controller
 assert "closeOtherPanels();\n        state.setRetained(\"wallpaperManager\", true);" in wallpaper_controller
 
 # V2 visual and native-service contracts.
-for needle in ("Orbit.satellites", "Math.min(12", "Math.cos(angle)", "Math.sin(angle)", "depth", "scale:", "opacity:", "z:", "Mask { maskSource", "outgoingHeroPath", "heroCrossfade", "TextButton", "IconTextButton"):
+for needle in ("Orbit.satellites", "Math.min(12", "Math.cos(angle)", "Math.sin(angle)", "depth", "scale:", "opacity:", "z:", "CortetsuMask { maskSource", "outgoingHeroPath", "heroCrossfade", "component OrbitButton: CortetsuSurface"):
     assert needle in content, needle
 assert "source: satellite.modelData.entry.path" in content
 assert "root.selectSatellite(satellite.modelData.index)" in content
-if "Mask {" in content:
-    assert "import qs.components.effects" in content
+assert "import qs.components.effects" not in content
+assert "import qs.components.controls" not in content
 assert "Image {\n            anchors.fill: parent; anchors.margins" not in content
 assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content
 

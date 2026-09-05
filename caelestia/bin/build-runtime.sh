@@ -137,6 +137,7 @@ for required in \
     modules/CortetsuHypr.qml \
     modules/CortetsuScreens.qml \
     modules/CortetsuConfig.qml \
+    modules/CortetsuMask.qml \
     compatibility.json \
     composition.json
 do

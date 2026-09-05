@@ -4,8 +4,6 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Effects
 import Quickshell
-import qs.components.effects
-import qs.components.controls
 import qs.services
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
@@ -192,6 +190,49 @@ FocusScope {
 
     function closeManager(): void { cancelPreview(); }
 
+    component OrbitButton: CortetsuSurface {
+        id: button
+
+        required property string label
+        property string icon
+        property bool checked: false
+        property bool primary: false
+        signal clicked()
+
+        outlined: false
+        active: checked || primary
+        baseColor: "transparent"
+        implicitWidth: buttonRow.implicitWidth + CortetsuDesign.spacingStandard * 2
+        implicitHeight: 34
+
+        Row {
+            id: buttonRow
+            anchors.centerIn: parent
+            spacing: CortetsuDesign.spacingCompact
+
+            CortetsuIcon {
+                visible: button.icon.length > 0
+                text: button.icon
+                iconSize: CortetsuTypography.iconSmallPx
+                color: CortetsuDesign.colorOnSurface
+            }
+            CortetsuText {
+                text: button.label
+                textSize: CortetsuTypography.labelMediumPx
+                color: CortetsuDesign.colorOnSurface
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onContainsMouseChanged: button.hovered = containsMouse
+            onPressedChanged: button.pressed = pressed
+            onClicked: button.clicked()
+        }
+    }
+
     onCurrentPathChanged: updateHero()
     Component.onDestruction: cancelPreview()
 
@@ -305,12 +346,10 @@ FocusScope {
                 spacing: 6
                 Repeater {
                     model: root.categoryNames
-                    delegate: TextButton {
+                    delegate: OrbitButton {
                         required property string modelData
-                        text: modelData
+                        label: modelData
                         checked: root.selectedCategory === modelData
-                        isToggle: true
-                        type: TextButton.Tonal
                         onClicked: root.selectCategory(modelData)
                     }
                 }
@@ -375,7 +414,7 @@ FocusScope {
                     mipmap: true
                     retainWhileLoading: true
                     layer.enabled: true
-                    layer.effect: Mask { maskSource: heroMask }
+                    layer.effect: CortetsuMask { maskSource: heroMask }
                 }
                 Image {
                     id: heroImage
@@ -390,7 +429,7 @@ FocusScope {
                     mipmap: true
                     retainWhileLoading: true
                     layer.enabled: true
-                    layer.effect: Mask { maskSource: heroMask }
+                    layer.effect: CortetsuMask { maskSource: heroMask }
                     onStatusChanged: root.updatePresentationReady()
                     CortetsuIcon {
                         anchors.centerIn: parent
@@ -472,7 +511,7 @@ FocusScope {
                         mipmap: true
                         retainWhileLoading: true
                         layer.enabled: true
-                        layer.effect: Mask { maskSource: satelliteMask }
+                        layer.effect: CortetsuMask { maskSource: satelliteMask }
                     }
                     Shape {
                         id: satelliteOutline
@@ -543,9 +582,9 @@ FocusScope {
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 8
-                TextButton { text: qsTr("Cancel"); type: TextButton.Text; onClicked: root.cancel() }
-                IconTextButton { icon: "shuffle"; text: qsTr("Random"); type: IconTextButton.Tonal; onClicked: root.random() }
-                TextButton { text: qsTr("Apply"); type: TextButton.Filled; onClicked: root.apply() }
+                OrbitButton { label: qsTr("Cancel"); onClicked: root.cancel() }
+                OrbitButton { icon: "shuffle"; label: qsTr("Random"); onClicked: root.random() }
+                OrbitButton { label: qsTr("Apply"); primary: true; onClicked: root.apply() }
             }
         }
     }
