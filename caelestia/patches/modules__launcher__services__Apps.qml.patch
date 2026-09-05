@@ -1,6 +1,6 @@
 --- a/modules/launcher/services/Apps.qml
 +++ b/modules/launcher/services/Apps.qml
-@@ -10,13 +10,36 @@ Searcher {
+@@ -10,13 +10,51 @@ Searcher {
      id: root
  
 +    function scopeUnitName(entry: DesktopEntry): string {
@@ -10,7 +10,22 @@
 +        return `cortetsu-app-${identity}-${Date.now()}`;
 +    }
 +
++    function isSteamCommand(command: list<string>): bool {
++        return command.some(token => token === "steam" || token.endsWith("/steam"));
++    }
++
++    function launchDetached(entry: DesktopEntry, command: list<string>): void {
++        Quickshell.execDetached({
++            command: command,
++            workingDirectory: entry.workingDirectory
++        });
++    }
++
 +    function launchInScope(entry: DesktopEntry, command: list<string>): void {
++        if (root.isSteamCommand(command)) {
++            root.launchDetached(entry, command);
++            return;
++        }
 +        const scopedCommand = [
 +            "systemd-run",
 +            "--user",

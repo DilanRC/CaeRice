@@ -18,6 +18,9 @@ for token in ('"--user"', '"--scope"', '"--collect"', '"--unit"', '"--"'):
 assert "+            entry.execute();" not in text
 assert "entry.workingDirectory" in text
 assert "Date.now()" in text
+assert "function isSteamCommand(command: list<string>): bool" in text
+assert "root.launchDetached(entry, command);" in text
+assert "token.endsWith(\"/steam\")" in text
 assert "modules__launcher__services__Apps.qml.patch\tmodules/launcher/services/Apps.qml" in manifest
 
-print("PASS: launcher applications use independent systemd scopes")
+print("PASS: launcher applications use independent scopes; Steam stays detached")
