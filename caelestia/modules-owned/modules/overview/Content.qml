@@ -4,15 +4,14 @@ import ".."
 import QtQuick
 import Quickshell
 import QtQuick.Controls
-import Caelestia.Config
-import qs.components
-import qs.services
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
 FocusScope {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property bool overviewVisible
 
     property int selectedIndex: -1
@@ -502,14 +501,14 @@ FocusScope {
 
         spacing: 14
 
-        StyledRect {
+        Rectangle {
             id: header
 
             width: parent.width
             implicitHeight: 62
 
             radius:
-                Tokens.rounding.extraLarge
+                CortetsuDesign.radiusLarge
 
             /*
              * Local header scrim only: keeps the title legible over a busy
@@ -517,7 +516,7 @@ FocusScope {
              */
             color:
                 Qt.alpha(
-                    Colours.tPalette.m3surfaceContainerHigh,
+                    CortetsuDesign.colorSurfaceHigh,
                     0.78
                 )
 
@@ -525,7 +524,7 @@ FocusScope {
 
             border.color:
                 Qt.alpha(
-                    Colours.palette.m3outlineVariant,
+                    CortetsuDesign.colorOutlineVariant,
                     0.70
                 )
 
@@ -538,17 +537,16 @@ FocusScope {
 
                 spacing: 12
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.verticalCenter:
                         parent.verticalCenter
 
                     text: "view_cozy"
 
                     color:
-                        Colours.palette.m3primary
+                        CortetsuDesign.colorPrimary
 
-                    fontStyle:
-                        Tokens.font.icon.extraLarge
+                    iconSize: CortetsuTypography.iconExtraLargePx
                 }
 
                 Column {
@@ -557,22 +555,20 @@ FocusScope {
 
                     spacing: -1
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Overview")
 
-                        font:
-                            Tokens.font.title.large
+                        textSize: CortetsuTypography.titleLargePx
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text:
                             `${root.windowCountText} · ${root.monitorCountText}`
 
                         color:
-                            Colours.palette.m3outline
+                            CortetsuDesign.colorOutline
 
-                        font:
-                            Tokens.font.label.medium
+                        textSize: CortetsuTypography.labelMediumPx
                     }
                 }
 
@@ -586,7 +582,7 @@ FocusScope {
                     height: 1
                 }
 
-                StyledRect {
+                Rectangle {
                     anchors.verticalCenter:
                         parent.verticalCenter
 
@@ -596,11 +592,11 @@ FocusScope {
                     implicitHeight: 34
 
                     radius:
-                        Tokens.rounding.full
+                        999
 
                     color:
                         Qt.alpha(
-                            Colours.palette.m3surfaceContainer,
+                            CortetsuDesign.colorSurface,
                             0.90
                         )
 
@@ -608,11 +604,11 @@ FocusScope {
 
                     border.color:
                         Qt.alpha(
-                            Colours.palette.m3outlineVariant,
+                            CortetsuDesign.colorOutlineVariant,
                             0.78
                         )
 
-                    StyledText {
+                    CortetsuText {
                         id: hints
 
                         anchors.centerIn: parent
@@ -623,10 +619,9 @@ FocusScope {
                             )
 
                         color:
-                            Colours.palette.m3onSurfaceVariant
+                            CortetsuDesign.colorOnSurfaceVariant
 
-                        font:
-                            Tokens.font.label.medium
+                        textSize: CortetsuTypography.labelMediumPx
                     }
                 }
             }
@@ -667,7 +662,7 @@ FocusScope {
                 Repeater {
                     model: CortetsuScreens.screens
 
-                    StyledRect {
+                    Rectangle {
                         id: monitorBox
 
                         required property ShellScreen modelData
@@ -699,11 +694,11 @@ FocusScope {
                         implicitHeight: 68
 
                         radius:
-                            Tokens.rounding.extraLarge
+                            CortetsuDesign.radiusLarge
 
                         color:
                             Qt.alpha(
-                                Colours.tPalette.m3surfaceContainerHigh,
+                                CortetsuDesign.colorSurfaceHigh,
                                 0.90
                             )
 
@@ -711,7 +706,7 @@ FocusScope {
 
                         border.color:
                             Qt.alpha(
-                                Colours.palette.m3outlineVariant,
+                                CortetsuDesign.colorOutlineVariant,
                                 0.82
                             )
 
@@ -729,7 +724,7 @@ FocusScope {
 
                                 spacing: 7
 
-                                MaterialIcon {
+                                CortetsuIcon {
                                     anchors.verticalCenter:
                                         parent.verticalCenter
 
@@ -740,26 +735,24 @@ FocusScope {
                                         : "desktop_windows"
 
                                     color:
-                                        Colours.palette.m3primary
+                                        CortetsuDesign.colorPrimary
 
-                                    fontStyle:
-                                        Tokens.font.icon.medium
+                                    iconSize: CortetsuTypography.iconMediumPx
                                 }
 
                                 Column {
                                     anchors.verticalCenter:
                                         parent.verticalCenter
 
-                                    StyledText {
+                                    CortetsuText {
                                         text:
                                             monitorBox.monitor?.name ??
                                             qsTr("Monitor")
 
-                                        font:
-                                            Tokens.font.label.large
+                                        textSize: CortetsuTypography.labelLargePx
                                     }
 
-                                    StyledText {
+                                    CortetsuText {
                                         text:
                                             monitorBox.monitor
                                                 ?.activeWorkspace
@@ -768,10 +761,9 @@ FocusScope {
                                             : ""
 
                                         color:
-                                            Colours.palette.m3outline
+                                            CortetsuDesign.colorOutline
 
-                                        font:
-                                            Tokens.font.label.small
+                                        textSize: CortetsuTypography.labelSmallPx
                                     }
                                 }
                             }
@@ -791,7 +783,7 @@ FocusScope {
                                     model:
                                         monitorBox.workspaceIds
 
-                                    StyledRect {
+                                    Rectangle {
                                         id: chip
 
                                         required property int modelData
@@ -820,19 +812,16 @@ FocusScope {
                                         implicitHeight: 36
 
                                         radius:
-                                            Tokens.rounding.large
+                                            CortetsuDesign.radiusMedium
 
                                         color:
                                             dropZone.containsDrag
-                                            ? Colours.palette
-                                                .m3tertiaryContainer
+                                            ? CortetsuDesign.colorSecondaryContainer
                                             : activeWorkspace
-                                                ? Colours.palette
-                                                    .m3secondaryContainer
+                                                ? CortetsuDesign.colorSecondaryContainer
                                                 : workspaceMouse
                                                     .containsMouse
-                                                    ? Colours.palette
-                                                        .m3surfaceContainerHighest
+                                                    ? CortetsuDesign.colorSurfaceHigh
                                                     : "transparent"
 
                                         border.width:
@@ -841,8 +830,7 @@ FocusScope {
                                                 : 0
 
                                         border.color:
-                                            Colours.palette
-                                                .m3tertiary
+                                            CortetsuDesign.colorTertiary
 
                                         Column {
                                             anchors.centerIn:
@@ -850,25 +838,22 @@ FocusScope {
 
                                             spacing: -2
 
-                                            StyledText {
+                                            CortetsuText {
                                                 anchors.horizontalCenter:
                                                     parent.horizontalCenter
 
                                                 text:
                                                     `${chip.workspaceId}`
 
-                                                font:
-                                                    Tokens.font.label.medium
+                                                textSize: CortetsuTypography.labelMediumPx
 
                                                 color:
                                                     chip.activeWorkspace
-                                                    ? Colours.palette
-                                                        .m3onSecondaryContainer
-                                                    : Colours.palette
-                                                        .m3onSurfaceVariant
+                                                    ? CortetsuDesign.colorOnSecondaryContainer
+                                                    : CortetsuDesign.colorOnSurfaceVariant
                                             }
 
-                                            StyledText {
+                                            CortetsuText {
                                                 visible:
                                                     chip.windowCount > 0
 
@@ -880,12 +865,10 @@ FocusScope {
                                                     ? "1 win"
                                                     : `${chip.windowCount} wins`
 
-                                                font:
-                                                    Tokens.font.label.small
+                                                textSize: CortetsuTypography.labelSmallPx
 
                                                 color:
-                                                    Colours.palette
-                                                        .m3outline
+                                                    CortetsuDesign.colorOutline
                                             }
                                         }
 
@@ -945,7 +928,7 @@ FocusScope {
 
             color:
                 Qt.alpha(
-                    Colours.palette.m3outlineVariant,
+                    CortetsuDesign.colorOutlineVariant,
                     0.62
                 )
         }
@@ -1091,7 +1074,7 @@ FocusScope {
                 visible:
                     root.clients.length === 0
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: emptyIcon
 
                     anchors.horizontalCenter:
@@ -1105,13 +1088,12 @@ FocusScope {
                     text: "web_asset_off"
 
                     color:
-                        Colours.palette.m3outline
+                        CortetsuDesign.colorOutline
 
-                    fontStyle:
-                        Tokens.font.icon.extraLarge
+                    iconSize: CortetsuTypography.iconExtraLargePx
                 }
 
-                StyledText {
+                CortetsuText {
                     id: emptyText
 
                     anchors.centerIn: parent
@@ -1120,10 +1102,9 @@ FocusScope {
                         qsTr("No windows to show")
 
                     color:
-                        Colours.palette.m3outline
+                        CortetsuDesign.colorOutline
 
-                    font:
-                        Tokens.font.body.large
+                    textSize: CortetsuTypography.bodyLargePx
                 }
             }
         }
