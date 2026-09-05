@@ -18,6 +18,9 @@ QtObject {
     property var actions: []
     property bool enableDangerousActions: true
     property bool useFuzzyApps: true
+    property bool useFuzzyWallpapers: true
+    property bool smartScheme: true
+    property string wallpaperDirectory: "~/Pictures/Wallpapers"
     property bool vimKeybinds: true
     property int workspacesShown: 5
     property bool loaded: false
@@ -43,6 +46,12 @@ QtObject {
                 enableDangerousActions = data.enableDangerousActions;
             if (typeof data.useFuzzyApps === "boolean")
                 useFuzzyApps = data.useFuzzyApps;
+            if (typeof data.useFuzzyWallpapers === "boolean")
+                useFuzzyWallpapers = data.useFuzzyWallpapers;
+            if (typeof data.smartScheme === "boolean")
+                smartScheme = data.smartScheme;
+            if (typeof data.wallpaperDirectory === "string" && data.wallpaperDirectory.length > 0)
+                wallpaperDirectory = data.wallpaperDirectory;
             if (typeof data.vimKeybinds === "boolean")
                 vimKeybinds = data.vimKeybinds;
             if (Number.isInteger(data.workspacesShown))
@@ -54,7 +63,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

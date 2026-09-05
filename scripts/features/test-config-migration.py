@@ -12,14 +12,16 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
     legacy = home / ".config/caelestia/shell.json"
     legacy.parent.mkdir(parents=True)
     legacy.write_text(json.dumps({
-        "launcher": {"favouriteApps": ["steam", 7], "hiddenApps": ["qt6ct"], "actions": [{"name": "Open", "command": ["open"]}, 7], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzy": {"apps": False}, "vimKeybinds": False},
+        "launcher": {"favouriteApps": ["steam", 7], "hiddenApps": ["qt6ct"], "actions": [{"name": "Open", "command": ["open"]}, 7], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzy": {"apps": False, "wallpapers": False}, "vimKeybinds": False},
+        "paths": {"wallpaperDir": "~/Wallpapers"},
+        "services": {"smartScheme": False},
         "bar": {"workspaces": {"shown": 6}, "tray": {"hiddenIcons": ["nm-applet", None]}},
         "general": {"apps": {"terminal": ["foot", 9]}},
     }), encoding="utf-8")
     env = {**os.environ, "XDG_CONFIG_HOME": str(home / ".config"), "XDG_DATA_HOME": str(home / ".local/share")}
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
     target = home / ".config/cortetsu/preferences.json"
-    assert json.loads(target.read_text()) == {"schema": 1, "favouriteApps": ["steam"], "hiddenApps": ["qt6ct"], "hiddenTrayIcons": ["nm-applet"], "terminalCommand": ["foot"], "actions": [{"name": "Open", "command": ["open"]}], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzyApps": False, "vimKeybinds": False, "workspacesShown": 6}
+    assert json.loads(target.read_text()) == {"schema": 1, "favouriteApps": ["steam"], "hiddenApps": ["qt6ct"], "hiddenTrayIcons": ["nm-applet"], "terminalCommand": ["foot"], "actions": [{"name": "Open", "command": ["open"]}], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzyApps": False, "useFuzzyWallpapers": False, "smartScheme": False, "wallpaperDirectory": "~/Wallpapers", "vimKeybinds": False, "workspacesShown": 6}
     backups = list((home / ".local/share/cortetsu/migrations").glob("*/preferences/legacy-shell.json"))
     assert len(backups) == 1
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)

@@ -41,6 +41,9 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
         "specialPrefix": launcher.get("specialPrefix", "@") if isinstance(launcher.get("specialPrefix", "@"), str) else "@",
         "enableDangerousActions": launcher.get("enableDangerousActions", True) is True,
         "useFuzzyApps": launcher.get("useFuzzy", {}).get("apps", True) is True,
+        "useFuzzyWallpapers": launcher.get("useFuzzy", {}).get("wallpapers", True) is True,
+        "smartScheme": data.get("services", {}).get("smartScheme", True) is True,
+        "wallpaperDirectory": data.get("paths", {}).get("wallpaperDir", "~/Pictures/Wallpapers") if isinstance(data.get("paths", {}).get("wallpaperDir", "~/Pictures/Wallpapers"), str) else "~/Pictures/Wallpapers",
         "vimKeybinds": launcher.get("vimKeybinds", True) is True,
         "workspacesShown": shown,
     }
