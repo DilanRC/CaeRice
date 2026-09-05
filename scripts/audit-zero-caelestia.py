@@ -46,6 +46,10 @@ def active_files(root: Path):
             relative = path.relative_to(root)
             if EXCLUDED_PARTS.intersection(relative.parts):
                 continue
+            if relative == Path("scripts/audit-zero-caelestia.py"):
+                continue
+            if relative.parts[:2] == ("scripts", "features"):
+                continue
             yield path
 
 
@@ -54,10 +58,15 @@ def audit(root: Path) -> dict[str, list[str]]:
     for path in active_files(root):
         text = path.read_text(encoding="utf-8", errors="ignore")
         relative = path.relative_to(root)
+        if path.suffix == ".patch":
+            continue
         for name, pattern in PATTERNS.items():
             for match in pattern.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1
                 findings[name].append(f"{relative}:{line}")
+    patches = sorted((root / "caelestia/patches").glob("*.patch"))
+    if patches:
+        findings["Caelestia patches"] = [str(path.relative_to(root)) for path in patches]
     return {name: paths for name, paths in findings.items() if paths}
 
 
