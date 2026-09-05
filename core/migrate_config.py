@@ -27,6 +27,7 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
     apps = data.get("general", {}).get("apps", {})
     services = data.get("services", {})
     toasts = data.get("utilities", {}).get("toasts", {})
+    notifs = data.get("notifs", {})
     shown = workspaces.get("shown", 5)
     try:
         shown = max(1, min(20, int(shown)))
@@ -56,6 +57,13 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
         "toastAudioOutputChanged": toasts.get("audioOutputChanged", True) is True,
         "toastAudioInputChanged": toasts.get("audioInputChanged", True) is True,
         "toastNowPlaying": toasts.get("nowPlaying", False) is True,
+        "notificationExpire": notifs.get("expire", True) is True,
+        "suppressNotificationsInFullscreen": notifs.get("fullscreen", "on") in (0, "off", "Off"),
+        "notificationDefaultExpireTimeout": notifs.get("defaultExpireTimeout", 5000) if isinstance(notifs.get("defaultExpireTimeout", 5000), int) else 5000,
+        "notificationFullscreenExpireTimeout": notifs.get("fullscreenExpireTimeout", 2000) if isinstance(notifs.get("fullscreenExpireTimeout", 2000), int) else 2000,
+        "notificationActionOnClick": notifs.get("actionOnClick", False) is True,
+        "toastDndChanged": toasts.get("dndChanged", True) is True,
+        "toastGameModeChanged": toasts.get("gameModeChanged", True) is True,
         "vimKeybinds": launcher.get("vimKeybinds", True) is True,
         "workspacesShown": shown,
     }

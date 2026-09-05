@@ -16,6 +16,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
         "paths": {"wallpaperDir": "~/Wallpapers"},
         "services": {"smartScheme": False, "useTwelveHourClock": True, "audioIncrement": 0.05, "brightnessIncrement": 0.2, "maxVolume": 1.5, "visualiserBars": 48, "defaultPlayer": "VLC", "playerAliases": [{"from": "vlc", "to": "VLC"}]},
         "utilities": {"toasts": {"audioOutputChanged": False, "audioInputChanged": False, "nowPlaying": True}},
+        "notifs": {"expire": False, "fullscreen": "off", "defaultExpireTimeout": 7000, "fullscreenExpireTimeout": 3000, "actionOnClick": True},
         "bar": {"workspaces": {"shown": 6}, "tray": {"hiddenIcons": ["nm-applet", None]}},
         "general": {"apps": {"terminal": ["foot", 9]}},
     }), encoding="utf-8")
@@ -23,7 +24,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
     target = home / ".config/cortetsu/preferences.json"
     payload = json.loads(target.read_text())
-    assert payload == {"schema": 1, "favouriteApps": ["steam"], "hiddenApps": ["qt6ct"], "hiddenTrayIcons": ["nm-applet"], "terminalCommand": ["foot"], "actions": [{"name": "Open", "command": ["open"]}], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzyApps": False, "useFuzzyWallpapers": False, "smartScheme": False, "wallpaperDirectory": "~/Wallpapers", "useTwelveHourClock": True, "audioIncrement": 0.05, "brightnessIncrement": 0.2, "maxVolume": 1.5, "visualiserBars": 48, "defaultPlayer": "VLC", "playerAliases": [{"from": "vlc", "to": "VLC"}], "toastAudioOutputChanged": False, "toastAudioInputChanged": False, "toastNowPlaying": True, "vimKeybinds": False, "workspacesShown": 6}
+    assert payload == {"schema": 1, "favouriteApps": ["steam"], "hiddenApps": ["qt6ct"], "hiddenTrayIcons": ["nm-applet"], "terminalCommand": ["foot"], "actions": [{"name": "Open", "command": ["open"]}], "actionPrefix": "/", "specialPrefix": "@", "enableDangerousActions": False, "useFuzzyApps": False, "useFuzzyWallpapers": False, "smartScheme": False, "wallpaperDirectory": "~/Wallpapers", "useTwelveHourClock": True, "audioIncrement": 0.05, "brightnessIncrement": 0.2, "maxVolume": 1.5, "visualiserBars": 48, "defaultPlayer": "VLC", "playerAliases": [{"from": "vlc", "to": "VLC"}], "toastAudioOutputChanged": False, "toastAudioInputChanged": False, "toastNowPlaying": True, "notificationExpire": False, "suppressNotificationsInFullscreen": True, "notificationDefaultExpireTimeout": 7000, "notificationFullscreenExpireTimeout": 3000, "notificationActionOnClick": True, "toastDndChanged": True, "toastGameModeChanged": True, "vimKeybinds": False, "workspacesShown": 6}
     backups = list((home / ".local/share/cortetsu/migrations").glob("*/preferences/legacy-shell.json"))
     assert len(backups) == 1
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)

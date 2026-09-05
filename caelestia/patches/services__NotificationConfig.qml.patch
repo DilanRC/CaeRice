@@ -1,0 +1,44 @@
+--- a/services/Notifs.qml
++++ b/services/Notifs.qml
+@@ -12,1 +12,2 @@
+ import qs.utils
++import "../modules"
+@@ -35,1 +36,1 @@
+-        if (GlobalConfig.notifs.fullscreen === NotifsFullscreen.Off && hasFullscreen())
++        if (CortetsuConfig.suppressNotificationsInFullscreen && hasFullscreen())
+@@ -41,1 +42,1 @@
+-        if (!GlobalConfig.utilities.toasts.dndChanged)
++        if (!CortetsuConfig.toastDndChanged)
+--- a/services/NotifData.qml
++++ b/services/NotifData.qml
+@@ -9,1 +9,2 @@
+ import qs.utils
++import "../modules"
+@@ -36,1 +37,1 @@
+-    property real expireTimeout: GlobalConfig.notifs.defaultExpireTimeout
++    property real expireTimeout: CortetsuConfig.notificationDefaultExpireTimeout
+@@ -54,1 +55,1 @@
+-        interval: notif.expireTimeout > 0 ? notif.expireTimeout : notif.hasFullscreen ? GlobalConfig.notifs.fullscreenExpireTimeout : GlobalConfig.notifs.defaultExpireTimeout
++        interval: notif.expireTimeout > 0 ? notif.expireTimeout : notif.hasFullscreen ? CortetsuConfig.notificationFullscreenExpireTimeout : CortetsuConfig.notificationDefaultExpireTimeout
+@@ -57,1 +58,1 @@
+-            if (GlobalConfig.notifs.expire || notif.hasFullscreen)
++            if (CortetsuConfig.notificationExpire || notif.hasFullscreen)
+--- a/services/GameMode.qml
++++ b/services/GameMode.qml
+@@ -8,1 +8,2 @@
+ import qs.services
++import "../modules"
+@@ -31,1 +32,1 @@
+-            if (GlobalConfig.utilities.toasts.gameModeChanged)
++            if (CortetsuConfig.toastGameModeChanged)
+@@ -35,1 +36,1 @@
+-            if (GlobalConfig.utilities.toasts.gameModeChanged)
++            if (CortetsuConfig.toastGameModeChanged)
+--- a/modules/notifications/Notification.qml
++++ b/modules/notifications/Notification.qml
+@@ -13,1 +13,2 @@
+ import qs.utils
++import ".."
+@@ -84,1 +85,1 @@
+-            if (!GlobalConfig.notifs.actionOnClick || event.button !== Qt.LeftButton)
++            if (!CortetsuConfig.notificationActionOnClick || event.button !== Qt.LeftButton)

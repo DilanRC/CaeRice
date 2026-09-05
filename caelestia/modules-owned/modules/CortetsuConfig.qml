@@ -31,6 +31,13 @@ QtObject {
     property bool toastAudioOutputChanged: true
     property bool toastAudioInputChanged: true
     property bool toastNowPlaying: false
+    property bool notificationExpire: true
+    property bool suppressNotificationsInFullscreen: false
+    property int notificationDefaultExpireTimeout: 5000
+    property int notificationFullscreenExpireTimeout: 2000
+    property bool notificationActionOnClick: false
+    property bool toastDndChanged: true
+    property bool toastGameModeChanged: true
     property bool vimKeybinds: true
     property int workspacesShown: 5
     property bool loaded: false
@@ -82,6 +89,20 @@ QtObject {
                 toastAudioInputChanged = data.toastAudioInputChanged;
             if (typeof data.toastNowPlaying === "boolean")
                 toastNowPlaying = data.toastNowPlaying;
+            if (typeof data.notificationExpire === "boolean")
+                notificationExpire = data.notificationExpire;
+            if (typeof data.suppressNotificationsInFullscreen === "boolean")
+                suppressNotificationsInFullscreen = data.suppressNotificationsInFullscreen;
+            if (Number.isInteger(data.notificationDefaultExpireTimeout))
+                notificationDefaultExpireTimeout = Math.max(0, data.notificationDefaultExpireTimeout);
+            if (Number.isInteger(data.notificationFullscreenExpireTimeout))
+                notificationFullscreenExpireTimeout = Math.max(0, data.notificationFullscreenExpireTimeout);
+            if (typeof data.notificationActionOnClick === "boolean")
+                notificationActionOnClick = data.notificationActionOnClick;
+            if (typeof data.toastDndChanged === "boolean")
+                toastDndChanged = data.toastDndChanged;
+            if (typeof data.toastGameModeChanged === "boolean")
+                toastGameModeChanged = data.toastGameModeChanged;
             if (typeof data.vimKeybinds === "boolean")
                 vimKeybinds = data.vimKeybinds;
             if (Number.isInteger(data.workspacesShown))
@@ -93,7 +114,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {
