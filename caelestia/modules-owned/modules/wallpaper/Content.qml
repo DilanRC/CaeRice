@@ -4,18 +4,19 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Effects
 import Quickshell
-import Caelestia.Config
-import qs.components
 import qs.components.effects
 import qs.components.controls
 import qs.services
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import "OrbitModel.js" as Orbit
 
 FocusScope {
     id: root
 
-    required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screen
+    required property var screenState
     property var entries: Wallpapers.list ? Array.from(Wallpapers.list) : []
     property var filteredEntries: Orbit.filtered(entries, selectedCategory, categoryFor)
     property var categoryNames: Orbit.categories(entries, categoryFor)
@@ -281,10 +282,10 @@ FocusScope {
             anchors.rightMargin: -8
             anchors.topMargin: -8
             anchors.bottomMargin: -4
-            radius: Tokens.rounding.large
-            color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.68)
+            radius: CortetsuDesign.radiusLarge
+            color: Qt.alpha(CortetsuDesign.colorSurfaceHigh, 0.68)
             border.width: 1
-            border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.55)
+            border.color: Qt.alpha(CortetsuDesign.colorOutlineVariant, 0.55)
         }
 
         Flickable {
@@ -310,7 +311,6 @@ FocusScope {
                         checked: root.selectedCategory === modelData
                         isToggle: true
                         type: TextButton.Tonal
-                        font: Tokens.font.label.medium
                         onClicked: root.selectCategory(modelData)
                     }
                 }
@@ -343,7 +343,7 @@ FocusScope {
                 layer.enabled: true
                 visible: true
                 ShapePath {
-                    fillColor: Colours.palette.m3surface
+                    fillColor: CortetsuDesign.colorSurface
                     startX: heroMask.width * 0.28; startY: 0
                     PathLine { x: heroMask.width * 0.72; y: 0 }
                     PathLine { x: heroMask.width; y: heroMask.height * 0.28 }
@@ -392,12 +392,12 @@ FocusScope {
                     layer.enabled: true
                     layer.effect: Mask { maskSource: heroMask }
                     onStatusChanged: root.updatePresentationReady()
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         visible: parent.status === Image.Error
                         text: "broken_image"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.extraLarge
+                        color: CortetsuDesign.colorOnSurfaceVariant
+                        iconSize: CortetsuTypography.iconExtraLargePx
                     }
                 }
 
@@ -407,7 +407,7 @@ FocusScope {
                     z: 4
                     ShapePath {
                         fillColor: "transparent"
-                        strokeColor: Qt.alpha(Colours.palette.m3outlineVariant, 0.8)
+                        strokeColor: Qt.alpha(CortetsuDesign.colorOutlineVariant, 0.8)
                         strokeWidth: 1
                         startX: heroOutline.width * 0.28; startY: 0
                         PathLine { x: heroOutline.width * 0.72; y: 0 }
@@ -448,7 +448,7 @@ FocusScope {
                         layer.enabled: true
                         visible: true
                         ShapePath {
-                            fillColor: Colours.palette.m3surface
+                            fillColor: CortetsuDesign.colorSurface
                             startX: satelliteMask.width * 0.28; startY: 0
                             PathLine { x: satelliteMask.width * 0.72; y: 0 }
                             PathLine { x: satelliteMask.width; y: satelliteMask.height * 0.28 }
@@ -480,7 +480,7 @@ FocusScope {
                         z: 3
                         ShapePath {
                             fillColor: "transparent"
-                            strokeColor: satellite.hovered ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outlineVariant, 0.72)
+                            strokeColor: satellite.hovered ? CortetsuDesign.colorPrimary : Qt.alpha(CortetsuDesign.colorOutlineVariant, 0.72)
                             strokeWidth: satellite.hovered ? 1.5 : 1
                             startX: satelliteOutline.width * 0.28; startY: 0
                             PathLine { x: satelliteOutline.width * 0.72; y: 0 }
@@ -512,10 +512,10 @@ FocusScope {
             anchors.bottomMargin: 12
             width: Math.min(500, parent.width - 40)
             height: footer.height + 24
-            radius: Tokens.rounding.extraLarge
-            color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.68)
+            radius: CortetsuDesign.radiusLarge
+            color: Qt.alpha(CortetsuDesign.colorSurfaceHigh, 0.68)
             border.width: 1
-            border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.55)
+            border.color: Qt.alpha(CortetsuDesign.colorOutlineVariant, 0.55)
         }
 
         Column {
@@ -525,20 +525,20 @@ FocusScope {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 7
 
-            StyledText {
+            CortetsuText {
                 width: Math.min(440, panel.width - 48)
                 text: root.currentPath ? root.currentPath.split("/").pop() : qsTr("No readable wallpapers found")
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideMiddle
-                color: Colours.palette.m3onSurface
-                font: Tokens.font.title.small
+                color: CortetsuDesign.colorOnSurface
+                textSize: CortetsuTypography.titleSmallPx
             }
-            StyledText {
+            CortetsuText {
                 width: Math.min(440, panel.width - 48)
                 text: root.currentEntry ? qsTr("%1  ·  %2  ·  %3/%4").arg(root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")).arg(root.categoryFor(root.currentEntry)).arg(root.currentIndex + 1).arg(root.filteredEntries.length) : qsTr("Add images to the native wallpaper directory")
                 horizontalAlignment: Text.AlignHCenter
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.label.medium
+                color: CortetsuDesign.colorOnSurfaceVariant
+                textSize: CortetsuTypography.labelMediumPx
             }
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter

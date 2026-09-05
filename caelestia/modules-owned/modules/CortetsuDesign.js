@@ -22,6 +22,8 @@ var colorSecondaryContainer = "#293B4A"
 var colorOnSecondaryContainer = colorWashi
 var colorTertiary = colorVermillion
 var colorOutline = colorMuted
+var colorOutlineVariant = "#505862"
+var colorScrim = "#000000"
 
 var radiusSmall = 8
 var radiusMedium = 14

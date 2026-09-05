@@ -16,3 +16,4 @@ var titleLargePx = 22
 var iconSmallPx = 18
 var iconMediumPx = 22
 var iconLargePx = 28
+var iconExtraLargePx = 34

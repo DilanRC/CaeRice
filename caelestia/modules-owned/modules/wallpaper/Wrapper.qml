@@ -3,15 +3,14 @@ pragma ComponentBehavior: Bound
 import ".."
 import QtQuick
 import Quickshell
-import Caelestia
-import qs.components
 import qs.services
 import "../OverlayPolicy.js" as OverlayPolicy
+import "../CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
-    required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screen
+    required property var screenState
     readonly property bool shouldBeActive: screenState.cortetsuState?.wallpaperManager ?? false
     readonly property bool presentationReady: contentLoader.item?.presentationReady ?? false
     readonly property bool globalOtherOverlayOpen: {
@@ -37,7 +36,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Qt.alpha(Colours.palette.m3scrim, 0.18)
+        color: Qt.alpha(CortetsuDesign.colorScrim, 0.18)
     }
 
     Loader {

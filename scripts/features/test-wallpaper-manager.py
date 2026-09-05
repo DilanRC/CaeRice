@@ -85,12 +85,14 @@ assert content.count("onStatusChanged: root.updatePresentationReady()") >= 2
 assert "Math.min(prefetchRepeater.count, 7)" in content
 assert content.count("cache: true") >= 4
 assert "id: panel\n        z: 1" in content and "Item {\n        id: panel" in content
-assert "m3surfaceContainerHigh, 0.68" in content
+assert "CortetsuDesign.colorSurfaceHigh, 0.68" in content
 assert 'root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")' in content
 assert "shouldBeActive && presentationReady" in wrapper
-assert "m3scrim, 0.18" in wrapper
-assert "m3scrim, 0.44" not in wrapper
+assert "CortetsuDesign.colorScrim, 0.18" in wrapper
+assert "CortetsuDesign.colorScrim, 0.44" not in wrapper
 assert 'color: "black"' not in content
+for legacy in ("Caelestia.Config", "import Caelestia\n", "import qs.components\n", "Colours.palette", "Tokens.", "StyledText", "MaterialIcon"):
+    assert legacy not in content + wrapper, legacy
 
 # V2.1.1 polish: orbital geometry stays uniform and clears the footer.
 assert "scale: 1" in content
