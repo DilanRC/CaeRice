@@ -3,10 +3,10 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import Caelestia.Config
-import qs.components
-import qs.services
 import qs.utils
+import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
@@ -85,26 +85,26 @@ Item {
         }
     }
 
-    StyledRect {
+    Rectangle {
         id: cardBg
 
         anchors.fill: parent
 
-        radius: Tokens.rounding.extraLarge
+        radius: CortetsuDesign.radiusLarge
 
         color:
             root.selected
                 ? Qt.alpha(
-                    Colours.palette.m3secondaryContainer,
+                    CortetsuDesign.colorSecondaryContainer,
                     0.96
                 )
                 : pointer.containsMouse
                     ? Qt.alpha(
-                        Colours.palette.m3surfaceContainerHighest,
+                        CortetsuDesign.colorSurfaceHigh,
                         0.96
                     )
                     : Qt.alpha(
-                        Colours.tPalette.m3surfaceContainerHigh,
+                        CortetsuDesign.colorSurfaceHigh,
                         0.93
                     )
 
@@ -112,9 +112,9 @@ Item {
 
         border.color:
             root.selected
-                ? Colours.palette.m3primary
+                ? CortetsuDesign.colorPrimary
                 : Qt.alpha(
-                    Colours.palette.m3outlineVariant,
+                    CortetsuDesign.colorOutlineVariant,
                     0.82
                 )
 
@@ -125,8 +125,9 @@ Item {
         }
     }
 
-    StyledClippingRect {
+    Rectangle {
         id: preview
+        clip: true
 
         anchors.top: parent.top
         anchors.left: parent.left
@@ -138,10 +139,10 @@ Item {
 
         implicitHeight: root.previewHeight
 
-        radius: Tokens.rounding.large
+        radius: CortetsuDesign.radiusMedium
 
         color:
-            Colours.tPalette.m3surfaceContainerLowest
+            CortetsuDesign.colorSurface
 
         Image {
             anchors.centerIn: parent
@@ -158,10 +159,7 @@ Item {
             opacity: 0.22
         }
 
-        /*
-         * Same strategy as Caelestia's native windowinfo preview:
-         * constrain the ScreencopyView using the client's real size.
-         */
+        // Constrain the ScreencopyView using the client's real size.
         ScreencopyView {
             anchors.centerIn: parent
 
@@ -187,7 +185,7 @@ Item {
          * Workspace/monitor badge. One compact badge is enough; the overview
          * no longer repeats workspace headings around every row of cards.
          */
-        StyledRect {
+        Rectangle {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
 
@@ -200,22 +198,22 @@ Item {
             implicitHeight:
                 workspaceLabel.implicitHeight + 8
 
-            radius: Tokens.rounding.full
+            radius: 999
 
             color:
                 Qt.alpha(
-                    Colours.palette.m3surfaceContainerLowest,
+                    CortetsuDesign.colorSurface,
                     0.92
                 )
 
             border.width: 1
             border.color:
                 Qt.alpha(
-                    Colours.palette.m3outlineVariant,
+                    CortetsuDesign.colorOutlineVariant,
                     0.75
                 )
 
-            StyledText {
+            CortetsuText {
                 id: workspaceLabel
 
                 anchors.centerIn: parent
@@ -225,10 +223,10 @@ Item {
                         ? root.workspaceName
                         : `WS ${root.workspaceId} · ${root.monitorName}`
 
-                font: Tokens.font.label.small
+                textSize: CortetsuTypography.labelSmallPx
 
                 color:
-                    Colours.palette.m3onSurface
+                    CortetsuDesign.colorOnSurface
             }
         }
 
@@ -258,25 +256,25 @@ Item {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 implicitWidth: 36
                 implicitHeight: 36
 
-                radius: Tokens.rounding.full
+                radius: 999
 
                 color:
                     floatMouse.containsMouse
-                        ? Colours.palette.m3tertiaryContainer
+                        ? CortetsuDesign.colorSecondaryContainer
                         : Qt.alpha(
-                            Colours.palette.m3surfaceContainerLowest,
+                            CortetsuDesign.colorSurface,
                             0.94
                         )
 
                 border.width: 1
                 border.color:
-                    Colours.palette.m3outlineVariant
+                    CortetsuDesign.colorOutlineVariant
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
 
                     text:
@@ -284,8 +282,7 @@ Item {
                             ? "select_window"
                             : "open_in_full"
 
-                    fontStyle:
-                        Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 MouseArea {
@@ -304,38 +301,37 @@ Item {
                 }
             }
 
-            StyledRect {
+            Rectangle {
                 implicitWidth: 36
                 implicitHeight: 36
 
-                radius: Tokens.rounding.full
+                radius: 999
 
                 color:
                     closeMouse.containsMouse
-                        ? Colours.palette.m3errorContainer
+                        ? Qt.darker(CortetsuDesign.colorVermillion, 1.5)
                         : Qt.alpha(
-                            Colours.palette.m3surfaceContainerLowest,
+                            CortetsuDesign.colorSurface,
                             0.94
                         )
 
                 border.width: 1
                 border.color:
                     closeMouse.containsMouse
-                        ? Colours.palette.m3error
-                        : Colours.palette.m3outlineVariant
+                        ? CortetsuDesign.colorVermillion
+                        : CortetsuDesign.colorOutlineVariant
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
 
                     text: "close"
 
                     color:
                         closeMouse.containsMouse
-                            ? Colours.palette.m3onErrorContainer
-                            : Colours.palette.m3onSurface
+                            ? CortetsuDesign.colorOnSurface
+                            : CortetsuDesign.colorOnSurface
 
-                    fontStyle:
-                        Tokens.font.icon.medium
+                    iconSize: CortetsuTypography.iconMediumPx
                 }
 
                 MouseArea {
@@ -391,28 +387,26 @@ Item {
 
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
 
                 text: root.title
 
-                font:
-                    Tokens.font.body.medium
+                textSize: CortetsuTypography.bodyPx
 
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 width: parent.width
 
                 text:
                     root.className
 
-                font:
-                    Tokens.font.label.small
+                textSize: CortetsuTypography.labelSmallPx
 
                 color:
-                    Colours.palette.m3outline
+                    CortetsuDesign.colorOutline
 
                 elide: Text.ElideRight
             }
