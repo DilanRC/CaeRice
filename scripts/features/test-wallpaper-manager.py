@@ -74,7 +74,8 @@ assert "root.selectSatellite(satellite.modelData.index)" in content
 assert "import qs.components.effects" not in content
 assert "import qs.components.controls" not in content
 assert "Image {\n            anchors.fill: parent; anchors.margins" not in content
-assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content
+assert 'if (CortetsuConfig.smartScheme)\n                Wallpapers.previewColourLock = true;' in content
+assert "Colours." not in content
 
 # V2.1 presentation: bounded shared-cache prefetch, ready-gated entry, and floating surfaces.
 assert "Orbit.prefetch(filteredEntries, currentIndex, visibleLimit + 6)" in content

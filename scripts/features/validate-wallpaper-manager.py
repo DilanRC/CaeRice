@@ -40,7 +40,8 @@ def main() -> None:
     open_body = content_text[open_start:open_end]
     for contract in ("presentationReady = false", "resync();", "Qt.callLater(updatePresentationReady)", "forceActiveFocus();"):
         assert contract in open_body, f"openManager missing {contract}"
-    assert 'if (Colours.scheme === "dynamic")\n                Wallpapers.previewColourLock = true;' in content_text
+    assert 'if (CortetsuConfig.smartScheme)\n                Wallpapers.previewColourLock = true;' in content_text
+    assert "Colours." not in content_text
     assert "Item {\n        id: panel" in content_text and 'color: "black"' not in content_text
     wrapper_text = (ROOT / "caelestia/modules-owned/modules/wallpaper/Wrapper.qml").read_text(encoding="utf-8")
     assert "shouldBeActive && presentationReady" in wrapper_text

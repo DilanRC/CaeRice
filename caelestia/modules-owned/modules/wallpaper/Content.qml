@@ -158,7 +158,7 @@ FocusScope {
         previewTimer.stop();
         pendingPreviewPath = "";
         if (Wallpapers.actualCurrent !== currentPath) {
-            if (Colours.scheme === "dynamic")
+            if (CortetsuConfig.smartScheme)
                 Wallpapers.previewColourLock = true;
             if (previewActive || Wallpapers.showPreview)
                 Wallpapers.stopPreview();
