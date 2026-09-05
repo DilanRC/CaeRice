@@ -1,0 +1,27 @@
+--- a/modules/launcher/AppList.qml
++++ b/modules/launcher/AppList.qml
+@@ -10,2 +10,3 @@
+ import qs.utils
+ import qs.modules.launcher.services
++import ".."
+@@ -137,1 +138,1 @@
+-        const apps = GlobalConfig.launcher.favouriteApps;
++        const apps = CortetsuConfig.favouriteApps;
+@@ -140,1 +141,1 @@
+-            GlobalConfig.launcher.favouriteApps = apps.filter(a => a !== id);
++            CortetsuConfig.setFavouriteApps(apps.filter(a => a !== id));
+@@ -142,1 +143,1 @@
+-            GlobalConfig.launcher.favouriteApps = [...apps, id];
++            CortetsuConfig.setFavouriteApps([...apps, id]);
+@@ -221,1 +222,1 @@
+-                    GlobalConfig.launcher.favouriteApps,
++                    CortetsuConfig.favouriteApps,
+--- a/modules/launcher/services/Apps.qml
++++ b/modules/launcher/services/Apps.qml
+@@ -4,2 +4,3 @@
+ import Caelestia.Models
+ import qs.utils
++import "../.."
+@@ -110,1 +111,1 @@
+-        favouriteApps: GlobalConfig.launcher.favouriteApps
++        favouriteApps: CortetsuConfig.favouriteApps
