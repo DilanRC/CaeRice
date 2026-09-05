@@ -42,6 +42,15 @@ def resolve_link(path: Path) -> Path | None:
         return None
 
 
+def quarantine_generation(generation: Path, root: Path) -> Path:
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    destination_root = root / "invalid"
+    destination_root.mkdir(parents=True, exist_ok=True)
+    destination = destination_root / f"{generation.name}-{stamp}"
+    generation.rename(destination)
+    return destination
+
+
 def atomic_link(target: Path, link: Path) -> None:
     link.parent.mkdir(parents=True, exist_ok=True)
     temporary = link.with_name(f"{link.name}.tmp.{os.getpid()}")
@@ -141,14 +150,24 @@ def promote(repo: Path) -> int:
     current = root / "current"
     previous = root / "previous"
     old_current = resolve_link(current)
+    invalid_current = False
     if old_current is not None:
-        validate_system(old_current)
-        atomic_link(old_current, previous)
+        try:
+            validate_system(old_current)
+        except SystemError:
+            invalid_current = True
+        else:
+            atomic_link(old_current, previous)
     atomic_link(generation, current)
     verify(repo)
+    quarantined = None
+    if invalid_current and old_current is not None:
+        quarantined = quarantine_generation(old_current, root)
     print(f"PROMOTED system={generation}")
     if old_current is not None:
         print(f"PREVIOUS system={old_current}")
+    if quarantined is not None:
+        print(f"QUARANTINED invalid={quarantined}")
     return 0
 
 

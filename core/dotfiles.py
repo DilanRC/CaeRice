@@ -245,6 +245,15 @@ def resolved_link(link: Path) -> Path | None:
         return None
 
 
+def quarantine_generation(generation: Path, data: Path) -> Path:
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    root = data / "dotfiles" / "invalid"
+    root.mkdir(parents=True, exist_ok=True)
+    destination = root / f"{generation.name}-{stamp}"
+    generation.rename(destination)
+    return destination
+
+
 def stable_target(data: Path, target: str) -> Path:
     return data / "dotfiles/current/home" / safe_relative(target)
 
@@ -307,6 +316,12 @@ def apply(repo: Path, profile_name: str | None = None) -> int:
 
     old_current = resolved_link(current)
     old_previous = resolved_link(previous)
+    invalid_current = False
+    if old_current is not None:
+        try:
+            validate_generation(old_current)
+        except DotfilesError:
+            invalid_current = True
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     backup_root = backups / stamp
     backup_map: dict[Path, Path | None] = {}
@@ -327,7 +342,7 @@ def apply(repo: Path, profile_name: str | None = None) -> int:
             backup_map[target] = None
 
     try:
-        if old_current is not None:
+        if old_current is not None and not invalid_current:
             validate_generation(old_current)
             atomic_symlink(old_current, previous)
         atomic_symlink(generation, current)
@@ -356,6 +371,10 @@ def apply(repo: Path, profile_name: str | None = None) -> int:
             restore_backup(backup_map.get(target), target)
         raise
 
+    quarantined = None
+    if invalid_current and old_current is not None:
+        quarantined = quarantine_generation(old_current, data)
+
     if not any(backup_root.rglob("*")) if backup_root.exists() else True:
         shutil.rmtree(backup_root, ignore_errors=True)
     print(f"PROMOTED dotfiles={generation}")
@@ -364,6 +383,8 @@ def apply(repo: Path, profile_name: str | None = None) -> int:
         print(f"PREVIOUS dotfiles={old_current}")
     if backup_root.exists():
         print(f"BACKUP unmanaged={backup_root}")
+    if quarantined is not None:
+        print(f"QUARANTINED invalid={quarantined}")
     return 0
 
 
