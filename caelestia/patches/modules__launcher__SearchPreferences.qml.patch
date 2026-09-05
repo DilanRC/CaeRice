@@ -1,0 +1,36 @@
+--- a/modules/launcher/services/Actions.qml
++++ b/modules/launcher/services/Actions.qml
+@@ -3,1 +3,2 @@
+ import ".."
++import "../.."
+@@ -15,1 +16,1 @@
+-        return search.slice(GlobalConfig.launcher.actionPrefix.length);
++        return search.slice(CortetsuConfig.actionPrefix.length);
+@@ -19,1 +20,1 @@
+-    useFuzzy: GlobalConfig.launcher.useFuzzy.actions
++    useFuzzy: CortetsuConfig.useFuzzyApps
+@@ -43,1 +44,1 @@
+-                list.search.text = `${GlobalConfig.launcher.actionPrefix}${command[1]} `;
++                list.search.text = `${CortetsuConfig.actionPrefix}${command[1]} `;
+--- a/modules/launcher/services/Schemes.qml
++++ b/modules/launcher/services/Schemes.qml
+@@ -3,1 +3,2 @@
+ import ".."
++import "../.."
+@@ -17,1 +18,1 @@
+-        return search.slice(`${GlobalConfig.launcher.actionPrefix}scheme `.length);
++        return search.slice(`${CortetsuConfig.actionPrefix}scheme `.length);
+@@ -29,1 +30,1 @@
+-    useFuzzy: GlobalConfig.launcher.useFuzzy.schemes
++    useFuzzy: CortetsuConfig.useFuzzyApps
+--- a/modules/launcher/services/M3Variants.qml
++++ b/modules/launcher/services/M3Variants.qml
+@@ -3,1 +3,2 @@
+ import ".."
++import "../.."
+@@ -13,1 +14,1 @@
+-        return search.slice(`${GlobalConfig.launcher.actionPrefix}variant `.length);
++        return search.slice(`${CortetsuConfig.actionPrefix}variant `.length);
+@@ -72,1 +73,1 @@
+-    useFuzzy: GlobalConfig.launcher.useFuzzy.variants
++    useFuzzy: CortetsuConfig.useFuzzyApps
