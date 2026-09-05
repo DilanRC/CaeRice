@@ -15,14 +15,59 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-BEGIN = "# BEGIN CORTETSU HYPRLAND IMPORT"
-END = "# END CORTETSU HYPRLAND IMPORT"
 MAX_BYTES = 1024 * 1024
 SKIP_DIRS = {".git", "backup", "backups", "cache", "logs", "legacy-backup"}
 SKIP_SUFFIXES = (".bak", ".old", ".orig", ".tmp", ".swp", ".swo", "~")
+# Cortetsu's own timestamped-backup convention (see CLAUDE.md fish snippets):
+# `name.bak-20260905-131903` or `name.bak.20260905-131903`. A plain endswith
+# check on SKIP_SUFFIXES misses these because the timestamp trails the token.
+BACKUP_TOKEN = re.compile(r"\.(bak|old|orig|tmp|swp|swo)([.-]|$)", re.IGNORECASE)
 SENSITIVE = re.compile(
     r"(?i)\b(password|passwd|api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret)\b\s*[:=]"
 )
+
+# The "modules" scope owns the dynamically-discovered ~/.config/hypr/hyprland/
+# tree (per-domain Hyprland config split into files).
+#
+# The "core" scope owns the fixed set of files that make that tree loadable at
+# all without ~/.config/caelestia as a Lua module root: the loader itself,
+# shared variables, transitive utils, and the scheme fallback. These are not
+# auto-discovered (unlike "modules") because the set is small, load-bearing,
+# and enumerated explicitly by the Hyprland regression contract.
+SCOPES = {
+    "modules": {
+        "begin": "# BEGIN CORTETSU HYPRLAND IMPORT",
+        "end": "# END CORTETSU HYPRLAND IMPORT",
+        "active_root": lambda home: home / ".config/hypr/hyprland",
+        "imported_root": lambda repo: repo / "dotfiles/home/.config/hypr/hyprland",
+        "source_prefix": "dotfiles/home/.config/hypr/hyprland",
+        "target_prefix": ".config/hypr/hyprland",
+        "discover": True,
+        "files": (),
+    },
+    "core": {
+        "begin": "# BEGIN CORTETSU HYPRLAND CORE IMPORT",
+        "end": "# END CORTETSU HYPRLAND CORE IMPORT",
+        "active_root": lambda home: home / ".config/hypr",
+        "imported_root": lambda repo: repo / "dotfiles/home/.config/hypr",
+        "source_prefix": "dotfiles/home/.config/hypr",
+        "target_prefix": ".config/hypr",
+        "discover": False,
+        # The loader (hyprland.lua) plus every module it must resolve without
+        # ~/.config/caelestia on package.path: variables, transitive utils,
+        # and the scheme fallback. scheme/current.lua is deliberately excluded:
+        # it is live, per-user theme state that hyprland.lua bootstraps from
+        # scheme/default.lua on first run (see maybe_copy), not a fixed dotfile.
+        "files": (
+            "hyprland.lua",
+            "variables.lua",
+            "utils/functions.lua",
+            "utils/json.lua",
+            "scheme/default.lua",
+            "verify.fish",
+        ),
+    },
+}
 
 
 class ImportError(RuntimeError):
@@ -42,23 +87,11 @@ def repo_root(value: str | None) -> Path:
     return Path(__file__).resolve().parents[1]
 
 
-def active_root(home: Path) -> Path:
-    return home / ".config/hypr/hyprland"
-
-
-def imported_root(repo: Path) -> Path:
-    return repo / "dotfiles/home/.config/hypr/hyprland"
-
-
-def manifest_path(repo: Path) -> Path:
-    return repo / "dotfiles/manifest.toml"
-
-
 def is_backupish(path: Path) -> bool:
     lowered = path.name.lower()
     if any(part.lower() in SKIP_DIRS or part.lower().startswith("legacy-backup") for part in path.parts):
         return True
-    return lowered.endswith(SKIP_SUFFIXES) or ".backup" in lowered
+    return lowered.endswith(SKIP_SUFFIXES) or ".backup" in lowered or bool(BACKUP_TOKEN.search(lowered))
 
 
 def inspect_file(path: Path) -> tuple[str, int]:
@@ -83,14 +116,24 @@ def inspect_file(path: Path) -> tuple[str, int]:
     return "ok", size
 
 
-def scan(home: Path) -> tuple[list[Candidate], list[tuple[Path, str]]]:
-    root = active_root(home)
+def scan(home: Path, scope: dict) -> tuple[list[Candidate], list[tuple[Path, str]]]:
+    root = scope["active_root"](home)
     if not root.is_dir():
         raise ImportError(f"árbol Hyprland activo inexistente: {root}")
     accepted: list[Candidate] = []
     rejected: list[tuple[Path, str]] = []
-    for path in sorted(root.rglob("*"), key=lambda item: item.as_posix()):
-        rel = path.relative_to(root)
+
+    if scope["discover"]:
+        paths = sorted(root.rglob("*"), key=lambda item: item.as_posix())
+    else:
+        paths = [root / name for name in scope["files"]]
+
+    for path in paths:
+        rel = path.relative_to(root) if path.is_absolute() else path
+        if not scope["discover"] and not path.exists():
+            # Fixed-file scope: an absent file is a plan-time omission, not a
+            # rejection. The runtime loader is what enforces "required".
+            continue
         if is_backupish(rel):
             if path.is_file() or path.is_symlink():
                 rejected.append((rel, "backup/temp"))
@@ -113,12 +156,12 @@ def scan(home: Path) -> tuple[list[Candidate], list[tuple[Path, str]]]:
     return accepted, rejected
 
 
-def render_entries(candidates: list[Candidate]) -> str:
-    lines = [BEGIN, "# Generated by core/import_hyprland.py. Do not edit this block by hand."]
+def render_entries(candidates: list[Candidate], scope: dict) -> str:
+    lines = [scope["begin"], f"# Generated by core/import_hyprland.py --scope {scope['name']}. Do not edit this block by hand."]
     for candidate in candidates:
         rel = candidate.relative.as_posix()
-        source = f"dotfiles/home/.config/hypr/hyprland/{rel}"
-        target = f".config/hypr/hyprland/{rel}"
+        source = f"{scope['source_prefix']}/{rel}"
+        target = f"{scope['target_prefix']}/{rel}"
         lines.extend(
             [
                 "",
@@ -128,24 +171,26 @@ def render_entries(candidates: list[Candidate]) -> str:
                 'tags = ["hyprland"]',
             ]
         )
-    lines.extend([END, ""])
+    lines.extend([scope["end"], ""])
     return "\n".join(lines)
 
 
-def replace_generated_block(text: str, block: str) -> str:
-    if BEGIN in text or END in text:
-        if text.count(BEGIN) != 1 or text.count(END) != 1:
+def replace_generated_block(text: str, block: str, begin: str, end: str) -> str:
+    if begin in text or end in text:
+        if text.count(begin) != 1 or text.count(end) != 1:
             raise ImportError("manifest contiene marcadores Hyprland inconsistentes")
-        start = text.index(BEGIN)
-        finish = text.index(END, start) + len(END)
+        start = text.index(begin)
+        finish = text.index(end, start) + len(end)
         prefix = text[:start].rstrip()
         suffix = text[finish:].lstrip("\n")
         return f"{prefix}\n\n{block}{suffix}"
     return f"{text.rstrip()}\n\n{block}"
 
 
-def check_repo_paths_clean(repo: Path) -> None:
-    paths = ["dotfiles/manifest.toml", "dotfiles/home/.config/hypr/hyprland"]
+def check_repo_paths_clean(repo: Path, candidates: list[Candidate], scope: dict) -> None:
+    paths = ["dotfiles/manifest.toml"] + [
+        f"{scope['source_prefix']}/{candidate.relative.as_posix()}" for candidate in candidates
+    ]
     proc = subprocess.run(
         ["git", "-C", str(repo), "status", "--porcelain", "--", *paths],
         text=True,
@@ -174,8 +219,8 @@ def validate_manifest(path: Path) -> None:
         targets.add(target)
 
 
-def print_plan(home: Path, candidates: list[Candidate], rejected: list[tuple[Path, str]]) -> None:
-    print(f"Cortetsu Hyprland import · source={active_root(home)}")
+def print_plan(home: Path, scope: dict, candidates: list[Candidate], rejected: list[tuple[Path, str]]) -> None:
+    print(f"Cortetsu Hyprland import ({scope['name']}) · source={scope['active_root'](home)}")
     for item in candidates:
         print(f"  import       {item.relative.as_posix()} ({item.size} B)")
     for rel, reason in rejected:
@@ -184,62 +229,51 @@ def print_plan(home: Path, candidates: list[Candidate], rejected: list[tuple[Pat
     print(f"SUMMARY import={len(candidates)} skipped={len(rejected)}")
 
 
-def apply(repo: Path, home: Path, candidates: list[Candidate], rejected: list[tuple[Path, str]], commit: bool) -> int:
+def apply(repo: Path, home: Path, scope: dict, candidates: list[Candidate], rejected: list[tuple[Path, str]], commit: bool) -> int:
     sensitive = [rel for rel, reason in rejected if reason == "sensitive"]
     if sensitive:
         joined = ", ".join(path.as_posix() for path in sensitive)
         raise ImportError(f"importación bloqueada por posibles secretos: {joined}")
-    check_repo_paths_clean(repo)
-    manifest = manifest_path(repo)
+    check_repo_paths_clean(repo, candidates, scope)
+    manifest = repo / "dotfiles/manifest.toml"
     if not manifest.is_file():
         raise ImportError(f"manifest inexistente: {manifest}")
     original_manifest = manifest.read_text(encoding="utf-8")
-    block = render_entries(candidates)
-    updated_manifest = replace_generated_block(original_manifest, block)
+    block = render_entries(candidates, scope)
+    updated_manifest = replace_generated_block(original_manifest, block, scope["begin"], scope["end"])
 
-    destination = imported_root(repo)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    backup = destination.with_name(f"{destination.name}.previous.{os.getpid()}")
-    if backup.exists():
-        shutil.rmtree(backup)
-
-    with tempfile.TemporaryDirectory(prefix="cortetsu-hypr-import-", dir=destination.parent) as tmp:
-        staging = Path(tmp) / "hyprland"
-        staging.mkdir(parents=True)
-        for candidate in candidates:
-            out = staging / candidate.relative
-            out.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(candidate.source, out)
-
-        manifest_tmp = manifest.with_name(f"{manifest.name}.tmp.{os.getpid()}")
-        manifest_tmp.write_text(updated_manifest, encoding="utf-8")
+    # Validate the manifest change before touching any real file, so a bad
+    # manifest never leaves file copies orphaned ahead of what it declares.
+    manifest_tmp = manifest.with_name(f"{manifest.name}.tmp.{os.getpid()}")
+    manifest_tmp.write_text(updated_manifest, encoding="utf-8")
+    try:
         validate_manifest(manifest_tmp)
-        try:
-            if destination.exists():
-                destination.rename(backup)
-            staging.rename(destination)
-            os.replace(manifest_tmp, manifest)
-        except Exception:
-            manifest_tmp.unlink(missing_ok=True)
-            manifest.write_text(original_manifest, encoding="utf-8")
-            if destination.exists():
-                shutil.rmtree(destination)
-            if backup.exists():
-                backup.rename(destination)
-            raise
-        else:
-            shutil.rmtree(backup, ignore_errors=True)
+    except Exception:
+        manifest_tmp.unlink(missing_ok=True)
+        raise
 
-    print(f"IMPORTED hyprland={destination}")
+    written: list[Path] = []
+    try:
+        for candidate in candidates:
+            dest = repo / scope["source_prefix"] / candidate.relative
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            tmp_dest = dest.with_name(f"{dest.name}.tmp.{os.getpid()}")
+            shutil.copy2(candidate.source, tmp_dest)
+            os.replace(tmp_dest, dest)
+            written.append(dest)
+        os.replace(manifest_tmp, manifest)
+    except Exception:
+        manifest_tmp.unlink(missing_ok=True)
+        raise
+
+    print(f"IMPORTED hyprland[{scope['name']}]={repo / scope['source_prefix']}")
     print(f"MANIFEST entries={len(candidates)}")
     if rejected:
         print(f"SKIPPED count={len(rejected)}")
 
     if commit:
-        subprocess.run(
-            ["git", "-C", str(repo), "add", "--", "dotfiles/manifest.toml", "dotfiles/home/.config/hypr/hyprland"],
-            check=True,
-        )
+        add_paths = ["dotfiles/manifest.toml", *[str(p) for p in written]]
+        subprocess.run(["git", "-C", str(repo), "add", "--", *add_paths], check=True)
         diff = subprocess.run(["git", "-C", str(repo), "diff", "--cached", "--quiet"]).returncode
         if diff == 0:
             print("COMMIT skipped=no changes")
@@ -247,7 +281,10 @@ def apply(repo: Path, home: Path, candidates: list[Candidate], rejected: list[tu
             host = socket.gethostname().split(".")[0]
             stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             subprocess.run(
-                ["git", "-C", str(repo), "commit", "-m", f"feat(hyprland): import active config from {host} ({stamp})"],
+                [
+                    "git", "-C", str(repo), "commit", "-m",
+                    f"feat(hyprland): import active {scope['name']} config from {host} ({stamp})",
+                ],
                 check=True,
             )
             print("COMMIT created=Hyprland import")
@@ -259,15 +296,20 @@ def main() -> int:
     parser.add_argument("action", choices=("plan", "apply"), nargs="?", default="plan")
     parser.add_argument("--repo")
     parser.add_argument("--home", type=Path, default=Path.home())
+    parser.add_argument(
+        "--scope", choices=sorted(SCOPES), default="modules",
+        help="modules = ~/.config/hypr/hyprland/* (discovered); core = loader/variables/utils/scheme (fixed set)",
+    )
     parser.add_argument("--commit", action="store_true", help="stage only imported Hyprland files and create a local commit")
     args = parser.parse_args()
     repo = repo_root(args.repo)
     home = args.home.expanduser().resolve()
+    scope = {**SCOPES[args.scope], "name": args.scope}
     try:
-        candidates, rejected = scan(home)
-        print_plan(home, candidates, rejected)
+        candidates, rejected = scan(home, scope)
+        print_plan(home, scope, candidates, rejected)
         if args.action == "apply":
-            return apply(repo, home, candidates, rejected, args.commit)
+            return apply(repo, home, scope, candidates, rejected, args.commit)
         return 2 if any(reason == "sensitive" for _, reason in rejected) else 0
     except (ImportError, OSError, subprocess.CalledProcessError, tomllib.TOMLDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

@@ -12,9 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Install Lua
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends lua5.4
       - name: Compile importer
-        run: python3 -m py_compile core/import_hyprland.py scripts/features/test-hyprland-import.py
-      - name: Validate safe Hyprland import
+        run: |
+          python3 -m py_compile core/import_hyprland.py \
+            scripts/features/test-hyprland-import.py \
+            scripts/features/test-hyprland-self-contained.py \
+            scripts/features/test-zero-caelestia-gate.py \
+            scripts/features/test-shortcut-namespace.py
+      - name: Validate safe Hyprland import (modules + core scopes)
         run: python3 scripts/features/test-hyprland-import.py
+      - name: Validate self-contained Hyprland module tree (P0 regression)
+        run: python3 scripts/features/test-hyprland-self-contained.py
+      - name: Validate Zero-Caelestia static gate
+        run: python3 scripts/features/test-zero-caelestia-gate.py
+      - name: Validate global shortcut namespace
+        run: python3 scripts/features/test-shortcut-namespace.py
       - name: Validate helper syntax
         run: bash -n cortetsu/bin/cortetsu-import-hyprland

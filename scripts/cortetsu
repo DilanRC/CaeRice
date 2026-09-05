@@ -259,6 +259,10 @@ test_cmd() {
         "scripts/features/test-cortetsu-config.py"
         "scripts/features/test-config-migration.py"
         "scripts/features/test-legacy-process-migration.py"
+        "scripts/features/test-hyprland-import.py"
+        "scripts/features/test-hyprland-self-contained.py"
+        "scripts/features/test-zero-caelestia-gate.py"
+        "scripts/features/test-shortcut-namespace.py"
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done

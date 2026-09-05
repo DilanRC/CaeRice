@@ -73,3 +73,62 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-hypr-import-test-") as tmp:
     assert not (imported / "secret.lua").exists()
 
 print("PASS: Hyprland importer is deterministic, backup-aware, secret-safe, and commit-scoped")
+
+# --- scope=core: the fixed loader/variables/utils/scheme set -------------
+with tempfile.TemporaryDirectory(prefix="cortetsu-hypr-core-import-test-") as tmp:
+    root = Path(tmp)
+    repo = root / "repo"
+    home = root / "home"
+    hypr = home / ".config/hypr"
+    (repo / "dotfiles").mkdir(parents=True)
+    (hypr / "utils").mkdir(parents=True)
+    (hypr / "scheme").mkdir(parents=True)
+
+    (repo / "dotfiles/manifest.toml").write_text(
+        'schema = 1\n\n[defaults]\nprofile = "personal"\n', encoding="utf-8"
+    )
+    (hypr / "hyprland.lua").write_text('package.path = "x" .. package.path\n', encoding="utf-8")
+    (hypr / "variables.lua").write_text("return {}\n", encoding="utf-8")
+    (hypr / "utils/functions.lua").write_text("return {}\n", encoding="utf-8")
+    (hypr / "utils/json.lua").write_text("return {}\n", encoding="utf-8")
+    (hypr / "scheme/default.lua").write_text("return {}\n", encoding="utf-8")
+    (hypr / "verify.fish").write_text("#!/usr/bin/env fish\n", encoding="utf-8")
+    # scheme/current.lua is live theme state, never dotfiles-managed.
+    (hypr / "scheme/current.lua").write_text("return {}\n", encoding="utf-8")
+    # Cortetsu's timestamped-backup convention must still be skipped even
+    # though it doesn't end in a plain ".bak" suffix.
+    (hypr / "variables.lua.bak-20260905-131903").write_text("return {}\n", encoding="utf-8")
+
+    run("git", "init", cwd=repo, check=True)
+    run("git", "config", "user.name", "Cortetsu Test", cwd=repo, check=True)
+    run("git", "config", "user.email", "test@example.invalid", cwd=repo, check=True)
+    run("git", "add", ".", cwd=repo, check=True)
+    run("git", "commit", "-m", "base", cwd=repo, check=True)
+
+    plan = run("python3", str(SCRIPT), "plan", "--scope", "core", "--repo", str(repo), "--home", str(home), cwd=REPO)
+    assert plan.returncode == 0, plan.stdout
+    assert "import       hyprland.lua" in plan.stdout
+    assert "import       variables.lua" in plan.stdout
+    assert "import       utils/functions.lua" in plan.stdout
+    assert "import       utils/json.lua" in plan.stdout
+    assert "import       scheme/default.lua" in plan.stdout
+    assert "scheme/current.lua" not in plan.stdout, "current.lua is live state, never a fixed-scope candidate"
+    assert "variables.lua.bak" not in plan.stdout or "[backup/temp]" in plan.stdout
+
+    applied = run(
+        "python3", str(SCRIPT), "apply", "--commit", "--scope", "core", "--repo", str(repo), "--home", str(home),
+        cwd=REPO,
+    )
+    assert applied.returncode == 0, applied.stdout
+    imported = repo / "dotfiles/home/.config/hypr"
+    assert (imported / "hyprland.lua").is_file()
+    assert (imported / "utils/json.lua").is_file()
+    assert not (imported / "scheme/current.lua").exists()
+    manifest = (repo / "dotfiles/manifest.toml").read_text(encoding="utf-8")
+    assert "# BEGIN CORTETSU HYPRLAND CORE IMPORT" in manifest
+    assert '.config/hypr/hyprland.lua' in manifest
+    assert '.config/hypr/scheme/default.lua' in manifest
+    assert '.config/hypr/scheme/current.lua' not in manifest
+    assert run("git", "status", "--porcelain", cwd=repo).stdout.strip() == ""
+
+print("PASS: Hyprland core-scope importer captures the loader/variables/utils/scheme set without live theme state")
