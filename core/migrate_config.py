@@ -28,6 +28,7 @@ def migrate_runtime_state(home: Path, data_root: Path) -> None:
     candidates = (
         (legacy_root / "wallpaper/path.txt", target_root / "wallpaper/path.txt"),
         (legacy_root / "scheme.json", target_root / "scheme.json"),
+        (legacy_root / "notifs.json", target_root / "notifs.json"),
     )
     pending = [(source, target) for source, target in candidates if source.is_file() and not target.exists()]
     if not pending:

@@ -24,6 +24,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
     (legacy_state / "wallpaper").mkdir(parents=True)
     (legacy_state / "wallpaper/path.txt").write_text("/wallpaper.png\n")
     (legacy_state / "scheme.json").write_text('{"name":"dynamic"}\n')
+    (legacy_state / "notifs.json").write_text('[{"summary":"Migrated"}]\n')
     env = {**os.environ, "XDG_CONFIG_HOME": str(home / ".config"), "XDG_DATA_HOME": str(home / ".local/share"), "XDG_STATE_HOME": str(home / ".local/state")}
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
     target = home / ".config/cortetsu/preferences.json"
@@ -33,6 +34,7 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
     assert len(backups) == 1
     assert (home / ".local/state/cortetsu/wallpaper/path.txt").read_text() == "/wallpaper.png\n"
     assert (home / ".local/state/cortetsu/scheme.json").is_file()
+    assert (home / ".local/state/cortetsu/notifs.json").read_text() == '[{"summary":"Migrated"}]\n'
     assert len(list((home / ".local/share/cortetsu/migrations").glob("*/runtime-state/wallpaper/path.txt"))) == 1
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
     assert len(list((home / ".local/share/cortetsu/migrations").glob("*/preferences/legacy-shell.json"))) == 1
