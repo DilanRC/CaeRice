@@ -11,6 +11,8 @@ QtObject {
     readonly property string path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/cortetsu/preferences.json`
     property list<string> favouriteApps: []
     property list<string> hiddenTrayIcons: []
+    property list<string> terminalCommand: ["kitty"]
+    readonly property string actionPrefix: ">"
     property int workspacesShown: 5
     property bool loaded: false
 
@@ -21,6 +23,8 @@ QtObject {
                 favouriteApps = data.favouriteApps.filter(value => typeof value === "string");
             if (Array.isArray(data.hiddenTrayIcons))
                 hiddenTrayIcons = data.hiddenTrayIcons.filter(value => typeof value === "string");
+            if (Array.isArray(data.terminalCommand))
+                terminalCommand = data.terminalCommand.filter(value => typeof value === "string");
             if (Number.isInteger(data.workspacesShown))
                 workspacesShown = Math.max(1, Math.min(20, data.workspacesShown));
         } catch (_) {}
@@ -30,7 +34,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenTrayIcons, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenTrayIcons, terminalCommand, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

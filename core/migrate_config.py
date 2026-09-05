@@ -24,6 +24,7 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
     bar = data.get("bar", {})
     workspaces = bar.get("workspaces", {})
     tray = bar.get("tray", {})
+    apps = data.get("general", {}).get("apps", {})
     shown = workspaces.get("shown", 5)
     try:
         shown = max(1, min(20, int(shown)))
@@ -33,6 +34,7 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
         "schema": 1,
         "favouriteApps": [x for x in launcher.get("favouriteApps", []) if isinstance(x, str)],
         "hiddenTrayIcons": [x for x in tray.get("hiddenIcons", []) if isinstance(x, str)],
+        "terminalCommand": [x for x in apps.get("terminal", ["kitty"]) if isinstance(x, str)],
         "workspacesShown": shown,
     }
 

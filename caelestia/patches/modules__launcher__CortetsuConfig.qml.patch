@@ -4,6 +4,9 @@
  import qs.utils
  import qs.modules.launcher.services
 +import ".."
+@@ -49,1 +50,1 @@
+-        const prefix = GlobalConfig.launcher.actionPrefix;
++        const prefix = CortetsuConfig.actionPrefix;
 @@ -137,1 +138,1 @@
 -        const apps = GlobalConfig.launcher.favouriteApps;
 +        const apps = CortetsuConfig.favouriteApps;
@@ -16,6 +19,14 @@
 @@ -221,1 +222,1 @@
 -                    GlobalConfig.launcher.favouriteApps,
 +                    CortetsuConfig.favouriteApps,
+@@ -399,3 +400,3 @@
+             readonly property string math:
+                 root.search.text.slice(
+-                    `${GlobalConfig.launcher.actionPrefix}calc `.length
++                    `${CortetsuConfig.actionPrefix}calc `.length
+@@ -489,1 +490,1 @@
+-                            ...GlobalConfig.general.apps.terminal,
++                            ...CortetsuConfig.terminalCommand,
 --- a/modules/launcher/services/Apps.qml
 +++ b/modules/launcher/services/Apps.qml
 @@ -4,2 +4,3 @@

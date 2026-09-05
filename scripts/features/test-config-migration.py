@@ -14,11 +14,12 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-config-test-") as directory:
     legacy.write_text(json.dumps({
         "launcher": {"favouriteApps": ["steam", 7]},
         "bar": {"workspaces": {"shown": 6}, "tray": {"hiddenIcons": ["nm-applet", None]}},
+        "general": {"apps": {"terminal": ["foot", 9]}},
     }), encoding="utf-8")
     env = {**os.environ, "XDG_CONFIG_HOME": str(home / ".config"), "XDG_DATA_HOME": str(home / ".local/share")}
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
     target = home / ".config/cortetsu/preferences.json"
-    assert json.loads(target.read_text()) == {"schema": 1, "favouriteApps": ["steam"], "hiddenTrayIcons": ["nm-applet"], "workspacesShown": 6}
+    assert json.loads(target.read_text()) == {"schema": 1, "favouriteApps": ["steam"], "hiddenTrayIcons": ["nm-applet"], "terminalCommand": ["foot"], "workspacesShown": 6}
     backups = list((home / ".local/share/cortetsu/migrations").glob("*/preferences/legacy-shell.json"))
     assert len(backups) == 1
     subprocess.run(["python3", str(script), "--home", str(home)], env=env, check=True)
