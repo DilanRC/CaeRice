@@ -23,7 +23,7 @@ PATTERNS = {
 }
 
 ACTIVE_ROOTS = (
-    "caelestia/modules-owned",
+    "cortetsu/modules",
     "caelestia/patches",
     "cortetsu/bin",
     "config",

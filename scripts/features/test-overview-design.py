@@ -1,7 +1,7 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-overview = repo / "caelestia/modules-owned/modules/overview"
+overview = repo / "cortetsu/modules/overview"
 legacy = ("Caelestia", "qs.components", "Colours.", "Tokens.", "StyledRect", "StyledText", "StyledClippingRect", "MaterialIcon")
 
 for name in ("Wrapper.qml", "WindowCard.qml", "Content.qml"):

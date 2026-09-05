@@ -1,7 +1,7 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-modules = repo / "caelestia/modules-owned/modules"
+modules = repo / "cortetsu/modules"
 config = (modules / "CortetsuConfig.qml").read_text(encoding="utf-8")
 hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")
 launcher_patch = (repo / "caelestia/patches/modules__launcher__CortetsuConfig.qml.patch").read_text(encoding="utf-8")

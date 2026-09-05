@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-modules = repo / "caelestia/modules-owned/modules"
+modules = repo / "cortetsu/modules"
 controllers = tuple(modules.glob("*Controller.qml"))
 
 assert controllers

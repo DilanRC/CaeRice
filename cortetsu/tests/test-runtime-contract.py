@@ -14,7 +14,7 @@ wallpaper_daemon = (repo / "cortetsu/bin/cortetsu-wallpaper-color-daemon").read_
 wallpaper_unit = (repo / "config/systemd/user/cortetsu-wallpaper-color.service").read_text(encoding="utf-8")
 rollback = (repo / "cortetsu/bin/rollback-runtime.sh").read_text(encoding="utf-8")
 composer = (repo / "cortetsu/bin/compose-panels.py").read_text(encoding="utf-8")
-content = (repo / "caelestia/modules-owned/modules/calendar/Content.qml").read_text(encoding="utf-8")
+content = (repo / "cortetsu/modules/calendar/Content.qml").read_text(encoding="utf-8")
 cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
 compatibility = json.loads((repo / "caelestia/compatibility.json").read_text(encoding="utf-8"))
 composition = json.loads((repo / "caelestia/composition.json").read_text(encoding="utf-8"))
@@ -85,7 +85,7 @@ assert "Restart=on-failure" in wallpaper_unit
 assert "cortetsu-wallpaper-color-daemon" in wallpaper_unit
 apply_wallpaper = (repo / "cortetsu/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
 assert "cortetsu-scheme-posthook" not in apply_wallpaper
-wallpaper_service = (repo / "caelestia/modules-owned/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
+wallpaper_service = (repo / "cortetsu/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
 assert '"cortetsu-wallpaper-colours", path' in wallpaper_service
 assert '"cortetsu-wallpaper-select", path' in wallpaper_service
 assert '"cortetsu-wallpaper-select", "--random", wallsdir' in wallpaper_service

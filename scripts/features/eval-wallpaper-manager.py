@@ -6,10 +6,10 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-helper = (ROOT / "caelestia/modules-owned/modules/wallpaper/OrbitModel.js").read_text(encoding="utf-8")
-content = (ROOT / "caelestia/modules-owned/modules/wallpaper/Content.qml").read_text(encoding="utf-8")
-controller = (ROOT / "caelestia/modules-owned/modules/WallpaperController.qml").read_text(encoding="utf-8")
-wrapper = (ROOT / "caelestia/modules-owned/modules/wallpaper/Wrapper.qml").read_text(encoding="utf-8")
+helper = (ROOT / "cortetsu/modules/wallpaper/OrbitModel.js").read_text(encoding="utf-8")
+content = (ROOT / "cortetsu/modules/wallpaper/Content.qml").read_text(encoding="utf-8")
+controller = (ROOT / "cortetsu/modules/WallpaperController.qml").read_text(encoding="utf-8")
+wrapper = (ROOT / "cortetsu/modules/wallpaper/Wrapper.qml").read_text(encoding="utf-8")
 installer = (ROOT / "scripts/features/install-wallpaper-manager.py").read_text(encoding="utf-8")
 checks = {
     "bounded_to_12": "Math.min(12, count)" in helper,

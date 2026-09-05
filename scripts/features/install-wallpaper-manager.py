@@ -13,8 +13,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OWNED = ROOT / "caelestia/modules-owned/modules"
-SERVICE = ROOT / "caelestia/modules-owned/modules/CortetsuWallpapers.qml"
+OWNED = ROOT / "cortetsu/modules"
+SERVICE = ROOT / "cortetsu/modules/CortetsuWallpapers.qml"
 
 def load(name):
     spec = importlib.util.spec_from_file_location(name, ROOT / "scripts/features" / f"{name}.py")

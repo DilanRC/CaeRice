@@ -5,7 +5,7 @@ REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
 
 LIVE="/etc/xdg/quickshell/caelestia"
-SRC="$REPO/caelestia/modules-owned/modules"
+SRC="$REPO/cortetsu/modules"
 PROBE_SRC="$REPO/cortetsu/bin/cortetsu-hardware-probe"
 PROBE_DST="$HOME/.local/bin/cortetsu-hardware-probe"
 POWER_SRC="$REPO/cortetsu/bin/cortetsu-hardware-power"

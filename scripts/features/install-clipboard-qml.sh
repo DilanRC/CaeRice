@@ -12,7 +12,7 @@ USERCFG="$HOME/.config/caelestia/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/clipboard-qml-$STAMP"
 STAGE="$BACKUP/stage"
-SRC="$REPO/caelestia/modules-owned/modules"
+SRC="$REPO/cortetsu/modules"
 
 for f in \
     "$LIVE/shell.qml" \

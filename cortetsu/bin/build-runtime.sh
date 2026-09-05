@@ -37,8 +37,8 @@ trap cleanup EXIT
 
 require_file "$COMPATIBILITY"
 require_file "$REPO/caelestia/patches/MANIFEST.tsv"
-require_file "$REPO/caelestia/modules-owned/modules/BottomHub.qml"
-require_file "$REPO/caelestia/modules-owned/modules/CortetsuBottomHubView.qml"
+require_file "$REPO/cortetsu/modules/BottomHub.qml"
+require_file "$REPO/cortetsu/modules/CortetsuBottomHubView.qml"
 
 readarray -t upstream_contract < <(
     python3 - "$COMPATIBILITY" <<'PY'
@@ -88,7 +88,7 @@ while IFS=$'\t' read -r patch_name relative_path; do
 done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
-cp -a "$REPO/caelestia/modules-owned/modules/." "$STAGING/modules/"
+cp -a "$REPO/cortetsu/modules/." "$STAGING/modules/"
 python3 "$REPO/cortetsu/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/caelestia/composition.json" "$STAGING/composition.json"

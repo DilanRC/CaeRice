@@ -50,5 +50,5 @@ The configurator itself is idempotent, preserves file mode, and creates no backu
 for script in scripts/features/test-*.py scripts/features/validate-*.py scripts/features/eval-*.py; do
   PYTHONDONTWRITEBYTECODE=1 python3 "$script"
 done
-QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -input caelestia/modules-owned/modules/wallpaper/tests/TestOrbit.qml
+QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -input cortetsu/modules/wallpaper/tests/TestOrbit.qml
 ```

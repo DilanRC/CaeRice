@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULES = REPO / "caelestia/modules-owned/modules"
+MODULES = REPO / "cortetsu/modules"
 
 spec = importlib.util.spec_from_file_location(
     "bottom_hub_target",

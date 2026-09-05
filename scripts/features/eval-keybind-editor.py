@@ -2,7 +2,7 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-page = (repo / "caelestia/modules-owned/modules/hardware/KeybindsPage.qml").read_text(encoding="utf-8")
+page = (repo / "cortetsu/modules/hardware/KeybindsPage.qml").read_text(encoding="utf-8")
 helper = (repo / "cortetsu/bin/cortetsu-keybinds").read_text(encoding="utf-8")
 
 criteria = {

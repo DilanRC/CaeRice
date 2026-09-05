@@ -237,7 +237,7 @@ def render_kde(data: dict) -> str:
 def outputs(repo: Path, data: dict) -> dict[Path, str]:
     generated = repo / "dotfiles/generated/theme/home/.config"
     return {
-        repo / "caelestia/modules-owned/modules/CortetsuDesign.js": render_design(data),
+        repo / "cortetsu/modules/CortetsuDesign.js": render_design(data),
         generated / "kitty/cortetsu-theme.conf": render_kitty(data),
         generated / "gtk-3.0/cortetsu-colors.css": render_gtk(data),
         generated / "gtk-4.0/cortetsu-colors.css": render_gtk(data),

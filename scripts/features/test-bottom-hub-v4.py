@@ -2,7 +2,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MODULES = ROOT / "caelestia/modules-owned/modules"
+MODULES = ROOT / "cortetsu/modules"
 HUB = (MODULES / "BottomHub.qml").read_text()
 VIEW = (MODULES / "CortetsuBottomHubView.qml").read_text()
 TRAY = (MODULES / "CortetsuTraySegment.qml").read_text()

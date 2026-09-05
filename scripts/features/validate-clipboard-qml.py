@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 repo = Path(__file__).resolve().parents[2]
-qml_dir = repo / "caelestia/modules-owned/modules/clipboard"
+qml_dir = repo / "cortetsu/modules/clipboard"
 
 errors = []
 legacy = ("Caelestia", "qs.components", "qs.services", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon")

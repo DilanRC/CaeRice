@@ -9,7 +9,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 LIVE = Path("/etc/xdg/quickshell/caelestia")
-CLIP_REPO = REPO / "caelestia/modules-owned/modules/clipboard/Content.qml"
+CLIP_REPO = REPO / "cortetsu/modules/clipboard/Content.qml"
 CLIP_LIVE = LIVE / "modules/clipboard/Content.qml"
 APP_LIVE = LIVE / "modules/launcher/AppList.qml"
 APP_PATCH = REPO / "caelestia/patches/modules__launcher__AppList.qml.patch"

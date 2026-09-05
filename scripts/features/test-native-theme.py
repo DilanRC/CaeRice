@@ -48,7 +48,7 @@ assert "ColorScheme=Cortetsu" in kde
 assert "Name=Cortetsu" in kde
 assert "Caelestia" not in kde
 
-design = (repo / "caelestia/modules-owned/modules/CortetsuDesign.js").read_text(encoding="utf-8")
+design = (repo / "cortetsu/modules/CortetsuDesign.js").read_text(encoding="utf-8")
 assert 'var colorSumi = "#0B0D10"' in design
 assert 'var colorVermillion = "#D64B32"' in design
 assert "var motionFastMs = 100" in design

@@ -88,11 +88,11 @@ jobs:
           test -f scripts/features/test-fish-import.py
           test -f scripts/features/test-native-bottom-hub.py
           test ! -e cortetsu/bin/native-bottom-hub.py
-          test -f caelestia/modules-owned/modules/CortetsuBottomHubView.qml
-          test -f caelestia/modules-owned/modules/CortetsuModeSegment.qml
-          test -f caelestia/modules-owned/modules/CortetsuAppRail.qml
-          test -f caelestia/modules-owned/modules/CortetsuTraySegment.qml
-          test -f caelestia/modules-owned/modules/CortetsuStatusSegment.qml
+          test -f cortetsu/modules/CortetsuBottomHubView.qml
+          test -f cortetsu/modules/CortetsuModeSegment.qml
+          test -f cortetsu/modules/CortetsuAppRail.qml
+          test -f cortetsu/modules/CortetsuTraySegment.qml
+          test -f cortetsu/modules/CortetsuStatusSegment.qml
           test -f dotfiles/manifest.toml
           test -f dotfiles/generated/theme/home/.config/kitty/cortetsu-theme.conf
           test -f dotfiles/generated/theme/home/.config/gtk-3.0/cortetsu-colors.css

@@ -47,7 +47,7 @@ validator = run(sys.executable, str(REPO / "scripts/features/validate-hardware-c
 print((validator.stdout or validator.stderr).strip())
 
 print("\n===== LIVE VS REPO =====")
-repo_modules = REPO / "caelestia/modules-owned/modules"
+repo_modules = REPO / "cortetsu/modules"
 checks = [(repo_modules / "HardwareController.qml", LIVE / "modules/HardwareController.qml")]
 for repo_path in sorted((repo_modules / "hardware").glob("*.qml")):
     checks.append((repo_path, LIVE / "modules/hardware" / repo_path.name))

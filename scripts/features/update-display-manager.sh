@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
 LIVE="/etc/xdg/quickshell/caelestia"
-SRC="$REPO/caelestia/modules-owned/modules"
+SRC="$REPO/cortetsu/modules"
 
 [[ -f "$LIVE/modules/DisplayController.qml" ]] || {
     echo "ERROR: Display Manager no está integrado. Ejecuta scripts/features/install-display-manager.sh primero." >&2

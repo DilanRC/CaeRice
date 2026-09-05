@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULES = REPO / "caelestia/modules-owned/modules"
+MODULES = REPO / "cortetsu/modules"
 
 scripts = [
     "scripts/features/audit-theme-colours.py",
@@ -22,10 +22,10 @@ scripts = [
 ]
 
 retired_paths = [
-    "caelestia/modules-owned/modules/GamingController.qml",
-    "caelestia/modules-owned/modules/gaming",
-    "caelestia/modules-owned/modules/UpdaterController.qml",
-    "caelestia/modules-owned/modules/updater",
+    "cortetsu/modules/GamingController.qml",
+    "cortetsu/modules/gaming",
+    "cortetsu/modules/UpdaterController.qml",
+    "cortetsu/modules/updater",
     "cortetsu/bin/cortetsu-gaming-probe",
     "cortetsu/bin/cortetsu-gaming-profile",
     "cortetsu/bin/cortetsu-upstream-audit",

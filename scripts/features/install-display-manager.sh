@@ -6,7 +6,7 @@ REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 
 LIVE="/etc/xdg/quickshell/caelestia"
 USERCFG="$HOME/.config/caelestia/hypr-user.lua"
-SRC="$REPO/caelestia/modules-owned/modules"
+SRC="$REPO/cortetsu/modules"
 VALIDATOR="$REPO/scripts/features/validate-display-manager.py"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/display-manager-$STAMP"

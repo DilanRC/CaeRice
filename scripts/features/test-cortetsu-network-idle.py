@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-modules = repo / "caelestia/modules-owned/modules"
+modules = repo / "cortetsu/modules"
 network = (modules / "CortetsuNetwork.qml").read_text(encoding="utf-8")
 idle = (modules / "CortetsuIdleInhibitor.qml").read_text(encoding="utf-8")
 hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")

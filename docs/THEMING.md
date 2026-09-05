@@ -10,7 +10,7 @@ The repository copy under `dotfiles/home/.config/cortetsu/ui.toml` is compiled b
 
 `cortetsu theme compile` derives the following from `ui.toml`:
 
-- `caelestia/modules-owned/modules/CortetsuDesign.js` for Cortetsu-owned QML tokens.
+- `cortetsu/modules/CortetsuDesign.js` for Cortetsu-owned QML tokens.
 - `dotfiles/generated/theme/home/.config/kitty/cortetsu-theme.conf` for Kitty.
 - GTK 3 and GTK 4 `cortetsu-colors.css` token files.
 - `dotfiles/generated/theme/home/.config/kdeglobals` for KDE/Qt applications that consume KDE colours.

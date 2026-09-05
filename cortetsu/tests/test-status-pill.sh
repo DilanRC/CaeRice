@@ -2,8 +2,8 @@
 set -euo pipefail
 
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-component="$root/caelestia/modules-owned/modules/StatusPill.qml"
-hub="$root/caelestia/modules-owned/modules/BottomHub.qml"
+component="$root/cortetsu/modules/StatusPill.qml"
+hub="$root/cortetsu/modules/BottomHub.qml"
 
 require() {
     rg -Fq "$1" "$2" || {

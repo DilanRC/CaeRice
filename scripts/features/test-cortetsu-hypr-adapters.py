@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-modules = repo / "caelestia/modules-owned/modules"
+modules = repo / "cortetsu/modules"
 hypr = (modules / "CortetsuHypr.qml").read_text(encoding="utf-8")
 screens = (modules / "CortetsuScreens.qml").read_text(encoding="utf-8")
 

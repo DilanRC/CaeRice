@@ -52,11 +52,11 @@ No normal Display Manager action edits EDID data, creates arbitrary modelines, o
 - `cortetsu/bin/cortetsu-display-probe`
 - `cortetsu/bin/cortetsu-display-plan`
 - `cortetsu/bin/cortetsu-display-transaction`
-- `caelestia/modules-owned/modules/DisplayController.qml`
-- `caelestia/modules-owned/modules/display/Wrapper.qml`
-- `caelestia/modules-owned/modules/display/Content.qml`
-- `caelestia/modules-owned/modules/display/Editor.qml`
-- `caelestia/modules-owned/modules/display/PreviewControls.qml`
+- `cortetsu/modules/DisplayController.qml`
+- `cortetsu/modules/display/Wrapper.qml`
+- `cortetsu/modules/display/Content.qml`
+- `cortetsu/modules/display/Editor.qml`
+- `cortetsu/modules/display/PreviewControls.qml`
 - `scripts/features/install-display-manager.sh`
 - `scripts/features/update-display-manager.sh`
 - `scripts/features/validate-display-manager.py`

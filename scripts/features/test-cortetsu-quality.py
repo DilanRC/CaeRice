@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-modules = repo / "caelestia/modules-owned/modules"
+modules = repo / "cortetsu/modules"
 
 # No arbitrary shell pipelines inside QML. Commands must remain explicit and
 # inspectable, or move behind a typed/native backend.

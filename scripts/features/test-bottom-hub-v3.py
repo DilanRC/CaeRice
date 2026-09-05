@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULES = REPO / "caelestia/modules-owned/modules"
+MODULES = REPO / "cortetsu/modules"
 BOTTOM_HUB = MODULES / "BottomHub.qml"
 VIEW = MODULES / "CortetsuBottomHubView.qml"
 MODE = MODULES / "CortetsuModeSegment.qml"

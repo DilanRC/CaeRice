@@ -6,9 +6,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 TARGETS = [
-    REPO / "caelestia/modules-owned/modules/CustomDock.qml",
-    REPO / "caelestia/modules-owned/modules/clipboard",
-    REPO / "caelestia/modules-owned/modules/overview",
+    REPO / "cortetsu/modules/CustomDock.qml",
+    REPO / "cortetsu/modules/clipboard",
+    REPO / "cortetsu/modules/overview",
     REPO / "caelestia/patches/modules__launcher__AppList.qml.patch",
     REPO / "caelestia/patches/modules__launcher__Content.qml.patch",
     REPO / "caelestia/patches/modules__launcher__ContentList.qml.patch",

@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-display = repo / "caelestia/modules-owned/modules/display"
+display = repo / "cortetsu/modules/display"
 legacy = ("Caelestia", "qs.components", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon")
 
 for path in sorted(display.glob("*.qml")):

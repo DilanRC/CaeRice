@@ -2,23 +2,23 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-state = (repo / "caelestia/modules-owned/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
-policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
+state = (repo / "cortetsu/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
+policy = (repo / "cortetsu/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
 panels_patch = (repo / "caelestia/patches/modules__drawers__Panels__cortetsu-shell-state.qml.patch").read_text(encoding="utf-8")
-shell_state = (repo / "caelestia/modules-owned/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
+shell_state = (repo / "cortetsu/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
-calendar = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
-clipboard = (repo / "caelestia/modules-owned/modules/ClipboardController.qml").read_text(encoding="utf-8")
+calendar = (repo / "cortetsu/modules/CalendarController.qml").read_text(encoding="utf-8")
+clipboard = (repo / "cortetsu/modules/ClipboardController.qml").read_text(encoding="utf-8")
 controllers = {
-    "hardware": (repo / "caelestia/modules-owned/modules/HardwareController.qml").read_text(encoding="utf-8"),
-    "displayManager": (repo / "caelestia/modules-owned/modules/DisplayController.qml").read_text(encoding="utf-8"),
-    "wallpaperManager": (repo / "caelestia/modules-owned/modules/WallpaperController.qml").read_text(encoding="utf-8"),
-    "overview": (repo / "caelestia/modules-owned/modules/OverviewController.qml").read_text(encoding="utf-8"),
+    "hardware": (repo / "cortetsu/modules/HardwareController.qml").read_text(encoding="utf-8"),
+    "displayManager": (repo / "cortetsu/modules/DisplayController.qml").read_text(encoding="utf-8"),
+    "wallpaperManager": (repo / "cortetsu/modules/WallpaperController.qml").read_text(encoding="utf-8"),
+    "overview": (repo / "cortetsu/modules/OverviewController.qml").read_text(encoding="utf-8"),
 }
-hub = (repo / "caelestia/modules-owned/modules/BottomHub.qml").read_text(encoding="utf-8")
+hub = (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 
 for flag in ("overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"):
     assert f"property bool {flag}" in state, flag
@@ -69,10 +69,10 @@ for wrapper, flag in (
     ("overview/Wrapper.qml", "overview"),
     ("wallpaper/Wrapper.qml", "wallpaperManager"),
 ):
-    wrapper_text = (repo / "caelestia/modules-owned/modules" / wrapper).read_text(encoding="utf-8")
+    wrapper_text = (repo / "cortetsu/modules" / wrapper).read_text(encoding="utf-8")
     assert f"screenState.cortetsuState?.{flag}" in wrapper_text, wrapper
 for content_file, flag in (("calendar/Content.qml", "calendar"), ("overview/Content.qml", "overview")):
-    content_text = (repo / "caelestia/modules-owned/modules" / content_file).read_text(encoding="utf-8")
+    content_text = (repo / "cortetsu/modules" / content_file).read_text(encoding="utf-8")
     assert f'cortetsuState?.setRetained("{flag}", false)' in content_text, content_file
 for marker in ("closeRetainedOverlays", "requiresWindowKeyboardFocus", "requiresFullInputMask", "retainedOverlayOpen"):
     assert marker in content_window_patch, marker
@@ -85,6 +85,6 @@ for content_file, flag in (
     ("wallpaper/Content.qml", "wallpaperManager"),
     ("wallpaper/Wrapper.qml", "wallpaperManager"),
 ):
-    content_text = (repo / "caelestia/modules-owned/modules" / content_file).read_text(encoding="utf-8")
+    content_text = (repo / "cortetsu/modules" / content_file).read_text(encoding="utf-8")
     assert f'cortetsuState?.setRetained("{flag}", false)' in content_text, content_file
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")

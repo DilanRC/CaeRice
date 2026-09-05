@@ -10,7 +10,7 @@ spec.loader.exec_module(gate)
 
 with tempfile.TemporaryDirectory(prefix="cortetsu-zero-gate-") as directory:
     root = Path(directory)
-    active = root / "caelestia/modules-owned/modules"
+    active = root / "cortetsu/modules"
     active.mkdir(parents=True)
     (active / "Bad.qml").write_text("import Caelestia.Config\nItem { color: Colours.palette.x }\n")
     history = root / "caelestia/history"
@@ -23,9 +23,9 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-zero-gate-") as directory:
     patches.mkdir(parents=True)
     (patches / "change.patch").write_text("--- a/x.qml\n+++ b/x.qml\n-GlobalConfig.old\n+Item {}\n")
     findings = gate.audit(root)
-    assert findings["Caelestia.Config"] == ["caelestia/modules-owned/modules/Bad.qml:1"]
-    assert findings["Caelestia import"] == ["caelestia/modules-owned/modules/Bad.qml:1"]
-    assert findings["Colours"] == ["caelestia/modules-owned/modules/Bad.qml:2"]
+    assert findings["Caelestia.Config"] == ["cortetsu/modules/Bad.qml:1"]
+    assert findings["Caelestia import"] == ["cortetsu/modules/Bad.qml:1"]
+    assert findings["Colours"] == ["cortetsu/modules/Bad.qml:2"]
     assert "GlobalConfig" not in findings
     assert findings["Caelestia patches"] == ["caelestia/patches/change.patch"]
 

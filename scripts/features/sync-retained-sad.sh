@@ -11,9 +11,9 @@ bash "$REPO/scripts/features/apply-canonical-sad-wiring.sh"
 # Synchronize retained Display Manager QML and helpers. Wallpaper Manager QML
 # is owned by the base Cortetsu module install; canonical wiring above connects
 # its ScreenState/controller/drawer surfaces together with Display.
-sudo install -m 0644 "$REPO/caelestia/modules-owned/modules/DisplayController.qml" "$LIVE/modules/DisplayController.qml"
+sudo install -m 0644 "$REPO/cortetsu/modules/DisplayController.qml" "$LIVE/modules/DisplayController.qml"
 sudo mkdir -p "$LIVE/modules/display"
-for qml in "$REPO/caelestia/modules-owned/modules/display/"*.qml; do
+for qml in "$REPO/cortetsu/modules/display/"*.qml; do
     sudo install -m 0644 "$qml" "$LIVE/modules/display/$(basename "$qml")"
 done
 mkdir -p "$HOME/.local/bin"

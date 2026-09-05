@@ -1,7 +1,7 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-service = (repo / "caelestia/modules-owned/modules/CortetsuWallpapers.qml").read_text()
+service = (repo / "cortetsu/modules/CortetsuWallpapers.qml").read_text()
 
 for legacy in ("Caelestia", "qs.services", "Searcher", "FileSystemModel", "Colours.", "Paths."):
     assert legacy not in service, legacy

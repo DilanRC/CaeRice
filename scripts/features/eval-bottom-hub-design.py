@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-hub = (Path(__file__).resolve().parents[2] / "caelestia/modules-owned/modules/BottomHub.qml").read_text()
+hub = (Path(__file__).resolve().parents[2] / "cortetsu/modules/BottomHub.qml").read_text()
 
 criteria = {
     "superficie exterior transparente": 'color: "transparent"\n                border.width: 0',

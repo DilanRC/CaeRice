@@ -5,13 +5,13 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MODULES = ROOT / "caelestia/modules-owned/modules"
+MODULES = ROOT / "cortetsu/modules"
 content = (MODULES / "wallpaper/Content.qml").read_text(encoding="utf-8")
 wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
 orbit = (MODULES / "wallpaper/OrbitModel.js").read_text(encoding="utf-8")
 policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
 wallpaper_controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
-service = (ROOT / "caelestia/modules-owned/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
+service = (ROOT / "cortetsu/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
 hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")

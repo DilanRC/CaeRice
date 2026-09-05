@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MODULES = REPO / "caelestia/modules-owned/modules"
+MODULES = REPO / "cortetsu/modules"
 DISPLAY = MODULES / "display"
 BIN = REPO / "cortetsu/bin"
 errors: list[str] = []

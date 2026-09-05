@@ -94,7 +94,7 @@ files = [
 ]
 for rel in files:
     live_path = LIVE / rel
-    repo_path = REPO / "caelestia/modules-owned" / rel
+    repo_path = REPO / "cortetsu/modules" / rel
     live_hash = sha256(live_path) if live_path.exists() else "MISSING"
     repo_hash = sha256(repo_path) if repo_path.exists() else "MISSING"
     state = "MATCH" if live_hash == repo_hash else "DIFF"

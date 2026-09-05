@@ -3,7 +3,7 @@
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-source = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
+source = (repo / "cortetsu/modules/CalendarController.qml").read_text(encoding="utf-8")
 
 assert "CortetsuShellState.forScreen(screen)?.cortetsuState?.calendar" in source
 assert 'state.setRetained("calendar", false)' in source

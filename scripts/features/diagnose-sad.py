@@ -126,7 +126,7 @@ def cmd(args: list[str], timeout: int = 20) -> subprocess.CompletedProcess[str] 
 
 
 def check_file(rel: str) -> None:
-    src = REPO / "caelestia/modules-owned" / rel
+    src = REPO / "cortetsu/modules" / rel
     live = LIVE / rel
     same = src.is_file() and live.is_file() and sha(src) == sha(live)
     rows.append({"path": rel, "repo": src.is_file(), "live": live.is_file(), "match": same})
