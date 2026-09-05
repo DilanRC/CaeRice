@@ -10,9 +10,12 @@ QtObject {
 
     readonly property string path: `${Quickshell.env("XDG_CONFIG_HOME") || `${Quickshell.env("HOME")}/.config`}/cortetsu/preferences.json`
     property list<string> favouriteApps: []
+    property list<string> hiddenApps: []
     property list<string> hiddenTrayIcons: []
     property list<string> terminalCommand: ["kitty"]
     readonly property string actionPrefix: ">"
+    property bool useFuzzyApps: true
+    property bool vimKeybinds: true
     property int workspacesShown: 5
     property bool loaded: false
 
@@ -21,10 +24,16 @@ QtObject {
             const data = JSON.parse(raw);
             if (Array.isArray(data.favouriteApps))
                 favouriteApps = data.favouriteApps.filter(value => typeof value === "string");
+            if (Array.isArray(data.hiddenApps))
+                hiddenApps = data.hiddenApps.filter(value => typeof value === "string");
             if (Array.isArray(data.hiddenTrayIcons))
                 hiddenTrayIcons = data.hiddenTrayIcons.filter(value => typeof value === "string");
             if (Array.isArray(data.terminalCommand))
                 terminalCommand = data.terminalCommand.filter(value => typeof value === "string");
+            if (typeof data.useFuzzyApps === "boolean")
+                useFuzzyApps = data.useFuzzyApps;
+            if (typeof data.vimKeybinds === "boolean")
+                vimKeybinds = data.vimKeybinds;
             if (Number.isInteger(data.workspacesShown))
                 workspacesShown = Math.max(1, Math.min(20, data.workspacesShown));
         } catch (_) {}
@@ -34,7 +43,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenTrayIcons, terminalCommand, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, useFuzzyApps, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {
@@ -44,6 +53,11 @@ QtObject {
 
     function setHiddenTrayIcons(values: list<string>): void {
         hiddenTrayIcons = values.filter(value => typeof value === "string");
+        save();
+    }
+
+    function setHiddenApps(values: list<string>): void {
+        hiddenApps = values.filter(value => typeof value === "string");
         save();
     }
 

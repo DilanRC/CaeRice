@@ -33,8 +33,11 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
     return {
         "schema": 1,
         "favouriteApps": [x for x in launcher.get("favouriteApps", []) if isinstance(x, str)],
+        "hiddenApps": [x for x in launcher.get("hiddenApps", []) if isinstance(x, str)],
         "hiddenTrayIcons": [x for x in tray.get("hiddenIcons", []) if isinstance(x, str)],
         "terminalCommand": [x for x in apps.get("terminal", ["kitty"]) if isinstance(x, str)],
+        "useFuzzyApps": launcher.get("useFuzzy", {}).get("apps", True) is True,
+        "vimKeybinds": launcher.get("vimKeybinds", True) is True,
         "workspacesShown": shown,
     }
 
@@ -56,8 +59,29 @@ def migrate(home: Path, target: Path | None = None, data_root: Path | None = Non
     legacy = config_home(home) / "caelestia/shell.json"
 
     if target.exists():
-        json.loads(target.read_text(encoding="utf-8"))
-        print(f"PASS: Cortetsu preferences already exist: {target}")
+        current = json.loads(target.read_text(encoding="utf-8"))
+        if not isinstance(current, dict):
+            raise ValueError(f"preferences must be an object: {target}")
+        if not legacy.is_file():
+            print(f"PASS: Cortetsu preferences already exist: {target}")
+            return 0
+        legacy_payload = payload_from_legacy(legacy)
+        merged = dict(current)
+        changed = False
+        for key, value in legacy_payload.items():
+            if key not in merged:
+                merged[key] = value
+                changed = True
+        if changed:
+            stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+            backup = data_root / "migrations" / stamp / "preferences" / "legacy-shell.json"
+            backup.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(legacy, backup)
+            atomic_write(target, merged)
+            print(f"UPDATED preferences={target}")
+            print(f"BACKUP preferences={backup}")
+        else:
+            print(f"PASS: Cortetsu preferences already exist: {target}")
         return 0
     if not legacy.is_file():
         print("PASS: no legacy shell preferences to migrate")

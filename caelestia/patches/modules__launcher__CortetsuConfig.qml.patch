@@ -33,6 +33,11 @@
  import Caelestia.Models
  import qs.utils
 +import "../.."
-@@ -110,1 +111,1 @@
+@@ -104,1 +105,1 @@
+-    useFuzzy: GlobalConfig.launcher.useFuzzy.apps
++    useFuzzy: CortetsuConfig.useFuzzyApps
+@@ -110,2 +111,2 @@
 -        favouriteApps: GlobalConfig.launcher.favouriteApps
+-        entries: DesktopEntries.applications.values.filter(a => !Strings.testRegexList(GlobalConfig.launcher.hiddenApps, a.id))
 +        favouriteApps: CortetsuConfig.favouriteApps
++        entries: DesktopEntries.applications.values.filter(a => !Strings.testRegexList(CortetsuConfig.hiddenApps, a.id))
