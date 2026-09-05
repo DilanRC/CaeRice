@@ -116,7 +116,7 @@ def main() -> None:
     require(mode, 'imageSource: "file:///usr/share/icons/cachyos.svg"', "CachyOS launcher logo")
     require(mode, "CortetsuWorkspaceDots {", "workspace indicator component")
 
-    require(bottom, "Icons.getVolumeIcon(Audio.volume, Audio.muted)", "volume icon controller")
+    require(bottom, "Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)", "volume icon controller")
     require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "network icon controller")
     require(bottom, '"bluetooth_connected"', "bluetooth state icon")
     require(bottom, "Icons.getBatteryIcon(UPower.displayDevice.percentage, batteryCharging)", "battery icon controller")

@@ -8,7 +8,7 @@ criteria = {
     "segmentos ligados al scheme": "Colours.tPalette.m3surfaceContainer",
     "launcher CachyOS": 'imageSource: "file:///usr/share/icons/cachyos.svg"',
     "esferas de workspace": "id: workspaceDots",
-    "volumen Caelestia": "Icons.getVolumeIcon(Audio.volume, Audio.muted)",
+    "volumen Cortetsu": "Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)",
     "audio único": 'id: volumeButton',
     "wifi Caelestia": "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)",
     "Bluetooth con estado": '"bluetooth_connected"',

@@ -231,7 +231,7 @@ Scope {
                 .filter(ws => ws.lastIpcObject?.windows > 0)
                 .map(ws => ws.id)
 
-            readonly property string volumeIcon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
+            readonly property string volumeIcon: Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)
             readonly property string networkIcon: Nmcli.activeEthernet
                 ? "cable"
                 : Nmcli.active
@@ -595,7 +595,7 @@ Scope {
                 trayItems: win.trayViewItems
 
                 volumeIcon: win.volumeIcon
-                volumeMuted: Audio.muted
+                volumeMuted: CortetsuAudio.muted
                 networkIcon: win.networkIcon
                 networkActive: win.networkActive
                 bluetoothIcon: win.bluetoothIcon
@@ -632,14 +632,14 @@ Scope {
                 )
                 onDetachedControlRequested: mode => hubRoot.toggleDetachedControlFor(win.modelData, mode)
                 onVolumeMuteRequested: {
-                    if (Audio.sink?.audio)
-                        Audio.sink.audio.muted = !Audio.sink.audio.muted;
+                    if (CortetsuAudio.sink?.audio)
+                        CortetsuAudio.sink.audio.muted = !CortetsuAudio.sink.audio.muted;
                 }
                 onVolumeWheel: delta => {
                     if (delta > 0)
-                        Audio.incrementVolume();
+                        CortetsuAudio.incrementVolume();
                     else if (delta < 0)
-                        Audio.decrementVolume();
+                        CortetsuAudio.decrementVolume();
                 }
                 onNotificationsRequested: hubRoot.toggleSidebarFor(win.modelData)
                 onStopRecordingRequested: Recorder.stop()
