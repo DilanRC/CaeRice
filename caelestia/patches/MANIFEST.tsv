@@ -3,8 +3,7 @@ shell.qml.patch	shell.qml
 components__misc__CustomShortcut.qml.patch	components/misc/CustomShortcut.qml
 components__ScreenState.qml.patch	components/ScreenState.qml
 services__Hypr.qml.patch	services/Hypr.qml
-services__Wallpapers.qml.patch	services/Wallpapers.qml
-services__Wallpapers__Config.qml.patch	services/Wallpapers.qml,utils/Paths.qml
+utils__Paths__Config.qml.patch	utils/Paths.qml
 services__CoreConfig.qml.patch	services/Time.qml,services/Brightness.qml,services/Audio.qml,services/Players.qml
 services__NotificationConfig.qml.patch	services/Notifs.qml,services/NotifData.qml,services/GameMode.qml,modules/notifications/Notification.qml
 services__RegionalConfig.qml.patch	services/Weather.qml,modules/background/DesktopClock.qml,modules/lock/weather/Forecast.qml

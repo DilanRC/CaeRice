@@ -28,7 +28,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert (stage / "modules/wallpaper/Content.qml").is_file()
     assert (stage / "modules/WallpaperController.qml").is_file()
     assert (stage / "modules/OverlayPolicy.js").is_file()
-    assert (stage / "patches/services__Wallpapers.qml.patch").is_file()
+    assert (stage / "services/Wallpapers.qml").read_bytes() == installer.SERVICE.read_bytes()
     again = subprocess.run(["python3", str(HERE / "update-wallpaper-manager.py"), "--stage", str(stage)], text=True, capture_output=True)
     assert again.returncode != 0 and "refusing existing stage" in again.stderr
     live = Path(tmp) / "live"
@@ -66,23 +66,6 @@ with tempfile.TemporaryDirectory() as tmp:
     assert (live / "services/Wallpapers.qml").read_text() == original
     assert tree(live) == before_live
     assert (hypr.stat().st_mode & 0o777, hypr.read_bytes()) == before_hypr
-    corrupt = Path(tmp) / "corrupt"
-    shutil.copytree(live, corrupt)
-    corrupt_service = corrupt / "services/Wallpapers.qml"
-    corrupt_service.write_text(corrupt_service.read_text().replace(
-        'Quickshell.execDetached(["caelestia", "wallpaper"',
-        'Quickshell.execDetached(["broken-wallpaper"',
-    ))
-    corrupt_config = Path(tmp) / "corrupt-shell.json"; shutil.copy2(config, corrupt_config)
-    corrupt_hypr = Path(tmp) / "corrupt-hypr.lua"; shutil.copy2(hypr, corrupt_hypr)
-    corrupt_before = tree(corrupt)
-    corrupt_mode = corrupt_service.stat().st_mode & 0o777
-    corrupt_backups = Path(tmp) / "corrupt-backups"
-    rejected = subprocess.run(["python3", str(HERE / "install-wallpaper-manager.py"), "--apply", "--live", str(corrupt), "--usercfg", str(corrupt_config), "--hypr-usercfg", str(corrupt_hypr), "--backup-root", str(corrupt_backups)], text=True, capture_output=True)
-    assert rejected.returncode != 0 and "complete V1 patched state" in rejected.stderr, rejected.stdout + rejected.stderr
-    assert tree(corrupt) == corrupt_before
-    assert corrupt_service.stat().st_mode & 0o777 == corrupt_mode
-    assert not corrupt_backups.exists()
     failed = Path(tmp) / "failed"
     shutil.copytree(live, failed)
     failed_config = Path(tmp) / "failed-shell.json"; shutil.copy2(config, failed_config)
@@ -110,4 +93,4 @@ with tempfile.TemporaryDirectory() as tmp:
     assert (failed_hypr.stat().st_mode & 0o777, failed_hypr.read_bytes()) == failed_hypr_before
     installer.rollback(backups[0])
     assert tree(failed) == failed_before
-print("test-install-wallpaper-manager: OK (pristine, complete-V1 upgrade, partial rejection, atomic failure rollback)")
+print("test-install-wallpaper-manager: OK (first-party service, idempotency, rollback, atomic failure rollback)")

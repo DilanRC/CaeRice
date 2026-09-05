@@ -84,12 +84,12 @@ assert "Restart=on-failure" in wallpaper_unit
 assert "cortetsu-wallpaper-color-daemon" in wallpaper_unit
 apply_wallpaper = (repo / "caelestia/bin/cortetsu-apply-wallpaper-colors").read_text(encoding="utf-8")
 assert "cortetsu-scheme-posthook" not in apply_wallpaper
-preview_patch = (repo / "caelestia/patches/services__Wallpapers.qml.patch").read_text(encoding="utf-8")
-assert '"cortetsu-wallpaper-colours", queuedPreviewPath' in preview_patch
-assert '+        getPreviewColoursProc.command = ["caelestia", "wallpaper", "-p"' not in preview_patch
-assert '"cortetsu-wallpaper-select", path' in preview_patch
-assert '"cortetsu-wallpaper-select", "--random", Paths.wallsdir' in preview_patch
-assert '"cortetsu-wallpaper-select", root.fallback' in preview_patch
+wallpaper_service = (repo / "caelestia/services-owned/services/Wallpapers.qml").read_text(encoding="utf-8")
+assert '"cortetsu-wallpaper-colours", path' in wallpaper_service
+assert '"cortetsu-wallpaper-select", path' in wallpaper_service
+assert '"cortetsu-wallpaper-select", "--random", wallsdir' in wallpaper_service
+assert 'cortetsu/wallpaper/path.txt' in wallpaper_service
+assert "caelestia" not in wallpaper_service.lower()
 
 for marker in (
     "atomic_link", "build.lock", "is_managed_generation", "BUILD.json",

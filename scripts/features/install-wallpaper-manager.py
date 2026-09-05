@@ -9,76 +9,12 @@ import json
 import os
 import stat
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OWNED = ROOT / "caelestia/modules-owned/modules"
-
-V1_SERVICE_REQUIREMENTS = {
-    "setRandom": ("previewGeneration += 1;", "queuedPreviewPath = \"\";", "getPreviewColoursProc.running = false;"),
-    "setWallpaper": ("previewGeneration += 1;", "queuedPreviewPath = \"\";", "getPreviewColoursProc.running = false;"),
-    "preview": ("previewGeneration += 1;", "queuedPreviewPath = path;", "if (getPreviewColoursProc.running)", "startLatestPreviewColours();"),
-    "stopPreview": ("previewGeneration += 1;", "queuedPreviewPath = \"\";", "getPreviewColoursProc.running = false;"),
-}
-V1_SERVICE_GLOBALS = (
-    "property int previewGeneration: 0",
-    "property string queuedPreviewPath: \"\"",
-    "function startLatestPreviewColours(): void",
-    "getPreviewColoursProc.requestPath = queuedPreviewPath;",
-    "getPreviewColoursProc.requestGeneration = previewGeneration;",
-    "property int requestGeneration: -1",
-    "property string requestPath: \"\"",
-    "command: []",
-    "onRunningChanged:",
-    "if (!running && root.queuedPreviewPath)",
-    "getPreviewColoursProc.requestGeneration !== root.previewGeneration",
-    "getPreviewColoursProc.requestPath !== root.previewPath",
-    "|| !root.showPreview",
-)
-
-
-def function_body(text: str, name: str) -> str:
-    start = text.find(f"function {name}(")
-    if start < 0:
-        return ""
-    open_brace = text.find("{", start)
-    if open_brace < 0:
-        return ""
-    depth = 0
-    for position in range(open_brace, len(text)):
-        if text[position] == "{":
-            depth += 1
-        elif text[position] == "}":
-            depth -= 1
-            if depth == 0:
-                return text[open_brace + 1:position]
-    return ""
-
-
-def is_complete_v1_service(text: str) -> bool:
-    if not all(requirement in text for requirement in V1_SERVICE_GLOBALS):
-        return False
-    return all(
-        all(requirement in function_body(text, name) for requirement in requirements)
-        for name, requirements in V1_SERVICE_REQUIREMENTS.items()
-    )
-
-
-def prepare_wallpapers_service(source: Path, target: Path, patch_file: Path, patch_root: Path) -> str:
-    original = source.read_text(encoding="utf-8")
-    shutil.copy2(source, target)
-    result = subprocess.run(
-        ["patch", "--batch", "--forward", "-p1", "-d", str(patch_root)],
-        input=patch_file.read_text(encoding="utf-8"), text=True, capture_output=True,
-    )
-    if result.returncode == 0:
-        return "patched"
-    shutil.copy2(source, target)
-    if is_complete_v1_service(original):
-        return "already-patched"
-    raise RuntimeError("Wallpapers patch cannot apply and service is not a complete V1 patched state: " + result.stdout + result.stderr)
+SERVICE = ROOT / "caelestia/services-owned/services/Wallpapers.qml"
 
 def load(name):
     spec = importlib.util.spec_from_file_location(name, ROOT / "scripts/features" / f"{name}.py")
@@ -93,8 +29,9 @@ def payload(stage):
         destination = stage / "modules" / name; destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(OWNED / name, destination)
     shutil.copytree(OWNED / "wallpaper", stage / "modules/wallpaper")
-    (stage / "patches").mkdir()
-    shutil.copy2(ROOT / "caelestia/patches/services__Wallpapers.qml.patch", stage / "patches/services__Wallpapers.qml.patch")
+    destination = stage / "services/Wallpapers.qml"
+    destination.parent.mkdir()
+    shutil.copy2(SERVICE, destination)
 
 def missing_parent_dirs(copies):
     result = []
@@ -180,18 +117,11 @@ def deploy(live, usercfg, hypr_usercfg, backup_root, production, replace_file=at
         temp = Path(temp); staged = temp / "payload"; payload(staged)
         texts, _ = wire.wire_all(live, hypr_usercfg, ("display", "wallpaper"))
         wired = temp / "wired"; wire.write_staged(texts, wired)
-        (temp / "services").mkdir()
-        prepare_wallpapers_service(
-            live / "services/Wallpapers.qml",
-            temp / "services/Wallpapers.qml",
-            staged / "patches/services__Wallpapers.qml.patch",
-            temp,
-        )
         config = temp / "shell.json"; shutil.copy2(usercfg, config); configure.configure(config)
         backup = backup_root / datetime.now().strftime("wallpaper-manager-%Y%m%d-%H%M%S-%f"); backup.mkdir(parents=True)
         copies = [(wired / rel, live / rel) for rel in ("shell.qml", "components/ScreenState.qml", "modules/drawers/Panels.qml", "modules/drawers/ContentWindow.qml")]
         copies.append((wired / "user-config/hypr-user.lua", hypr_usercfg))
-        copies += [(temp / "services/Wallpapers.qml", live / "services/Wallpapers.qml"), (config, usercfg)]
+        copies += [(staged / "services/Wallpapers.qml", live / "services/Wallpapers.qml"), (config, usercfg)]
         copies += [(source, live / "modules" / source.relative_to(staged / "modules")) for source in (staged / "modules").rglob("*") if source.is_file()]
         apply_transaction(copies, backup, replace_file)
         return backup

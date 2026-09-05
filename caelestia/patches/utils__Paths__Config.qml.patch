@@ -1,0 +1,8 @@
+--- a/utils/Paths.qml
++++ b/utils/Paths.qml
+@@ -5,1 +5,2 @@
+ import Caelestia.Config
++import "../modules"
+@@ -22,1 +23,1 @@
+-    readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.wallpaperDir)
++    readonly property string wallsdir: Quickshell.env("CORTETSU_WALLPAPERS_DIR") || absolutePath(CortetsuConfig.wallpaperDirectory)

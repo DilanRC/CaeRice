@@ -11,7 +11,7 @@ wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
 orbit = (MODULES / "wallpaper/OrbitModel.js").read_text(encoding="utf-8")
 policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
 wallpaper_controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
-patch = (ROOT / "caelestia/patches/services__Wallpapers.qml.patch").read_text(encoding="utf-8")
+service = (ROOT / "caelestia/services-owned/services/Wallpapers.qml").read_text(encoding="utf-8")
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
 hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")
@@ -112,7 +112,8 @@ assert "--features" not in wire_line, "canonical wiring must include all retaine
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr
 assert "customDock\", \"launcher" in shortcuts_patch
-for needle in ("previewGeneration += 1", "queuedPreviewPath", "requestGeneration !== root.previewGeneration", "requestPath !== root.previewPath", "!root.showPreview"):
-    assert needle in patch, needle
+for needle in ("previewGeneration += 1", "requestGeneration === root.previewGeneration", "root.showPreview", "previewPalette.running = false"):
+    assert needle in service, needle
+assert "caelestia" not in service.lower()
 
 print("test-wallpaper-manager: OK (neutral open, final-candidate debounce, cancellation, wheel reversal, canonical retained wiring, and two-way overlay exclusion)")

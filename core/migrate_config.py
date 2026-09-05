@@ -18,6 +18,33 @@ def data_home(home: Path) -> Path:
     return Path(os.environ.get("XDG_DATA_HOME", home / ".local/share")).expanduser()
 
 
+def state_home(home: Path) -> Path:
+    return Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")).expanduser()
+
+
+def migrate_runtime_state(home: Path, data_root: Path) -> None:
+    legacy_root = state_home(home) / "caelestia"
+    target_root = state_home(home) / "cortetsu"
+    candidates = (
+        (legacy_root / "wallpaper/path.txt", target_root / "wallpaper/path.txt"),
+        (legacy_root / "scheme.json", target_root / "scheme.json"),
+    )
+    pending = [(source, target) for source, target in candidates if source.is_file() and not target.exists()]
+    if not pending:
+        return
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    backup_root = data_root / "migrations" / stamp / "runtime-state"
+    for source, target in pending:
+        relative = source.relative_to(legacy_root)
+        backup = backup_root / relative
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, backup)
+        shutil.copy2(source, target)
+        print(f"MIGRATED state={target}")
+    print(f"BACKUP state={backup_root}")
+
+
 def payload_from_legacy(path: Path) -> dict[str, object]:
     data = json.loads(path.read_text(encoding="utf-8"))
     launcher = data.get("launcher", {})
@@ -87,6 +114,7 @@ def migrate(home: Path, target: Path | None = None, data_root: Path | None = Non
     target = target or config_home(home) / "cortetsu/preferences.json"
     data_root = data_root or data_home(home) / "cortetsu"
     legacy = config_home(home) / "caelestia/shell.json"
+    migrate_runtime_state(home, data_root)
 
     if target.exists():
         current = json.loads(target.read_text(encoding="utf-8"))

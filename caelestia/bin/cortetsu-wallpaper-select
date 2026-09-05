@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-state="${XDG_STATE_HOME:-$HOME/.local/state}/caelestia/wallpaper/path.txt"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/cortetsu/wallpaper/path.txt"
 valid_image() {
     [[ -f "$1" ]] || return 1
     case "${1,,}" in

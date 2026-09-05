@@ -2,22 +2,9 @@
 """Static contract gate for the native Cortetsu Wallpaper Manager."""
 from __future__ import annotations
 
-import shutil
-import subprocess
-import tempfile
-import importlib.util
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-UPSTREAM = Path(subprocess.check_output(
-    ["bash", str(ROOT / "caelestia/bin/ensure-upstream.sh")],
-    text=True,
-).strip())
-
-spec = importlib.util.spec_from_file_location("install_wallpaper_manager", ROOT / "scripts/features/install-wallpaper-manager.py")
-assert spec and spec.loader
-installer = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(installer)
 
 
 def require(path: Path, *needles: str) -> None:
@@ -49,35 +36,10 @@ def main() -> None:
     require(ROOT / "caelestia/modules-owned/modules/WallpaperController.qml", "wallpaperManager", "CortetsuShortcut", 'name: "wallpapermanager"')
     require(ROOT / "caelestia/modules-owned/modules/BottomHub.qml", "openWallpaperFor", "Wallpapers.actualCurrent")
     require(ROOT / "config/hypr-user.lua", "SUPER + SHIFT + W", "cortetsu:wallpapermanager")
-    with tempfile.TemporaryDirectory(prefix="wallpaper-patch-") as tmp:
-        stage = Path(tmp)
-        target = stage / "services"
-        target.mkdir()
-        source = stage / "upstream-Wallpapers.qml"
-        source.write_bytes(subprocess.check_output(
-            ["git", "-C", str(UPSTREAM), "show", "v2.4.0:services/Wallpapers.qml"]
-        ))
-        patch = ROOT / "caelestia/patches/services__Wallpapers.qml.patch"
-        shutil.copy2(source, target / "Wallpapers.qml")
-        result = subprocess.run(["patch", "--batch", "--forward", "--dry-run", "-p1", "-d", str(stage)], input=patch.read_text(encoding="utf-8"), text=True, capture_output=True)
-        assert result.returncode == 0, result.stdout + result.stderr
-        assert installer.prepare_wallpapers_service(source, target / "Wallpapers.qml", patch, stage) == "patched"
-        assert installer.is_complete_v1_service((target / "Wallpapers.qml").read_text())
-        v1_source = stage / "complete-v1.qml"
-        shutil.copy2(target / "Wallpapers.qml", v1_source)
-        assert installer.prepare_wallpapers_service(v1_source, target / "Wallpapers.qml", patch, stage) == "already-patched"
-        partial = stage / "partial.qml"
-        partial.write_text(source.read_text().replace(
-            'Quickshell.execDetached(["caelestia", "wallpaper"',
-            'Quickshell.execDetached(["broken-wallpaper"',
-        ))
-        try:
-            installer.prepare_wallpapers_service(partial, target / "Wallpapers.qml", patch, stage)
-        except RuntimeError:
-            pass
-        else:
-            raise AssertionError("partial V1 service was accepted")
-    print("validate-wallpaper-manager: OK (pristine patch and complete-V1 upgrade accepted; partial state rejected)")
+    service = ROOT / "caelestia/services-owned/services/Wallpapers.qml"
+    require(service, "pragma Singleton", "cortetsu-wallpaper-select", "previewGeneration", "requestGeneration", "cortetsu/wallpaper/path.txt")
+    assert "caelestia" not in service.read_text(encoding="utf-8").lower()
+    print("validate-wallpaper-manager: OK (first-party service and native manager contracts)")
 
 
 if __name__ == "__main__":
