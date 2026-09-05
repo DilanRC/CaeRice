@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Static contract check for the first controller migration."""
+from pathlib import Path
+
+repo = Path(__file__).resolve().parents[2]
+source = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
+
+assert "ShellState.forScreen(screen)?.cortetsuState?.calendar" in source
+assert 'state.setRetained("calendar", false)' in source
+assert "ShellState.forActive()?.cortetsuState" in source
+assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in source
+assert 'state.setRetained("calendar", true)' in source
+assert "ShellState.forScreen(screen)?.calendar" not in source
+print("PASS: CalendarController uses CortetsuScreenState")

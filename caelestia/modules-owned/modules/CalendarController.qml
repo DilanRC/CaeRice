@@ -13,7 +13,7 @@ Scope {
 
     function anyOpen(): bool {
         for (const screen of Screens.screens) {
-            if (ShellState.forScreen(screen)?.calendar)
+            if (ShellState.forScreen(screen)?.cortetsuState?.calendar)
                 return true;
         }
         return false;
@@ -21,19 +21,19 @@ Scope {
 
     function close(): void {
         for (const screen of Screens.screens) {
-            const state = ShellState.forScreen(screen);
+            const state = ShellState.forScreen(screen)?.cortetsuState;
             if (state)
-                state.calendar = false;
+                state.setRetained("calendar", false);
         }
     }
 
     function open(): void {
-        const state = ShellState.forActive();
+        const state = ShellState.forActive()?.cortetsuState;
         if (!state)
             return;
         close();
-        OverlayPolicy.closeOtherPanels(state);
-        state.calendar = true;
+        OverlayPolicy.closeOtherPanels(state.legacyState);
+        state.setRetained("calendar", true);
     }
 
     function toggle(): void { anyOpen() ? close() : open(); }

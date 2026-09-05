@@ -5,6 +5,7 @@ repo = Path(__file__).resolve().parents[2]
 state = (repo / "caelestia/modules-owned/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
 policy = (repo / "caelestia/modules-owned/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
+calendar = (repo / "caelestia/modules-owned/modules/CalendarController.qml").read_text(encoding="utf-8")
 
 for flag in ("overview", "calendar", "clipboard", "hardware", "displayManager", "wallpaperManager"):
     assert f"property bool {flag}" in state, flag
@@ -13,6 +14,14 @@ for derived in ("retainedOverlayOpen", "requiresOverlayLayer", "requiresFullInpu
     assert derived in state and derived in patch, derived
 assert "required property QtObject legacyState" in state
 assert "function closeRetainedOverlays" in state
+assert "function setRetained(flag: string, value: bool): bool" in state
 assert "function openExclusive" in policy
 assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects" in policy
+assert 'import "../modules"' in patch
+assert "cortetsuState" in patch
+assert "cortetsuState" in calendar
+assert 'state.setRetained("calendar", false)' in calendar
+assert 'state.setRetained("calendar", true)' in calendar
+assert "OverlayPolicy.closeOtherPanels(state.legacyState)" in calendar
+assert "ShellState.forScreen(screen)?.calendar" not in calendar
 print("PASS: Cortetsu screen state and overlay policy preserve the legacy boundary")

@@ -27,4 +27,12 @@ QtObject {
         legacyState.displayManager = false;
         legacyState.wallpaperManager = false;
     }
+
+    function setRetained(flag: string, value: bool): bool {
+        if (flag !== "overview" && flag !== "calendar" && flag !== "clipboard"
+                && flag !== "hardware" && flag !== "displayManager" && flag !== "wallpaperManager")
+            return false;
+        legacyState[flag] = value;
+        return true;
+    }
 }
