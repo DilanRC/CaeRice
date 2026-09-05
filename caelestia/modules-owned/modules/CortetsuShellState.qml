@@ -26,6 +26,10 @@ QtObject {
         return states.find(entry => entry.screen === screen)?.state ?? null;
     }
 
+    function anySidebarOpen(): bool {
+        return states.some(entry => !!entry.state?.sidebar);
+    }
+
     function forActive(): var {
         const monitor = CortetsuHypr.focusedMonitor;
         return states.find(entry => CortetsuHypr.monitorFor(entry.screen) === monitor)?.state ?? null;

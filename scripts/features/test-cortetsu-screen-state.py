@@ -40,6 +40,7 @@ assert "CortetsuShellState.registerComponents(screen, root)" in panels_patch
 assert "import qs.services" not in shell_state
 for marker in ("registerState", "unregisterState", "registerComponents", "unregisterComponents", "CortetsuHypr.focusedMonitor"):
     assert marker in shell_state, marker
+assert "function anySidebarOpen" in shell_state
 assert "cortetsuState" in calendar
 assert 'state.setRetained("calendar", false)' in calendar
 assert 'state.setRetained("calendar", true)' in calendar
