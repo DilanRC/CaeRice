@@ -9,6 +9,7 @@ modules__launcher__AppList.qml.patch	modules/launcher/AppList.qml
 modules__launcher__Content.qml.patch	modules/launcher/Content.qml
 modules__launcher__ContentList.qml.patch	modules/launcher/ContentList.qml
 modules__launcher__Wrapper.qml.patch	modules/launcher/Wrapper.qml
+modules__launcher__services__Apps.qml.patch	modules/launcher/services/Apps.qml
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
 modules__bar__BarWrapper.qml.patch	modules/bar/BarWrapper.qml
 modules__bar__popouts__Wrapper.qml.patch	modules/bar/popouts/Wrapper.qml
