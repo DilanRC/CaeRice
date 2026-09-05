@@ -2,14 +2,13 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.components
-import qs.services
+import "../CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
 
     readonly property bool shouldBeActive: screenState.cortetsuState?.displayManager ?? false
 
@@ -24,7 +23,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         visible: root.shouldBeActive
-        color: Qt.alpha(Colours.palette.m3scrim, 0.42)
+        color: Qt.alpha(CortetsuDesign.colorScrim, 0.42)
     }
 
     Loader {
