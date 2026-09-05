@@ -5,6 +5,7 @@ modules = repo / "caelestia/modules-owned/modules"
 config = (modules / "CortetsuConfig.qml").read_text(encoding="utf-8")
 hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")
 launcher_patch = (repo / "caelestia/patches/modules__launcher__CortetsuConfig.qml.patch").read_text(encoding="utf-8")
+launcher_more_patch = (repo / "caelestia/patches/modules__launcher__CortetsuConfigMore.qml.patch").read_text(encoding="utf-8")
 manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
@@ -21,4 +22,6 @@ for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.setFavouriteApps"
     assert marker in launcher_patch, marker
 assert "CortetsuConfig.hiddenApps" in launcher_patch
 assert "CortetsuConfig.useFuzzyApps" in launcher_patch
+assert "CortetsuConfig.actionPrefix" in launcher_more_patch
+assert "CortetsuConfig.terminalCommand" in launcher_more_patch
 print("PASS: Cortetsu functional preferences use an XDG-owned contract")
