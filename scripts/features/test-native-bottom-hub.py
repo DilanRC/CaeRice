@@ -36,7 +36,7 @@ FORBIDDEN_VIEW_TOKENS = (
     "DesktopEntries.",
     "GlobalConfig.",
     "Apps.",
-    "Wallpapers.",
+    "\nWallpapers.",
     "qs.services",
     "Caelestia.Config",
     "Quickshell.Bluetooth",

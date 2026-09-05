@@ -586,7 +586,7 @@ Scope {
 
                 launcherActive: win.screenState?.launcher ?? false
                 wallpaperActive: win.cortetsuState?.wallpaperManager ?? false
-                wallpaperSource: Wallpapers.actualCurrent
+                wallpaperSource: CortetsuWallpapers.actualCurrent
                 workspaceCount: win.workspaceCount
                 workspaceOffset: win.workspaceOffset
                 activeWsId: win.activeWsId

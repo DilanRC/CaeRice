@@ -11,7 +11,7 @@ wrapper = (MODULES / "wallpaper/Wrapper.qml").read_text(encoding="utf-8")
 orbit = (MODULES / "wallpaper/OrbitModel.js").read_text(encoding="utf-8")
 policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
 wallpaper_controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
-service = (ROOT / "caelestia/services-owned/services/Wallpapers.qml").read_text(encoding="utf-8")
+service = (ROOT / "caelestia/modules-owned/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
 hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")
@@ -27,8 +27,8 @@ def body(name: str) -> str:
 open_body = body("openManager")
 resync_body = body("resync")
 assert "resync();" in open_body and "forceActiveFocus();" in open_body
-assert "Wallpapers.preview" not in open_body
-assert "Wallpapers.actualCurrent" in resync_body and "Orbit.resolveCurrentIndex" in resync_body
+assert "CortetsuWallpapers.preview" not in open_body
+assert "CortetsuWallpapers.actualCurrent" in resync_body and "Orbit.resolveCurrentIndex" in resync_body
 assert "Orbit.resolveCurrentIndex" in body("selectCategory")
 assert "function resolveCurrentIndex" in orbit and "function basename" in orbit
 
@@ -37,18 +37,18 @@ assert content.count("Timer {") == 1
 assert "interval: 220" in content
 timer_body = content[content.index("id: previewTimer"):content.index("NumberAnimation {", content.index("id: previewTimer"))]
 assert "Orbit.previewEligible" in timer_body
-assert "Wallpapers.preview(root.pendingPreviewPath)" in timer_body
+assert "CortetsuWallpapers.preview(root.pendingPreviewPath)" in timer_body
 assert "previewTimer.restart()" in body("queuePreview")
 assert "cancelPreview();" in body("requestTarget")
 
 # Close, category/model reset, apply and random erase delayed work; active preview stops.
 cancel_body = body("cancelPreview")
-assert "previewTimer.stop();" in cancel_body and "Wallpapers.stopPreview();" in cancel_body
-assert "cancelPreview();" in body("selectCategory") and "Wallpapers.preview" not in body("selectCategory")
+assert "previewTimer.stop();" in cancel_body and "CortetsuWallpapers.stopPreview();" in cancel_body
+assert "cancelPreview();" in body("selectCategory") and "CortetsuWallpapers.preview" not in body("selectCategory")
 assert "cancelPreview();" in resync_body
-assert "previewTimer.stop();" in body("apply") and "Wallpapers.previewColourLock = true;" in body("apply")
-assert "cancelPreview();" in body("random") and "Wallpapers.setRandom();" in body("random")
-assert "closeManager();" in wrapper and "Wallpapers.stopPreview();" in wrapper
+assert "previewTimer.stop();" in body("apply") and "CortetsuWallpapers.previewColourLock = true;" in body("apply")
+assert "cancelPreview();" in body("random") and "CortetsuWallpapers.setRandom();" in body("random")
+assert "closeManager();" in wrapper and "CortetsuWallpapers.stopPreview();" in wrapper
 assert "globalOtherOverlayOpen" in wrapper and "onGlobalOtherOverlayOpenChanged" in wrapper
 assert "for (const candidate of CortetsuScreens.screens)" in wrapper
 assert "OverlayPolicy.hasCompetingPanel" in wrapper and "closeCompetingPanels();" in wrapper
@@ -74,7 +74,7 @@ assert "root.selectSatellite(satellite.modelData.index)" in content
 assert "import qs.components.effects" not in content
 assert "import qs.components.controls" not in content
 assert "Image {\n            anchors.fill: parent; anchors.margins" not in content
-assert 'if (CortetsuConfig.smartScheme)\n                Wallpapers.previewColourLock = true;' in content
+assert 'if (CortetsuConfig.smartScheme)\n                CortetsuWallpapers.previewColourLock = true;' in content
 assert "Colours." not in content
 
 # V2.1 presentation: bounded shared-cache prefetch, ready-gated entry, and floating surfaces.
@@ -87,7 +87,7 @@ assert "Math.min(prefetchRepeater.count, 7)" in content
 assert content.count("cache: true") >= 4
 assert "id: panel\n        z: 1" in content and "Item {\n        id: panel" in content
 assert "CortetsuDesign.colorSurfaceHigh, 0.68" in content
-assert 'root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")' in content
+assert 'root.currentPath === CortetsuWallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")' in content
 assert "shouldBeActive && presentationReady" in wrapper
 assert "CortetsuDesign.colorScrim, 0.18" in wrapper
 assert "CortetsuDesign.colorScrim, 0.44" not in wrapper

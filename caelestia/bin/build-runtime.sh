@@ -89,7 +89,6 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/caelestia/modules-owned/modules/." "$STAGING/modules/"
-cp -a "$REPO/caelestia/services-owned/services/." "$STAGING/services/"
 python3 "$REPO/caelestia/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/caelestia/composition.json" "$STAGING/composition.json"

@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import ".."
 import QtQuick
 import Quickshell
-import qs.services
 import "../OverlayPolicy.js" as OverlayPolicy
 import "../CortetsuDesign.js" as CortetsuDesign
 
@@ -55,14 +54,14 @@ Item {
             Qt.callLater(() => contentLoader.item?.openManager());
         } else {
             contentLoader.item?.closeManager();
-            Wallpapers.stopPreview();
+            CortetsuWallpapers.stopPreview();
         }
     }
 
     onGlobalOtherOverlayOpenChanged: {
         if (shouldBeActive && globalOtherOverlayOpen) {
             screenState.cortetsuState?.setRetained("wallpaperManager", false);
-            Wallpapers.stopPreview();
+            CortetsuWallpapers.stopPreview();
         }
     }
 }

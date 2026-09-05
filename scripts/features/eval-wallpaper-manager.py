@@ -19,7 +19,7 @@ checks = {
     "wrap_safe_empty": "if (count <= 0)" in helper,
     "unicode_paths_untouched": "entries.filter" in helper and "encode" not in helper,
     "no_second_backend": "execDetached" not in content and "Quickshell.exec" not in content,
-    "native_preview_apply": "Wallpapers.preview(" in content and "Wallpapers.setWallpaper(" in content,
+    "native_preview_apply": "CortetsuWallpapers.preview(" in content and "CortetsuWallpapers.setWallpaper(" in content,
     "stable_preview_only": "interval: 220" in content and "Orbit.previewEligible" in content and "function previewEligible" in helper,
     "wheel_coalescing": "Orbit.wheelIntent" in content and "function wheelIntent" in helper and "Math.abs(total) % threshold" in helper,
     "global_overlay_exclusivity": "globalOtherOverlayOpen" in wrapper and "for (const candidate of CortetsuScreens.screens)" in wrapper and "closeCompetingPanels" in wrapper,

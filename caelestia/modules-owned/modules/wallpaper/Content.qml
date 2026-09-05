@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Effects
 import Quickshell
-import qs.services
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
@@ -15,7 +14,7 @@ FocusScope {
 
     required property var screen
     required property var screenState
-    property var entries: Wallpapers.list ? Array.from(Wallpapers.list) : []
+    property var entries: CortetsuWallpapers.list ? Array.from(CortetsuWallpapers.list) : []
     property var filteredEntries: Orbit.filtered(entries, selectedCategory, categoryFor)
     property var categoryNames: Orbit.categories(entries, categoryFor)
     property string selectedCategory: "ALL"
@@ -55,13 +54,13 @@ FocusScope {
             presentationReady = true;
     }
 
-    function categoryFor(entry): string { return Wallpapers.getCategoryFor(entry) || qsTr("Unsorted"); }
+    function categoryFor(entry): string { return CortetsuWallpapers.getCategoryFor(entry) || qsTr("Unsorted"); }
 
     function cancelPreview(): void {
         previewTimer.stop();
         pendingPreviewPath = "";
-        if (previewActive || Wallpapers.showPreview)
-            Wallpapers.stopPreview();
+        if (previewActive || CortetsuWallpapers.showPreview)
+            CortetsuWallpapers.stopPreview();
         previewActive = false;
     }
 
@@ -78,12 +77,12 @@ FocusScope {
 
     function resync(): void {
         cancelPreview();
-        entries = Wallpapers.list ? Array.from(Wallpapers.list) : [];
+        entries = CortetsuWallpapers.list ? Array.from(CortetsuWallpapers.list) : [];
         categoryNames = Orbit.categories(entries, categoryFor);
         if (!categoryNames.includes(selectedCategory))
             selectedCategory = "ALL";
         filteredEntries = Orbit.filtered(entries, selectedCategory, categoryFor);
-        const actual = Orbit.resolveCurrentIndex(filteredEntries, Wallpapers.actualCurrent);
+        const actual = Orbit.resolveCurrentIndex(filteredEntries, CortetsuWallpapers.actualCurrent);
         currentIndex = Orbit.normalize(actual >= 0 ? actual : 0, filteredEntries.length);
         windowIndex = currentIndex;
         queuedDirection = 0;
@@ -144,7 +143,7 @@ FocusScope {
         cancelPreview();
         selectedCategory = category;
         filteredEntries = Orbit.filtered(entries, category, categoryFor);
-        const actual = Orbit.resolveCurrentIndex(filteredEntries, Wallpapers.actualCurrent);
+        const actual = Orbit.resolveCurrentIndex(filteredEntries, CortetsuWallpapers.actualCurrent);
         currentIndex = Orbit.normalize(actual >= 0 ? actual : 0, filteredEntries.length);
         windowIndex = currentIndex;
         queuedDirection = 0;
@@ -157,13 +156,13 @@ FocusScope {
             return;
         previewTimer.stop();
         pendingPreviewPath = "";
-        if (Wallpapers.actualCurrent !== currentPath) {
+        if (CortetsuWallpapers.actualCurrent !== currentPath) {
             if (CortetsuConfig.smartScheme)
-                Wallpapers.previewColourLock = true;
-            if (previewActive || Wallpapers.showPreview)
-                Wallpapers.stopPreview();
+                CortetsuWallpapers.previewColourLock = true;
+            if (previewActive || CortetsuWallpapers.showPreview)
+                CortetsuWallpapers.stopPreview();
             previewActive = false;
-            Wallpapers.setWallpaper(currentPath);
+            CortetsuWallpapers.setWallpaper(currentPath);
         } else {
             cancelPreview();
         }
@@ -177,7 +176,7 @@ FocusScope {
 
     function random(): void {
         cancelPreview();
-        Wallpapers.setRandom();
+        CortetsuWallpapers.setRandom();
         screenState.cortetsuState?.setRetained("wallpaperManager", false);
     }
 
@@ -247,7 +246,7 @@ FocusScope {
             }
             if (Orbit.previewEligible(root.pendingPreviewPath, root.currentPath,
                                      root.screenState.cortetsuState?.wallpaperManager ?? false, root.animating, root.queuedDirection)) {
-                Wallpapers.preview(root.pendingPreviewPath);
+                CortetsuWallpapers.preview(root.pendingPreviewPath);
                 root.previewActive = true;
             }
         }
@@ -279,7 +278,7 @@ FocusScope {
     }
 
     Connections {
-        target: Wallpapers
+        target: CortetsuWallpapers
         function onActualCurrentChanged(): void { root.resync(); }
         function onListChanged(): void { root.resync(); }
     }
@@ -574,7 +573,7 @@ FocusScope {
             }
             CortetsuText {
                 width: Math.min(440, panel.width - 48)
-                text: root.currentEntry ? qsTr("%1  ·  %2  ·  %3/%4").arg(root.currentPath === Wallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")).arg(root.categoryFor(root.currentEntry)).arg(root.currentIndex + 1).arg(root.filteredEntries.length) : qsTr("Add images to the native wallpaper directory")
+                text: root.currentEntry ? qsTr("%1  ·  %2  ·  %3/%4").arg(root.currentPath === CortetsuWallpapers.actualCurrent ? qsTr("Current") : qsTr("Preview")).arg(root.categoryFor(root.currentEntry)).arg(root.currentIndex + 1).arg(root.filteredEntries.length) : qsTr("Add images to the native wallpaper directory")
                 horizontalAlignment: Text.AlignHCenter
                 color: CortetsuDesign.colorOnSurfaceVariant
                 textSize: CortetsuTypography.labelMediumPx

@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OWNED = ROOT / "caelestia/modules-owned/modules"
-SERVICE = ROOT / "caelestia/services-owned/services/Wallpapers.qml"
+SERVICE = ROOT / "caelestia/modules-owned/modules/CortetsuWallpapers.qml"
 
 def load(name):
     spec = importlib.util.spec_from_file_location(name, ROOT / "scripts/features" / f"{name}.py")
@@ -29,8 +29,7 @@ def payload(stage):
         destination = stage / "modules" / name; destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(OWNED / name, destination)
     shutil.copytree(OWNED / "wallpaper", stage / "modules/wallpaper")
-    destination = stage / "services/Wallpapers.qml"
-    destination.parent.mkdir()
+    destination = stage / "modules/CortetsuWallpapers.qml"
     shutil.copy2(SERVICE, destination)
 
 def missing_parent_dirs(copies):
@@ -109,7 +108,7 @@ def apply_transaction(copies, backup, replace_file=atomic_replace):
 def deploy(live, usercfg, hypr_usercfg, backup_root, production, replace_file=atomic_replace):
     if live == Path("/etc/xdg/quickshell/caelestia") and not production:
         raise RuntimeError("refusing production live root without --production")
-    required = [live / rel for rel in ("shell.qml", "components/ScreenState.qml", "modules/drawers/Panels.qml", "modules/drawers/ContentWindow.qml", "services/Wallpapers.qml")] + [usercfg, hypr_usercfg]
+    required = [live / rel for rel in ("shell.qml", "components/ScreenState.qml", "modules/drawers/Panels.qml", "modules/drawers/ContentWindow.qml")] + [usercfg, hypr_usercfg]
     missing = [str(path) for path in required if not path.is_file()]
     if missing: raise RuntimeError("missing exact target(s): " + ", ".join(missing))
     wire, configure = load("wire_sad_shell"), load("configure-launcher-wallpaper-actions")
@@ -121,8 +120,8 @@ def deploy(live, usercfg, hypr_usercfg, backup_root, production, replace_file=at
         backup = backup_root / datetime.now().strftime("wallpaper-manager-%Y%m%d-%H%M%S-%f"); backup.mkdir(parents=True)
         copies = [(wired / rel, live / rel) for rel in ("shell.qml", "components/ScreenState.qml", "modules/drawers/Panels.qml", "modules/drawers/ContentWindow.qml")]
         copies.append((wired / "user-config/hypr-user.lua", hypr_usercfg))
-        copies += [(staged / "services/Wallpapers.qml", live / "services/Wallpapers.qml"), (config, usercfg)]
         copies += [(source, live / "modules" / source.relative_to(staged / "modules")) for source in (staged / "modules").rglob("*") if source.is_file()]
+        copies.append((config, usercfg))
         apply_transaction(copies, backup, replace_file)
         return backup
 

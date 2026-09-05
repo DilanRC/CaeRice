@@ -3,7 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../modules"
+import "."
 
 Singleton {
     id: root
@@ -80,7 +80,7 @@ Singleton {
     Component.onCompleted: reload()
 
     IpcHandler {
-        target: "wallpaper"
+        target: "cortetsu-wallpaper"
         function get(): string { return root.actualCurrent; }
         function set(path: string): void { root.setWallpaper(path); }
         function list(): string { return root.list.map(w => w.path).join("\n"); }
