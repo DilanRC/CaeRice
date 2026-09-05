@@ -10,7 +10,7 @@ criteria = {
     "esferas de workspace": "id: workspaceDots",
     "volumen Cortetsu": "Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)",
     "audio único": 'id: volumeButton',
-    "wifi Caelestia": "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)",
+    "wifi Cortetsu": "Icons.getNetworkIcon(CortetsuNetwork.active.strength ?? 0)",
     "Bluetooth con estado": '"bluetooth_connected"',
     "bateria Caelestia": "Icons.getBatteryIcon(",
     "iconos de sistema compactos": "iconFontStyle: Tokens.font.icon.medium",

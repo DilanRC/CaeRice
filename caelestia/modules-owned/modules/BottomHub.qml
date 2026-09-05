@@ -8,7 +8,6 @@ import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
 import qs.services
-import qs.services as Services
 import qs.utils
 import qs.modules.launcher.services
 import "OverlayPolicy.js" as OverlayPolicy
@@ -232,12 +231,12 @@ Scope {
                 .map(ws => ws.id)
 
             readonly property string volumeIcon: Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)
-            readonly property string networkIcon: Nmcli.activeEthernet
+            readonly property string networkIcon: CortetsuNetwork.activeEthernet
                 ? "cable"
-                : Nmcli.active
-                    ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0)
+                : CortetsuNetwork.active
+                    ? Icons.getNetworkIcon(CortetsuNetwork.active.strength ?? 0)
                     : "wifi_off"
-            readonly property bool networkActive: Nmcli.activeEthernet || !!Nmcli.active
+            readonly property bool networkActive: CortetsuNetwork.activeEthernet || !!CortetsuNetwork.active
             readonly property bool bluetoothActive: Bluetooth.devices.values.some(device => device.connected)
             readonly property string bluetoothIcon: !Bluetooth.defaultAdapter?.enabled
                 ? "bluetooth_disabled"
@@ -607,7 +606,7 @@ Scope {
                 sidebarActive: win.screenState?.sidebar ?? false
                 recordingActive: Recorder.running
                 dndActive: Notifs.dnd
-                idleInhibited: Services.IdleInhibitor.enabled
+                idleInhibited: CortetsuIdleInhibitor.enabled
                 now: win.now
                 sessionActive: win.screenState?.session ?? false
 
@@ -644,7 +643,7 @@ Scope {
                 onNotificationsRequested: hubRoot.toggleSidebarFor(win.modelData)
                 onStopRecordingRequested: Recorder.stop()
                 onToggleDndRequested: Notifs.dnd = !Notifs.dnd
-                onToggleIdleInhibitorRequested: Services.IdleInhibitor.enabled = !Services.IdleInhibitor.enabled
+                onToggleIdleInhibitorRequested: CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled
                 onCalendarRequested: hubRoot.openCalendarFor(win.modelData)
                 onSessionRequested: win.toggleSession()
             }

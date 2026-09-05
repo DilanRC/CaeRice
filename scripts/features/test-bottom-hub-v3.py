@@ -117,7 +117,7 @@ def main() -> None:
     require(mode, "CortetsuWorkspaceDots {", "workspace indicator component")
 
     require(bottom, "Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)", "volume icon controller")
-    require(bottom, "Icons.getNetworkIcon(Nmcli.active.strength ?? 0)", "network icon controller")
+    require(bottom, "Icons.getNetworkIcon(CortetsuNetwork.active.strength ?? 0)", "network icon controller")
     require(bottom, '"bluetooth_connected"', "bluetooth state icon")
     require(bottom, "Icons.getBatteryIcon(UPower.displayDevice.percentage, batteryCharging)", "battery icon controller")
     require(bottom, "SystemTray.items.values", "system tray controller")

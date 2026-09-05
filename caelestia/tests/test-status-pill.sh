@@ -22,7 +22,7 @@ require "id: tooltipPopup" "$component"
 require "color: Colours.palette.m3inverseSurface" "$component"
 require "recordingActive: Recorder.running" "$hub"
 require "dndActive: Notifs.dnd" "$hub"
-require "idleInhibited: Services.IdleInhibitor.enabled" "$hub"
+require "idleInhibited: CortetsuIdleInhibitor.enabled" "$hub"
 require "StatusPill {" "$hub"
 
 if rg -n 'Timer|Process|execDetached' "$component"; then
