@@ -1,35 +1,23 @@
 --- a/services/Wallpapers.qml
 +++ b/services/Wallpapers.qml
-@@ -21,6 +21,8 @@
-     property string actualCurrent
-     property bool previewColourLock
-     property bool pendingPreviewClear
+@@ -23,0 +24,2 @@
 +    property int previewGeneration: 0
 +    property string queuedPreviewPath: ""
-
-     function getCategoryFor(w: FileSystemEntry): string {
-         let category = w.parentDir.slice(Paths.wallsdir.length + 1);
-         if (category.includes("/"))
-             category = category.slice(0, category.indexOf("/"));
-         return category;
-     }
-@@ -30,23 +32,48 @@ Searcher {
-
-     function setRandom(): void {
+@@ -33 +35,4 @@
+-        Quickshell.execDetached(["caelestia", "wallpaper", "-r", ...smartArg]);
 +        previewGeneration += 1;
 +        queuedPreviewPath = "";
 +        getPreviewColoursProc.running = false;
-         Quickshell.execDetached(["cortetsu-wallpaper-select", "--random", Paths.wallsdir]);
-     }
-
-     function setWallpaper(path: string): void {
++        Quickshell.execDetached(["cortetsu-wallpaper-select", "--random", Paths.wallsdir]);
+@@ -36,0 +42,3 @@
 +        previewGeneration += 1;
 +        queuedPreviewPath = "";
 +        getPreviewColoursProc.running = false;
-         actualCurrent = path;
-         Quickshell.execDetached(["cortetsu-wallpaper-select", path]);
-     }
-
+@@ -38 +46,11 @@
+-        Quickshell.execDetached(["caelestia", "wallpaper", "-f", path, ...smartArg]);
++        Quickshell.execDetached(["cortetsu-wallpaper-select", path]);
++    }
++
 +    function startLatestPreviewColours(): void {
 +        if (!queuedPreviewPath || Colours.scheme !== "dynamic")
 +            return;
@@ -38,13 +26,9 @@
 +        getPreviewColoursProc.command = ["cortetsu-wallpaper-colours", queuedPreviewPath];
 +        queuedPreviewPath = "";
 +        getPreviewColoursProc.running = true;
-+    }
-
-     function preview(path: string): void {
+@@ -41,0 +60 @@
 +        previewGeneration += 1;
-         previewPath = path;
-         showPreview = true;
-
+@@ -45,2 +64,7 @@
 -        if (Colours.scheme === "dynamic")
 -            getPreviewColoursProc.running = true;
 +        if (Colours.scheme !== "dynamic")
@@ -54,51 +38,29 @@
 +            getPreviewColoursProc.running = false;
 +        else
 +            startLatestPreviewColours();
-     }
-
-     function stopPreview(): void {
+@@ -49,0 +74,3 @@
 +        previewGeneration += 1;
 +        queuedPreviewPath = "";
 +        getPreviewColoursProc.running = false;
-         showPreview = false;
-         if (previewColourLock)
-             pendingPreviewClear = true;
-@@ -114,12 +141,24 @@ Searcher {
-     Process {
-         id: getPreviewColoursProc
-
-         property int requestGeneration: -1
-         property string requestPath: ""
-         command: []
-
-         onRunningChanged: {
-             if (!running && root.queuedPreviewPath)
-                 root.startLatestPreviewColours();
-         }
-
-         stdout: StdioCollector {
-             onStreamFinished: {
-                 if (getPreviewColoursProc.requestGeneration !== root.previewGeneration
-                     || getPreviewColoursProc.requestPath !== root.previewPath
-                     || !root.showPreview)
-                     return;
-                 Colours.load(text, true);
-                 Colours.showPreview = true;
-             }
-         }
-     }
- }
-@@ -118,7 +157,7 @@
-             let wall = text().trim();
-             if (!wall) {
-                 wall = root.fallback;
+@@ -94 +121 @@
 -                Quickshell.execDetached(["caelestia", "wallpaper", "-f", root.fallback, ...root.smartArg]);
 +                Quickshell.execDetached(["cortetsu-wallpaper-select", root.fallback]);
-             }
-@@ -126,7 +165,7 @@
-         onLoadFailed: {
-             root.actualCurrent = root.fallback;
-             root.previewColourLock = false;
+@@ -102 +129 @@
 -            Quickshell.execDetached(["caelestia", "wallpaper", "-f", root.fallback, ...root.smartArg]);
 +            Quickshell.execDetached(["cortetsu-wallpaper-select", root.fallback]);
-         }
+@@ -117 +144,9 @@
+-        command: ["caelestia", "wallpaper", "-p", root.previewPath, ...root.smartArg]
++        property int requestGeneration: -1
++        property string requestPath: ""
++        command: []
++
++        onRunningChanged: {
++            if (!running && root.queuedPreviewPath)
++                root.startLatestPreviewColours();
++        }
++
+@@ -119,0 +155,4 @@
++                if (getPreviewColoursProc.requestGeneration !== root.previewGeneration
++                    || getPreviewColoursProc.requestPath !== root.previewPath
++                    || !root.showPreview)
++                    return;
