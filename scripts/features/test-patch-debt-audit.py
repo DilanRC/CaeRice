@@ -21,10 +21,6 @@ AUDITED_ACTIVE_PATCHES = {
         "modules/sidebar/Wrapper.qml",
         ("cortetsuBottomNotificationCenter",),
     ),
-    "modules__bar__BarWrapper.qml.patch": (
-        "modules/bar/BarWrapper.qml",
-        ("readonly property bool disabled: true",),
-    ),
     "modules__bar__popouts__Wrapper.qml.patch": (
         "modules/bar/popouts/Wrapper.qml",
         ("bottomAttached",),
@@ -76,11 +72,7 @@ def main() -> None:
             "(it is the Bottom Hub v4 contract, not dead code)"
         )
 
-    assert "modules__bar__BarWrapper.qml.patch" in v4_text, (
-        "test-bottom-hub-v4.py must keep asserting the native bar retirement patch stays in MANIFEST.tsv"
-    )
-
-    print("PASS: all 4 remaining audited patches confirmed ACTIVE (Bottom Hub v4 migration engine)")
+    print("PASS: all 2 remaining audited patches confirmed ACTIVE (Bottom Hub v4 migration engine)")
 
 
 def _grep_repo(needle: str) -> bool:

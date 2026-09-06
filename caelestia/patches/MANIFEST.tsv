@@ -1,6 +1,5 @@
 patch	path
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
-modules__bar__BarWrapper.qml.patch	modules/bar/BarWrapper.qml
 modules__bar__popouts__Wrapper.qml.patch	modules/bar/popouts/Wrapper.qml
 modules__bar__popouts__ClipWrapper.qml.patch	modules/bar/popouts/ClipWrapper.qml
 modules__drawers__Interactions.qml.patch	modules/drawers/Interactions.qml

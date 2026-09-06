@@ -17,7 +17,7 @@ For each patch:
    `scripts/features/test-bottom-hub-v4.py`, which assert on these exact
    patches' content and on their presence in `MANIFEST.tsv`.
 
-## Result: 6 remain ACTIVE
+## Result: 5 remain ACTIVE
 
 The working hypothesis going in was that some of these patches might be dead,
 superseded by the Bottom Hub v4 migration. The evidence points the other way:

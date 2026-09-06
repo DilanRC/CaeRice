@@ -14,6 +14,7 @@ SHORTCUTS = (MODULES / "Shortcuts.qml").read_text()
 PANELS = (ROOT / "caelestia/patches/modules__drawers__Panels.qml.patch").read_text()
 POPOUT = (ROOT / "caelestia/patches/modules__bar__popouts__ClipWrapper.qml.patch").read_text()
 WINDOW_CARD = (MODULES / "overview/WindowCard.qml").read_text()
+BAR = (MODULES / "bar/BarWrapper.qml").read_text()
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -44,7 +45,8 @@ def main() -> None:
     require(MIGRATOR, 'qml_block(after, "Launcher.Wrapper", "launcher")', "launcher localizado por id")
     forbid(MIGRATOR, '"anchors.horizontalCenter: parent.horizontalCenter\\n        anchors.bottom: parent.bottom\\n",', "reemplazo global ambiguo")
     require(CHECKER, 'qml_block(text, "Launcher.Wrapper", "launcher")', "validación scoped del launcher")
-    require(MANIFEST, "modules__bar__BarWrapper.qml.patch", "retiro de barra nativa")
+    require(BAR, "readonly property bool disabled: true", "retiro de barra nativa")
+    require(BAR, "implicitWidth: 0", "ancho de barra retirada")
     require(HYPR, '"SUPER + I",\n    hl.dsp.global("cortetsu:nexus")', "SUPER+I a Nexus")
     require(HYPR, '"SUPER + H",\n    hl.dsp.global("cortetsu:hardware")', "SUPER+H a Hardware Center")
     require(HUB, "hubRoot.toggleLauncherFor(state.modelData);", "SUPER alterna el launcher")
