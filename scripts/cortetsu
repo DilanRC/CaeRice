@@ -264,6 +264,7 @@ test_cmd() {
         "scripts/features/test-shell-lifecycle.py"
         "cortetsu/tests/test-calendar-credentials.py"
         "cortetsu/tests/test-calendar-polish.py"
+        "cortetsu/tests/test-regional.py"
         "cortetsu/tests/test-pomodoro.py"
         "cortetsu/tests/test-runtime-contract.py"
         "scripts/features/test-cortetsu-screen-state.py"
