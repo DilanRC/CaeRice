@@ -19,7 +19,9 @@ PATTERNS = {
     "MaterialIcon": re.compile(r"\bMaterialIcon\b"),
     "caelestia CLI": re.compile(r"(?<![A-Za-z0-9_-])caelestia(?:\s|$)"),
     "caelestia IPC": re.compile(r"caelestia:"),
-    "caelestia path": re.compile(r"(?:/|\$\{?[^}\s]*)(?:\.config/)?(?:quickshell/)?caelestia(?:/|\b)"),
+    "caelestia path": re.compile(
+        r"(?:/etc/xdg/quickshell/caelestia|\.config/caelestia|state/caelestia|quickshell/caelestia)"
+    ),
 }
 
 ACTIVE_ROOTS = (
@@ -32,6 +34,15 @@ ACTIVE_ROOTS = (
 )
 
 EXCLUDED_PARTS = {"tests", "evals", "history", "historical", "recovery", "maintenance", "__pycache__"}
+EXCLUDED_FILES = {
+    "core/import_desktop.py",
+    "core/import_hyprland.py",
+    "core/migrate_legacy_processes.py",
+    "core/shell_lifecycle.py",
+    "scripts/migrate-cortetsu-v2.sh",
+    "cortetsu/bin/check-bottom-hub-target.py",
+    "cortetsu/bin/migrate-bottom-hub-from-main.py",
+}
 TEXT_SUFFIXES = {"", ".qml", ".js", ".py", ".sh", ".fish", ".service", ".tsv", ".json", ".patch", ".conf"}
 
 
@@ -44,6 +55,8 @@ def active_files(root: Path):
             if not path.is_file() or path.suffix not in TEXT_SUFFIXES:
                 continue
             relative = path.relative_to(root)
+            if str(relative) in EXCLUDED_FILES:
+                continue
             if EXCLUDED_PARTS.intersection(relative.parts):
                 continue
             if relative == Path("scripts/audit-zero-caelestia.py"):
