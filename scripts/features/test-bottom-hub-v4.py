@@ -12,7 +12,7 @@ HYPR = (ROOT / "caelestia/user-config/.config/hypr/hypr-user.lua").read_text()
 MANIFEST = (ROOT / "caelestia/patches/MANIFEST.tsv").read_text()
 SHORTCUTS = (MODULES / "Shortcuts.qml").read_text()
 PANELS = (ROOT / "caelestia/patches/modules__drawers__Panels.qml.patch").read_text()
-POPOUT = (ROOT / "caelestia/patches/modules__bar__popouts__ClipWrapper.qml.patch").read_text()
+POPOUT = (MODULES / "bar/popouts/ClipWrapper.qml").read_text()
 WINDOW_CARD = (MODULES / "overview/WindowCard.qml").read_text()
 BAR = (MODULES / "bar/BarWrapper.qml").read_text()
 
@@ -56,7 +56,7 @@ def main() -> None:
     require(PANELS, "anchors.right: root.screenState.utilities ? utilities.left : parent.right", "centros adyacentes")
     require(POPOUT, "content.bottomAnchorCenter - content.nonAnimWidth / 2", "popup centrado en su icono")
     require(WINDOW_CARD, "import qs.utils", "Overview resuelve Icons sin ReferenceError")
-    forbid(POPOUT, "\n+    Behavior on y", "viaje vertical de popup")
+    forbid(POPOUT, "caelestia", "dependencia Caelestia en el wrapper de popup")
 
     print("BottomHub v4 architecture tests: OK")
 
