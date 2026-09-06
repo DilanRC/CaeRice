@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Shapes
 import Caelestia
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects

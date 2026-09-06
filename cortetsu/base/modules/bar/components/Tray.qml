@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
-import Caelestia.Config
 import qs.components
 import qs.modules
 import qs.services

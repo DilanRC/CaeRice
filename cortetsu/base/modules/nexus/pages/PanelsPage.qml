@@ -1,5 +1,4 @@
 import QtQuick.Layouts
-import Caelestia.Config
 import qs.modules
 import qs.modules.nexus.common
 
