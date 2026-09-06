@@ -276,6 +276,8 @@ test_cmd() {
         "scripts/features/test-shortcut-namespace.py"
         "scripts/features/test-cortetsu-screenshot.py"
         "scripts/features/test-cortetsu-emoji.py"
+        "scripts/features/test-patch-debt-audit.py"
+        "scripts/features/test-design-system-migration-status.py"
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done

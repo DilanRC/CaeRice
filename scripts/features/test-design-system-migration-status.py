@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Gate test for Task 8 (design system reduction, cortetsu/modules scope).
+
+Audit result: cortetsu/modules/ already has zero references to the legacy
+Colours./Tokens./StyledRect/StyledText/MaterialIcon vocabulary. Every module
+already uses the first-party primitives (CortetsuSurface, CortetsuText,
+CortetsuIcon) driven by CortetsuDesign.js. This test locks that in as a
+regression gate: if a future change reintroduces a legacy token into an
+owned module, this fails instead of silently regressing the design debt.
+
+Legacy usage still exists in caelestia/patches/*.patch (diffs against the
+upstream caelestia-shell tree) -- that is out of scope for Task 8, which
+targets cortetsu/modules/ only, and is not audited here.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[2]
+MODULES = REPO / "cortetsu/modules"
+
+LEGACY_TOKENS = ("Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon")
+
+REQUIRED_FIRST_PARTY_PRIMITIVES = (
+    "CortetsuSurface.qml",
+    "CortetsuText.qml",
+    "CortetsuIcon.qml",
+    "CortetsuDesign.js",
+)
+
+
+def main() -> None:
+    for name in REQUIRED_FIRST_PARTY_PRIMITIVES:
+        assert (MODULES / name).is_file(), f"missing first-party primitive: {name}"
+
+    offenders: list[str] = []
+    for path in MODULES.rglob("*.qml"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for token in LEGACY_TOKENS:
+            if token in text:
+                offenders.append(f"{path.relative_to(REPO)}: {token}")
+
+    assert not offenders, (
+        "cortetsu/modules/ regressed to legacy design tokens: " + ", ".join(offenders)
+    )
+
+    consumers = sum(
+        1
+        for path in MODULES.rglob("*.qml")
+        if "CortetsuDesign" in path.read_text(encoding="utf-8", errors="ignore")
+    )
+    assert consumers > 0, "no module consumes CortetsuDesign.js -- design system not wired"
+
+    print(
+        f"PASS: cortetsu/modules/ has 0 legacy design tokens, "
+        f"{consumers} files on CortetsuDesign.js first-party primitives"
+    )
+
+
+if __name__ == "__main__":
+    main()
