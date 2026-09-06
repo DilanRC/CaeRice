@@ -97,6 +97,7 @@ Scope {
     function openCalendarFor(screen): void {
         closeAllLaunchers();
         closeAllPanels();
+        closeAllPopouts();
         const state = CortetsuShellState.forScreen(screen)?.cortetsuState;
         if (state)
             state.setRetained("calendar", !(state.calendar ?? false));
@@ -113,6 +114,8 @@ Scope {
         const wasOpen = state.launcher;
         closeAllLaunchers();
         closeAllPanels();
+        if (!wasOpen)
+            closeAllPopouts();
         OverlayPolicy.closeOtherPanels(state);
         state.launcher = !wasOpen;
         shown = true;
@@ -126,6 +129,8 @@ Scope {
         const wasOpen = state.sidebar || state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        if (!wasOpen)
+            closeAllPopouts();
         OverlayPolicy.closeOtherPanels(state);
         state.sidebar = !wasOpen;
         state.utilities = !wasOpen;
@@ -140,12 +145,15 @@ Scope {
         const wasOpen = state.utilities;
         closeAllLaunchers();
         closeAllPanels();
+        if (!wasOpen)
+            closeAllPopouts();
         OverlayPolicy.closeOtherPanels(state);
         state.utilities = !wasOpen;
         shown = true;
     }
 
     function openWallpaperFor(screen): void {
+        closeAllPopouts();
         for (const candidate of CortetsuScreens.screens) {
             const state = CortetsuShellState.forScreen(candidate)?.cortetsuState;
             if (!state)
