@@ -23,6 +23,7 @@ notification = (ROOT / "cortetsu/modules/notifications/Notification.qml").read_t
 toast = (ROOT / "cortetsu/modules/utilities/toasts/ToastItem.qml").read_text()
 sidebar = (ROOT / "cortetsu/modules/sidebar/Content.qml").read_text()
 launcher_list = (ROOT / "cortetsu/modules/launcher/ContentList.qml").read_text()
+overview = (ROOT / "cortetsu/modules/overview/Content.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
@@ -44,6 +45,7 @@ checks = {
     "toast supports keyboard": all(x in toast for x in ("activeFocusOnTab", "Keys.onEnterPressed", "Keys.onEscapePressed")),
     "notification center has reusable empty states": sidebar.count("CortetsuStateMessage") >= 2,
     "launcher has reusable empty state": all(x in launcher_list for x in ("CortetsuStateMessage", "No wallpapers found", "No results")),
+    "overview has reusable empty state": all(x in overview for x in ("CortetsuStateMessage", "No windows to show", "Open an application")),
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),

@@ -6,6 +6,7 @@ import Quickshell
 import QtQuick.Controls
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
+import "../../components"
 
 FocusScope {
     id: root
@@ -1065,47 +1066,15 @@ FocusScope {
                 }
             }
 
-            Item {
+            CortetsuStateMessage {
                 anchors.centerIn: parent
 
                 width: 300
-                height: 120
-
                 visible:
                     root.clients.length === 0
-
-                CortetsuIcon {
-                    id: emptyIcon
-
-                    anchors.horizontalCenter:
-                        parent.horizontalCenter
-
-                    anchors.bottom:
-                        emptyText.top
-
-                    anchors.bottomMargin: 10
-
-                    text: "web_asset_off"
-
-                    color:
-                        CortetsuDesign.colorOutline
-
-                    iconSize: CortetsuTypography.iconExtraLargePx
-                }
-
-                CortetsuText {
-                    id: emptyText
-
-                    anchors.centerIn: parent
-
-                    text:
-                        qsTr("No windows to show")
-
-                    color:
-                        CortetsuDesign.colorOutline
-
-                    textSize: CortetsuTypography.bodyLargePx
-                }
+                icon: "web_asset_off"
+                title: qsTr("No windows to show")
+                detail: qsTr("Open an application to see it here")
             }
         }
     }
