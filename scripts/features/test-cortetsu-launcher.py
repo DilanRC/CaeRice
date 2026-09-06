@@ -73,6 +73,8 @@ assert "CortetsuConfig.actions" in texts["services/Actions.qml"]
 assert "CortetsuConfig.vimKeybinds" in texts["Content.qml"]
 assert "CortetsuConfig.actionPrefix" in texts["Content.qml"]
 assert "CortetsuConfig.actionPrefix" in texts["ContentList.qml"]
+assert "listLoading" in texts["ContentList.qml"]
+assert 'title: qsTr("Loading wallpapers")' in texts["ContentList.qml"]
 
 # actionPrefix and specialPrefix are the two distinct prefixes upstream
 # used to split across GlobalConfig.launcher.actionPrefix/specialPrefix;

@@ -24,6 +24,7 @@ Item {
     required property int rounding
 
     readonly property bool showWallpapers: search.text.startsWith(`${CortetsuConfig.actionPrefix}wallpaper `)
+    readonly property bool listLoading: showWallpapers && wallpaperList.status === Loader.Loading
     readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
     property string animState: showWallpapers ? "wallpapers" : "apps"
 
@@ -117,7 +118,7 @@ Item {
     CortetsuStateMessage {
         id: empty
 
-        opacity: root.currentList?.count === 0 ? 1 : 0
+        opacity: !root.listLoading && root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
         anchors.horizontalCenter: parent.horizontalCenter
@@ -138,6 +139,19 @@ Item {
         Behavior on scale {
             CortetsuAnim {}
         }
+    }
+
+    CortetsuStateMessage {
+        id: loading
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        width: 360
+        visible: root.listLoading
+        kind: "loading"
+        icon: "sync"
+        title: qsTr("Loading wallpapers")
+        detail: qsTr("Preparing the wallpaper library")
     }
 
     Behavior on implicitWidth {

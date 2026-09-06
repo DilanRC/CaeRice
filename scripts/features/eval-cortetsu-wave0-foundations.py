@@ -46,6 +46,7 @@ checks = {
     "toast supports keyboard": all(x in toast for x in ("activeFocusOnTab", "Keys.onEnterPressed", "Keys.onEscapePressed")),
     "notification center has reusable empty states": sidebar.count("CortetsuStateMessage") >= 2,
     "launcher has reusable empty state": all(x in launcher_list for x in ("CortetsuStateMessage", "No wallpapers found", "No results")),
+    "launcher distinguishes wallpaper loading": all(x in launcher_list for x in ("listLoading", 'kind: "loading"', "Loading wallpapers")),
     "launcher has product heading": "title: qsTr(\"Launcher\")" in launcher and "Applications and commands" in launcher,
     "overview has reusable empty state": all(x in overview for x in ("CortetsuStateMessage", "No windows to show", "Open an application")),
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
