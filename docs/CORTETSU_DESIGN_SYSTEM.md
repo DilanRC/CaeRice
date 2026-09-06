@@ -21,8 +21,9 @@ signals instead of reaching into services, so a popup can bind them to the
 existing first-party backend without coupling presentation and capability.
 
 Every interactive component has a disabled state, hover state, pressed state,
-and a visible selected/active state where applicable. Keyboard ownership is
-provided by the popup host and the enclosing surface.
+and a visible selected/active state where applicable. `CortetsuButton` and
+`CortetsuListRow` also opt into tab focus and activate with Enter, Return or
+Space. Popup hosts still own Escape and outside-click dismissal.
 
 ## Density and motion
 

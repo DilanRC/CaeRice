@@ -4,6 +4,9 @@ import "../modules/CortetsuDesign.js" as CortetsuDesign
 Item {
     id: root
 
+    focus: !disabled
+    activeFocusOnTab: !disabled
+
     property string icon
     property string title
     property string subtitle
@@ -18,6 +21,8 @@ Item {
         anchors.fill: parent
         radiusValue: CortetsuDesign.radiusSmall
         active: root.selected
+        disabled: root.disabled
+        focused: root.activeFocus
         baseColor: root.selected ? CortetsuDesign.colorPrimaryContainer : "transparent"
         hoverColor: CortetsuDesign.colorSurfaceGlass
         outlined: false
@@ -69,4 +74,8 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
     }
+
+    Keys.onEnterPressed: root.clicked()
+    Keys.onReturnPressed: root.clicked()
+    Keys.onSpacePressed: root.clicked()
 }

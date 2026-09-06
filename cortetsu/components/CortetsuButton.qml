@@ -5,6 +5,9 @@ import "../modules/CortetsuTypography.js" as CortetsuTypography
 Item {
     id: root
 
+    focus: !disabled
+    activeFocusOnTab: !disabled
+
     property string label
     property string icon
     property bool active: false
@@ -23,6 +26,8 @@ Item {
         radiusValue: CortetsuDesign.radiusPill
         active: root.active
         danger: root.danger
+        disabled: root.disabled
+        focused: root.activeFocus
         baseColor: root.active ? CortetsuDesign.colorPrimary : CortetsuDesign.colorSurfaceGlass
         outlined: !root.active
         hovered: mouse.containsMouse
@@ -59,4 +64,8 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
     }
+
+    Keys.onEnterPressed: root.clicked()
+    Keys.onReturnPressed: root.clicked()
+    Keys.onSpacePressed: root.clicked()
 }
