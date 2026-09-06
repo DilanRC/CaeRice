@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.containers
@@ -101,7 +100,7 @@ PageBase {
                 id: list
 
                 implicitWidth: Tokens.sizes.nexus.popupWidth
-                implicitHeight: CUtils.clamp(row.popupHeight, Tokens.sizes.nexus.minPopupHeight, Tokens.sizes.nexus.maxPopupHeight)
+                                implicitHeight: Math.max(Tokens.sizes.nexus.minPopupHeight, Math.min(row.popupHeight, Tokens.sizes.nexus.maxPopupHeight))
 
                 model: {
                     const apps = [...DesktopEntries.applications.values];

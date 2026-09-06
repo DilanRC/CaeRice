@@ -53,6 +53,8 @@ assert "Caelestia" not in toggles and "GlobalConfig" not in toggles
 wallpaper_style = (repo / "cortetsu/base/modules/nexus/pages/WallpaperAndStyle.qml").read_text(encoding="utf-8")
 assert "GlobalConfig" not in wallpaper_style and "GlobalCortetsuConfig" not in wallpaper_style
 assert "CortetsuConfig.transparencyEnabled" in wallpaper_style
+apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
+assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 assert "GlobalConfig.launcher.favouriteApps" not in hub
 assert "GlobalConfig.bar.tray.hiddenIcons" not in hub
 assert "GlobalConfig.bar.workspaces.shown" not in hub

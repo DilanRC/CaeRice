@@ -52,7 +52,7 @@ PageBase {
             onEditingFinished: value => {
                 if (!field.valid)
                     return;
-                /// TODO: replace with GlobalConfig.launcher.resetOption("actionPrefix") on empty commit when reset is fixed
+                // Empty commits restore the Cortetsu default action prefix.
                 CortetsuConfig.actionPrefix = value || ">";
                 if (CortetsuConfig.actionPrefix === ">")
                     clear();
