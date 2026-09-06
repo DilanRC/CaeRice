@@ -356,8 +356,7 @@ GridView {
                     ? CortetsuDesign.colorVermillion
                     : CortetsuDesign.colorOnSurfaceVariant
 
-                fontStyle:
-                    Qt.font({pixelSize: CortetsuTypography.iconLargePx * 1.3})
+                iconSize: CortetsuTypography.iconLargePx * 1.3
             }
 
             Column {
@@ -435,7 +434,7 @@ GridView {
                 anchors.verticalCenter: parent.verticalCenter
 
                 text: "function"
-                fontStyle: CortetsuTypography.iconLargePx
+                iconSize: CortetsuTypography.iconLargePx
             }
 
             Column {
@@ -503,7 +502,7 @@ GridView {
                 CortetsuIcon {
                     anchors.centerIn: parent
                     text: "open_in_new"
-                    fontStyle: CortetsuTypography.iconMediumPx
+                iconSize: CortetsuTypography.iconMediumPx
                 }
             }
         }
@@ -629,7 +628,7 @@ GridView {
                 text: "check_circle"
                 fill: 1
                 color: CortetsuDesign.colorPrimary
-                fontStyle: CortetsuTypography.iconSmallPx
+                iconSize: CortetsuTypography.iconSmallPx
             }
         }
     }
@@ -674,7 +673,7 @@ GridView {
                 anchors.topMargin: 11
 
                 text: variant.modelData?.icon ?? ""
-                fontStyle: CortetsuTypography.iconLargePx
+                iconSize: CortetsuTypography.iconLargePx
             }
 
             CortetsuText {
