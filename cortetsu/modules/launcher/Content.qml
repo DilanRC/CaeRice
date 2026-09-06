@@ -14,7 +14,7 @@ import qs.modules.launcher.services
 Item {
     id: root
 
-    required property ScreenState screenState
+    required property var screenState
     required property var panels
     required property real maxHeight
 

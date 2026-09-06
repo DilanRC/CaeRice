@@ -10,7 +10,7 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property ScreenState screenState
+    required property var screenState
     required property var panels
 
     readonly property bool shouldBeActive: screenState.launcher

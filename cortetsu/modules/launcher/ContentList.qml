@@ -15,7 +15,7 @@ Item {
     id: root
 
     required property var content
-    required property ScreenState screenState
+    required property var screenState
     required property var panels
     required property real maxHeight
     required property TextField search

@@ -18,7 +18,7 @@ GridView {
     id: root
 
     required property TextField search
-    required property ScreenState screenState
+    required property var screenState
 
     /*
      * IMPORTANT:
@@ -202,7 +202,6 @@ GridView {
                     : appDelegate
 
     ScrollBar.vertical: ScrollBar {
-        flickable: root
     }
 
     Component {
