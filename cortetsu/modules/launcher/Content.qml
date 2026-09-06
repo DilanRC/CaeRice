@@ -1,14 +1,14 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
 import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
-import qs.components
-import qs.components.controls
+import "../CortetsuSearchBar.qml"
 import qs.modules.launcher.services
 
 Item {
@@ -35,7 +35,7 @@ Item {
         listWrapper.implicitHeight +
         padding
 
-    SearchBar {
+    CortetsuSearchBar {
         id: search
 
         objectName: "launcherSearch"

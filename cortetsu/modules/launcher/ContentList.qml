@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
@@ -8,8 +9,6 @@ import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
 import "../CortetsuAnim.qml"
-import qs.components
-import qs.components.controls
 import qs.utils
 
 Item {
@@ -19,7 +18,7 @@ Item {
     required property ScreenState screenState
     required property var panels
     required property real maxHeight
-    required property SearchBar search
+    required property TextField search
     required property int padding
     required property int rounding
 

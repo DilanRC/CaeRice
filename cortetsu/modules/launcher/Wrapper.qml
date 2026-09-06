@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuAnim.qml"
-import qs.components
 import qs.modules.launcher.services
 
 Item {

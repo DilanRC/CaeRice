@@ -1,10 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Widgets
-import qs.components
-import qs.components.controls
 import qs.utils
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
@@ -18,7 +17,7 @@ import qs.modules.launcher.services
 GridView {
     id: root
 
-    required property SearchBar search
+    required property TextField search
     required property ScreenState screenState
 
     /*
@@ -202,7 +201,7 @@ GridView {
                     ? variantDelegate
                     : appDelegate
 
-    StyledScrollBar.vertical: StyledScrollBar {
+    ScrollBar.vertical: ScrollBar {
         flickable: root
     }
 
