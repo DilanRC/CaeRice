@@ -14,6 +14,7 @@ mode = (modules / "CortetsuModeSegment.qml").read_text(encoding="utf-8")
 
 criteria = {
     "superficie exterior transparente": 'color: "transparent"' in hub,
+    "dock continuo": "id: dockBackdrop" in view and "colorSumi, 0.82" in view,
     "segmentos con CortetsuDesign": all("CortetsuDesign" in text for text in (rail, tray, status, mode)),
     "launcher first-party": "CortetsuModeSegment" in view and "launcherRequested" in view,
     "workspace state": "occupiedWorkspaceIds" in view and "activeWsId" in view,

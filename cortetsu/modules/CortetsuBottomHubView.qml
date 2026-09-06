@@ -1,4 +1,5 @@
 import QtQuick
+import "CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
@@ -59,6 +60,25 @@ Item {
     )
 
     implicitHeight: 60
+
+    // The dock is one product surface; the segments remain separate only for
+    // interaction and popup anchoring.
+    CortetsuSurface {
+        id: dockBackdrop
+
+        anchors.fill: parent
+        radiusValue: 0
+        baseColor: Qt.alpha(CortetsuDesign.colorSumi, 0.82)
+        outlined: false
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: 1
+        color: Qt.alpha(CortetsuDesign.colorWashi, 0.12)
+    }
 
     CortetsuModeSegment {
         id: leftSegment
