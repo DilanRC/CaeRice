@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Wayland
 import Quickshell.Widgets
-import qs.services
 import qs.utils
+import ".."
+import "../.."
 import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 
@@ -29,23 +30,23 @@ Item {
                 anchors.fill: parent
                 anchors.margins: CortetsuDesign.spacingStandard
                 spacing: CortetsuDesign.spacingStandard
-                IconImage { Layout.preferredWidth: 32; Layout.preferredHeight: 32; source: Icons.getAppIcon(Hypr.activeToplevel?.lastIpcObject.class ?? "", "image-missing") }
+                IconImage { Layout.preferredWidth: 32; Layout.preferredHeight: 32; source: Icons.getAppIcon(CortetsuHypr.activeToplevel?.lastIpcObject.class ?? "", "image-missing") }
                 ColumnLayout {
                     Layout.fillWidth: true
-                    CortetsuText { Layout.fillWidth: true; text: Hypr.activeToplevel?.title ?? qsTr("No active window"); elide: Text.ElideRight }
-                    CortetsuText { Layout.fillWidth: true; text: Hypr.activeToplevel?.lastIpcObject.class ?? qsTr("Desktop"); color: CortetsuDesign.colorOnSurfaceVariant; elide: Text.ElideRight }
+                    CortetsuText { Layout.fillWidth: true; text: CortetsuHypr.activeToplevel?.title ?? qsTr("No active window"); elide: Text.ElideRight }
+                    CortetsuText { Layout.fillWidth: true; text: CortetsuHypr.activeToplevel?.lastIpcObject.class ?? qsTr("Desktop"); color: CortetsuDesign.colorOnSurfaceVariant; elide: Text.ElideRight }
                 }
                 CortetsuButton { compact: true; icon: "open_in_full"; label: qsTr("Details"); onClicked: root.popouts.detachRequested("winfo") }
             }
         }
 
         ClippingWrapperRectangle {
-            visible: Hypr.activeToplevel !== null
+            visible: CortetsuHypr.activeToplevel !== null
             width: parent.width
             height: 220
             color: CortetsuDesign.colorSurfaceGlass
             radius: CortetsuDesign.radiusLarge
-            ScreencopyView { anchors.fill: parent; captureSource: Hypr.activeToplevel?.wayland ?? null; live: visible }
+            ScreencopyView { anchors.fill: parent; captureSource: CortetsuHypr.activeToplevel?.wayland ?? null; live: visible }
         }
     }
 }

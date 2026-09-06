@@ -1,5 +1,6 @@
 import QtQuick.Layouts
-import qs.services
+import ".."
+import "../.."
 import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 

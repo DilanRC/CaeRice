@@ -4,8 +4,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Widgets
-import qs.components
-import qs.services
+import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 
 StackView {

@@ -73,6 +73,8 @@ for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "Corte
     owned = (popouts / name).read_text(encoding="utf-8")
     assert "CortetsuSurface" in owned or "CortetsuListRow" in owned or "CortetsuButton" in owned
     assert "CortetsuDesign" in owned
+    assert "import qs.services" not in owned
+    assert "import qs.components" not in owned
 for legacy in ("sourceComponent: Battery", "sourceComponent: ActiveWindow", "sourceComponent: KbLayout", "sourceComponent: LockStatus", "sourceComponent: TrayMenu"):
     assert legacy not in content, legacy
 assert "sourceComponent: Network {" not in content

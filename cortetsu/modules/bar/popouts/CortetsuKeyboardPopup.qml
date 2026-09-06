@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import qs.components
 import qs.modules.bar.popouts.kblayout
+import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 
 ColumnLayout {
