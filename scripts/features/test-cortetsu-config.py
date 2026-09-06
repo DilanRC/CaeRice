@@ -53,6 +53,12 @@ assert "Caelestia" not in toggles and "GlobalConfig" not in toggles
 wallpaper_style = (repo / "cortetsu/base/modules/nexus/pages/WallpaperAndStyle.qml").read_text(encoding="utf-8")
 assert "GlobalConfig" not in wallpaper_style and "GlobalCortetsuConfig" not in wallpaper_style
 assert "CortetsuConfig.transparencyEnabled" in wallpaper_style
+notifications_page = (repo / "cortetsu/base/modules/nexus/pages/services/NotificationsPage.qml").read_text(encoding="utf-8")
+assert "GlobalCortetsuConfig" not in notifications_page
+assert "CortetsuConfig.notificationGroupPreviewNum" in notifications_page
+fetch = (repo / "cortetsu/base/modules/lock/Fetch.qml").read_text(encoding="utf-8")
+assert "import Caelestia" not in fetch and "CUtils.clamp" not in fetch
+assert "function clamp(value: real, low: real, high: real)" in fetch
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (

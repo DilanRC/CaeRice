@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
 import qs.components.controls
 import qs.modules
 import qs.modules.nexus.common
@@ -89,11 +88,11 @@ PageBase {
             last: true
             label: qsTr("Group preview count")
             subtext: qsTr("Notifications shown per group before collapsing")
-            value: GlobalCortetsuConfig.notificationGroupPreviewNum
+            value: CortetsuConfig.notificationGroupPreviewNum
             from: 1
             to: 10
             stepSize: 1
-            onMoved: v => GlobalCortetsuConfig.notificationGroupPreviewNum = Math.round(v)
+            onMoved: v => CortetsuConfig.notificationGroupPreviewNum = Math.round(v)
         }
 
         // Toasts

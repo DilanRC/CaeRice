@@ -3,8 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import Caelestia
-import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.modules
@@ -16,6 +14,10 @@ CortetsuSurface {
 
     required property real rootHeight
     readonly property int cBoxSize: Tokens.font.body.medium.pointSize * 2
+
+    function clamp(value: real, low: real, high: real): real {
+        return Math.max(low, Math.min(high, value));
+    }
 
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.margins
     radius: Tokens.rounding.medium
@@ -135,7 +137,7 @@ CortetsuSurface {
                 spacing: Tokens.spacing.largeIncreased
 
                 Repeater {
-                    model: CUtils.clamp(Math.floor((layout.width + coloursRow.spacing) / (root.cBoxSize + coloursRow.spacing)), 0, 8)
+                    model: root.clamp(Math.floor((layout.width + coloursRow.spacing) / (root.cBoxSize + coloursRow.spacing)), 0, 8)
 
                     CortetsuSurface {
                         required property int index
