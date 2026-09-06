@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQml
 import Quickshell.Io
+import "../modules"
 
 // Optional first-party spectrum boundary. The shell remains usable when cava
 // is absent; consumers receive a stable zero-filled list instead of an
@@ -25,7 +26,7 @@ QtObject {
         available = true;
     }
 
-    Process {
+    property Process cavaProcess: Process {
         command: ["sh", "-c", "command -v cava >/dev/null 2>&1 && exec cava"]
         running: true
         stdout: SplitParser {
