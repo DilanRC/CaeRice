@@ -15,7 +15,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Surface | Entrypoint | Direct visual dependencies | Maturity | Main product gap | Priority |
 | --- | --- | --- | --- | --- | --- |
 | BottomHub | `modules/BottomHub.qml`, `modules/CortetsuBottomHubView.qml` | `CortetsuAppRail`, `CortetsuModeSegment`, `CortetsuStatusSegment`, `CortetsuTraySegment` | FUNCTIONAL | density, hierarchy, keyboard focus, state polish | P0 |
-| Launcher | `modules/launcher/Wrapper.qml`, `Content.qml`, `AppList.qml`, `ContentList.qml` | launcher services, `CortetsuSearchBar`, item delegates | FUNCTIONAL | result hierarchy, focus model, empty/loading states | P1 |
+| Launcher | `modules/launcher/Wrapper.qml`, `Content.qml`, `AppList.qml`, `ContentList.qml` | launcher services, `CortetsuSearchBar`, item delegates | VERIFIED | runtime search/selection/Enter launch, Escape close, wallpaper query empty state, two-monitor visual inspection and clean journal verified | P1 |
 | Quick Settings / Utilities | `modules/utilities/Wrapper.qml`, `Content.qml` | utility cards, `CortetsuSurface`, toggle controls | FUNCTIONAL | control-surface composition and state feedback | P1 |
 | Notifications | `modules/sidebar/Content.qml`, `modules/notifications/Wrapper.qml`, `Notification.qml` | notification model, action list, scroll container | VERIFIED | real notify-send card, two-monitor toast, always-visible Dismiss, empty state, Escape close, and clean journal verified | P1 |
 | Wi-Fi / Network | `modules/bar/popouts/CortetsuNetworkPopup.qml`, `base/modules/bar/popouts/Network.qml` | network service, list rows, password popup | COMPONENTIZED | loading/error/disconnected states and density | P1 |
@@ -45,3 +45,11 @@ Existing shared contracts are `CortetsuDesign.js`, `CortetsuTokens.qml`,
 This checkpoint adds keyboard focus and activation to the two most common
 interactive primitives. It does not change popup anchoring, screen selection,
 service ownership, or detached popup behavior.
+
+## Launcher verification evidence
+
+The promoted runtime was opened on both monitors. On the right monitor,
+searching `kitty` produced a selected application result and Enter launched a
+new Kitty instance. Escape closed the launcher. On the left monitor, a
+wallpaper query rendered the first-party empty state. The shell remained
+active with zero restarts and no new warning/error/critical journal entries.
