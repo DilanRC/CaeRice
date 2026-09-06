@@ -138,6 +138,14 @@ session_service = (repo / "cortetsu/services/CortetsuSession.qml").read_text(enc
 assert 'org.freedesktop.login1.Manager' in session_service and 'signal resumed' in session_service
 assert "import Caelestia.Services" not in (repo / "cortetsu/base/modules/lock/Pam.qml").read_text(encoding="utf-8")
 assert "CortetsuSession" in (repo / "cortetsu/base/modules/lock/Pam.qml").read_text(encoding="utf-8")
+lyrics_service = (repo / "cortetsu/services/Lyrics.qml").read_text(encoding="utf-8")
+for marker in ("parseLrc", "indexForTime", "timeForIndex", "lrclib.net/api/search", "CORTETSU_LYRICS_DIR"):
+    assert marker in lyrics_service, marker
+for lyrics_consumer in (
+    repo / "cortetsu/base/modules/dashboard/media/LyricList.qml",
+    repo / "cortetsu/base/modules/dashboard/media/LyricsInfo.qml",
+):
+    assert "import Caelestia" not in lyrics_consumer.read_text(encoding="utf-8"), lyrics_consumer
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (

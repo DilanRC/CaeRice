@@ -166,6 +166,7 @@ for required in \
     services/Brightness.qml \
     services/Audio.qml \
     services/Players.qml \
+    services/Lyrics.qml \
     services/Recorder.qml \
     services/ShellState.qml \
     modules/CortetsuStateLayer.qml \

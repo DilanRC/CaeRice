@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia
 import qs.components.blobs
-import Caelestia.Services
 import qs.components
 import qs.services
 
@@ -148,7 +146,7 @@ Item {
                 opacity: 0
 
                 CortetsuText {
-                    text: qsTr("Backend: %1").arg(CUtils.enumToString(Lyrics, "backend"))
+                    text: qsTr("Backend: %1").arg(Lyrics.backendName(Lyrics.backend))
                     color: Colours.palette.m3onSurfaceVariant
                     animate: true
                 }
