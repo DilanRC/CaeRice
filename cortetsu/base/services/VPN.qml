@@ -3,9 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import Caelestia.Config
 import qs.modules
+import qs.services
 
 Singleton {
     id: root
@@ -27,7 +26,7 @@ Singleton {
     // Internal id of the currently selected provider (persisted). Only one
     // provider can be selected at a time; empty means none. Keyed by id rather
     // than name so the selection survives renames.
-    readonly property string selectedProvider: GlobalConfig.utilities.vpn.selectedProvider
+    readonly property string selectedProvider: CortetsuConfig.vpn.selectedProvider
 
     // Live connection stats, refreshed on demand by the UI via refreshStats().
     property double connectedSince: 0
@@ -50,7 +49,7 @@ Singleton {
         const sel = root.selectedProvider;
         if (sel.length === 0)
             return "wireguard";
-        const match = GlobalConfig.utilities.vpn.provider.find(p => typeof p === "object" && p.id === sel);
+        const match = CortetsuConfig.vpn.providers.find(p => typeof p === "object" && p.id === sel);
         return match || "wireguard";
     }
 
@@ -99,7 +98,7 @@ Singleton {
     // Normalised, plain-data view of the configured providers. Re-evaluated
     // whenever the config changes; syncProviders() folds it into `providers`.
     readonly property var providerConfigs: {
-        const list = GlobalConfig.utilities.vpn.provider;
+        const list = CortetsuConfig.vpn.providers;
         const out = [];
         for (let i = 0; i < list.length; i++) {
             const p = list[i];
@@ -174,19 +173,19 @@ Singleton {
 
     // Persist the whole provider list back to config (file-backed).
     function writeProviders(providers: var): void {
-        GlobalConfig.utilities.vpn.provider = providers;
+        CortetsuConfig.vpn.providers = providers;
     }
 
     // Resolve the stable internal id of the provider entry at `index`.
     function providerIdAt(index: int): string {
-        const entry = GlobalConfig.utilities.vpn.provider[index];
+        const entry = CortetsuConfig.vpn.providers[index];
         return (entry && typeof entry === "object") ? (entry.id || "") : "";
     }
 
     // Add a new provider. data: { name, displayName, interface, connectCmd[],
     // disconnectCmd[] }. Newly added providers are not selected by default.
     function addProvider(data: var): void {
-        const current = GlobalConfig.utilities.vpn.provider.slice();
+        const current = CortetsuConfig.vpn.providers.slice();
         current.push(buildProviderObject(root.generateId(), data));
         writeProviders(current);
     }
@@ -194,7 +193,7 @@ Singleton {
     // Update an existing provider (by index), preserving its internal id so the
     // selection sticks even when the name changes.
     function updateProvider(index: int, data: var): void {
-        const current = GlobalConfig.utilities.vpn.provider;
+        const current = CortetsuConfig.vpn.providers;
         const id = root.providerIdAt(index) || root.generateId();
         const result = [];
         for (let i = 0; i < current.length; i++)
@@ -205,7 +204,7 @@ Singleton {
     // Delete a provider by index. ensureSelection() re-homes the selection to
     // the first remaining provider if the deleted one was selected.
     function deleteProvider(index: int): void {
-        const current = GlobalConfig.utilities.vpn.provider;
+        const current = CortetsuConfig.vpn.providers;
         const result = [];
         for (let i = 0; i < current.length; i++)
             if (i !== index)
@@ -228,7 +227,7 @@ Singleton {
     }
 
     function applySelectedProvider(id: string): void {
-        GlobalConfig.utilities.vpn.selectedProvider = id;
+        CortetsuConfig.vpn.selectedProvider = id;
     }
 
     // Guarantee there is always a valid selection while any provider exists: if
@@ -240,7 +239,7 @@ Singleton {
             return;
         const next = configs.length > 0 ? configs[0].id : "";
         if (next !== root.selectedProvider)
-            GlobalConfig.utilities.vpn.selectedProvider = next;
+            CortetsuConfig.vpn.selectedProvider = next;
     }
 
     function connect(): void {
@@ -270,14 +269,14 @@ Singleton {
         connected = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
         if (CortetsuConfig.toastVpnChanged)
-            Toaster.toast(qsTr("VPN connection failed"), reason, "vpn_key_alert");
+            CortetsuToaster.toast(qsTr("VPN connection failed"), reason, "vpn_key_alert");
     }
 
     function reportDisconnectFailure(reason: string): void {
         disconnectPending = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
         if (CortetsuConfig.toastVpnChanged)
-            Toaster.toast(qsTr("VPN disconnection failed"), reason, "vpn_key_alert");
+            CortetsuToaster.toast(qsTr("VPN disconnection failed"), reason, "vpn_key_alert");
     }
 
     function checkStatus(): void {
@@ -527,19 +526,19 @@ Singleton {
 
         switch (statusObj.state) {
         case "connected":
-            Toaster.toast(qsTr("VPN connected"), qsTr("Connected to %1").arg(displayName), "vpn_key");
+            CortetsuToaster.toast(qsTr("VPN connected"), qsTr("Connected to %1").arg(displayName), "vpn_key");
             break;
         case "disconnected":
-            Toaster.toast(qsTr("VPN disconnected"), qsTr("Disconnected from %1").arg(displayName), "vpn_key_off");
+            CortetsuToaster.toast(qsTr("VPN disconnected"), qsTr("Disconnected from %1").arg(displayName), "vpn_key_off");
             break;
         case "needs-auth":
             const authMsg = statusObj.reason || "Authentication required";
-            Toaster.toast(qsTr("VPN authentication required"), qsTr("%1: %2").arg(displayName).arg(authMsg), "vpn_lock");
+            CortetsuToaster.toast(qsTr("VPN authentication required"), qsTr("%1: %2").arg(displayName).arg(authMsg), "vpn_lock");
             break;
         case "error":
             if (status.state === "connected" || status.state === "connecting" || status.state === "needs-auth") {
                 const errMsg = statusObj.reason || "Unknown error";
-                Toaster.toast(qsTr("VPN error"), qsTr("%1: %2").arg(displayName).arg(errMsg), "error");
+                CortetsuToaster.toast(qsTr("VPN error"), qsTr("%1: %2").arg(displayName).arg(errMsg), "error");
             }
             break;
         }
@@ -549,7 +548,7 @@ Singleton {
     // and fold any legacy per-provider `enabled` flag into the single selection.
     // Runs once at startup and rewrites the config only if something changed.
     function migrateProviders(): void {
-        const list = GlobalConfig.utilities.vpn.provider;
+        const list = CortetsuConfig.vpn.providers;
         const result = [];
         let selectedId = root.selectedProvider;
         let changed = false;
@@ -575,7 +574,7 @@ Singleton {
         }
 
         if (selectedId !== root.selectedProvider)
-            GlobalConfig.utilities.vpn.selectedProvider = selectedId;
+            CortetsuConfig.vpn.selectedProvider = selectedId;
         if (changed)
             writeProviders(result);
     }
@@ -594,8 +593,8 @@ Singleton {
         }
 
         // Update config flag, but not on provider switch
-        if (pendingSwitchProvider.length === 0 && GlobalConfig.utilities.vpn.enabled !== connected)
-            GlobalConfig.utilities.vpn.enabled = connected;
+        if (pendingSwitchProvider.length === 0 && CortetsuConfig.vpn.enabled !== connected)
+            CortetsuConfig.vpn.enabled = connected;
 
         if (!connected && pendingSwitchProvider.length > 0) {
             const id = pendingSwitchProvider;
@@ -641,7 +640,7 @@ Singleton {
         root.ensureSelection();
         root.syncProviders();
         if (root.selectedProvider.length > 0) {
-            root.autoConnectPending = GlobalConfig.utilities.vpn.enabled;
+            root.autoConnectPending = CortetsuConfig.vpn.enabled;
             statusCheckTimer.start();
         }
     }
@@ -922,7 +921,7 @@ Singleton {
     LoggingCategory {
         id: lc
 
-        name: "caelestia.qml.services.vpn"
+        name: "cortetsu.qml.services.vpn"
         defaultLogLevel: LoggingCategory.Info
     }
 

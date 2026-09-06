@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.modules
@@ -29,7 +28,7 @@ CortetsuSurface {
             }
 
             if (item.id === "vpn") {
-                return GlobalConfig.utilities.vpn.selectedProvider.length > 0;
+                return CortetsuConfig.vpn.selectedProvider.length > 0;
             }
 
             seenIds.add(item.id);

@@ -55,18 +55,36 @@ def payload_from_legacy(path: Path) -> dict[str, object]:
     apps = data.get("general", {}).get("apps", {})
     services = data.get("services", {})
     toasts = data.get("utilities", {}).get("toasts", {})
+    vpn = data.get("utilities", {}).get("vpn", {})
     notifs = data.get("notifs", {})
     shown = workspaces.get("shown", 5)
     try:
         shown = max(1, min(20, int(shown)))
     except (TypeError, ValueError):
         shown = 5
+    providers = []
+    for value in vpn.get("provider", []) if isinstance(vpn, dict) else []:
+        if isinstance(value, str):
+            providers.append(value)
+            continue
+        if not isinstance(value, dict) or not isinstance(value.get("name"), str):
+            continue
+        provider = {key: value[key] for key in ("id", "name", "displayName", "interface") if isinstance(value.get(key), str)}
+        for key in ("connectCmd", "disconnectCmd"):
+            if isinstance(value.get(key), list):
+                provider[key] = [item for item in value[key] if isinstance(item, str)]
+        providers.append(provider)
     return {
         "schema": 1,
         "favouriteApps": [x for x in launcher.get("favouriteApps", []) if isinstance(x, str)],
         "hiddenApps": [x for x in launcher.get("hiddenApps", []) if isinstance(x, str)],
         "hiddenTrayIcons": [x for x in tray.get("hiddenIcons", []) if isinstance(x, str)],
         "terminalCommand": [x for x in apps.get("terminal", ["kitty"]) if isinstance(x, str)],
+        "vpn": {
+            "providers": providers,
+            "selectedProvider": vpn.get("selectedProvider", "") if isinstance(vpn, dict) and isinstance(vpn.get("selectedProvider", ""), str) else "",
+            "enabled": vpn.get("enabled", False) is True if isinstance(vpn, dict) else False,
+        },
         "actions": [x for x in launcher.get("actions", []) if isinstance(x, dict)],
         "actionPrefix": launcher.get("actionPrefix", ">") if isinstance(launcher.get("actionPrefix", ">"), str) else ">",
         "specialPrefix": launcher.get("specialPrefix", "@") if isinstance(launcher.get("specialPrefix", "@"), str) else "@",

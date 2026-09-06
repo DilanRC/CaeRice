@@ -19,6 +19,7 @@ visualiser = (modules / "background/Visualiser.qml").read_text(encoding="utf-8")
 wallpaper_service = (modules / "CortetsuWallpapers.qml").read_text(encoding="utf-8")
 bar_clock = (modules / "bar/components/Clock.qml").read_text(encoding="utf-8")
 status_icons = (modules / "bar/components/StatusIcons.qml").read_text(encoding="utf-8")
+vpn_service = (repo / "cortetsu/base/services/VPN.qml").read_text(encoding="utf-8")
 battery_monitor = (modules / "BatteryMonitor.qml").read_text(encoding="utf-8")
 service_loader = (modules / "ServiceLoader.qml").read_text(encoding="utf-8")
 game_mode = (repo / "cortetsu/services/GameMode.qml").read_text(encoding="utf-8")
@@ -46,6 +47,9 @@ nexus_sources = "\n".join(path.read_text(encoding="utf-8") for path in (repo / "
 lock_sources = "\n".join(path.read_text(encoding="utf-8") for path in (repo / "cortetsu/base/modules/lock").rglob("*.qml"))
 for marker in ("CortetsuConfig.dashboard", "CortetsuConfig.launcher", "CortetsuConfig.sidebar", "CortetsuConfig.utilities", "CortetsuConfig.bar", "CortetsuConfig.bar.workspaces", "CortetsuConfig.bar.tray", "CortetsuConfig.bar.activeWindow", "CortetsuConfig.bar.popouts", "CortetsuConfig.bar.clock", "CortetsuConfig.toastFullscreen", "CortetsuConfig.maxToasts", "CortetsuConfig.lockRecolourLogo", "CortetsuConfig.lockEnableFprint", "CortetsuConfig.notificationGroupPreviewNum", "CortetsuConfig.dashboardMediaUpdateInterval", "CortetsuConfig.nexusNetworkRescanInterval", "CortetsuConfig.useFuzzyActions", "CortetsuConfig.useFuzzySchemes", "CortetsuConfig.useFuzzyVariants", "CortetsuConfig.audioCommand", "CortetsuConfig.playbackCommand", "CortetsuConfig.explorerCommand", "CortetsuConfig.gpuType", "CortetsuConfig.statusIcons", "CortetsuConfig.quickToggles"):
     assert marker in (panel_sources + workspace_sources + bar_sources + nexus_sources + lock_sources), marker
+assert "CortetsuConfig.vpn.providers" in vpn_service
+toggles = (repo / "cortetsu/base/modules/utilities/cards/Toggles.qml").read_text(encoding="utf-8")
+assert "Caelestia" not in toggles and "GlobalConfig" not in toggles
 assert "GlobalConfig.launcher.favouriteApps" not in hub
 assert "GlobalConfig.bar.tray.hiddenIcons" not in hub
 assert "GlobalConfig.bar.workspaces.shown" not in hub
@@ -99,6 +103,9 @@ for legacy in ("Caelestia", "GlobalConfig", "qs.components", "qs.services"):
 assert "CortetsuSurface" in notification_view and "modelData.close()" in notification_view
 assert "CortetsuConfig" in utilities_wrapper and "modules__utilities__Wrapper.qml.patch" not in utilities_wrapper
 assert "readonly property real nonAnimHeight" in utilities_wrapper
+vpn = (repo / "cortetsu/base/services/VPN.qml").read_text(encoding="utf-8")
+assert "GlobalConfig" not in vpn and "Caelestia" not in vpn
+assert "CortetsuConfig.vpn.providers" in vpn and "CortetsuToaster" in vpn
 for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components", "Colours.qml"):
     assert legacy not in colours, legacy
 assert "CortetsuDesign.colorPrimary" in colours and "component CortetsuPalette" in colours
