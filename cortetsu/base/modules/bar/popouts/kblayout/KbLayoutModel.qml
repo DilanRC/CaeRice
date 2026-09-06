@@ -2,8 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell.Io
-import Caelestia
-import Caelestia.Config
 import qs.modules
 
 // TODO: handle this better later

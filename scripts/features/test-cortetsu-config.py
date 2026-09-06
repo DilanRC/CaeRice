@@ -55,6 +55,23 @@ assert "GlobalConfig" not in wallpaper_style and "GlobalCortetsuConfig" not in w
 assert "CortetsuConfig.transparencyEnabled" in wallpaper_style
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
+for path in (
+    repo / "cortetsu/base/modules/utilities/cards/RecordingList.qml",
+    repo / "cortetsu/base/modules/sidebar/NotifDock.qml",
+    repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml",
+    repo / "cortetsu/base/modules/lock/Pam.qml",
+    repo / "cortetsu/base/modules/nexus/pages/ServicesPage.qml",
+    repo / "cortetsu/base/modules/lock/center/PasswordInput.qml",
+    repo / "cortetsu/base/modules/nexus/pages/WallpaperAndStyle.qml",
+    repo / "cortetsu/base/modules/lock/center/StateMessage.qml",
+    repo / "cortetsu/base/modules/launcher/items/CalcItem.qml",
+    repo / "cortetsu/base/modules/nexus/pages/panels/UtilitiesPanel.qml",
+    repo / "cortetsu/base/modules/nexus/pages/panels/taskbar/BarStatusIcons.qml",
+    repo / "cortetsu/base/modules/bar/popouts/kblayout/KbLayoutModel.qml",
+):
+    assert "import Caelestia.Config" not in path.read_text(encoding="utf-8"), path
+assert "import Caelestia" not in (repo / "cortetsu/base/modules/launcher/items/CalcItem.qml").read_text(encoding="utf-8")
+assert "import Caelestia" not in (repo / "cortetsu/base/modules/bar/popouts/kblayout/KbLayoutModel.qml").read_text(encoding="utf-8")
 button_row = (repo / "cortetsu/base/components/controls/ButtonRow.qml").read_text(encoding="utf-8")
 assert "RowLayout" in button_row and "property real spacing" in button_row
 for primitive in ("CircularIndicatorManager.qml", "LinearIndicatorManager.qml"):
