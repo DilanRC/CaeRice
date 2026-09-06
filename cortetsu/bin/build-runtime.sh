@@ -172,6 +172,8 @@ for required in \
     modules/CortetsuShellState.qml \
     services/Time.qml \
     services/Hypr.qml \
+    services/Notifs.qml \
+    services/NotifData.qml \
     services/Brightness.qml \
     services/Audio.qml \
     services/Players.qml \

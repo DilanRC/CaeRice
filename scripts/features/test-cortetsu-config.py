@@ -25,6 +25,8 @@ requests = (repo / "cortetsu/services/Requests.qml").read_text(encoding="utf-8")
 weather = (repo / "cortetsu/services/Weather.qml").read_text(encoding="utf-8")
 icons = (repo / "cortetsu/utils/Icons.qml").read_text(encoding="utf-8")
 sysinfo = (repo / "cortetsu/utils/SysInfo.qml").read_text(encoding="utf-8")
+notifs = (repo / "cortetsu/services/Notifs.qml").read_text(encoding="utf-8")
+notif_data = (repo / "cortetsu/services/NotifData.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -71,6 +73,11 @@ for utility in (icons, sysinfo):
         assert legacy not in utility, legacy
 assert "getAppIcon" in icons and "getBatteryIcon" in icons and "getNotifIcon" in icons
 assert "sanitiseDmi" in sysinfo and "/etc/os-release" in sysinfo
+for notification_file in (notifs, notif_data):
+    for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components"):
+        assert legacy not in notification_file, legacy
+assert "NotificationServer" in notifs and "function hasFullscreen" in notifs
+assert "function close" in notif_data and "property list<var> actions" in notif_data
 assert "import Caelestia" not in visualiser
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
