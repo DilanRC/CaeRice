@@ -29,10 +29,6 @@ AUDITED_ACTIVE_PATCHES = {
         "modules/bar/popouts/ClipWrapper.qml",
         ("bottomAnchorCenter",),
     ),
-    "modules__utilities__Wrapper.qml.patch": (
-        "modules/utilities/Wrapper.qml",
-        ("readonly property bool shouldBeActive: screenState.utilities",),
-    ),
 }
 
 # check-bottom-hub-target.py CHECKS keys that must exist for the Bottom-Hub
