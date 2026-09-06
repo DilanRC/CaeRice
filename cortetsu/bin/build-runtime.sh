@@ -168,6 +168,7 @@ for required in \
     modules/CortetsuShellState.qml \
     services/Time.qml \
     services/Brightness.qml \
+    services/Audio.qml \
     services/Players.qml \
     services/ShellState.qml \
     modules/CortetsuStateLayer.qml \

@@ -2,7 +2,6 @@ patch	path
 shell.qml.patch	shell.qml
 services__Hypr.qml.patch	services/Hypr.qml
 utils__Paths__Config.qml.patch	utils/Paths.qml
-services__CoreConfig.qml.patch	services/Time.qml,services/Brightness.qml,services/Audio.qml,services/Players.qml
 services__NotificationConfig.qml.patch	services/Notifs.qml,services/NotifData.qml,services/GameMode.qml,modules/notifications/Notification.qml
 services__RegionalConfig.qml.patch	services/Weather.qml,modules/background/DesktopClock.qml,modules/lock/weather/Forecast.qml
 modules__Shortcuts.qml.patch	modules/Shortcuts.qml
