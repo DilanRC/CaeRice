@@ -175,7 +175,7 @@ PageBase {
             first: true
             text: qsTr("Display wallpaper")
             checked: CortetsuConfig.wallpaperEnabled
-            onToggled: GlobalCortetsuConfig.wallpaperEnabled = checked
+            onToggled: CortetsuConfig.wallpaperEnabled = checked
         }
 
         ToggleRow {
@@ -184,7 +184,7 @@ PageBase {
             text: qsTr("Transparency")
             subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
             checked: Colours.transparency.enabled
-            onToggled: GlobalConfig.appearance.transparency.enabled = checked
+            onToggled: CortetsuConfig.transparencyEnabled = checked
         }
 
         ToggleRow {

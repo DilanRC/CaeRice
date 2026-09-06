@@ -17,7 +17,7 @@ Singleton {
     readonly property QtObject current: palette
     readonly property QtObject preview: palette
     readonly property QtObject tPalette: palette
-    readonly property QtObject transparency: QtObject { readonly property bool enabled: false; readonly property real base: 0; readonly property real layers: 0 }
+    readonly property QtObject transparency: QtObject { readonly property bool enabled: CortetsuConfig.transparencyEnabled; readonly property real base: 0.92; readonly property real layers: 0.92 }
     readonly property real wallLuminance: 0
 
     function layer(colour, layerNumber = 0) { return colour; }
