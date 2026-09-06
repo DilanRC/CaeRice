@@ -8,6 +8,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.effects
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -42,7 +43,7 @@ ColumnLayout {
             asynchronous: true
             anchors.centerIn: parent
             active: opacity > 0
-            opacity: Notifs.list.length > 0 && !Config.lock.hideNotifs ? 0 : 1
+            opacity: Notifs.list.length > 0 && !CortetsuConfig.lockHideNotifs ? 0 : 1
 
             sourceComponent: ColumnLayout {
                 spacing: Tokens.spacing.largeIncreased
@@ -62,7 +63,7 @@ ColumnLayout {
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Config.lock.hideNotifs ? qsTr("Unlock for Notifications") : qsTr("No Notifications")
+                    text: CortetsuConfig.lockHideNotifs ? qsTr("Unlock for Notifications") : qsTr("No Notifications")
                     color: Colours.palette.m3outlineVariant
                     font: Tokens.font.mono.builders.large.weight(Font.Medium).build()
                 }
@@ -77,7 +78,7 @@ ColumnLayout {
 
         StyledListView {
             anchors.fill: parent
-            visible: !Config.lock.hideNotifs
+            visible: !CortetsuConfig.lockHideNotifs
             spacing: Tokens.spacing.small
             clip: true
 

@@ -7,6 +7,7 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.effects
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -164,7 +165,7 @@ CortetsuSurface {
             source: SysInfo.osLogo
             implicitSize: height
             colour: Colours.palette.m3primary
-            layer.enabled: Config.lock.recolourLogo
+            layer.enabled: CortetsuConfig.lockRecolourLogo
         }
     }
 

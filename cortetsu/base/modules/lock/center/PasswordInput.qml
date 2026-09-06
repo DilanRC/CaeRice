@@ -6,6 +6,7 @@ import M3Shapes
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.modules
 import qs.services
 
 CortetsuSurface {
@@ -75,7 +76,7 @@ CortetsuSurface {
                 CortetsuIcon {
                     animate: true
                     text: {
-                        if (root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries) {
+                        if (root.lock.pam.fprint.tries >= CortetsuConfig.lockMaxFprintTries) {
                             if (root.lock.pam.howdy.canAttempt)
                                 return "face";
                             return "fingerprint_off";
@@ -86,7 +87,7 @@ CortetsuSurface {
                             return "face";
                         return "lock";
                     }
-                    color: !root.lock.pam.howdy.canAttempt && root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                    color: !root.lock.pam.howdy.canAttempt && root.lock.pam.fprint.tries >= CortetsuConfig.lockMaxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
                     fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale).build()
                     fill: text === "face"
                 }

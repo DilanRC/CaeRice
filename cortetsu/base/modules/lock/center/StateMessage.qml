@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 import qs.modules.lock
 
@@ -23,14 +24,14 @@ Item {
         // Fprint/howdy fail
         if (pam.state !== Pam.MaxTries) {
             if (pam.fprint.state === Pam.Failed)
-                return qsTr("Fingerprint not recognized (%1/%2). Please try again or use password.").arg(pam.fprint.tries).arg(GlobalConfig.lock.maxFprintTries);
+                return qsTr("Fingerprint not recognized (%1/%2). Please try again or use password.").arg(pam.fprint.tries).arg(CortetsuConfig.lockMaxFprintTries);
             if (pam.howdy.state === Pam.Failed)
-                return qsTr("Face not recognized (%1/%2). Please try again or use password.").arg(pam.howdy.tries).arg(GlobalConfig.lock.maxHowdyTries);
+                return qsTr("Face not recognized (%1/%2). Please try again or use password.").arg(pam.howdy.tries).arg(CortetsuConfig.lockMaxHowdyTries);
         } else {
             if (pam.fprint.state === Pam.Failed)
-                return qsTr("Fingerprint not recognized (%1/%2). Please try again.").arg(pam.fprint.tries).arg(GlobalConfig.lock.maxFprintTries);
+                return qsTr("Fingerprint not recognized (%1/%2). Please try again.").arg(pam.fprint.tries).arg(CortetsuConfig.lockMaxFprintTries);
             if (pam.howdy.state === Pam.Failed)
-                return qsTr("Face not recognized (%1/%2). Please try again.").arg(pam.howdy.tries).arg(GlobalConfig.lock.maxHowdyTries);
+                return qsTr("Face not recognized (%1/%2). Please try again.").arg(pam.howdy.tries).arg(CortetsuConfig.lockMaxHowdyTries);
         }
 
         if (pam.lockMessage) // Password max tries message

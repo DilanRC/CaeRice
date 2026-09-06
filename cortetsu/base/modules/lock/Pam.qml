@@ -7,6 +7,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Pam
 import Caelestia.Config
 import Caelestia.Services
+import qs.modules
 
 Scope {
     id: root
@@ -128,8 +129,8 @@ Scope {
         config: "fprint"
         availCommand: ["sh", "-c", "fprintd-list $USER"]
         retryOnFail: true
-        enabled: GlobalConfig.lock.enableFprint
-        maxTries: GlobalConfig.lock.maxFprintTries
+        enabled: CortetsuConfig.lockEnableFprint
+        maxTries: CortetsuConfig.lockMaxFprintTries
         onAvailProcExited: root.restartFprint()
     }
 
@@ -138,13 +139,13 @@ Scope {
 
         config: "howdy"
         availCommand: ["sh", "-c", "command -v howdy"]
-        enabled: GlobalConfig.lock.enableHowdy
-        maxTries: GlobalConfig.lock.maxHowdyTries
+        enabled: CortetsuConfig.lockEnableHowdy
+        maxTries: CortetsuConfig.lockMaxHowdyTries
     }
 
     Connections {
         function onResumed(): void {
-            if (howdy.canAttempt && !howdy.active && GlobalConfig.lock.triggerHowdyOnWake)
+            if (howdy.canAttempt && !howdy.active && CortetsuConfig.lockTriggerHowdyOnWake)
                 howdy.start();
         }
 
@@ -179,11 +180,11 @@ Scope {
         }
 
         function onEnableHowdyChanged(): void {
-            if (!GlobalConfig.lock.enableHowdy && howdy.active)
+            if (!CortetsuConfig.lockEnableHowdy && howdy.active)
                 howdy.abort();
         }
 
-        target: GlobalConfig.lock
+        target: CortetsuConfig
     }
 
     component ManualPamContext: Scope {
