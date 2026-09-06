@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-PALETTES = REPO / 'caelestia/schemes/palettes.json'
-OUT = REPO / 'caelestia/schemes/cortetsu-pack'
+PALETTES = REPO / 'cortetsu/data/schemes/palettes.json'
+OUT = REPO / 'cortetsu/data/schemes/cortetsu-pack'
 
 
 def rgb(h: str):
