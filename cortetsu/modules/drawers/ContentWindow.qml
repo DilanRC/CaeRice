@@ -252,6 +252,7 @@ StyledWindow {
     component PanelBg: Rectangle {
         required property Item panel
         property real deformAmount: 0.15
+        visible: panel.width > 0 && panel.height > 0 && (panel.offsetScale ?? 0) < 1
         x: panel.x + bar.implicitWidth
         y: panel.y + root.borderThickness
         width: panel.width
