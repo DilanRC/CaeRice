@@ -162,6 +162,7 @@ for required in \
     services/Time.qml \
     services/Brightness.qml \
     services/Players.qml \
+    services/ShellState.qml \
     modules/CortetsuStateLayer.qml \
     modules/CortetsuMask.qml \
     compatibility.json \

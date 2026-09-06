@@ -7,6 +7,7 @@ policy = (repo / "cortetsu/modules/CortetsuOverlayPolicy.js").read_text(encoding
 patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
 panels_patch = (repo / "caelestia/patches/modules__drawers__Panels__cortetsu-shell-state.qml.patch").read_text(encoding="utf-8")
 shell_state = (repo / "cortetsu/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
+shell_service = (repo / "cortetsu/services/ShellState.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
@@ -38,6 +39,9 @@ assert "cortetsuState" in patch
 assert "CortetsuShellState.registerState(modelData, root)" in patch
 assert "CortetsuShellState.registerComponents(screen, root)" in panels_patch
 assert "import qs.services" not in shell_state
+assert "CortetsuShellState.forScreen(screen)" in shell_service
+assert "import Caelestia" not in shell_service
+assert "import qs.services" not in shell_service
 for marker in ("registerState", "unregisterState", "registerComponents", "unregisterComponents", "CortetsuHypr.focusedMonitor"):
     assert marker in shell_state, marker
 assert "function anySidebarOpen" in shell_state
