@@ -16,6 +16,7 @@ checks = {
     "recording remains actionable": "CortetsuRecorder.stop()" in utilities and '"cortetsu-record", "start"' in utilities,
     "notifications remain reachable": "root.screenState.sidebar = true" in utilities,
     "osd keeps volume wheel control": "CortetsuAudio.incrementVolume" in osd and "CortetsuAudio.decrementVolume" in osd,
+    "osd uses one shared surface": "CortetsuPopupSurface" in osd and "id: indicators" in osd,
     "osd keeps brightness wheel control": "root.monitor.setBrightness" in osd,
     "osd renders a bounded level": "Math.max(0, Math.min(1, modelData.value))" in osd,
     "osd distinguishes mute": "root.muted && index === 0" in osd,
