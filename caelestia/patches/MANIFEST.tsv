@@ -1,5 +1,1 @@
 patch	path
-modules__drawers__Interactions.qml.patch	modules/drawers/Interactions.qml
-modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml
-modules__drawers__ContentWindow__adapter.qml.patch	modules/drawers/ContentWindow.qml
-modules__drawers__ContentWindow__scrim-adapter.qml.patch	modules/drawers/ContentWindow.qml

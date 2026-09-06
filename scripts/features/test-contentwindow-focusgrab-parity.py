@@ -10,24 +10,14 @@ but onCleared only reset `overview` via setRetained("overview", false) --
 clicking outside Calendar/Clipboard/Hardware/DisplayManager/WallpaperManager
 did not close them.
 
-This test applies the REAL patch files (not a reimplementation) with GNU
-`patch` against a hand-built pre-image that mirrors the state produced by
-`modules__drawers__ContentWindow.qml.patch`, then asserts the post-image
-closes every retained overlay uniformly from all three triggers.
+This test reads the first-party ContentWindow source and asserts it closes
+every retained overlay uniformly from all three triggers.
 """
 from __future__ import annotations
 
-import subprocess
-import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-PATCHES = REPO / "caelestia/patches"
-
-# Mirrors the file produced by modules__drawers__ContentWindow.qml.patch
-# (the "base" patch) applied to upstream ContentWindow.qml. Hand-built because
-# this sandbox has no network access to the real upstream checkout; every
-# line below is copied verbatim from that patch's added/context lines.
 AFTER_BASE_PATCH = '''StyledWindow {
     id: root
 
@@ -109,22 +99,6 @@ AFTER_BASE_PATCH = '''StyledWindow {
 '''
 
 
-def apply_patch(root: Path, patch_name: str) -> None:
-    patch_file = PATCHES / patch_name
-    result = subprocess.run(
-        ["patch", "-p1", "--fuzz=3"],
-        cwd=root,
-        input=patch_file.read_text(encoding="utf-8"),
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        raise SystemExit(
-            f"FAIL: {patch_name} did not apply to the reconstructed fixture\n"
-            f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-        )
-
-
 def block_between(text: str, start: str, end: str) -> str:
     start_pos = text.find(start)
     assert start_pos >= 0, f"missing block start: {start}"
@@ -134,39 +108,30 @@ def block_between(text: str, start: str, end: str) -> str:
 
 
 def main() -> None:
-    with tempfile.TemporaryDirectory(prefix="contentwindow-focusgrab-") as td:
-        root = Path(td)
-        target = root / "modules/drawers/ContentWindow.qml"
-        target.parent.mkdir(parents=True)
-        target.write_text(AFTER_BASE_PATCH, encoding="utf-8")
+    text = (REPO / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
 
-        apply_patch(root, "modules__drawers__ContentWindow__adapter.qml.patch")
-        apply_patch(root, "modules__drawers__ContentWindow__scrim-adapter.qml.patch")
+    fullscreen = block_between(text, "onHasFullscreenChanged: {", "panels.popouts.close();")
+    escape = block_between(text, 'sequence: "Escape"', "        }\n    }")
+    cleared = block_between(text, "onCleared: {", "bar.closeTray();")
 
-        text = target.read_text(encoding="utf-8")
-
-        fullscreen = block_between(text, "onHasFullscreenChanged: {", "panels.popouts.close();")
-        escape = block_between(text, 'sequence: "Escape"', "        }\n    }")
-        cleared = block_between(text, "onCleared: {", "bar.closeTray();")
-
-        assert "cortetsuState?.closeRetainedOverlays();" in fullscreen, "onHasFullscreenChanged must close every retained overlay"
-        assert "cortetsuState?.closeRetainedOverlays();" in escape, "Escape must close every retained overlay"
-        assert "cortetsuState?.closeRetainedOverlays();" in cleared, (
+    assert "cortetsuState?.closeRetainedOverlays();" in fullscreen, "onHasFullscreenChanged must close every retained overlay"
+    assert "cortetsuState?.closeRetainedOverlays();" in escape, "Escape must close every retained overlay"
+    assert "cortetsuState?.closeRetainedOverlays();" in cleared, (
             "FAIL regression: HyprlandFocusGrab.onCleared (click-outside) must close every "
             "retained overlay via closeRetainedOverlays(), matching Escape and fullscreen-change. "
             "Found instead:\n" + cleared
         )
-        assert 'setRetained("overview", false)' not in cleared, (
+    assert 'setRetained("overview", false)' not in cleared, (
             "FAIL regression: onCleared regressed to partially closing only 'overview' -- "
             "click-outside would no longer close calendar/clipboard/hardware/displayManager/"
             "wallpaperManager overlays"
         )
-        print("PASS onCleared-closes-all-retained-overlays")
+    print("PASS onCleared-closes-all-retained-overlays")
 
-        assert "screenState.cortetsuState?.requiresFullInputMask" in text
-        assert "screenState.cortetsuState?.requiresWindowKeyboardFocus" in text
-        assert "root.screenState.cortetsuState?.overview ? 0.58" in text
-        print("PASS input-mask-focus-scrim-still-wired")
+    assert "screenState.cortetsuState?.requiresFullInputMask" in text
+    assert "screenState.cortetsuState?.requiresWindowKeyboardFocus" in text
+    assert "root.screenState.cortetsuState?.overview ? 0.58" in text
+    print("PASS input-mask-focus-scrim-still-wired")
 
     print("ContentWindow focus-grab parity tests: OK")
 

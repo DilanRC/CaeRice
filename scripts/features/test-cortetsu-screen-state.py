@@ -10,8 +10,8 @@ shell_service = (repo / "cortetsu/services/ShellState.qml").read_text(encoding="
 screen_component = (repo / "cortetsu/components/ScreenState.qml").read_text(encoding="utf-8")
 screens_service = (repo / "cortetsu/services/Screens.qml").read_text(encoding="utf-8")
 background = (repo / "cortetsu/modules/background/Background.qml").read_text(encoding="utf-8")
-content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
-scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
+content_window_patch = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
+scrim_patch = content_window_patch
 shortcuts = (repo / "cortetsu/modules/Shortcuts.qml").read_text(encoding="utf-8")
 calendar = (repo / "cortetsu/modules/CalendarController.qml").read_text(encoding="utf-8")
 clipboard = (repo / "cortetsu/modules/ClipboardController.qml").read_text(encoding="utf-8")
