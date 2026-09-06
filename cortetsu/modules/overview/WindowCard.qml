@@ -159,6 +159,44 @@ Item {
             opacity: 0.22
         }
 
+        Rectangle {
+            z: 10
+
+            anchors.top: parent.top
+            anchors.left: parent.left
+
+            anchors.topMargin: 9
+            anchors.leftMargin: 9
+
+            implicitWidth: selectedLabel.implicitWidth + 18
+            implicitHeight: 28
+
+            radius: 999
+            color: CortetsuDesign.colorSecondaryContainer
+            border.width: 1
+            border.color: CortetsuDesign.colorPrimary
+            visible: root.selected
+
+            Row {
+                anchors.centerIn: parent
+                spacing: 5
+
+                CortetsuIcon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "check_circle"
+                    color: CortetsuDesign.colorOnSecondaryContainer
+                    iconSize: CortetsuTypography.iconSmallPx
+                }
+
+                CortetsuText {
+                    id: selectedLabel
+                    text: qsTr("Selected")
+                    color: CortetsuDesign.colorOnSecondaryContainer
+                    textSize: CortetsuTypography.labelSmallPx
+                }
+            }
+        }
+
         // Constrain the ScreencopyView using the client's real size.
         ScreencopyView {
             anchors.centerIn: parent
