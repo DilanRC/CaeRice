@@ -21,6 +21,14 @@ Scope {
             OverlayPolicy.closeOtherPanels(CortetsuShellState.forScreen(screen)?.cortetsuState?.legacyState);
     }
 
+    function closeAllPopouts(): void {
+        for (const screen of CortetsuScreens.screens) {
+            const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
+            if (popouts)
+                popouts.close();
+        }
+    }
+
     function open(): void {
         const state = CortetsuShellState.forActive()?.cortetsuState;
         if (!state)
@@ -28,6 +36,7 @@ Scope {
 
         closeAll();
         closeOtherPanels();
+        closeAllPopouts();
         state.setRetained("overview", true);
     }
 
