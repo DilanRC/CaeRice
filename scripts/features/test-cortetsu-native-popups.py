@@ -66,7 +66,7 @@ for path in (
 
 assert "closeTimer" in wrapper
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
-assert "} else if (popouts.bottomAttached) {" not in interactions
+assert "!popouts.bottomAttached &&" in interactions
 for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):
     assert token in hub, token
 for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "CortetsuKeyboardPopup.qml", "CortetsuLockStatusPopup.qml", "CortetsuTrayMenu.qml"):
