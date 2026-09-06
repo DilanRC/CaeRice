@@ -33,6 +33,11 @@ QtObject {
     property real brightnessIncrement: 0.1
     property real maxVolume: 1.0
     property int visualiserBars: 60
+    property bool visualiserEnabled: false
+    property bool visualiserAutoHide: true
+    property bool visualiserBlur: false
+    property real visualiserSpacing: 1
+    property real visualiserRounding: 1
     property string defaultPlayer: "Spotify"
     property var playerAliases: [{ from: "com.github.th_ch.youtube_music", to: "YT Music" }]
     property bool toastAudioOutputChanged: true
@@ -100,6 +105,16 @@ QtObject {
                 maxVolume = Math.max(0, Math.min(2, data.maxVolume));
             if (Number.isInteger(data.visualiserBars))
                 visualiserBars = Math.max(1, Math.min(256, data.visualiserBars));
+            if (typeof data.visualiserEnabled === "boolean")
+                visualiserEnabled = data.visualiserEnabled;
+            if (typeof data.visualiserAutoHide === "boolean")
+                visualiserAutoHide = data.visualiserAutoHide;
+            if (typeof data.visualiserBlur === "boolean")
+                visualiserBlur = data.visualiserBlur;
+            if (typeof data.visualiserSpacing === "number")
+                visualiserSpacing = Math.max(0, Math.min(10, data.visualiserSpacing));
+            if (typeof data.visualiserRounding === "number")
+                visualiserRounding = Math.max(0, Math.min(10, data.visualiserRounding));
             if (typeof data.defaultPlayer === "string")
                 defaultPlayer = data.defaultPlayer;
             if (Array.isArray(data.playerAliases))
@@ -135,7 +150,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

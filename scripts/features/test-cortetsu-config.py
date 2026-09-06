@@ -14,6 +14,7 @@ schemes_service = (modules / "launcher/services/Schemes.qml").read_text(encoding
 variants_service = (modules / "launcher/services/M3Variants.qml").read_text(encoding="utf-8")
 manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
 desktop_clock = (modules / "background/DesktopClock.qml").read_text(encoding="utf-8")
+spectrum = (repo / "cortetsu/services/CortetsuSpectrum.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -25,6 +26,9 @@ assert "GlobalConfig.bar.workspaces.shown" not in hub
 assert "import Caelestia" not in desktop_clock
 assert "CortetsuRegional.useTwelveHourClock" in desktop_clock
 assert "Time.hourStr" in desktop_clock and "Time.format" in desktop_clock
+assert "CortetsuConfig.visualiserBars" in spectrum
+assert "command -v cava" in spectrum
+assert "Caelestia" not in spectrum
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
 
