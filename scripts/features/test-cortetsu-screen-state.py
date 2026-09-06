@@ -9,7 +9,7 @@ shell_state = (repo / "cortetsu/modules/CortetsuShellState.qml").read_text(encod
 shell_service = (repo / "cortetsu/services/ShellState.qml").read_text(encoding="utf-8")
 screen_component = (repo / "cortetsu/components/ScreenState.qml").read_text(encoding="utf-8")
 screens_service = (repo / "cortetsu/services/Screens.qml").read_text(encoding="utf-8")
-background_patch = (repo / "caelestia/patches/modules__background__Background.qml.patch").read_text(encoding="utf-8")
+background = (repo / "cortetsu/modules/background/Background.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
@@ -43,7 +43,9 @@ assert "CortetsuShellState.registerState(modelData, root)" in screen_component
 assert "CortetsuScreens.screens" in screens_service
 assert "import Caelestia" not in screens_service
 assert "GlobalConfig" not in screens_service
-assert "model: CortetsuScreens.screens" in background_patch
+assert "model: CortetsuScreens.screens" in background
+assert "PanelWindow" in background
+assert "Caelestia.Config" not in background
 assert 'import ".."' in panels_patch
 assert "import qs.services" not in shell_state
 assert "CortetsuShellState.forScreen(screen)" in shell_service
