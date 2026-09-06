@@ -11,7 +11,7 @@ import qs.modules.sidebar as Sidebar
 import ".."
 import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
-import qs.modules.utilities.toasts as Toasts
+import "../utilities/toasts" as Toasts
 import "../CortetsuDesign.js" as CortetsuDesign
 import qs.modules.clipboard as Clipboard
 import qs.modules.hardware as Hardware

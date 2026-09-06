@@ -7,6 +7,7 @@ import Quickshell.Io
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import Quickshell.Services.SystemTray
+import "../services"
 import qs.utils
 import qs.modules.launcher.services
 import "OverlayPolicy.js" as OverlayPolicy
@@ -66,7 +67,7 @@ Scope {
                 const event = JSON.parse(text());
                 if (event.sequence !== consumed) {
                     consumed = event.sequence;
-                    Toaster.toast(event.title, event.message, "timer");
+                    CortetsuToaster.toast(event.title, event.message, "timer");
                 }
             } catch (_) {}
         }
