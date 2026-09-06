@@ -89,6 +89,8 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/cortetsu/modules/." "$STAGING/modules/"
+mkdir -p "$STAGING/services"
+cp -a "$REPO/cortetsu/services/." "$STAGING/services/"
 python3 "$REPO/cortetsu/bin/compose-panels.py" "$STAGING"
 install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
 install -m 0644 "$REPO/cortetsu/contracts/composition.json" "$STAGING/composition.json"

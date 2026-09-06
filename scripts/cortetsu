@@ -275,6 +275,7 @@ test_cmd() {
         "scripts/features/test-cortetsu-launcher.py"
         "scripts/features/test-launcher-process-scope.py"
         "scripts/features/test-cortetsu-scheme.py"
+        "scripts/features/test-cortetsu-time.py"
         "scripts/features/test-config-migration.py"
         "scripts/features/test-legacy-process-migration.py"
         "scripts/features/test-hyprland-import.py"
