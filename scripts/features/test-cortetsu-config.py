@@ -27,6 +27,7 @@ icons = (repo / "cortetsu/utils/Icons.qml").read_text(encoding="utf-8")
 sysinfo = (repo / "cortetsu/utils/SysInfo.qml").read_text(encoding="utf-8")
 notifs = (repo / "cortetsu/services/Notifs.qml").read_text(encoding="utf-8")
 notif_data = (repo / "cortetsu/services/NotifData.qml").read_text(encoding="utf-8")
+notification_view = (repo / "cortetsu/modules/notifications/Notification.qml").read_text(encoding="utf-8")
 colours = (repo / "cortetsu/services/Colours.qml").read_text(encoding="utf-8")
 shell = (repo / "cortetsu/shell.qml").read_text(encoding="utf-8")
 
@@ -80,6 +81,9 @@ for notification_file in (notifs, notif_data):
         assert legacy not in notification_file, legacy
 assert "NotificationServer" in notifs and "function hasFullscreen" in notifs
 assert "function close" in notif_data and "property list<var> actions" in notif_data
+for legacy in ("Caelestia", "GlobalConfig", "qs.components", "qs.services"):
+    assert legacy not in notification_view, legacy
+assert "CortetsuSurface" in notification_view and "modelData.close()" in notification_view
 for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components", "Colours.qml"):
     assert legacy not in colours, legacy
 assert "CortetsuDesign.colorPrimary" in colours and "component CortetsuPalette" in colours

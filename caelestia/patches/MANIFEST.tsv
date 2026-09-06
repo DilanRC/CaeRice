@@ -1,5 +1,4 @@
 patch	path
-services__NotificationConfig.qml.patch	services/Notifs.qml,services/NotifData.qml,services/GameMode.qml,modules/notifications/Notification.qml
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
 modules__bar__BarWrapper.qml.patch	modules/bar/BarWrapper.qml
 modules__bar__popouts__Wrapper.qml.patch	modules/bar/popouts/Wrapper.qml
