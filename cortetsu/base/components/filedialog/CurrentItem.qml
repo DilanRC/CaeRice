@@ -71,7 +71,7 @@ Item {
         anchors.fill: parent
         clip: true
 
-        StyledText {
+        CortetsuText {
             id: content
 
             anchors.right: parent.right

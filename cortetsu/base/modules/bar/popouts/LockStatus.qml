@@ -6,11 +6,11 @@ import qs.services
 ColumnLayout {
     spacing: Tokens.spacing.small
 
-    StyledText {
+    CortetsuText {
         text: qsTr("Capslock: %1").arg(Hypr.capsLock ? "Enabled" : "Disabled")
     }
 
-    StyledText {
+    CortetsuText {
         text: qsTr("Numlock: %1").arg(Hypr.numLock ? "Enabled" : "Disabled")
     }
 }

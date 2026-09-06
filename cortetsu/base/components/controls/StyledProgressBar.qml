@@ -197,7 +197,7 @@ ProgressBar {
         }
     }
 
-    component Line: StyledRect {
+    component Line: CortetsuSurface {
         property point bounds
 
         x: bounds.x

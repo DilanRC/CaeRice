@@ -14,10 +14,12 @@ targets cortetsu/modules/ only, and is not audited here.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 MODULES = REPO / "cortetsu/modules"
+RUNTIME = REPO / "cortetsu"
 
 LEGACY_TOKENS = ("Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon")
 
@@ -42,6 +44,17 @@ def main() -> None:
 
     assert not offenders, (
         "cortetsu/modules/ regressed to legacy design tokens: " + ", ".join(offenders)
+    )
+
+    runtime_offenders: list[str] = []
+    for path in RUNTIME.rglob("*.qml"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for token in ("StyledRect", "StyledText", "MaterialIcon", "StateLayer"):
+            if re.search(rf"\b{token}\b", text):
+                runtime_offenders.append(f"{path.relative_to(REPO)}: {token}")
+    assert not runtime_offenders, (
+        "runtime reintroduced inherited design component names: "
+        + ", ".join(runtime_offenders)
     )
 
     consumers = sum(

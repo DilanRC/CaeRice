@@ -30,7 +30,7 @@ TextField {
         CAnim {}
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: cursor
 
         property bool disableBlink

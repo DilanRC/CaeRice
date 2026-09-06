@@ -11,7 +11,7 @@ import qs.services
 import qs.modules.nexus
 import qs.modules.bar.popouts as BarPopouts
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property ScreenState screenState
@@ -51,7 +51,7 @@ StyledRect {
         anchors.margins: Tokens.padding.large
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             text: qsTr("Quick Toggles")
             font: Tokens.font.body.medium
         }

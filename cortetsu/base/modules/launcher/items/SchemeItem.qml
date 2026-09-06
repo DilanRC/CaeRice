@@ -15,7 +15,7 @@ Item {
     anchors.left: parent?.left
     anchors.right: parent?.right
 
-    StateLayer {
+    CortetsuStateLayer {
         radius: Tokens.rounding.large
         onClicked: root.modelData?.onClicked(root.list)
     }
@@ -26,7 +26,7 @@ Item {
         anchors.rightMargin: Tokens.padding.medium
         anchors.margins: Tokens.padding.small
 
-        StyledRect {
+        CortetsuSurface {
             id: preview
 
             anchors.verticalCenter: parent.verticalCenter
@@ -47,7 +47,7 @@ Item {
                 implicitWidth: parent.implicitWidth / 2
                 clip: true
 
-                StyledRect {
+                CortetsuSurface {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
@@ -67,12 +67,12 @@ Item {
             width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.medium : 0)
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 text: root.modelData?.flavour ?? ""
                 font: Tokens.font.body.medium
             }
 
-            StyledText {
+            CortetsuText {
                 text: root.modelData?.name ?? ""
                 font: Tokens.font.body.small
                 color: Colours.palette.m3outline
@@ -92,7 +92,7 @@ Item {
 
             active: `${root.modelData?.name} ${root.modelData?.flavour}` === Schemes.currentScheme
 
-            sourceComponent: MaterialIcon {
+            sourceComponent: CortetsuIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.large

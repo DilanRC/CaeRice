@@ -11,7 +11,7 @@ import qs.components.effects
 import qs.services
 import qs.utils
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property string modelData
@@ -98,7 +98,7 @@ StyledRect {
             Component {
                 id: materialIconComp
 
-                MaterialIcon {
+                CortetsuIcon {
                     text: Icons.getNotifIcon(root.notifs[0]?.summary, root.urgency)
                     color: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                     fontStyle: Tokens.font.icon.large
@@ -123,7 +123,7 @@ StyledRect {
                 anchors.bottom: parent.bottom
                 active: root.appIcon && root.image
 
-                sourceComponent: StyledRect {
+                sourceComponent: CortetsuSurface {
                     implicitWidth: Tokens.sizes.notifs.badge
                     implicitHeight: Tokens.sizes.notifs.badge
 
@@ -152,7 +152,7 @@ StyledRect {
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.medium
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
@@ -160,14 +160,14 @@ StyledRect {
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     animate: true
                     text: root.notifs[0]?.timeStr ?? ""
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.small
                 }
 
-                StyledRect {
+                CortetsuSurface {
                     implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
                     implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
@@ -177,7 +177,7 @@ StyledRect {
                     opacity: root.notifs.length > Config.notifs.groupPreviewNum ? 1 : 0
                     Layout.preferredWidth: root.notifs.length > Config.notifs.groupPreviewNum ? implicitWidth : 0
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
                         onClicked: root.expanded = !root.expanded
                     }
@@ -188,7 +188,7 @@ StyledRect {
                         anchors.centerIn: parent
                         spacing: Tokens.spacing.extraSmall
 
-                        StyledText {
+                        CortetsuText {
                             id: groupCount
 
                             Layout.leftMargin: Tokens.padding.extraSmall / 2
@@ -198,7 +198,7 @@ StyledRect {
                             font: Tokens.font.body.small
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.expanded ? "expand_less" : "expand_more"
@@ -305,7 +305,7 @@ StyledRect {
         Anim {}
     }
 
-    component NotifLine: StyledText {
+    component NotifLine: CortetsuText {
         id: notifLine
 
         required property NotifData modelData

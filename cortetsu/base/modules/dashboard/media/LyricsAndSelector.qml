@@ -20,13 +20,13 @@ Item {
             spacing: Tokens.spacing.medium
             z: 1
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.12)
                 text: "lyrics"
                 fontStyle: Tokens.font.icon.medium
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Lyrics")
                 font: Tokens.font.title.medium

@@ -34,7 +34,7 @@ ButtonBase {
     implicitWidth: label.implicitWidth + horizontalPadding * 2
     implicitHeight: label.implicitHeight + verticalPadding * 2
 
-    StyledText {
+    CortetsuText {
         id: label
 
         anchors.centerIn: parent

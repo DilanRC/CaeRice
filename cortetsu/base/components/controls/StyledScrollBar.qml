@@ -47,7 +47,7 @@ ScrollBar {
     }
     implicitWidth: Tokens.padding.extraSmall
 
-    contentItem: StyledRect {
+    contentItem: CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         opacity: {

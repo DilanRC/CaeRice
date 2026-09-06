@@ -18,7 +18,7 @@ ColumnLayout {
     width: 300
     spacing: Tokens.spacing.small
 
-    StyledText {
+    CortetsuText {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Bluetooth")
@@ -45,7 +45,7 @@ ColumnLayout {
         }
     }
 
-    StyledText {
+    CortetsuText {
         Layout.topMargin: Tokens.spacing.small
         Layout.rightMargin: Tokens.padding.extraSmall
         text: {
@@ -93,11 +93,11 @@ ColumnLayout {
                 Anim {}
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: Icons.getBluetoothIcon(device.modelData.icon)
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.leftMargin: Tokens.spacing.extraSmall
                 Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
@@ -105,13 +105,13 @@ ColumnLayout {
                 elide: Text.ElideRight
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 visible: device.modelData.state === BluetoothDeviceState.Connected  // qmllint disable unresolved-type
                 text: device.modelData.batteryAvailable ? Icons.getBatteryIcon(device.modelData.battery) : "battery_alert"
                 color: device.modelData.batteryAvailable && device.modelData.battery < 0.2 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
             }
 
-            StyledRect {
+            CortetsuSurface {
                 id: connectBtn
 
                 implicitWidth: implicitHeight
@@ -125,13 +125,13 @@ ColumnLayout {
                     running: device.loading
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
                     disabled: device.loading
                     onClicked: device.modelData.connected = !device.modelData.connected
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: connectIcon
 
                     anchors.centerIn: parent
@@ -157,12 +157,12 @@ ColumnLayout {
                     implicitWidth: connectBtn.implicitWidth
                     implicitHeight: connectBtn.implicitHeight
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         radius: Tokens.rounding.full
                         onClicked: device.modelData.forget()
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "delete"
                     }
@@ -192,7 +192,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.extraSmall
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: parent.label
         }

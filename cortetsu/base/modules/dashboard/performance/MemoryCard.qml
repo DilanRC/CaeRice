@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     readonly property color accent: Colours.palette.m3tertiary
@@ -31,14 +31,14 @@ StyledRect {
             Layout.leftMargin: -Tokens.padding.extraSmall
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "memory_alt"
                 fill: 1
                 color: root.accent
                 fontStyle: Tokens.font.icon.builders.medium.weight(Font.DemiBold).build() // DemiBold to fix fill issues
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Memory")
                 font: Tokens.font.title.medium
             }
@@ -65,14 +65,14 @@ StyledRect {
                 anchors.verticalCenterOffset: Tokens.padding.extraSmall
                 spacing: 0
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: Math.round(Memory.percentage * 100) + "%"
                     font: Tokens.font.title.builders.large.width(90).build()
                     color: root.accent
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Used")
                     font: Tokens.font.body.small
@@ -81,7 +81,7 @@ StyledRect {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.alignment: Qt.AlignHCenter
             text: {
                 const fmt = UsageFmt.formatKib(Memory.used, Memory.total);

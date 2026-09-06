@@ -82,7 +82,7 @@ PageBase {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.topMargin: Tokens.spacing.large
             text: qsTr("Local wallpapers")
             font: Tokens.font.title.small
@@ -158,7 +158,7 @@ PageBase {
             active: localWalls.count === 0
             visible: active
 
-            sourceComponent: StyledRect {
+            sourceComponent: CortetsuSurface {
                 color: Colours.tPalette.m3surfaceContainer
                 radius: Tokens.rounding.extraLarge
                 implicitHeight: noWallsLayout.implicitHeight + Tokens.padding.extraExtraLarge * 2
@@ -169,14 +169,14 @@ PageBase {
                     anchors.centerIn: parent
                     spacing: Tokens.spacing.extraSmall
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hide_image"
                         color: Colours.palette.m3outline
                         fontStyle: Tokens.font.icon.extraLarge
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("No local wallpapers found")
                         color: Colours.palette.m3outline

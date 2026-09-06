@@ -10,7 +10,7 @@ import qs.components.effects
 import qs.services
 import qs.utils
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property real rootHeight
@@ -35,7 +35,7 @@ StyledRect {
             Layout.fillHeight: false
             spacing: Tokens.spacing.medium
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: prompt.implicitWidth + Tokens.padding.medium * 2
                 implicitHeight: prompt.implicitHeight + Tokens.padding.small * 2
 
@@ -136,7 +136,7 @@ StyledRect {
                 Repeater {
                     model: CUtils.clamp(Math.floor((layout.width + coloursRow.spacing) / (root.cBoxSize + coloursRow.spacing)), 0, 8)
 
-                    StyledRect {
+                    CortetsuSurface {
                         required property int index
 
                         implicitWidth: implicitHeight
@@ -173,7 +173,7 @@ StyledRect {
         visible: active
     }
 
-    component MonoText: StyledText {
+    component MonoText: CortetsuText {
         font: root.width > Tokens.sizes.lock.largeFontWidth ? Tokens.font.mono.medium : Tokens.font.mono.small
     }
 }

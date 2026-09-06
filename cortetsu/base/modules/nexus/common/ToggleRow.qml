@@ -32,7 +32,7 @@ StyledSwitch {
     background: ConnectedRect {
         id: bg
 
-        StateLayer {
+        CortetsuStateLayer {
             id: stateLayer
 
             disabled: root.disabled
@@ -57,7 +57,7 @@ StyledSwitch {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 anchors.left: parent.left
@@ -68,7 +68,7 @@ StyledSwitch {
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
 

@@ -111,7 +111,7 @@ Item {
                     }
                 ]
 
-                StyledRect {
+                CortetsuSurface {
                     id: action
 
                     required property var modelData
@@ -132,7 +132,7 @@ Item {
                         onTriggered: actionInner.item.text = "content_copy"
                     }
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         id: actionStateLayer
 
                         onClicked: {
@@ -160,7 +160,7 @@ Item {
                     Component {
                         id: iconBtn
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             animate: action.modelData.isCopy ?? false
                             text: action.modelData.isCopy ? "content_copy" : "close"
                             color: Colours.palette.m3onSurfaceVariant
@@ -179,7 +179,7 @@ Item {
                     Component {
                         id: textComp
 
-                        StyledText {
+                        CortetsuText {
                             text: action.modelData.text
                             color: Colours.palette.m3onSurfaceVariant
                         }

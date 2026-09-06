@@ -115,7 +115,7 @@ Item {
         hoverEnabled: true
         onClicked: root.open = !root.open
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             anchors.centerIn: parent

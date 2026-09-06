@@ -148,13 +148,13 @@ Item {
                 spacing: Tokens.spacing.extraSmall
                 opacity: 0
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Backend: %1").arg(CUtils.enumToString(Lyrics, "backend"))
                     color: Colours.palette.m3onSurfaceVariant
                     animate: true
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.maximumWidth: Tokens.sizes.dashboard.mediaTabWidth / 2
                     text: qsTr("Selected candidate: %1 | %2 | %3").arg(Lyrics.selectedCandidate.title).arg(Lyrics.selectedCandidate.artist).arg(Lyrics.selectedCandidate.album)
                     color: Colours.palette.m3onSurfaceVariant
@@ -162,7 +162,7 @@ Item {
                     animate: true
                 }
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Offset: %1 ms").arg(Lyrics.offset)
                     color: Colours.palette.m3onSurfaceVariant
                     animate: true
@@ -176,7 +176,7 @@ Item {
                 implicitWidth: placeholderText.implicitWidth
                 implicitHeight: placeholderText.implicitHeight
 
-                StyledText {
+                CortetsuText {
                     id: placeholderText
 
                     text: Lyrics.loading ? qsTr("Loading...") : qsTr("No lyrics found")
@@ -198,7 +198,7 @@ Item {
         hoverEnabled: true
         onClicked: root.open = !root.open
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             anchors.centerIn: parent

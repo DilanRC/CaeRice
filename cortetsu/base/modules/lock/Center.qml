@@ -24,7 +24,7 @@ ColumnLayout {
         centerScale: root.centerScale
     }
 
-    StyledText {
+    CortetsuText {
         Layout.alignment: Qt.AlignHCenter
 
         text: Time.format("dddd • d MMM").toUpperCase()

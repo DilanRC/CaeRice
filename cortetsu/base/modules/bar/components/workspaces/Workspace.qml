@@ -81,7 +81,7 @@ ColumnLayout {
     Component {
         id: textComponent
 
-        StyledText {
+        CortetsuText {
             animate: true
             text: {
                 if (root.focused) {
@@ -160,7 +160,7 @@ ColumnLayout {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     required property var modelData
 
                     grade: 0

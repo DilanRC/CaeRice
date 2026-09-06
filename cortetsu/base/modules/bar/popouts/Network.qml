@@ -23,7 +23,7 @@ ColumnLayout {
     width: Tokens.sizes.bar.networkWidth
 
     // Wireless section
-    StyledText {
+    CortetsuText {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.padding.medium : 0
@@ -40,7 +40,7 @@ ColumnLayout {
         toggle.onToggled: Nmcli.enableWifi(checked)
     }
 
-    StyledText {
+    CortetsuText {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
@@ -91,18 +91,18 @@ ColumnLayout {
                 Anim {}
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: Icons.getNetworkIcon(networkItem.modelData.strength)
                 color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
                 fontStyle: Tokens.font.icon.small
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.leftMargin: Tokens.spacing.extraSmall
                 Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
@@ -112,7 +112,7 @@ ColumnLayout {
                 color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: implicitHeight
                 implicitHeight: wirelessConnectIcon.implicitHeight + Tokens.padding.extraSmall
 
@@ -124,7 +124,7 @@ ColumnLayout {
                     running: networkItem.loading
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     color: networkItem.modelData.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     disabled: networkItem.loading || !Nmcli.wifiEnabled
 
@@ -146,7 +146,7 @@ ColumnLayout {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: wirelessConnectIcon
 
                     anchors.centerIn: parent
@@ -166,7 +166,7 @@ ColumnLayout {
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
@@ -176,7 +176,7 @@ ColumnLayout {
         radius: Tokens.rounding.full
         color: Colours.palette.m3primaryContainer
 
-        StateLayer {
+        CortetsuStateLayer {
             color: Colours.palette.m3onPrimaryContainer
             disabled: Nmcli.scanning || !Nmcli.wifiEnabled
             onClicked: Nmcli.rescanWifi()
@@ -189,7 +189,7 @@ ColumnLayout {
             spacing: Tokens.spacing.small
             opacity: Nmcli.scanning ? 0 : 1
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: scanIcon
 
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.0575)
@@ -198,7 +198,7 @@ ColumnLayout {
                 color: Colours.palette.m3onPrimaryContainer
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.topMargin: -Math.round(scanIcon.fontInfo.pointSize * 0.0575)
                 text: qsTr("Rescan networks")
                 color: Colours.palette.m3onPrimaryContainer
@@ -221,7 +221,7 @@ ColumnLayout {
     }
 
     // Ethernet section
-    StyledText {
+    CortetsuText {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.padding.medium : 0
@@ -230,7 +230,7 @@ ColumnLayout {
         font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
-    StyledText {
+    CortetsuText {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: visible ? Tokens.spacing.small : 0
@@ -280,12 +280,12 @@ ColumnLayout {
                 Anim {}
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "cable"
                 color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.leftMargin: Tokens.spacing.extraSmall
                 Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
@@ -295,7 +295,7 @@ ColumnLayout {
                 color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: implicitHeight
                 implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
 
@@ -307,7 +307,7 @@ ColumnLayout {
                     running: ethernetItem.loading
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     color: ethernetItem.modelData.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     disabled: ethernetItem.loading
 
@@ -320,7 +320,7 @@ ColumnLayout {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: connectIcon
 
                     anchors.centerIn: parent
@@ -384,7 +384,7 @@ ColumnLayout {
         Layout.rightMargin: Tokens.padding.extraSmall
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: parent.label
         }

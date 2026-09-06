@@ -41,7 +41,7 @@ ItemList {
         }
     }
 
-    delegate: StateLayer {
+    delegate: CortetsuStateLayer {
         id: network
 
         required property int index
@@ -105,7 +105,7 @@ ItemList {
             anchors.rightMargin: Tokens.padding.extraLarge
             spacing: Tokens.spacing.medium
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: Icons.getNetworkIcon(network.modelData.strength)
                 color: network.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.medium
@@ -117,14 +117,14 @@ ItemList {
                 spacing: 0
                 opacity: network.textOpacity
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: network.modelData.ssid
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Security: %1%2").arg(network.modelData.security).arg(network.modelData.active ? qsTr(" • Connected") : Nmcli.hasSavedProfile(network.modelData.ssid) ? qsTr(" • Saved") : "")
                     color: Colours.palette.m3outline
@@ -139,7 +139,7 @@ ItemList {
                 Component {
                     id: iconComp
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: network.modelData.active ? "settings" : "lock"
                         color: network.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.medium

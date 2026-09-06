@@ -6,7 +6,7 @@ import qs.components
 import qs.components.effects
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property int activeWsId

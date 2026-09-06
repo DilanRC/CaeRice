@@ -102,7 +102,7 @@ Item {
                             CAnim {}
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             id: icon
 
                             anchors.centerIn: parent
@@ -112,13 +112,13 @@ Item {
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Nothing playing")
                         font: Tokens.font.headline.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Play something for it to show up here!")
                         color: Colours.palette.m3onSurfaceVariant
                         font: Tokens.font.body.large

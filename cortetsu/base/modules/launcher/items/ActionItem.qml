@@ -14,7 +14,7 @@ Item {
     anchors.left: parent?.left
     anchors.right: parent?.right
 
-    StateLayer {
+    CortetsuStateLayer {
         radius: Tokens.rounding.large
         onClicked: root.modelData?.onClicked(root.list)
     }
@@ -25,7 +25,7 @@ Item {
         anchors.rightMargin: Tokens.padding.medium
         anchors.margins: Tokens.padding.small
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             anchors.verticalCenter: parent.verticalCenter
@@ -42,14 +42,14 @@ Item {
             implicitWidth: parent.width - icon.width
             implicitHeight: name.implicitHeight + desc.implicitHeight
 
-            StyledText {
+            CortetsuText {
                 id: name
 
                 text: root.modelData?.name ?? ""
                 font: Tokens.font.body.medium
             }
 
-            StyledText {
+            CortetsuText {
                 id: desc
 
                 text: root.modelData?.desc ?? ""

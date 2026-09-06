@@ -67,14 +67,14 @@ PageBase {
                     Layout.preferredHeight: implicitHeight
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.topMargin: Tokens.spacing.small
                     text: "Caelestia"
                     font: Tokens.font.headline.builders.large.width(110).build()
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: CUtils.version ? `v${CUtils.version}` : "…"
                     color: Colours.palette.m3onSurfaceVariant

@@ -36,7 +36,7 @@ PageBase {
                 values: [...Nmcli.savedConnectionSsids].sort((a, b) => a.localeCompare(b))
             }
 
-            delegate: StateLayer {
+            delegate: CortetsuStateLayer {
                 id: saved
 
                 required property int index
@@ -69,7 +69,7 @@ PageBase {
                     anchors.rightMargin: Tokens.padding.extraLarge
                     spacing: Tokens.spacing.medium
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: saved.ap ? Icons.getNetworkIcon(saved.ap.strength, !["", "none"].includes(Nmcli.savedSecurityFor(saved.modelData))) : "signal_wifi_off"
                         color: saved.isActive ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.medium
@@ -79,14 +79,14 @@ PageBase {
                         Layout.fillWidth: true
                         spacing: 0
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: saved.modelData
                             font: Tokens.font.body.small
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: {
                                 let security;
@@ -104,7 +104,7 @@ PageBase {
                         }
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: "chevron_right"
                         color: Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.medium

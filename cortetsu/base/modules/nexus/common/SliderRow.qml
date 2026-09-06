@@ -29,7 +29,7 @@ ConnectedRect {
         anchors.topMargin: Tokens.padding.large
         spacing: Tokens.spacing.medium
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             color: Colours.palette.m3onSurfaceVariant
@@ -44,7 +44,7 @@ ConnectedRect {
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.small
 
-                StyledText {
+                CortetsuText {
                     id: label
 
                     Layout.fillWidth: true
@@ -52,7 +52,7 @@ ConnectedRect {
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     id: valueLabel
 
                     color: Colours.palette.m3outline

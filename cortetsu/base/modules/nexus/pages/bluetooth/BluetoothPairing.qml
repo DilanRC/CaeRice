@@ -48,7 +48,7 @@ PageBase {
             implicitHeight: headerText.implicitHeight + Tokens.padding.medium * 2
             first: true
 
-            StyledText {
+            CortetsuText {
                 id: headerText
 
                 anchors.left: parent.left
@@ -104,7 +104,7 @@ PageBase {
                     target: newDevice.modelData
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     radius: Tokens.rounding.extraSmall
                     bottomLeftRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
                     bottomRightRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
@@ -125,7 +125,7 @@ PageBase {
                     anchors.rightMargin: Tokens.padding.largeIncreased
                     spacing: Tokens.spacing.medium
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: Icons.getBluetoothIcon(newDevice.modelData?.icon ?? "")
                         color: Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.medium
@@ -137,14 +137,14 @@ PageBase {
                         spacing: 0
                         opacity: newDevice.textOpacity
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: newDevice.modelData?.name || qsTr("Unknown device")
                             font: Tokens.font.body.small
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: newDevice.modelData?.pairing ? qsTr("Pairing...") : (newDevice.modelData?.address ?? "")
                             color: Colours.palette.m3outline

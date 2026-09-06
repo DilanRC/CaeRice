@@ -3,7 +3,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property var dialog
@@ -21,11 +21,11 @@ StyledRect {
 
         spacing: Tokens.spacing.small
 
-        StyledText {
+        CortetsuText {
             text: qsTr("Filter:")
         }
 
-        StyledRect {
+        CortetsuSurface {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.rightMargin: Tokens.spacing.medium
@@ -33,7 +33,7 @@ StyledRect {
             color: Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.medium
 
-            StyledText {
+            CortetsuText {
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.medium
 
@@ -41,19 +41,19 @@ StyledRect {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             color: Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.medium
 
             implicitWidth: cancelText.implicitWidth + Tokens.padding.medium * 2
             implicitHeight: cancelText.implicitHeight + Tokens.padding.medium * 2
 
-            StateLayer {
+            CortetsuStateLayer {
                 disabled: !root.dialog.selectionValid
                 onClicked: root.dialog.accepted(root.folder.currentItem.modelData.path)
             }
 
-            StyledText {
+            CortetsuText {
                 id: selectText
 
                 anchors.centerIn: parent
@@ -64,20 +64,20 @@ StyledRect {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             color: Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.medium
 
             implicitWidth: cancelText.implicitWidth + Tokens.padding.medium * 2
             implicitHeight: cancelText.implicitHeight + Tokens.padding.medium * 2
 
-            StateLayer {
+            CortetsuStateLayer {
                 onClicked: {
                     root.dialog.rejected();
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 id: cancelText
 
                 anchors.centerIn: parent

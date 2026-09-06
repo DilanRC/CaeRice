@@ -115,7 +115,7 @@ CustomMouseArea {
                 implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.large * 2
                 implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
 
-                StateLayer {
+                CortetsuStateLayer {
                     color: Colours.palette.m3primary
                     radius: pressed ? Tokens.rounding.small : height / 2
                     disabled: {
@@ -131,7 +131,7 @@ CustomMouseArea {
                     }
                 }
 
-                StyledText {
+                CortetsuText {
                     id: monthYearDisplay
 
                     opacity: root.animOpacity
@@ -162,7 +162,7 @@ CustomMouseArea {
             Layout.fillWidth: true
             locale: grid.locale
 
-            delegate: StyledText {
+            delegate: CortetsuText {
                 required property var model
 
                 horizontalAlignment: Text.AlignHCenter
@@ -200,7 +200,7 @@ CustomMouseArea {
                     implicitWidth: implicitHeight
                     implicitHeight: text.implicitHeight + Tokens.padding.small
 
-                    StyledText {
+                    CortetsuText {
                         id: text
 
                         anchors.centerIn: parent

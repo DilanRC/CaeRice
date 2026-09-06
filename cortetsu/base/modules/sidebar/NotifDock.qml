@@ -34,7 +34,7 @@ Item {
 
         implicitHeight: Math.max(count.implicitHeight, titleText.implicitHeight)
 
-        StyledText {
+        CortetsuText {
             id: count
 
             anchors.verticalCenter: parent.verticalCenter
@@ -57,7 +57,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             id: titleText
 
             anchors.verticalCenter: parent.verticalCenter
@@ -106,7 +106,7 @@ Item {
                     }
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("All up to date!")
                     color: Colours.palette.m3outlineVariant

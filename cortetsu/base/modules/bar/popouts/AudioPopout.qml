@@ -32,7 +32,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             text: qsTr("Output device")
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
@@ -52,7 +52,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Input device")
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
@@ -71,7 +71,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()

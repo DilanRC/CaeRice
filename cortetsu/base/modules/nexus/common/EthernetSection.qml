@@ -48,7 +48,7 @@ ColumnLayout {
             anchors.rightMargin: Tokens.padding.largeIncreased
             spacing: Tokens.spacing.medium
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Ethernet")
                 font: Tokens.font.body.medium
@@ -58,14 +58,14 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignRight
                 spacing: 0
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignRight
                     text: Nmcli.activeEthernet ? qsTr("Connected") : qsTr("Not connected")
                     color: Nmcli.activeEthernet ? Colours.palette.m3primary : Colours.palette.m3outline
                     font: Tokens.font.label.small
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignRight
                     visible: Nmcli.activeEthernet && Nmcli.ethernetDataUsage.length > 0
                     text: qsTr("Data usage: %1").arg(Nmcli.ethernetDataUsage)
@@ -99,7 +99,7 @@ ColumnLayout {
             implicitHeight: ethLayout.implicitHeight + Tokens.padding.medium * 2
 
             // Tap opens the detail page for this interface.
-            StateLayer {
+            CortetsuStateLayer {
                 onClicked: {
                     root.nState.selectedEthernetInterface = ethRow.modelData.iface;
                     root.nState.openSubPage(1);
@@ -115,13 +115,13 @@ ColumnLayout {
                 anchors.rightMargin: Tokens.padding.medium
                 spacing: Tokens.spacing.medium
 
-                StyledRect {
+                CortetsuSurface {
                     implicitWidth: implicitHeight
                     implicitHeight: ethIcon.implicitHeight + Tokens.padding.small * 2
                     radius: Tokens.rounding.full
                     color: ethRow.isConnected ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHighest
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         id: ethIcon
 
                         anchors.centerIn: parent
@@ -138,7 +138,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 0
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: ethRow.modelData.connection || ethRow.modelData.iface || qsTr("Wired connection")
                         font: Tokens.font.body.medium
@@ -146,7 +146,7 @@ ColumnLayout {
                         animate: true
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: ethRow.isConnected ? ethRow.modelData.iface : qsTr("Not connected • %1").arg(ethRow.modelData.iface)
                         color: ethRow.isConnected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
@@ -218,7 +218,7 @@ ColumnLayout {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     text: "chevron_right"
                     color: Colours.palette.m3onSurfaceVariant
                     fontStyle: Tokens.font.icon.small
@@ -236,7 +236,7 @@ ColumnLayout {
         visible: value.length > 0
         spacing: 0
 
-        StyledText {
+        CortetsuText {
             Layout.alignment: Qt.AlignRight
             text: ethDetail.label
             color: Colours.palette.m3onSurfaceVariant
@@ -245,7 +245,7 @@ ColumnLayout {
             horizontalAlignment: Text.AlignRight
         }
 
-        StyledText {
+        CortetsuText {
             Layout.alignment: Qt.AlignRight
             text: ethDetail.value
             color: Colours.palette.m3outline

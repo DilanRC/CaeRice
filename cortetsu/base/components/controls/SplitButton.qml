@@ -38,7 +38,7 @@ Row {
 
     spacing: Math.floor(Tokens.spacing.extraSmall / 2)
 
-    StyledRect {
+    CortetsuSurface {
         radius: implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
         topRightRadius: Tokens.rounding.medium / 2
         bottomRightRadius: Tokens.rounding.medium / 2
@@ -47,7 +47,7 @@ Row {
         implicitWidth: Math.max(root.minLeftWidth, textRow.implicitWidth + root.horizontalPadding * 2)
         implicitHeight: expandBtn.implicitHeight
 
-        StateLayer {
+        CortetsuStateLayer {
             id: stateLayer
 
             topRightRadius: parent.topRightRadius
@@ -64,7 +64,7 @@ Row {
             anchors.horizontalCenterOffset: Math.floor(root.verticalPadding / 4)
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: iconLabel
 
                 Layout.alignment: Qt.AlignVCenter
@@ -74,7 +74,7 @@ Row {
                 fill: 1
             }
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 Layout.alignment: Qt.AlignVCenter
@@ -93,7 +93,7 @@ Row {
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: expandBtn
 
         property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Tokens.rounding.scale) : Tokens.rounding.medium / 2
@@ -106,7 +106,7 @@ Row {
         implicitWidth: implicitHeight
         implicitHeight: expandIcon.implicitHeight + root.verticalPadding * 2
 
-        StateLayer {
+        CortetsuStateLayer {
             id: expandStateLayer
 
             rect.topLeftRadius: parent.topLeftRadius
@@ -116,7 +116,7 @@ Row {
             onClicked: root.expanded = !root.expanded
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             id: expandIcon
 
             anchors.centerIn: parent

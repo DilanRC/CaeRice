@@ -55,14 +55,14 @@ PageBase {
                 Layout.fillWidth: true
                 spacing: Tokens.spacing.extraSmall / 2
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: root.app?.name ?? ""
                     font: Tokens.font.title.medium
                     wrapMode: Text.WordWrap
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     visible: text
                     text: (root.app?.comment || root.app?.genericName) ?? ""
@@ -146,7 +146,7 @@ PageBase {
             anchors.rightMargin: Tokens.padding.largeIncreased
             spacing: Tokens.spacing.medium
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 Layout.alignment: Qt.AlignTop
@@ -157,7 +157,7 @@ PageBase {
                 Layout.fillWidth: true
             }
 
-            StyledText {
+            CortetsuText {
                 id: value
 
                 Layout.fillWidth: true

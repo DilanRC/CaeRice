@@ -23,14 +23,14 @@ RadioButton {
         border.width: 2
         anchors.verticalCenter: parent.verticalCenter
 
-        StateLayer {
+        CortetsuStateLayer {
             anchors.margins: -Tokens.padding.small
             color: root.checked ? Colours.palette.m3onSurface : Colours.palette.m3primary
             z: -1
             onClicked: root.click()
         }
 
-        StyledRect {
+        CortetsuSurface {
             anchors.centerIn: parent
             implicitWidth: 8
             implicitHeight: 8
@@ -44,7 +44,7 @@ RadioButton {
         }
     }
 
-    contentItem: StyledText {
+    contentItem: CortetsuText {
         text: root.text
         font: root.font
         anchors.verticalCenter: parent.verticalCenter

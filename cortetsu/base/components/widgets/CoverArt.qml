@@ -57,7 +57,7 @@ Item {
         }
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         anchors.centerIn: parent
 
         grade: 200

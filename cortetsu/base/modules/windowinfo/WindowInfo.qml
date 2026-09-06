@@ -34,7 +34,7 @@ Item {
             Layout.preferredWidth: Tokens.sizes.winfo.detailsWidth
             Layout.fillHeight: true
 
-            StyledRect {
+            CortetsuSurface {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
@@ -47,7 +47,7 @@ Item {
                 }
             }
 
-            StyledRect {
+            CortetsuSurface {
                 Layout.fillWidth: true
                 Layout.preferredHeight: buttons.implicitHeight
 

@@ -92,7 +92,7 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.large
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             Layout.leftMargin: Tokens.padding.small
             text: qsTr("Built-in names (wireguard, warp, tailscale, netbird) auto-fill their commands. For others, provide the connect/disconnect commands.")

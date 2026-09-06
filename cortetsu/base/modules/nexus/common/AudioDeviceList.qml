@@ -36,7 +36,7 @@ ItemList {
         anchors.right: root.list.contentItem.right
         implicitHeight: deviceLayout.implicitHeight + deviceLayout.anchors.margins * 2
 
-        StateLayer {
+        CortetsuStateLayer {
             radius: Tokens.rounding.extraSmall
             bottomLeftRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
             bottomRightRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
@@ -52,13 +52,13 @@ ItemList {
             anchors.rightMargin: Tokens.padding.largeIncreased
             spacing: Tokens.spacing.medium
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: implicitHeight
                 implicitHeight: devIcon.implicitHeight + Tokens.padding.small * 2
                 radius: Tokens.rounding.full
                 color: device.active ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: devIcon
 
                     anchors.centerIn: parent
@@ -73,14 +73,14 @@ ItemList {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: device.modelData?.description || device.modelData?.name || qsTr("Unknown")
                 font: Tokens.font.body.small
                 elide: Text.ElideRight
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "check"
                 color: Colours.palette.m3primary
                 fontStyle: Tokens.font.icon.medium

@@ -6,7 +6,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property var dialog
@@ -27,13 +27,13 @@ StyledRect {
             implicitWidth: implicitHeight
             implicitHeight: upIcon.implicitHeight + Tokens.padding.small
 
-            StateLayer {
+            CortetsuStateLayer {
                 radius: Tokens.rounding.medium
                 disabled: root.dialog.cwd.length === 1
                 onClicked: root.dialog.cwd.pop()
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: upIcon
 
                 anchors.centerIn: parent
@@ -43,7 +43,7 @@ StyledRect {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             Layout.fillWidth: true
 
             radius: Tokens.rounding.medium
@@ -75,7 +75,7 @@ StyledRect {
                             asynchronous: true
                             Layout.rightMargin: Tokens.spacing.small
                             active: folder.index > 0
-                            sourceComponent: StyledText {
+                            sourceComponent: CortetsuText {
                                 text: "/"
                                 color: Colours.palette.m3onSurfaceVariant
                                 font: Tokens.font.body.builders.small.weight(Font.Bold).build()
@@ -90,7 +90,7 @@ StyledRect {
                                 asynchronous: true
                                 anchors.fill: parent
                                 active: folder.index < root.dialog.cwd.length - 1
-                                sourceComponent: StateLayer {
+                                sourceComponent: CortetsuStateLayer {
                                     onClicked: {
                                         root.dialog.cwd = root.dialog.cwd.slice(0, folder.index + 1);
                                     }
@@ -109,14 +109,14 @@ StyledRect {
                                 anchors.leftMargin: Tokens.padding.medium
 
                                 active: folder.index === 0 && folder.modelData === "Home"
-                                sourceComponent: MaterialIcon {
+                                sourceComponent: CortetsuIcon {
                                     text: "home"
                                     color: root.dialog.cwd.length === 1 ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
                                     fill: 1
                                 }
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 id: folderName
 
                                 anchors.left: homeIcon.right

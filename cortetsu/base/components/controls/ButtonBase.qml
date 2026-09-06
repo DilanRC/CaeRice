@@ -3,7 +3,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     enum ButtonType {
@@ -67,7 +67,7 @@ StyledRect {
     required implicitWidth
     required implicitHeight
 
-    StateLayer {
+    CortetsuStateLayer {
         id: stateLayer
 
         color: root.internalChecked ? root.activeOnColour : root.inactiveOnColour

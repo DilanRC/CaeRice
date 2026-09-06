@@ -75,7 +75,7 @@ StackView {
         Repeater {
             model: menuOpener.children
 
-            StyledRect {
+            CortetsuSurface {
                 id: item
 
                 required property QsMenuEntry modelData
@@ -98,7 +98,7 @@ StackView {
                     sourceComponent: Item {
                         implicitHeight: label.implicitHeight
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             anchors.margins: -Tokens.padding.extraSmall / 2
                             anchors.leftMargin: -Tokens.padding.small
                             anchors.rightMargin: -Tokens.padding.small
@@ -136,7 +136,7 @@ StackView {
                             }
                         }
 
-                        StyledText {
+                        CortetsuText {
                             id: label
 
                             anchors.left: icon.right
@@ -165,7 +165,7 @@ StackView {
 
                             active: item.modelData.hasChildren
 
-                            sourceComponent: MaterialIcon {
+                            sourceComponent: CortetsuIcon {
                                 text: "chevron_right"
                                 color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
                             }
@@ -188,7 +188,7 @@ StackView {
                     implicitWidth: back.implicitWidth
                     implicitHeight: back.implicitHeight
 
-                    StyledRect {
+                    CortetsuSurface {
                         anchors.fill: parent
                         anchors.margins: -Tokens.padding.extraSmall / 2
                         anchors.leftMargin: -Tokens.padding.small
@@ -197,7 +197,7 @@ StackView {
                         radius: Tokens.rounding.full
                         color: Colours.palette.m3secondaryContainer
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
                             onClicked: root.pop()
@@ -209,13 +209,13 @@ StackView {
 
                         anchors.verticalCenter: parent.verticalCenter
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "chevron_left"
                             color: Colours.palette.m3onSecondaryContainer
                         }
 
-                        StyledText {
+                        CortetsuText {
                             anchors.verticalCenter: parent.verticalCenter
                             text: qsTr("Back")
                             color: Colours.palette.m3onSecondaryContainer

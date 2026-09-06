@@ -46,7 +46,7 @@ PageBase {
 
                 spacing: Tokens.spacing.extraSmall / 2
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Filters")
                     font: Tokens.font.title.small
                 }

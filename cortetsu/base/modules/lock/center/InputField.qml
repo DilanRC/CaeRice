@@ -57,7 +57,7 @@ Item {
         font: placeholder.font
     }
 
-    StyledText {
+    CortetsuText {
         id: placeholder
 
         anchors.centerIn: parent

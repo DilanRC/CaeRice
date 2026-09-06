@@ -23,7 +23,7 @@ ConnectedRect {
     Component {
         id: iconComp
 
-        MaterialIcon {
+        CortetsuIcon {
             text: root.icon
             color: root.iconColour
             fontStyle: Tokens.font.icon.small
@@ -49,7 +49,7 @@ ConnectedRect {
             Layout.fillWidth: true
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 Layout.fillWidth: true
@@ -57,7 +57,7 @@ ConnectedRect {
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 visible: root.subtext
                 text: root.subtext
@@ -67,7 +67,7 @@ ConnectedRect {
             }
         }
 
-        StyledText {
+        CortetsuText {
             id: value
 
             Layout.maximumWidth: root.width / 2

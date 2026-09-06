@@ -10,7 +10,7 @@ import qs.components.effects
 import qs.components.widgets
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     readonly property real fontScale: {
@@ -67,7 +67,7 @@ StyledRect {
                     CAnim {}
                 }
 
-                StyledText {
+                CortetsuText {
                     id: tempLabel
 
                     anchors.centerIn: parent
@@ -161,14 +161,14 @@ StyledRect {
             anchors.centerIn: parent
             spacing: -Tokens.spacing.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: res.icon
                 color: Colours.palette.m3secondary
                 fontStyle: Tokens.font.icon.builders.medium.scale(root.fontScale).build()
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: res.value
                 color: res.colour

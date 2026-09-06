@@ -102,7 +102,7 @@ MouseArea {
             onWheel: e => e.accepted = true
         }
 
-        StyledRect {
+        CortetsuSurface {
             anchors.fill: parent
             radius: parent.radius
             color: Colours.palette.m3surfaceContainerLow
@@ -119,7 +119,7 @@ MouseArea {
 
                     model: root.items
 
-                    StyledRect {
+                    CortetsuSurface {
                         id: item
 
                         required property int index
@@ -142,7 +142,7 @@ MouseArea {
                             Anim {}
                         }
 
-                        StateLayer {
+                        CortetsuStateLayer {
                             topLeftRadius: parent.topLeftRadius
                             topRightRadius: parent.topRightRadius
                             bottomLeftRadius: parent.bottomLeftRadius
@@ -165,13 +165,13 @@ MouseArea {
                             anchors.margins: Tokens.padding.medium
                             spacing: Tokens.spacing.small
 
-                            MaterialIcon {
+                            CortetsuIcon {
                                 Layout.alignment: Qt.AlignVCenter
                                 text: item.modelData?.icon ?? ""
                                 color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.alignment: Qt.AlignVCenter
                                 Layout.fillWidth: true
                                 text: item.modelData?.text ?? ""
@@ -184,7 +184,7 @@ MouseArea {
                                 active: item.modelData?.trailingIcon.length > 0
                                 visible: active
 
-                                sourceComponent: MaterialIcon {
+                                sourceComponent: CortetsuIcon {
                                     text: item.modelData.trailingIcon
                                     color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
                                 }

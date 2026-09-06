@@ -64,7 +64,7 @@ Item {
         }
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         id: icon
 
         anchors.horizontalCenter: parent.horizontalCenter
@@ -102,7 +102,7 @@ Item {
         Anim {}
     }
 
-    component Title: StyledText {
+    component Title: CortetsuText {
         id: text
 
         anchors.horizontalCenter: icon.horizontalCenter

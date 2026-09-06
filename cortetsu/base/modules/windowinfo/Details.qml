@@ -29,7 +29,7 @@ ColumnLayout {
         font: Tokens.font.body.large
     }
 
-    StyledRect {
+    CortetsuSurface {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
         Layout.leftMargin: Tokens.padding.extraLargeIncreased
@@ -135,14 +135,14 @@ ColumnLayout {
 
         spacing: Tokens.spacing.medium
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             Layout.alignment: Qt.AlignVCenter
             text: detail.icon
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
 
@@ -152,7 +152,7 @@ ColumnLayout {
         }
     }
 
-    component Label: StyledText {
+    component Label: CortetsuText {
         Layout.leftMargin: Tokens.padding.large
         Layout.rightMargin: Tokens.padding.large
         Layout.fillWidth: true

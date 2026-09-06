@@ -16,7 +16,7 @@ Switch {
     implicitWidth: implicitIndicatorWidth
     implicitHeight: implicitIndicatorHeight
 
-    indicator: StyledRect {
+    indicator: CortetsuSurface {
         radius: Tokens.rounding.full
         color: {
             if (root.disabled)
@@ -27,7 +27,7 @@ Switch {
         implicitWidth: implicitHeight * 1.7
         implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.small * 2
 
-        StyledRect {
+        CortetsuSurface {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.2 : implicitHeight
 
             radius: Tokens.rounding.full
@@ -42,7 +42,7 @@ Switch {
             implicitHeight: parent.implicitHeight - Tokens.padding.extraSmall
             anchors.verticalCenter: parent.verticalCenter
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 radius: parent.radius
 

@@ -142,7 +142,7 @@ ListView {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             id: placeholder
 
             anchors.fill: parent
@@ -242,7 +242,7 @@ ListView {
                 opacity: 0
             }
 
-            StyledRect {
+            CortetsuSurface {
                 id: itemBg
 
                 anchors.fill: parent
@@ -260,7 +260,7 @@ ListView {
                 hoverEnabled: true
                 cursorShape: mouse.pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
 
-                StyledRect {
+                CortetsuSurface {
                     anchors.fill: parent
                     radius: itemBg.radius
                     topLeftRadius: itemBg.topLeftRadius
@@ -286,7 +286,7 @@ ListView {
 
                 spacing: Tokens.spacing.medium
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: dragIcon
 
                     text: "drag_indicator"
@@ -294,7 +294,7 @@ ListView {
                     fontStyle: Tokens.font.icon.medium
                 }
 
-                StyledText {
+                CortetsuText {
                     id: label
 
                     Layout.fillWidth: true

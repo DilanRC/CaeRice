@@ -43,14 +43,14 @@ Item {
                 spacing: 0
                 Layout.fillWidth: true
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: Hypr.activeToplevel?.title ?? ""
                     font: Tokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: Hypr.activeToplevel?.lastIpcObject.class ?? ""
                     color: Colours.palette.m3onSurfaceVariant
@@ -64,12 +64,12 @@ Item {
 
                 Layout.alignment: Qt.AlignVCenter
 
-                StateLayer {
+                CortetsuStateLayer {
                     radius: Tokens.rounding.large
                     onClicked: root.popouts.detachRequested("winfo")
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: expandIcon
 
                     anchors.centerIn: parent

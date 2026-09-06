@@ -37,7 +37,7 @@ ColumnLayout {
         implicitWidth: capslockIcon.implicitWidth
         implicitHeight: Math.round(root.capsHeight)
 
-        MaterialIcon {
+        CortetsuIcon {
             id: capslockIcon
 
             anchors.centerIn: parent
@@ -66,7 +66,7 @@ ColumnLayout {
         implicitWidth: numlockIcon.implicitWidth
         implicitHeight: Math.round(root.numHeight)
 
-        MaterialIcon {
+        CortetsuIcon {
             id: numlockIcon
 
             anchors.centerIn: parent

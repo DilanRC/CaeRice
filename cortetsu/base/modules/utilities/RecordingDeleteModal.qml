@@ -39,7 +39,7 @@ Loader {
             anchors.bottomMargin: -Tokens.padding.large - Config.border.thickness
             opacity: 0.5
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 anchors.rightMargin: -parent.width * (1 - root.deformMatrix.m11) / 2 // Additional bit to account for deform
                 anchors.bottomMargin: -parent.height * 0.1 // Additional bit to account for overshoot
@@ -136,7 +136,7 @@ Loader {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             anchors.centerIn: parent
             radius: Tokens.rounding.extraLarge
             color: Colours.palette.m3surfaceContainerHigh
@@ -166,12 +166,12 @@ Loader {
                 anchors.margins: Tokens.padding.large * 1.5
                 spacing: Tokens.spacing.medium
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Delete recording?")
                     font: Tokens.font.body.large
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Recording '%1' will be permanently deleted.").arg(deleteConfirmation.path)
                     color: Colours.palette.m3onSurfaceVariant

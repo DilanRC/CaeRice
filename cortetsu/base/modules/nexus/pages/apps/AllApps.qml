@@ -38,7 +38,7 @@ PageBase {
                 last: index === list.count - 1
                 implicitHeight: appRow.implicitHeight + appRow.anchors.margins * 2
 
-                StateLayer {
+                CortetsuStateLayer {
                     onClicked: {
                         root.nState.selectedApp = appItem.modelData;
                         root.nState.openSubPage(2);
@@ -64,14 +64,14 @@ PageBase {
                         Layout.fillWidth: true
                         spacing: 0
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: appItem.modelData.name
                             font: Tokens.font.body.small
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             visible: text
                             text: (appItem.modelData.comment || appItem.modelData.genericName) ?? ""
@@ -81,7 +81,7 @@ PageBase {
                         }
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         visible: Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appItem.modelData.id)
                         text: "favorite"
                         fill: 1
@@ -89,7 +89,7 @@ PageBase {
                         fontStyle: Tokens.font.icon.small
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: "chevron_right"
                         color: Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.medium

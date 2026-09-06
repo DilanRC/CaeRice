@@ -4,7 +4,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property int rootHeight

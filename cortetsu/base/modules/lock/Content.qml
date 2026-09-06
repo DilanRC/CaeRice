@@ -44,7 +44,7 @@ RowLayout {
             Layout.fillWidth: true
         }
 
-        StyledRect {
+        CortetsuSurface {
             Layout.fillWidth: true
             Layout.fillHeight: true
 

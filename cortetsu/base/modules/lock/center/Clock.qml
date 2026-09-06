@@ -17,7 +17,7 @@ Item {
     implicitWidth: hours.implicitWidth + minutes.implicitWidth + Tokens.spacing.small
     implicitHeight: hourMetrics.tightBoundingRect.height
 
-    StyledText {
+    CortetsuText {
         id: hours
 
         y: -root.calcTopOff(hourMetrics)
@@ -33,7 +33,7 @@ Item {
         }
     }
 
-    StyledText {
+    CortetsuText {
         id: minutes
 
         anchors.right: parent.right
@@ -59,14 +59,14 @@ Item {
         active: GlobalConfig.services.useTwelveHourClock
         asynchronous: true
 
-        sourceComponent: StyledRect {
+        sourceComponent: CortetsuSurface {
             color: Colours.tPalette.m3surfaceContainerHigh
             radius: Tokens.rounding.large
 
             implicitWidth: minuteMetrics.tightBoundingRect.width
             implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
 
-            StyledText {
+            CortetsuText {
                 id: amPm
 
                 anchors.centerIn: parent

@@ -4,7 +4,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledText {
+CortetsuText {
     property bool first
 
     Layout.fillWidth: true

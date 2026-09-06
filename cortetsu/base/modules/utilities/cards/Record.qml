@@ -8,7 +8,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property var props
@@ -32,7 +32,7 @@ StyledRect {
 
             spacing: Tokens.spacing.medium
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: implicitHeight
                 implicitHeight: {
                     const h = icon.implicitHeight + Tokens.padding.small * 2;
@@ -42,7 +42,7 @@ StyledRect {
                 radius: Tokens.rounding.full
                 color: Recorder.running ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: icon
 
                     anchors.centerIn: parent
@@ -57,14 +57,14 @@ StyledRect {
                 Layout.fillWidth: true
                 spacing: 0
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Screen Recorder")
                     font: Tokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: Recorder.paused ? qsTr("Paused") : Recorder.running ? qsTr("Running...") : qsTr("Ready")
                     color: Colours.palette.m3onSurfaceVariant
@@ -180,14 +180,14 @@ StyledRect {
         RowLayout {
             spacing: Tokens.spacing.medium
 
-            StyledRect {
+            CortetsuSurface {
                 radius: Tokens.rounding.full
                 color: Recorder.paused ? Colours.palette.m3tertiary : Colours.palette.m3error
 
                 implicitWidth: recText.implicitWidth + Tokens.padding.medium * 2
                 implicitHeight: recText.implicitHeight + Tokens.padding.large
 
-                StyledText {
+                CortetsuText {
                     id: recText
 
                     anchors.centerIn: parent
@@ -221,7 +221,7 @@ StyledRect {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: {
                     const elapsed = Recorder.elapsed;

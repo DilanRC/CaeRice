@@ -8,7 +8,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property real centerScale
@@ -44,7 +44,7 @@ StyledRect {
         Anim {}
     }
 
-    StateLayer {
+    CortetsuStateLayer {
         hoverEnabled: false
         cursorShape: Qt.IBeamCursor
         onClicked: parent.forceActiveFocus()
@@ -72,7 +72,7 @@ StyledRect {
             Component {
                 id: iconComp
 
-                MaterialIcon {
+                CortetsuIcon {
                     animate: true
                     text: {
                         if (root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries) {
@@ -148,7 +148,7 @@ StyledRect {
                 }
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: enterIcon
 
                 anchors.centerIn: parent

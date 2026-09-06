@@ -33,7 +33,7 @@ Item {
         layer.enabled: true
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         anchors.centerIn: parent
 
         text: "person"

@@ -4,7 +4,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     required property int extra
 
     anchors.right: parent.right
@@ -27,7 +27,7 @@ StyledRect {
         level: 2
     }
 
-    StyledText {
+    CortetsuText {
         id: count
 
         anchors.centerIn: parent

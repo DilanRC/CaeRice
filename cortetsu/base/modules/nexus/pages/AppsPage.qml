@@ -108,7 +108,7 @@ PageBase {
                     return apps.sort((a, b) => (favourited.has(b) - favourited.has(a)) || a.name.localeCompare(b.name));
                 }
 
-                delegate: StateLayer {
+                delegate: CortetsuStateLayer {
                     id: appItem
 
                     required property DesktopEntry modelData
@@ -142,14 +142,14 @@ PageBase {
                             Layout.fillWidth: true
                             spacing: 0
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.fillWidth: true
                                 text: appItem.modelData.name
                                 font: Tokens.font.body.small
                                 elide: Text.ElideRight
                             }
 
-                            StyledText {
+                            CortetsuText {
                                 Layout.fillWidth: true
                                 visible: text
                                 text: (appItem.modelData.comment || appItem.modelData.genericName) ?? ""
@@ -159,7 +159,7 @@ PageBase {
                             }
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             visible: Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appItem.modelData.id)
                             text: "favorite"
                             fill: 1

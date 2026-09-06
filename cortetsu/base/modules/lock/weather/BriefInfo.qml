@@ -11,7 +11,7 @@ ColumnLayout {
 
     spacing: Tokens.spacing.extraSmall
 
-    StyledText {
+    CortetsuText {
         Layout.alignment: Qt.AlignHCenter
         animate: true
         text: Weather.description
@@ -23,7 +23,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             id: temp
 
             animate: true
@@ -32,7 +32,7 @@ ColumnLayout {
             font: Tokens.font.headline.builders.large.scale(1.5).weight(Font.DemiBold).width(80).build()
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             animate: true
             text: Weather.icon
             color: Colours.palette.m3secondary
@@ -40,7 +40,7 @@ ColumnLayout {
         }
     }
 
-    StyledText {
+    CortetsuText {
         visible: root.rootHeight > Tokens.sizes.lock.showWeatherDetailsHeight
         Layout.alignment: Qt.AlignHCenter
         animate: true
@@ -49,7 +49,7 @@ ColumnLayout {
         font: Tokens.font.body.large
     }
 
-    StyledText {
+    CortetsuText {
         visible: root.rootHeight > Tokens.sizes.lock.showWeatherDetailsHeight
         Layout.alignment: Qt.AlignHCenter
         animate: true

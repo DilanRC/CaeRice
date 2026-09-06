@@ -19,7 +19,7 @@ Item {
     required property var dialog
     readonly property FileEntry currentItem: view.currentItem as FileEntry
 
-    StyledRect {
+    CortetsuSurface {
         anchors.fill: parent
         color: Colours.tPalette.m3surfaceContainer
 
@@ -52,14 +52,14 @@ Item {
         active: opacity > 0
 
         sourceComponent: ColumnLayout {
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "scan_delete"
                 color: Colours.palette.m3outline
                 fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.Medium).build()
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("This folder is empty")
                 color: Colours.palette.m3outline
                 font: Tokens.font.body.builders.large.weight(Font.Medium).build()
@@ -153,7 +153,7 @@ Item {
         currentItem: view.currentItem
     }
 
-    component FileEntry: StyledRect {
+    component FileEntry: CortetsuSurface {
         id: item
 
         required property int index
@@ -169,7 +169,7 @@ Item {
         z: GridView.isCurrentItem || implicitHeight !== nonAnimHeight ? 1 : 0
         clip: true
 
-        StateLayer {
+        CortetsuStateLayer {
             onClicked: view.currentIndex = item.index
             onDoubleClicked: {
                 if (item.modelData.isDir)
@@ -201,7 +201,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             id: name
 
             anchors.left: parent.left

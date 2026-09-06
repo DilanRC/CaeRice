@@ -75,7 +75,7 @@ Item {
                 asynchronous: true
                 active: pfp.status !== Image.Ready
 
-                sourceComponent: MaterialIcon {
+                sourceComponent: CortetsuIcon {
                     text: "person_add"
                     color: Colours.palette.m3onSurfaceVariant
                     fontStyle: Tokens.font.icon.extraLarge
@@ -91,7 +91,7 @@ Item {
                 path: `${Paths.home}/.face`
             }
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 color: Qt.alpha(Colours.palette.m3scrim, pfp.status === Image.Ready ? 0.4 : 0)
                 opacity: mouse.containsMouse ? 1 : 0
@@ -120,7 +120,7 @@ Item {
                         }
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.centerIn: parent
                         text: "person_edit"
                         color: Colours.palette.m3onPrimary
@@ -187,7 +187,7 @@ Item {
             CAnim {}
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             anchors.centerIn: parent
             text: "clock_arrow_up"
             color: Colours.palette.m3onTertiaryContainer
@@ -195,7 +195,7 @@ Item {
         }
     }
 
-    StyledText {
+    CortetsuText {
         anchors.left: uptimeShape.right
         anchors.verticalCenter: uptimeShape.verticalCenter
         anchors.leftMargin: Tokens.spacing.small
@@ -206,7 +206,7 @@ Item {
         elide: Text.ElideRight
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: bubble1
 
         anchors.left: pfpContainer.right
@@ -220,7 +220,7 @@ Item {
         color: Colours.palette.m3secondaryContainer
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: bubble2
 
         anchors.left: bubble1.right
@@ -233,7 +233,7 @@ Item {
         color: Colours.palette.m3secondaryContainer
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: wmContainer
 
         anchors.left: bubble2.left
@@ -251,7 +251,7 @@ Item {
             anchors.centerIn: parent
             spacing: Tokens.spacing.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: wmIcon
 
                 anchors.verticalCenter: parent.verticalCenter
@@ -260,7 +260,7 @@ Item {
                 fontStyle: wmText.font
             }
 
-            StyledText {
+            CortetsuText {
                 id: wmText
 
                 anchors.verticalCenter: parent.verticalCenter

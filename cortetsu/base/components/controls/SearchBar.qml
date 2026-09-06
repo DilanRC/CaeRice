@@ -20,14 +20,14 @@ TextFieldBase {
             stateLayer.press(stateLayer.mouseX, stateLayer.mouseY);
     }
 
-    background: StyledRect {
+    background: CortetsuSurface {
         id: bg
 
         anchors.fill: parent
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
 
-        StateLayer {
+        CortetsuStateLayer {
             id: stateLayer
 
             cursorShape: Qt.IBeamCursor
@@ -37,7 +37,7 @@ TextFieldBase {
         }
     }
 
-    StyledText {
+    CortetsuText {
         id: placeholder
 
         anchors.left: parent.left
@@ -57,7 +57,7 @@ TextFieldBase {
         }
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         id: searchIcon
 
         anchors.left: parent.left

@@ -27,13 +27,13 @@ Item {
             Column {
                 spacing: Tokens.spacing.extraSmall
 
-                StyledText {
+                CortetsuText {
                     text: Weather.city || qsTr("Loading...")
                     font: Tokens.font.body.builders.large.size(28).weight(Font.DemiBold).build()
                     color: Colours.palette.m3onSurface
                 }
 
-                StyledText {
+                CortetsuText {
                     text: new Date().toLocaleDateString(Qt.locale(), "dddd, MMMM d")
                     font: Tokens.font.body.small
                     color: Colours.palette.m3onSurfaceVariant
@@ -63,7 +63,7 @@ Item {
             }
         }
 
-        StyledRect {
+        CortetsuSurface {
             Layout.fillWidth: true
             implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.small
 
@@ -76,7 +76,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: Tokens.spacing.largeIncreased
 
-                MaterialIcon {
+                CortetsuIcon {
                     Layout.alignment: Qt.AlignVCenter
                     text: Weather.icon
                     fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).build()
@@ -88,13 +88,13 @@ Item {
                     Layout.alignment: Qt.AlignVCenter
                     spacing: -Tokens.spacing.small
 
-                    StyledText {
+                    CortetsuText {
                         text: Weather.temp
                         font: Tokens.font.body.builders.large.size(28 * 2).weight(Font.Medium).build()
                         color: Colours.palette.m3primary
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.leftMargin: Tokens.padding.extraSmall
                         text: Weather.description
                         font: Tokens.font.body.medium
@@ -128,7 +128,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.topMargin: Tokens.spacing.medium
             Layout.leftMargin: Tokens.padding.medium
             visible: forecastRepeater.count > 0
@@ -146,7 +146,7 @@ Item {
 
                 model: Weather.forecast
 
-                StyledRect {
+                CortetsuSurface {
                     id: forecastItem
 
                     required property int index
@@ -164,14 +164,14 @@ Item {
                         anchors.centerIn: parent
                         spacing: Tokens.spacing.small
 
-                        StyledText {
+                        CortetsuText {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.index === 0 ? qsTr("Today") : new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "ddd")
                             font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
                             color: Colours.palette.m3primary
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.topMargin: -Tokens.spacing.extraSmall
                             Layout.alignment: Qt.AlignHCenter
                             text: new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "MMM d")
@@ -180,14 +180,14 @@ Item {
                             color: Colours.palette.m3onSurfaceVariant
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.modelData.icon
                             fontStyle: Tokens.font.icon.extraLarge
                             color: Colours.palette.m3secondary
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.alignment: Qt.AlignHCenter
                             text: {
                                 const min = Weather.formatTemp(forecastItem.modelData.minTempC).slice(0, -1);
@@ -203,7 +203,7 @@ Item {
         }
     }
 
-    component DetailCard: StyledRect {
+    component DetailCard: CortetsuSurface {
         id: detailRoot
 
         property string icon
@@ -220,7 +220,7 @@ Item {
             anchors.centerIn: parent
             spacing: Tokens.spacing.medium
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: detailRoot.icon
                 color: detailRoot.colour
                 fontStyle: Tokens.font.icon.large
@@ -231,13 +231,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 0
 
-                StyledText {
+                CortetsuText {
                     text: detailRoot.label
                     font: Tokens.font.body.small
                     opacity: 0.7
                     horizontalAlignment: Text.AlignLeft
                 }
-                StyledText {
+                CortetsuText {
                     text: detailRoot.value
                     font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
                     horizontalAlignment: Text.AlignLeft
@@ -256,19 +256,19 @@ Item {
 
         spacing: Tokens.spacing.small
 
-        MaterialIcon {
+        CortetsuIcon {
             text: weatherStat.icon
             fontStyle: Tokens.font.icon.extraLarge
             color: weatherStat.colour
         }
 
         Column {
-            StyledText {
+            CortetsuText {
                 text: weatherStat.label
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }
-            StyledText {
+            CortetsuText {
                 text: weatherStat.value
                 font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
                 color: Colours.palette.m3onSurface

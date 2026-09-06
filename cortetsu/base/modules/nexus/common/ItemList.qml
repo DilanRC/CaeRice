@@ -37,7 +37,7 @@ ConnectedRect {
         sourceComponent: ColumnLayout {
             spacing: Tokens.spacing.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.placeholderIcon
                 color: Colours.palette.m3outline
@@ -45,7 +45,7 @@ ConnectedRect {
                 animate: true
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.placeholderText
                 color: Colours.palette.m3outline

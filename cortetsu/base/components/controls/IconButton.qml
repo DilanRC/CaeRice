@@ -34,7 +34,7 @@ ButtonBase {
         return h;
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         id: label
 
         anchors.centerIn: parent

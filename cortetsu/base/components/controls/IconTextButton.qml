@@ -45,7 +45,7 @@ ButtonBase {
         anchors.centerIn: parent
         spacing: Tokens.spacing.small
 
-        MaterialIcon {
+        CortetsuIcon {
             id: iconLabel
 
             Layout.alignment: Qt.AlignVCenter
@@ -64,7 +64,7 @@ ButtonBase {
             }
         }
 
-        StyledText {
+        CortetsuText {
             id: label
 
             Layout.alignment: Qt.AlignVCenter

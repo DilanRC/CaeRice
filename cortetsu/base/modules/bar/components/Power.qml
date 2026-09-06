@@ -11,7 +11,7 @@ Item {
     implicitWidth: icon.implicitHeight + Tokens.padding.small
     implicitHeight: icon.implicitHeight
 
-    StateLayer {
+    CortetsuStateLayer {
         // Cursed workaround to make the height larger than the parent
         anchors.fill: undefined
         anchors.centerIn: parent
@@ -21,7 +21,7 @@ Item {
         onClicked: root.screenState.session = !root.screenState.session
     }
 
-    MaterialIcon {
+    CortetsuIcon {
         id: icon
 
         anchors.centerIn: parent

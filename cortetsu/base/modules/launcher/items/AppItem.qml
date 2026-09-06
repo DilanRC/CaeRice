@@ -18,7 +18,7 @@ Item {
     anchors.left: parent?.left
     anchors.right: parent?.right
 
-    StateLayer {
+    CortetsuStateLayer {
         radius: Tokens.rounding.large
         onClicked: {
             Apps.launch(root.modelData);
@@ -50,14 +50,14 @@ Item {
             implicitWidth: parent.width - icon.width - favouriteIcon.width
             implicitHeight: name.implicitHeight + comment.implicitHeight
 
-            StyledText {
+            CortetsuText {
                 id: name
 
                 text: root.modelData?.name ?? ""
                 font: Tokens.font.body.medium
             }
 
-            StyledText {
+            CortetsuText {
                 id: comment
 
                 text: (root.modelData?.comment || root.modelData?.genericName || root.modelData?.name) ?? ""
@@ -79,7 +79,7 @@ Item {
             anchors.right: parent.right
             active: root.modelData && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, root.modelData.id)
 
-            sourceComponent: MaterialIcon {
+            sourceComponent: CortetsuIcon {
                 text: "favorite"
                 fill: 1
                 color: Colours.palette.m3primary

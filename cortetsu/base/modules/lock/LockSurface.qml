@@ -207,7 +207,7 @@ WlSessionLockSurface {
         rotation: 180
         scale: 0
 
-        StyledRect {
+        CortetsuSurface {
             id: lockBg
 
             anchors.fill: parent
@@ -223,7 +223,7 @@ WlSessionLockSurface {
             }
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             id: lockIcon
 
             anchors.centerIn: parent

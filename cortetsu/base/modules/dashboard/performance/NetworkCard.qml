@@ -6,7 +6,7 @@ import Caelestia.Services
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     color: Colours.tPalette.m3surfaceContainer
@@ -30,13 +30,13 @@ StyledRect {
         RowLayout {
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "swap_vert"
                 color: Colours.palette.m3primary
                 fontStyle: Tokens.font.icon.medium
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Network")
                 font: Tokens.font.title.medium
             }
@@ -91,7 +91,7 @@ StyledRect {
             }
 
             // "Collecting data" placeholder
-            StyledText {
+            CortetsuText {
                 anchors.centerIn: parent
                 text: qsTr("Collecting data...")
                 font: Tokens.font.body.small
@@ -105,13 +105,13 @@ StyledRect {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "download"
                 color: Colours.palette.m3tertiary
                 fontStyle: Tokens.font.icon.medium
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Download")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
@@ -121,7 +121,7 @@ StyledRect {
                 Layout.fillWidth: true
             }
 
-            StyledText {
+            CortetsuText {
                 text: {
                     const fmt = NetworkUsage.formatBytesRate(NetworkUsage.downloadSpeed ?? 0);
                     return fmt ? `${fmt.value.toFixed(1)} ${fmt.unit}` : "0.0 B/s";
@@ -136,13 +136,13 @@ StyledRect {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "upload"
                 color: Colours.palette.m3secondary
                 fontStyle: Tokens.font.icon.medium
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Upload")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
@@ -152,7 +152,7 @@ StyledRect {
                 Layout.fillWidth: true
             }
 
-            StyledText {
+            CortetsuText {
                 text: {
                     const fmt = NetworkUsage.formatBytesRate(NetworkUsage.uploadSpeed ?? 0);
                     return fmt ? `${fmt.value.toFixed(1)} ${fmt.unit}` : "0.0 B/s";
@@ -167,13 +167,13 @@ StyledRect {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "history"
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.medium
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Total")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
@@ -183,7 +183,7 @@ StyledRect {
                 Layout.fillWidth: true
             }
 
-            StyledText {
+            CortetsuText {
                 text: {
                     const down = NetworkUsage.formatBytes(NetworkUsage.downloadTotal ?? 0);
                     const up = NetworkUsage.formatBytes(NetworkUsage.uploadTotal ?? 0);

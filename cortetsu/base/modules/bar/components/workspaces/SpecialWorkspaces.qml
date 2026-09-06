@@ -295,7 +295,7 @@ Item {
             Component {
                 id: iconComp
 
-                MaterialIcon {
+                CortetsuIcon {
                     fill: 1
                     text: ws.icon
                     verticalAlignment: Qt.AlignVCenter
@@ -305,7 +305,7 @@ Item {
             Component {
                 id: letterComp
 
-                StyledText {
+                CortetsuText {
                     text: ws.icon
                     verticalAlignment: Qt.AlignVCenter
                 }
@@ -356,7 +356,7 @@ Item {
                         }
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         required property var modelData
 
                         grade: 0

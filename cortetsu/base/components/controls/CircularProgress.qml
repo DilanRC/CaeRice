@@ -111,7 +111,7 @@ Item {
         x: root.size / 2 + root.arcRadius * Math.cos(root.dotAngleRad) - width / 2
         y: root.size / 2 + root.arcRadius * Math.sin(root.dotAngleRad) - height / 2
 
-        sourceComponent: StyledRect {
+        sourceComponent: CortetsuSurface {
             radius: Tokens.rounding.full
             color: root.fgColour
             opacity: Math.min(1, remainingArc.sweepAngle)

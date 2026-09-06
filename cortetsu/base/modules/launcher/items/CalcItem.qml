@@ -27,7 +27,7 @@ Item {
     anchors.left: parent?.left
     anchors.right: parent?.right
 
-    StateLayer {
+    CortetsuStateLayer {
         radius: Tokens.rounding.large
         onClicked: root.onClicked()
     }
@@ -40,13 +40,13 @@ Item {
 
         spacing: Tokens.spacing.medium
 
-        MaterialIcon {
+        CortetsuIcon {
             text: "function"
             fontStyle: Tokens.font.icon.extraLarge
             Layout.alignment: Qt.AlignVCenter
         }
 
-        StyledText {
+        CortetsuText {
             id: result
 
             color: {
@@ -64,7 +64,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        StyledRect {
+        CortetsuSurface {
             color: Colours.palette.m3tertiary
             radius: Tokens.rounding.large
             clip: true
@@ -74,7 +74,7 @@ Item {
 
             Layout.alignment: Qt.AlignVCenter
 
-            StateLayer {
+            CortetsuStateLayer {
                 id: stateLayer
 
                 onClicked: {
@@ -85,7 +85,7 @@ Item {
                 color: Colours.palette.m3onTertiary
             }
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 anchors.verticalCenter: parent.verticalCenter
@@ -105,7 +105,7 @@ Item {
                 }
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: icon
 
                 anchors.verticalCenter: parent.verticalCenter

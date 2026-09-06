@@ -32,7 +32,7 @@ StyledClippingRect {
         subTextColour: Colours.palette.m3onSurfaceVariant
     }
 
-    StyledRect {
+    CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -65,14 +65,14 @@ StyledClippingRect {
 
         spacing: 0
 
-        MaterialIcon {
+        CortetsuIcon {
             Layout.leftMargin: -Tokens.padding.extraSmall
             text: "battery_full"
             color: contents.accentColour
             fontStyle: Tokens.font.icon.large
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: qsTr("Battery")
             color: contents.textColour
@@ -83,7 +83,7 @@ StyledClippingRect {
             Layout.fillHeight: true
         }
 
-        StyledText {
+        CortetsuText {
             Layout.alignment: Qt.AlignRight
             text: {
                 if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
@@ -115,7 +115,7 @@ StyledClippingRect {
             Layout.alignment: Qt.AlignRight
             spacing: Tokens.spacing.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 text: "bolt"
                 color: contents.accentColour
                 fontStyle: Tokens.font.icon.large
@@ -137,7 +137,7 @@ StyledClippingRect {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 text: `${Math.round(UPower.displayDevice.percentage * 100)}%`
                 color: contents.accentColour
                 font: Tokens.font.headline.medium

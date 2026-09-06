@@ -23,7 +23,7 @@ ColumnLayout {
         id: kb
     }
 
-    StyledText {
+    CortetsuText {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Keyboard Layouts")
@@ -92,7 +92,7 @@ ColumnLayout {
             ToolTip.visible: isDisabled && layer.containsMouse
             ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
 
-            StateLayer {
+            CortetsuStateLayer {
                 id: layer
 
                 onClicked: {
@@ -108,7 +108,7 @@ ColumnLayout {
                 enabled: !kbDelegate.isDisabled
             }
 
-            StyledText {
+            CortetsuText {
                 id: rowText
 
                 anchors.verticalCenter: layer.verticalCenter
@@ -146,12 +146,12 @@ ColumnLayout {
         opacity: 1
         scale: 1
 
-        MaterialIcon {
+        CortetsuIcon {
             text: "keyboard"
             color: Colours.palette.m3primary
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: kb.activeLabel
             elide: Text.ElideRight

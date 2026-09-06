@@ -52,7 +52,7 @@ DoubleSpinBox {
         implicitWidth: 65
         horizontalAlignment: TextField.AlignHCenter
 
-        background: StyledRect {
+        background: CortetsuSurface {
             radius: Tokens.rounding.extraSmall
             color: Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
         }

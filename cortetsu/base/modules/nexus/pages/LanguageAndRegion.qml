@@ -63,14 +63,14 @@ PageBase {
                     Layout.fillWidth: true
                     spacing: 0
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("System language")
                         font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("Follows your system locale (%1)").arg(Qt.locale().name)
                         color: Colours.palette.m3outline
@@ -79,7 +79,7 @@ PageBase {
                     }
                 }
 
-                StyledText {
+                CortetsuText {
                     text: Qt.locale().nativeLanguageName || Qt.locale().name
                     color: Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.body.small
@@ -106,21 +106,21 @@ PageBase {
                 width: parent.width - Tokens.padding.largeIncreased * 2
                 spacing: Tokens.padding.extraSmall
 
-                MaterialIcon {
+                CortetsuIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "map"
                     color: Colours.palette.m3outlineVariant
                     fontStyle: Tokens.font.icon.extraLarge
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Location picker coming soon")
                     color: Colours.palette.m3outlineVariant
                     font: Tokens.font.title.small
                 }
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap

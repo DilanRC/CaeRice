@@ -12,11 +12,11 @@ Column {
     spacing: Tokens.spacing.medium
     width: Tokens.sizes.bar.batteryWidth
 
-    StyledText {
+    CortetsuText {
         text: UPower.displayDevice.isLaptopBattery ? qsTr("Remaining: %1%").arg(Math.round(UPower.displayDevice.percentage * 100)) : qsTr("No battery detected")
     }
 
-    StyledText {
+    CortetsuText {
         function formatSeconds(s: int, fallback: string): string {
             const day = Math.floor(s / 86400);
             const hr = Math.floor(s / 3600) % 24;
@@ -44,7 +44,7 @@ Column {
 
         height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
-        sourceComponent: StyledRect {
+        sourceComponent: CortetsuSurface {
             implicitWidth: child.implicitWidth + Tokens.padding.medium * 2
             implicitHeight: child.implicitHeight + Tokens.padding.large
 
@@ -60,7 +60,7 @@ Column {
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: Tokens.spacing.small
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.verticalCenterOffset: -font.pointSize / 10
 
@@ -68,14 +68,14 @@ Column {
                         color: Colours.palette.m3onError
                     }
 
-                    StyledText {
+                    CortetsuText {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Performance Degraded")
                         color: Colours.palette.m3onError
                         font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
                     }
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.verticalCenterOffset: -font.pointSize / 10
 
@@ -84,7 +84,7 @@ Column {
                     }
                 }
 
-                StyledText {
+                CortetsuText {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text: qsTr("Reason: %1").arg(PerformanceDegradationReason.toString(PowerProfiles.degradationReason))
@@ -94,7 +94,7 @@ Column {
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: profiles
 
         property string current: {
@@ -114,7 +114,7 @@ Column {
         color: Colours.tPalette.m3surfaceContainer
         radius: Tokens.rounding.full
 
-        StyledRect {
+        CortetsuSurface {
             id: indicator
 
             color: Colours.palette.m3primary
@@ -199,13 +199,13 @@ Column {
         implicitWidth: icon.implicitHeight + Tokens.padding.small
         implicitHeight: icon.implicitHeight + Tokens.padding.small
 
-        StateLayer {
+        CortetsuStateLayer {
             radius: Tokens.rounding.full
             color: profiles.current === parent.icon ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
             onClicked: PowerProfiles.profile = parent.profile
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             anchors.centerIn: parent

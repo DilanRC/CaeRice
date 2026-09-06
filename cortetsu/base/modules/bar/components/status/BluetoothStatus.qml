@@ -28,7 +28,7 @@ Item {
         spacing: Tokens.spacing.medium / 2
 
         // Bluetooth icon
-        MaterialIcon {
+        CortetsuIcon {
             animate: true
             text: {
                 if (!Bluetooth.defaultAdapter?.enabled) // qmllint disable unresolved-type
@@ -46,7 +46,7 @@ Item {
                 values: Bluetooth.devices.values.filter(d => d.state !== BluetoothDeviceState.Disconnected) // qmllint disable unresolved-type
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: device
 
                 required property BluetoothDevice modelData

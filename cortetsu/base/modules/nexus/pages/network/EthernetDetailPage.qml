@@ -142,14 +142,14 @@ PageBase {
                     anchors.centerIn: parent
                     spacing: 0
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: root.device?.connected ? "link_off" : "link"
                         color: connectBtn.onColour
                         fontStyle: Tokens.font.icon.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: root.device?.connected ? qsTr("Disconnect") : qsTr("Connect")
                         color: connectBtn.onColour
@@ -336,7 +336,7 @@ PageBase {
                 Component {
                     id: applyTextComp
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("Apply")
                         color: applyBtn.onColour
                         animate: true

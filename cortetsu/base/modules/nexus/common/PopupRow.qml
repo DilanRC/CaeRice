@@ -20,7 +20,7 @@ ConnectedRect {
     Layout.fillWidth: true
     implicitHeight: navLayout.implicitHeight + navLayout.anchors.margins * 2
 
-    StateLayer {
+    CortetsuStateLayer {
         id: stateLayer
 
         manualHoverOverride: popup.hovered && !popup.open
@@ -36,7 +36,7 @@ ConnectedRect {
         anchors.rightMargin: Tokens.padding.largeIncreased
         spacing: Tokens.spacing.medium
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             color: Colours.palette.m3onSurfaceVariant
@@ -47,7 +47,7 @@ ConnectedRect {
             Layout.fillWidth: true
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 Layout.fillWidth: true
@@ -55,7 +55,7 @@ ConnectedRect {
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 id: status
 
                 Layout.fillWidth: true

@@ -125,7 +125,7 @@ ColumnLayout {
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
         implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
@@ -177,19 +177,19 @@ ColumnLayout {
 
             spacing: Tokens.spacing.medium
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
                 fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
                 font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
-            StyledText {
+            CortetsuText {
                 id: networkNameText
 
                 Layout.alignment: Qt.AlignHCenter
@@ -235,7 +235,7 @@ ColumnLayout {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 id: statusText
 
                 Layout.alignment: Qt.AlignHCenter
@@ -335,7 +335,7 @@ ColumnLayout {
                     }
                 }
 
-                StyledRect {
+                CortetsuSurface {
                     anchors.fill: parent
                     radius: Tokens.rounding.large
                     color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
@@ -363,14 +363,14 @@ ColumnLayout {
                     }
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
                     radius: Tokens.rounding.large
                     onClicked: passwordContainer.forceActiveFocus()
                 }
 
-                StyledText {
+                CortetsuText {
                     id: placeholder
 
                     anchors.centerIn: parent
@@ -403,7 +403,7 @@ ColumnLayout {
                         values: passwordContainer.passwordBuffer.split("")
                     }
 
-                    delegate: StyledRect {
+                    delegate: CortetsuSurface {
                         id: ch
 
                         implicitWidth: implicitHeight

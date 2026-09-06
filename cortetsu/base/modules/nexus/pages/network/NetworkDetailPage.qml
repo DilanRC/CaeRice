@@ -131,14 +131,14 @@ PageBase {
                     anchors.centerIn: parent
                     spacing: 0
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "delete"
                         color: forgetBtn.onColour
                         fontStyle: Tokens.font.icon.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Forget")
                         color: forgetBtn.onColour
@@ -170,14 +170,14 @@ PageBase {
                     anchors.centerIn: parent
                     spacing: 0
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "link_off"
                         color: disconnectBtn.onColour
                         fontStyle: Tokens.font.icon.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Disconnect")
                         color: disconnectBtn.onColour
@@ -474,7 +474,7 @@ PageBase {
                 Component {
                     id: applyTextComp
 
-                    StyledText {
+                    CortetsuText {
                         text: applyMetrics.text
                         font: applyBtn.font
                         color: applyBtn.onColour

@@ -22,21 +22,21 @@ PageBase {
             anchors.centerIn: parent
             spacing: Tokens.padding.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "handyman"
                 color: Colours.palette.m3outlineVariant
                 fontStyle: Tokens.font.icon.extraLarge
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Page under construction")
                 color: Colours.palette.m3outlineVariant
                 font: Tokens.font.title.large
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("This page will be available in a future update.")
                 color: Colours.palette.m3outlineVariant

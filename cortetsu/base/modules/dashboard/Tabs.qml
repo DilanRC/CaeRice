@@ -79,7 +79,7 @@ Item {
 
         clip: true
 
-        StyledRect {
+        CortetsuSurface {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -98,7 +98,7 @@ Item {
         }
     }
 
-    StyledRect {
+    CortetsuSurface {
         id: separator
 
         anchors.top: indicator.bottom
@@ -139,7 +139,7 @@ Item {
 
             onPressed: root.screenState.dashboardTab = tab.TabBar.index
 
-            StateLayer {
+            CortetsuStateLayer {
                 id: stateLayer
 
                 anchors.fill: undefined
@@ -153,7 +153,7 @@ Item {
                 onClicked: root.screenState.dashboardTab = tab.TabBar.index
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: icon
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -171,7 +171,7 @@ Item {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 anchors.horizontalCenter: parent.horizontalCenter

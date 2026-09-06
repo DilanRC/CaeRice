@@ -13,7 +13,7 @@ Item {
 
     Component.onCompleted: Weather.reload()
 
-    MaterialIcon {
+    CortetsuIcon {
         id: icon
 
         anchors.verticalCenter: parent.verticalCenter
@@ -34,7 +34,7 @@ Item {
 
         spacing: Tokens.spacing.extraSmall
 
-        StyledText {
+        CortetsuText {
             anchors.horizontalCenter: parent.horizontalCenter
 
             animate: true
@@ -43,7 +43,7 @@ Item {
             font: Tokens.font.headline.builders.medium.width(110).weight(Font.DemiBold).build()
         }
 
-        StyledText {
+        CortetsuText {
             anchors.horizontalCenter: parent.horizontalCenter
 
             animate: true

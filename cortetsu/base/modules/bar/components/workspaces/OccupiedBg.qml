@@ -47,7 +47,7 @@ Item {
             values: root.pills.filter(p => p)
         }
 
-        StyledRect {
+        CortetsuSurface {
             id: rect
 
             required property var modelData

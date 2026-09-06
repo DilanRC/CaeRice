@@ -171,7 +171,7 @@ Item {
         sourceComponent: ColumnLayout {
             spacing: Tokens.spacing.large
 
-            StyledRect {
+            CortetsuSurface {
                 Layout.alignment: Qt.AlignHCenter
                 implicitWidth: shape.implicitSize + Tokens.padding.medium * 2
                 implicitHeight: shape.implicitSize + Tokens.padding.medium * 2
@@ -187,7 +187,7 @@ Item {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("Loading lyrics...")
                 color: Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.title.medium
@@ -212,14 +212,14 @@ Item {
         sourceComponent: ColumnLayout {
             spacing: Tokens.spacing.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "sentiment_sad"
                 fontStyle: Tokens.font.icon.builders.large.scale(2).build()
                 color: Colours.palette.m3outline
             }
 
-            StyledText {
+            CortetsuText {
                 text: qsTr("No lyrics found")
                 color: Colours.palette.m3outline
                 font: Tokens.font.title.medium
@@ -257,7 +257,7 @@ Item {
         opacity: 0
         enabled: opacity > 0
 
-        delegate: StyledText {
+        delegate: CortetsuText {
             id: lyric
 
             required property string modelData

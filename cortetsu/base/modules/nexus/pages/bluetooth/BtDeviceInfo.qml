@@ -72,14 +72,14 @@ PageBase {
                     anchors.centerIn: parent
                     spacing: 0
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "delete"
                         color: forgetBtn.onColour
                         fontStyle: Tokens.font.icon.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Forget")
                         color: forgetBtn.onColour
@@ -126,7 +126,7 @@ PageBase {
                     ColumnLayout {
                         spacing: 0
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             Layout.alignment: Qt.AlignHCenter
                             text: root.connected ? "close" : "add"
                             color: connectBtn.inactiveOnColour
@@ -134,7 +134,7 @@ PageBase {
                             animate: true
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.alignment: Qt.AlignHCenter
                             text: root.connected ? qsTr("Disconnect") : qsTr("Connect")
                             color: connectBtn.inactiveOnColour
@@ -201,12 +201,12 @@ PageBase {
                     Layout.fillWidth: true
                     spacing: Tokens.spacing.medium
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("Battery")
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: root.device?.batteryAvailable ? Math.round(root.device.battery * 100) + "%" : qsTr("Unavailable")
                         color: Colours.palette.m3outline
                         font: Tokens.font.body.small
@@ -241,12 +241,12 @@ PageBase {
                 anchors.margins: Tokens.padding.large
                 spacing: Tokens.spacing.medium
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Address")
                 }
 
-                StyledText {
+                CortetsuText {
                     text: root.device?.address ?? ""
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.small

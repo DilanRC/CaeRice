@@ -22,25 +22,25 @@ ColumnLayout {
 
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: qsTr("Move to workspace")
             elide: Text.ElideRight
         }
 
-        StyledRect {
+        CortetsuSurface {
             color: Colours.palette.m3primary
             radius: Tokens.rounding.medium
 
             implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.small
             implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.extraSmall
 
-            StateLayer {
+            CortetsuStateLayer {
                 color: Colours.palette.m3onPrimary
                 onClicked: root.moveToWsExpanded = !root.moveToWsExpanded
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: moveToWsIcon
 
                 anchors.centerIn: parent
@@ -144,7 +144,7 @@ ColumnLayout {
         }
     }
 
-    component Button: StyledRect {
+    component Button: CortetsuSurface {
         property color onColor: Colours.palette.m3onSurface
         property alias disabled: stateLayer.disabled
         property alias text: label.text
@@ -156,14 +156,14 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: label.implicitHeight + Tokens.padding.small
 
-        StateLayer {
+        CortetsuStateLayer {
             id: stateLayer
 
             color: parent.onColor
             onClicked: parent.clicked()
         }
 
-        StyledText {
+        CortetsuText {
             id: label
 
             anchors.centerIn: parent

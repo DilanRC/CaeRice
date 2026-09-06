@@ -3,7 +3,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     property bool first
     property bool last
 

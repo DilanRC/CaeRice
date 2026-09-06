@@ -48,7 +48,7 @@ PageBase {
                 values: Bluetooth.devices.values.filter(d => d.bonded).sort((a, b) => (b.connected - a.connected) || a.name.localeCompare(b.name)) // qmllint disable unresolved-type
             }
 
-            delegate: StyledRect {
+            delegate: CortetsuSurface {
                 id: device
 
                 required property BluetoothDevice modelData
@@ -68,7 +68,7 @@ PageBase {
                     }
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     disabled: device.loading
                     onClicked: {
                         if (!device.modelData || device.loading)
@@ -86,13 +86,13 @@ PageBase {
                     anchors.rightMargin: Tokens.padding.largeIncreased
                     spacing: Tokens.spacing.medium
 
-                    StyledRect {
+                    CortetsuSurface {
                         implicitWidth: implicitHeight
                         implicitHeight: deviceIcon.implicitHeight + Tokens.padding.small * 2
                         radius: Tokens.rounding.full
                         color: device.connected ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             id: deviceIcon
 
                             anchors.centerIn: parent
@@ -113,14 +113,14 @@ PageBase {
                         spacing: 0
                         opacity: device.textOpacity
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: device.modelData?.name ?? qsTr("Unknown")
                             font: Tokens.font.body.small
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: device.connected ? qsTr("Connected%1").arg(device.modelData?.batteryAvailable ? " • " + Math.round(device.modelData.battery * 100) + "%" : "") : qsTr("Saved")
                             color: Colours.palette.m3outline

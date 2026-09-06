@@ -42,7 +42,7 @@ Item {
                 opacity: img.status === Image.Ready ? 0 : 1
                 active: opacity > 0
 
-                sourceComponent: StyledRect {
+                sourceComponent: CortetsuSurface {
                     implicitWidth: loadingIndicator.implicitSize + Tokens.padding.large * 2
                     implicitHeight: loadingIndicator.implicitSize + Tokens.padding.large * 2
 
@@ -86,7 +86,7 @@ Item {
             }
         }
 
-        StyledText {
+        CortetsuText {
             id: label
 
             Layout.bottomMargin: Tokens.padding.small
@@ -98,7 +98,7 @@ Item {
         }
     }
 
-    StateLayer {
+    CortetsuStateLayer {
         anchors.bottomMargin: root.fillLabel ? 0 : layout.implicitHeight - imgWrapper.implicitHeight
         onClicked: root.clicked()
     }

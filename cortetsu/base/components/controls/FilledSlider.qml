@@ -14,11 +14,11 @@ Slider {
 
     orientation: Qt.Vertical
 
-    background: StyledRect {
+    background: CortetsuSurface {
         color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
         radius: Tokens.rounding.full
 
-        StyledRect {
+        CortetsuSurface {
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -45,7 +45,7 @@ Slider {
             level: handleInteraction.containsMouse ? 2 : 1
         }
 
-        StyledRect {
+        CortetsuSurface {
             id: rect
 
             anchors.fill: parent
@@ -62,7 +62,7 @@ Slider {
                 acceptedButtons: Qt.NoButton
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: icon
 
                 property bool moving

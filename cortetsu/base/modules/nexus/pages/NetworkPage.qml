@@ -159,7 +159,7 @@ PageBase {
                 anchors.right: providerList.list.contentItem.right
                 implicitHeight: providerLayout.implicitHeight + providerLayout.anchors.margins * 2
 
-                StateLayer {
+                CortetsuStateLayer {
                     disabled: provider.isSelected
                     radius: Tokens.rounding.extraSmall
                     onClicked: {
@@ -177,13 +177,13 @@ PageBase {
                     anchors.rightMargin: Tokens.padding.medium
                     spacing: Tokens.spacing.medium
 
-                    StyledRect {
+                    CortetsuSurface {
                         implicitWidth: implicitHeight
                         implicitHeight: providerIcon.implicitHeight + Tokens.padding.small * 2
                         radius: Tokens.rounding.full
                         color: provider.isConnected ? Colours.palette.m3primaryContainer : provider.isSelected ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             id: providerIcon
 
                             anchors.centerIn: parent
@@ -199,14 +199,14 @@ PageBase {
                         Layout.fillWidth: true
                         spacing: 0
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: provider.modelData.displayName
                             font: Tokens.font.body.medium
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: {
                                 if (!provider.isSelected)
@@ -268,7 +268,7 @@ PageBase {
                             ColumnLayout {
                                 spacing: 0
 
-                                StyledText {
+                                CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: qsTr("Interface")
                                     color: Colours.palette.m3onSurfaceVariant
@@ -277,7 +277,7 @@ PageBase {
                                     horizontalAlignment: Text.AlignRight
                                 }
 
-                                StyledText {
+                                CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: provider.modelData.iface
                                     color: Colours.palette.m3outline
@@ -290,7 +290,7 @@ PageBase {
                             ColumnLayout {
                                 spacing: 0
 
-                                StyledText {
+                                CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: qsTr("Current Ping")
                                     color: Colours.palette.m3onSurfaceVariant
@@ -303,7 +303,7 @@ PageBase {
                                     Layout.alignment: Qt.AlignRight
                                     spacing: Tokens.spacing.small
 
-                                    StyledRect {
+                                    CortetsuSurface {
                                         Layout.alignment: Qt.AlignVCenter
                                         implicitWidth: Math.round(Tokens.font.body.small.pointSize * 0.7)
                                         implicitHeight: implicitWidth
@@ -311,7 +311,7 @@ PageBase {
                                         color: VPN.pingMs <= 80 ? Colours.palette.m3primary : VPN.pingMs <= 150 ? Colours.palette.m3tertiary : Colours.palette.m3error
                                     }
 
-                                    StyledText {
+                                    CortetsuText {
                                         text: qsTr("%1 ms").arg(VPN.pingMs)
                                         color: Colours.palette.m3outline
                                         font: Tokens.font.label.small

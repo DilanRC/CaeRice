@@ -38,7 +38,7 @@ DialogRowButton {
 
             model: root.model
 
-            delegate: StyledRect {
+            delegate: CortetsuSurface {
                 id: item
 
                 required property var modelData
@@ -58,13 +58,13 @@ DialogRowButton {
                     }
                 }
 
-                StateLayer {
+                CortetsuStateLayer {
                     id: stateLayer
 
                     onClicked: root.selectedItem = root.keyFor(item.modelData)
                 }
 
-                StyledText {
+                CortetsuText {
                     id: label
 
                     anchors.left: parent.left
@@ -78,7 +78,7 @@ DialogRowButton {
                     elide: Text.ElideRight
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     id: checkIcon
 
                     anchors.right: parent.right

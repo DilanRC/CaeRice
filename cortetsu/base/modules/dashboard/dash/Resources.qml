@@ -65,7 +65,7 @@ Item {
             Anim {}
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             anchors.centerIn: parent
             text: res.icon
             font: Tokens.font.icon.large

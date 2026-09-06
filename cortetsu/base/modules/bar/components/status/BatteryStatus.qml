@@ -4,7 +4,7 @@ import qs.components
 import qs.services
 import qs.utils
 
-MaterialIcon {
+CortetsuIcon {
     required property color colour
 
     animate: true

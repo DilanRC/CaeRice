@@ -35,7 +35,7 @@ Slider {
     contentItem: Item {
         anchors.fill: parent
 
-        StyledRect {
+        CortetsuSurface {
             id: remaining
 
             anchors.left: handle.right
@@ -52,7 +52,7 @@ Slider {
             color: root.bgColour
         }
 
-        StyledRect {
+        CortetsuSurface {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: 4 * remaining.opacity
@@ -65,7 +65,7 @@ Slider {
             color: root.fgColour
         }
 
-        StyledRect {
+        CortetsuSurface {
             id: handle
 
             anchors.left: filled.right
@@ -102,7 +102,7 @@ Slider {
         Component {
             id: lineComp
 
-            StyledRect {
+            CortetsuSurface {
                 implicitWidth: root.filledWidth
                 implicitHeight: root.height
 

@@ -72,7 +72,7 @@ PageBase {
             target: root.nState
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             Layout.leftMargin: Tokens.padding.extraSmall
             text: qsTr("Enter the details below to manually connect to a network.")
@@ -241,7 +241,7 @@ PageBase {
                 Component {
                     id: connectTextComp
 
-                    StyledText {
+                    CortetsuText {
                         text: connectMetrics.text
                         font: connectBtn.font
                         color: connectBtn.onColour

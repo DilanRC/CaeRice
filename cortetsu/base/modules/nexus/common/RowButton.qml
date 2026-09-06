@@ -24,7 +24,7 @@ ConnectedRect {
     Layout.fillWidth: true
     implicitHeight: row.implicitHeight + Tokens.padding.medium * 2
 
-    StateLayer {
+    CortetsuStateLayer {
         id: stateLayer
 
         onClicked: e => root.clicked(e)
@@ -45,7 +45,7 @@ ConnectedRect {
             Anim {}
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             id: iconLabel
 
             color: Colours.palette.m3onSurfaceVariant
@@ -59,7 +59,7 @@ ConnectedRect {
             Layout.fillWidth: true
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 anchors.left: parent.left
@@ -69,7 +69,7 @@ ConnectedRect {
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 id: subLabel
 
                 anchors.left: parent.left
@@ -87,7 +87,7 @@ ConnectedRect {
             active: root.trailingIcon
             visible: active
 
-            sourceComponent: MaterialIcon {
+            sourceComponent: CortetsuIcon {
                 text: root.trailingIcon
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.medium

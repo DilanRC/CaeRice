@@ -35,7 +35,7 @@ ColumnLayout {
         onTriggered: Players.active?.positionChanged()
     }
 
-    StyledText {
+    CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackTitle ?? ""
         font: Tokens.font.title.large
@@ -43,7 +43,7 @@ ColumnLayout {
         animate: true
     }
 
-    StyledText {
+    CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackArtist || qsTr("Unknown artist")
         color: Colours.palette.m3onSurfaceVariant
@@ -52,7 +52,7 @@ ColumnLayout {
         animate: true
     }
 
-    StyledText {
+    CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackAlbum || qsTr("Unknown album")
         color: Colours.palette.m3secondary
@@ -73,7 +73,7 @@ ColumnLayout {
             font: Tokens.font.label.medium
         }
 
-        StyledText {
+        CortetsuText {
             id: positionLabel
 
             Layout.preferredWidth: timeMetrics.width
@@ -108,7 +108,7 @@ ColumnLayout {
             }
         }
 
-        StyledText {
+        CortetsuText {
             Layout.preferredWidth: timeMetrics.width
             text: root.hasUnknownLength ? "--:--" : root.lengthStr(Players.active?.length ?? -1)
             color: Colours.palette.m3onSurfaceVariant

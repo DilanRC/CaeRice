@@ -7,7 +7,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     readonly property color accent: Colours.palette.m3secondary
@@ -55,21 +55,21 @@ StyledRect {
                     anchors.centerIn: parent
                     spacing: 0
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hard_drive"
                         color: root.accent
                         fontStyle: Tokens.font.icon.medium
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: Math.round(root.percentage * 100) + "%"
                         font: Tokens.font.title.builders.large.width(90).build()
                         color: root.accent
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Used")
                         font: Tokens.font.body.small
@@ -82,12 +82,12 @@ StyledRect {
                 Layout.minimumWidth: Tokens.sizes.dashboard.perfStorageTextWidth
                 spacing: Tokens.spacing.extraSmall
 
-                StyledText {
+                CortetsuText {
                     text: qsTr("Storage")
                     font: Tokens.font.title.medium
                 }
 
-                StyledText {
+                CortetsuText {
                     text: {
                         if (!Storage.primaryDisk)
                             return qsTr("No disks detected");

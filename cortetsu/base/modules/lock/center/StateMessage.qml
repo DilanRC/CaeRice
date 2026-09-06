@@ -131,7 +131,7 @@ Item {
         Anim {}
     }
 
-    StyledText {
+    CortetsuText {
         id: stateMessage
 
         anchors.left: parent.left
@@ -157,7 +157,7 @@ Item {
         }
     }
 
-    StyledText {
+    CortetsuText {
         id: message
 
         anchors.left: parent.left

@@ -31,7 +31,7 @@ StyledClippingRect {
         layer.enabled: true
         opacity: status === Image.Ready ? 1 : 0
 
-        StyledRect {
+        CortetsuSurface {
             anchors.fill: parent
             color: Colours.palette.m3surface
             opacity: 0.7
@@ -53,7 +53,7 @@ StyledClippingRect {
         anchors.margins: Tokens.padding.extraLarge
         spacing: Tokens.spacing.extraSmall
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             animate: true
             text: (Players.active?.trackTitle ?? qsTr("Nothing playing")) || qsTr("Unknown track")
@@ -63,7 +63,7 @@ StyledClippingRect {
             elide: Text.ElideRight
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             animate: true
             text: (Players.active?.trackArtist ?? qsTr("Try playing some music!")) || qsTr("Unknown artist")

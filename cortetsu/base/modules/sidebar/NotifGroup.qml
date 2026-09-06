@@ -10,7 +10,7 @@ import qs.components.effects
 import qs.services
 import qs.utils
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property string modelData
@@ -110,7 +110,7 @@ StyledRect {
             Component {
                 id: materialIconComp
 
-                MaterialIcon {
+                CortetsuIcon {
                     text: Icons.getNotifIcon(root.activeNotifs[0]?.summary, root.urgency)
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                     fontStyle: Tokens.font.icon.medium
@@ -136,7 +136,7 @@ StyledRect {
                 anchors.bottom: parent.bottom
                 active: root.appIcon && root.image
 
-                sourceComponent: StyledRect {
+                sourceComponent: CortetsuSurface {
                     implicitWidth: Tokens.sizes.notifs.badge
                     implicitHeight: Tokens.sizes.notifs.badge
 
@@ -171,7 +171,7 @@ StyledRect {
                 anchors.right: parent.right
                 spacing: Tokens.spacing.small
 
-                StyledText {
+                CortetsuText {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
@@ -179,21 +179,21 @@ StyledRect {
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     animate: true
                     text: root.activeNotifs[0]?.timeStr ?? ""
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.small
                 }
 
-                StyledRect {
+                CortetsuSurface {
                     implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
                     implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
                     radius: Tokens.rounding.full
 
-                    StateLayer {
+                    CortetsuStateLayer {
                         color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
                         onClicked: root.toggleExpand(!root.expanded)
                     }
@@ -204,7 +204,7 @@ StyledRect {
                         anchors.centerIn: parent
                         spacing: Tokens.spacing.extraSmall
 
-                        StyledText {
+                        CortetsuText {
                             id: groupCount
 
                             Layout.leftMargin: Tokens.padding.extraSmall / 2
@@ -214,7 +214,7 @@ StyledRect {
                             font: Tokens.font.body.small
                         }
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             text: "expand_more"
                             color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant

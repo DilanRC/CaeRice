@@ -47,14 +47,14 @@ PageBase {
                 sourceComponent: ColumnLayout {
                     spacing: Tokens.spacing.extraSmall
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hide_image"
                         color: Colours.palette.m3onSurfaceVariant
                         fontStyle: Tokens.font.icon.extraLarge
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Wallpaper disabled")
                         color: Colours.palette.m3onSurfaceVariant
@@ -87,7 +87,7 @@ PageBase {
                     opacity: 0
                     active: opacity > 0
 
-                    sourceComponent: StyledRect {
+                    sourceComponent: CortetsuSurface {
                         implicitWidth: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
                         implicitHeight: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
 

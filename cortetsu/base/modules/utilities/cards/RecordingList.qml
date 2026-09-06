@@ -29,13 +29,13 @@ ColumnLayout {
         RowLayout {
             spacing: Tokens.spacing.medium
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignVCenter
                 text: "list"
                 fontStyle: Tokens.font.icon.large
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
                 text: qsTr("Recordings")
@@ -82,7 +82,7 @@ ColumnLayout {
 
             Component.onCompleted: baseName = modelData.baseName
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 Layout.rightMargin: Tokens.spacing.extraSmall
                 text: {
@@ -165,7 +165,7 @@ ColumnLayout {
             sourceComponent: ColumnLayout {
                 spacing: Tokens.spacing.small
 
-                MaterialIcon {
+                CortetsuIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "scan_delete"
                     color: Colours.palette.m3outline
@@ -193,7 +193,7 @@ ColumnLayout {
                 RowLayout {
                     spacing: Tokens.spacing.medium
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "scan_delete"
                         color: Colours.palette.m3outline
@@ -217,7 +217,7 @@ ColumnLayout {
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         text: qsTr("No recordings found")
                         color: Colours.palette.m3outline
                     }

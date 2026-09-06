@@ -64,7 +64,7 @@ TextFieldBase {
 
         sourceComponent: root.type === StyledTextField.Filled ? filledComp : outlineComp
 
-        StateLayer {
+        CortetsuStateLayer {
             id: stateLayer
 
             topLeftRadius: root.clampedRadius
@@ -84,7 +84,7 @@ TextFieldBase {
         anchors.fill: parent
         anchors.bottomMargin: root.supportingTextOffset
 
-        StyledText {
+        CortetsuText {
             id: placeholder
 
             font.family: root.font.family
@@ -151,7 +151,7 @@ TextFieldBase {
             anchors.leftMargin: Tokens.padding.medium
             active: root.leadingIcon
 
-            sourceComponent: MaterialIcon {
+            sourceComponent: CortetsuIcon {
                 text: root.leadingIcon
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.builders.medium.scale(0.9).build()
@@ -166,7 +166,7 @@ TextFieldBase {
             anchors.rightMargin: Tokens.padding.medium
             active: root.trailingIcon
 
-            sourceComponent: MaterialIcon {
+            sourceComponent: CortetsuIcon {
                 text: root.trailingIcon
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.builders.medium.scale(0.9).build()
@@ -182,7 +182,7 @@ TextFieldBase {
         anchors.leftMargin: root.horizontalPadding
         active: root.effectiveSupportingText
 
-        sourceComponent: StyledText {
+        sourceComponent: CortetsuText {
             text: root.effectiveSupportingText
             color: root.isError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
             font: Tokens.font.label.small
@@ -279,12 +279,12 @@ TextFieldBase {
     Component {
         id: filledComp
 
-        StyledRect {
+        CortetsuSurface {
             topLeftRadius: root.clampedRadius
             topRightRadius: root.clampedRadius
             color: root.activeFocus ? Colours.tPalette.m3surfaceContainerHighest : Colours.tPalette.m3surfaceContainerHigh
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom

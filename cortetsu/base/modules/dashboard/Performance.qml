@@ -23,14 +23,14 @@ Item {
         sourceComponent: ColumnLayout {
             spacing: Tokens.spacing.medium
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
                 fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
                 color: Colours.palette.m3onSurfaceVariant
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.topMargin: -Tokens.spacing.small
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("No widgets enabled")
@@ -38,7 +38,7 @@ Item {
                 color: Colours.palette.m3onSurface
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enable widgets in the dashboard settings")
                 font: Tokens.font.body.small

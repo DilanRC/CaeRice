@@ -51,7 +51,7 @@ ConnectedRect {
             Layout.fillWidth: true
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 id: label
 
                 Layout.fillWidth: true
@@ -59,7 +59,7 @@ ConnectedRect {
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 visible: root.subtext
                 text: input.isError && root.errorText ? root.errorText : root.subtext

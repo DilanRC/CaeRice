@@ -49,7 +49,7 @@ ColumnLayout {
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: root.title
                 font: Tokens.font.title.large

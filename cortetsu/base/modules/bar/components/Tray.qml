@@ -7,7 +7,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     readonly property alias layout: layout
@@ -98,7 +98,7 @@ StyledRect {
             implicitWidth: expandIconInner.implicitWidth
             implicitHeight: expandIconInner.implicitHeight - Tokens.padding.small
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: expandIconInner
 
                 anchors.horizontalCenter: parent.horizontalCenter

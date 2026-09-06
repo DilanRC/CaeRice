@@ -33,7 +33,7 @@ VerticalFadeFlickable {
 
             model: PageRegistry.pages
 
-            StyledRect {
+            CortetsuSurface {
                 id: item
 
                 required property var modelData
@@ -62,7 +62,7 @@ VerticalFadeFlickable {
                 RadiusBehavior on bottomLeftRadius {}
                 RadiusBehavior on bottomRightRadius {}
 
-                StateLayer {
+                CortetsuStateLayer {
                     id: stateLayer
 
                     anchors.fill: parent
@@ -81,7 +81,7 @@ VerticalFadeFlickable {
                     anchors.margins: Tokens.padding.large
                     spacing: Tokens.spacing.medium
 
-                    StyledRect {
+                    CortetsuSurface {
                         Layout.fillHeight: true
                         Layout.topMargin: -1
                         Layout.bottomMargin: -1
@@ -90,7 +90,7 @@ VerticalFadeFlickable {
                         radius: Tokens.rounding.full
                         color: item.isCurrentPage ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
 
-                        MaterialIcon {
+                        CortetsuIcon {
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: 1
 
@@ -106,14 +106,14 @@ VerticalFadeFlickable {
                         Layout.fillWidth: true
                         spacing: 0
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: item.modelData.label
                             font: Tokens.font.body.medium
                             elide: Text.ElideRight
                         }
 
-                        StyledText {
+                        CortetsuText {
                             Layout.fillWidth: true
                             text: item.modelData.description
                             color: Colours.palette.m3onSurfaceVariant

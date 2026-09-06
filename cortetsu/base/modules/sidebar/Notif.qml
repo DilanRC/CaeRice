@@ -6,7 +6,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property NotifData modelData
@@ -14,7 +14,7 @@ StyledRect {
     required property bool expanded
     required property ScreenState screenState
 
-    readonly property StyledText body: (expandedContent.item as ExpandedBody)?.body ?? null
+    readonly property CortetsuText body: (expandedContent.item as ExpandedBody)?.body ?? null
     readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Tokens.padding.medium * 2 : summaryHeightMetrics.height
 
     implicitHeight: nonAnimHeight
@@ -54,7 +54,7 @@ StyledRect {
         text: " " // Use this height to prevent weird characters from changing the line height
     }
 
-    StyledText {
+    CortetsuText {
         id: summary
 
         anchors.top: parent.top
@@ -68,7 +68,7 @@ StyledRect {
         maximumLineCount: 1
     }
 
-    StyledText {
+    CortetsuText {
         id: dummySummary
 
         anchors.top: parent.top
@@ -87,7 +87,7 @@ StyledRect {
         anchors.right: parent.right
         anchors.leftMargin: Tokens.spacing.small
 
-        sourceComponent: StyledText {
+        sourceComponent: CortetsuText {
             text: String(root.modelData?.body ?? "").replace(/\n/g, " ")
             color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             elide: Text.ElideRight
@@ -101,7 +101,7 @@ StyledRect {
         anchors.top: parent.top
         anchors.right: parent.right
 
-        sourceComponent: StyledText {
+        sourceComponent: CortetsuText {
             animate: true
             text: root.modelData?.timeStr ?? ""
             color: Colours.palette.m3outline
@@ -130,7 +130,7 @@ StyledRect {
 
         spacing: Tokens.spacing.medium
 
-        StyledText {
+        CortetsuText {
             id: bodyText
 
             Layout.fillWidth: true

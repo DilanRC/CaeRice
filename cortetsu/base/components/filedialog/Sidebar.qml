@@ -7,7 +7,7 @@ import qs.components
 import qs.components.filedialog
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property var dialog
@@ -26,7 +26,7 @@ StyledRect {
         anchors.margins: Tokens.padding.medium
         spacing: Tokens.spacing.extraSmall
 
-        StyledText {
+        CortetsuText {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Tokens.padding.extraSmall / 2
             Layout.bottomMargin: Tokens.spacing.medium
@@ -38,7 +38,7 @@ StyledRect {
         Repeater {
             model: ["Home", "Downloads", "Desktop", "Documents", "Music", "Pictures", "Videos"]
 
-            StyledRect {
+            CortetsuSurface {
                 id: place
 
                 required property string modelData
@@ -50,7 +50,7 @@ StyledRect {
                 radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
 
-                StateLayer {
+                CortetsuStateLayer {
                     color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                     onClicked: {
                         if (place.modelData === "Home")
@@ -70,7 +70,7 @@ StyledRect {
 
                     spacing: Tokens.spacing.medium
 
-                    MaterialIcon {
+                    CortetsuIcon {
                         text: {
                             const p = place.modelData;
                             if (p === "Home")
@@ -100,7 +100,7 @@ StyledRect {
                         }
                     }
 
-                    StyledText {
+                    CortetsuText {
                         Layout.fillWidth: true
                         text: place.modelData
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface

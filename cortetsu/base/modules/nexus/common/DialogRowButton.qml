@@ -179,7 +179,7 @@ Item {
                     anchors.bottomMargin: Tokens.padding.largeIncreased
                     spacing: 0
 
-                    StyledText {
+                    CortetsuText {
                         text: root.header
                         font: Tokens.font.title.builders.large.weight(Font.Normal).build()
                     }
@@ -188,7 +188,7 @@ Item {
                         Layout.topMargin: Tokens.spacing.medium
                         Layout.fillWidth: true
                         active: root.separateContent
-                        sourceComponent: StyledRect {
+                        sourceComponent: CortetsuSurface {
                             implicitHeight: 1
                             color: Colours.palette.m3outline
                         }
@@ -206,7 +206,7 @@ Item {
                         Layout.bottomMargin: Tokens.spacing.medium
                         Layout.fillWidth: true
                         active: root.separateContent
-                        sourceComponent: StyledRect {
+                        sourceComponent: CortetsuSurface {
                             implicitHeight: 1
                             color: Colours.palette.m3outline
                         }

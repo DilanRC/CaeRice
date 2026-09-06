@@ -5,7 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
@@ -25,14 +25,14 @@ StyledRect {
         anchors.margins: Tokens.padding.large
         spacing: Tokens.spacing.medium
 
-        StyledRect {
+        CortetsuSurface {
             implicitWidth: implicitHeight
             implicitHeight: icon.implicitHeight + Tokens.padding.large
 
             radius: Tokens.rounding.full
             color: IdleInhibitor.enabled ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: icon
 
                 anchors.centerIn: parent
@@ -46,14 +46,14 @@ StyledRect {
             Layout.fillWidth: true
             spacing: 0
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Keep Awake")
                 font: Tokens.font.body.medium
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 Layout.fillWidth: true
                 text: IdleInhibitor.enabled ? qsTr("Preventing sleep mode") : qsTr("Normal power management")
                 color: Colours.palette.m3onSurfaceVariant
@@ -83,14 +83,14 @@ StyledRect {
 
         Component.onCompleted: active = Qt.binding(() => opacity > 0)
 
-        sourceComponent: StyledRect {
+        sourceComponent: CortetsuSurface {
             implicitWidth: activeText.implicitWidth + Tokens.padding.medium * 2
             implicitHeight: activeText.implicitHeight + Tokens.padding.small
 
             radius: Tokens.rounding.full
             color: Colours.palette.m3primary
 
-            StyledText {
+            CortetsuText {
                 id: activeText
 
                 anchors.centerIn: parent

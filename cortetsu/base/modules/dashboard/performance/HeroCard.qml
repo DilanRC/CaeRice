@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.services
 
-StyledRect {
+CortetsuSurface {
     id: root
 
     required property string icon
@@ -40,7 +40,7 @@ StyledRect {
             Anim {}
         }
 
-        MaterialIcon {
+        CortetsuIcon {
             id: icon
 
             anchors.centerIn: parent
@@ -57,13 +57,13 @@ StyledRect {
         anchors.margins: Tokens.spacing.large
         spacing: Tokens.spacing.extraSmall
 
-        StyledText {
+        CortetsuText {
             text: root.label
             font: Tokens.font.title.medium
             color: root.accent
         }
 
-        StyledText {
+        CortetsuText {
             Layout.fillWidth: true
             text: root.subLabel
             font: Tokens.font.body.small
@@ -84,7 +84,7 @@ StyledRect {
             Layout.leftMargin: -Tokens.padding.extraSmall
             spacing: Tokens.spacing.extraSmall
 
-            MaterialIcon {
+            CortetsuIcon {
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.08)
                 text: root.temperature > 90 ? "thermometer_alert" : "thermometer"
                 color: root.temperature > 90 ? Colours.palette.m3error : root.accent
@@ -92,7 +92,7 @@ StyledRect {
                 fill: 1
             }
 
-            StyledText {
+            CortetsuText {
                 text: `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? root.temperature * 1.8 + 32 : root.temperature)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`
                 font: Tokens.font.body.builders.medium.build()
             }
@@ -127,7 +127,7 @@ StyledRect {
             CAnim {}
         }
 
-        StyledText {
+        CortetsuText {
             id: usageLabel
 
             anchors.bottom: parent.top
@@ -138,7 +138,7 @@ StyledRect {
             font: Tokens.font.body.small
         }
 
-        StyledText {
+        CortetsuText {
             anchors.centerIn: parent
             text: isNaN(root.usage) ? "...%" : Math.round(root.usage * 100) + "%"
             color: root.accent
