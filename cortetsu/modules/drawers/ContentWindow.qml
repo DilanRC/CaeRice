@@ -6,12 +6,12 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import Caelestia.Blobs
 import ".."
 import "../../components"
 import "../../components/containers"
 import "../../services"
 import qs.modules.bar
+import "../CortetsuDesign.js" as CortetsuDesign
 
 StyledWindow {
     id: root
@@ -42,7 +42,7 @@ StyledWindow {
     readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : CortetsuOverlayConfig.border.thickness
 
-    property color surfaceColour: Colours.tPalette.m3surface
+    property color surfaceColour: CortetsuDesign.colorSurface
 
     readonly property int dragMaskPadding: {
         if (focusGrab.active || panels.popouts.isDetached)
@@ -90,14 +90,6 @@ StyledWindow {
             panels.popouts.hasCurrent = false;
             bar.closeTray();
         }
-    }
-
-    Behavior on fsTransitionProg {
-        Anim {}
-    }
-
-    Behavior on surfaceColour {
-        CAnim {}
     }
 
     Region {
@@ -153,113 +145,40 @@ StyledWindow {
         }
     }
 
-    StyledRect {
+    Rectangle {
         anchors.fill: parent
         opacity: root.screenState.cortetsuState?.overview ? 0.58 : ((root.screenState.session && CortetsuOverlayConfig.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
-        color: Colours.palette.m3scrim
-
-        Behavior on opacity {
-            Anim {
-                type: Anim.SlowEffects
-            }
-        }
+        color: Qt.alpha(CortetsuDesign.colorScrim, opacity)
+        Behavior on opacity { NumberAnimation { duration: CortetsuDesign.motionFastMs; easing.type: Easing.OutCubic } }
     }
 
     Item {
         anchors.fill: parent
-        opacity: root.surfaceColour.a
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            blurMax: 15
-            shadowColor: Qt.alpha(Colours.palette.m3shadow, Math.max(0, root.shadowOpacity))
-        }
-
-        BlobGroup {
-            id: blobGroup
-
-            color: root.surfaceColour
-            smoothing: root.CortetsuOverlayConfig.border.smoothing
-        }
-
-        BlobInvertedRect {
-            anchors.fill: parent
-            anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
-            group: blobGroup
-            radius: root.borderRounding
-            borderLeft: bar.implicitWidth - anchors.margins - root.sdfBorderOffset
-            borderRight: root.borderThickness - anchors.margins - root.sdfBorderOffset
-            borderTop: root.borderThickness - anchors.margins - root.sdfBorderOffset
-            borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
-        }
-
-        PanelBg {
-            id: dashBg
-
-            panel: panels.dashboard
-            deformAmount: 0.1
-        }
-
-        PanelBg {
-            id: launcherBg
-
-            panel: panels.launcher
-            deformAmount: 0.1
-        }
-
+        PanelBg { id: dashBg; panel: panels.dashboard; deformAmount: 0.1 }
+        PanelBg { id: launcherBg; panel: panels.launcher; deformAmount: 0.1 }
         PanelBg {
             id: sessionBg
-
             panel: panels.sessionWrapper
-            deformAmount: 0.2
             x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
-            implicitWidth: panels.session.width
+            width: panels.session.width
+            deformAmount: 0.2
         }
-
-        PanelBg {
-            id: sidebarBg
-
-            panel: panels.sidebar
-            deformAmount: 0.03
-            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
-        }
-
+        PanelBg { id: sidebarBg; panel: panels.sidebar; deformAmount: 0.03 }
         PanelBg {
             id: osdBg
-
             panel: panels.osdWrapper
-            deformAmount: 0.25
             x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
-            implicitWidth: panels.osd.width
+            width: panels.osd.width
+            deformAmount: 0.25
         }
-
-        PanelBg {
-            id: notifsBg
-
-            panel: panels.notifications
-        }
-
-        PanelBg {
-            id: utilsBg
-
-            panel: panels.utilities
-            deformAmount: 0.12
-        }
-
+        PanelBg { id: notifsBg; panel: panels.notifications }
+        PanelBg { id: utilsBg; panel: panels.utilities; deformAmount: 0.12 }
         PanelBg {
             id: popoutBg
-
-            // Extra width to prevent vertical movement deformation partially detaching panel from bar
-            property real extraWidth: panels.popouts.isDetached ? 0 : 0.2
-
             panel: panels.popoutsWrapper
-            deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
-            x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth - panels.popouts.width * extraWidth
-            implicitWidth: panels.popouts.width * (1 + extraWidth)
-
-            Behavior on extraWidth {
-                Anim {}
-            }
+            x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth
+            width: panels.popouts.width
+            deformAmount: panels.popouts.isDetached ? 0.05 : 0.15
         }
     }
 
@@ -282,32 +201,7 @@ StyledWindow {
             bar: bar
             borderThickness: root.borderThickness
 
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
 
-            dashboard.transform: Matrix4x4 {
-                matrix: dashBg.deformMatrix
-            }
-            launcher.transform: Matrix4x4 {
-                matrix: launcherBg.deformMatrix
-            }
-            session.transform: Matrix4x4 {
-                matrix: sessionBg.deformMatrix
-            }
-            sidebar.transform: Matrix4x4 {
-                matrix: sidebarBg.deformMatrix
-            }
-            osd.transform: Matrix4x4 {
-                matrix: osdBg.deformMatrix
-            }
-            notifications.transform: Matrix4x4 {
-                matrix: notifsBg.deformMatrix
-            }
-            utilities.transform: Matrix4x4 {
-                matrix: utilsBg.deformMatrix
-            }
-            popouts.transform: Matrix4x4 {
-                matrix: popoutBg.deformMatrix
-            }
         }
 
         BarWrapper {
@@ -348,16 +242,15 @@ StyledWindow {
         component: panels
     }
 
-    component PanelBg: BlobRect {
+    component PanelBg: Rectangle {
         required property Item panel
         property real deformAmount: 0.15
-
-        group: blobGroup
         x: panel.x + bar.implicitWidth
         y: panel.y + root.borderThickness
-        implicitWidth: panel.width
-        implicitHeight: panel.height
-        radius: Tokens.rounding.extraLarge
-        deformScale: (deformAmount * CortetsuOverlayConfig.appearance.deformScale) / 10000
+        width: panel.width
+        height: panel.height
+        radius: root.borderRounding
+        color: Qt.alpha(root.surfaceColour, Math.max(0, 1 - (panel.offsetScale ?? 0)))
+        border.width: root.borderThickness
+        border.color: CortetsuDesign.colorOutlineVariant
     }
-}
