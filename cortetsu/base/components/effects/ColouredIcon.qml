@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell.Widgets
-import Caelestia.Images
 
 IconImage {
     id: root
@@ -13,23 +12,7 @@ IconImage {
 
     layer.enabled: true
     layer.effect: Colouriser {
-        sourceColor: analyser.dominantColour
+        sourceColor: "black"
         colorizationColor: root.colour
-    }
-
-    layer.onEnabledChanged: {
-        if (layer.enabled && status === Image.Ready)
-            analyser.requestUpdate();
-    }
-
-    onStatusChanged: {
-        if (layer.enabled && status === Image.Ready)
-            analyser.requestUpdate();
-    }
-
-    ImageAnalyser {
-        id: analyser
-
-        sourceItem: root
     }
 }

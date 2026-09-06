@@ -59,6 +59,12 @@ assert "CortetsuConfig.notificationGroupPreviewNum" in notifications_page
 fetch = (repo / "cortetsu/base/modules/lock/Fetch.qml").read_text(encoding="utf-8")
 assert "import Caelestia" not in fetch and "CUtils.clamp" not in fetch
 assert "function clamp(value: real, low: real, high: real)" in fetch
+cached_image = (repo / "cortetsu/base/components/images/CachingImage.qml").read_text(encoding="utf-8")
+coloured_icon = (repo / "cortetsu/base/components/effects/ColouredIcon.qml").read_text(encoding="utf-8")
+assert "import Caelestia.Images" not in cached_image and "IUtils." not in cached_image
+assert "Paths.absolutePath(path)" in cached_image
+assert "import Caelestia.Images" not in coloured_icon and "ImageAnalyser" not in coloured_icon
+assert 'sourceColor: "black"' in coloured_icon and "Colouriser" in coloured_icon
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (
