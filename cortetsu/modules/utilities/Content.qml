@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
 import "../../services"
