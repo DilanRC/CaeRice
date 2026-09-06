@@ -22,6 +22,7 @@ battery_monitor = (modules / "BatteryMonitor.qml").read_text(encoding="utf-8")
 service_loader = (modules / "ServiceLoader.qml").read_text(encoding="utf-8")
 game_mode = (repo / "cortetsu/services/GameMode.qml").read_text(encoding="utf-8")
 requests = (repo / "cortetsu/services/Requests.qml").read_text(encoding="utf-8")
+weather = (repo / "cortetsu/services/Weather.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -59,6 +60,10 @@ for legacy in ("Caelestia", "GlobalConfig", "Requests.get", "QNetworkAccessManag
     assert legacy not in requests, legacy
 assert "function get(url, onSuccess, onError, headers = {})" in requests
 assert "curl" in requests and "--max-time" in requests and '"20"' in requests
+for legacy in ("Caelestia", "GlobalConfig", "CUtils", "Paths.", "Icons.", "qs.utils"):
+    assert legacy not in weather, legacy
+for marker in ("CortetsuRegional", "Requests.get", "parseForecastResponse", "requestGeneration", "hourlyForecast", "XDG_CACHE_HOME"):
+    assert marker in weather, marker
 assert "import Caelestia" not in visualiser
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
