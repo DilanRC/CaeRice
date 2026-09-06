@@ -31,9 +31,9 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | OSD | `modules/osd/Wrapper.qml`, `Content.qml` | OSD host and indicators | VERIFIED | two-monitor volume trigger, shared indicator surface, bounded levels, restored volume, and clean journal verified; brightness wheel remains a separate device-dependent check | P2 |
 | Toasts | `modules/utilities/toasts/Toasts.qml`, `ToastItem.qml` | toaster service, action rows | VERIFIED | two-monitor runtime, stacking, five-second expiration, mouse and Escape dismissal verified; full notification-center promotion remains separate | P1 |
 | Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | FUNCTIONAL | keyboard selection, selected-card identity, scrim, and focused-monitor routing verified; many-window, empty-workspace, drag, close, and floating-action matrix remains | P0 |
-| Display | `modules/display/Wrapper.qml`, `Content.qml` | display controller and editor | FUNCTIONAL | dense settings layout and error states | P2 |
-| Hardware | `modules/hardware/Wrapper.qml`, `Content.qml` | hardware controller, metric cards | FUNCTIONAL | information hierarchy and loading states | P2 |
-| Wallpaper | `modules/wallpaper/Wrapper.qml`, `Content.qml` | `CortetsuWallpapers`, orbit controls | FUNCTIONAL | selection feedback and empty/error states | P2 |
+| Display | `modules/display/Wrapper.qml`, `Content.qml` | display controller and editor | VERIFIED | two-monitor topology, layout controls, dry-run/save surface, IPC open and Escape close verified | P2 |
+| Hardware | `modules/hardware/Wrapper.qml`, `Content.qml` | hardware controller, metric cards | VERIFIED | live CPU/memory/storage/GPU/battery metrics, sensor cards, loading pipeline, IPC open and Escape close verified | P2 |
+| Wallpaper | `modules/wallpaper/Wrapper.qml`, `Content.qml` | `CortetsuWallpapers`, orbit controls | VERIFIED | live orbit previews, categories, current selection, Cancel/Random/Apply actions, IPC open and Escape close verified | P2 |
 
 ## Wave 0 foundation status
 
@@ -62,6 +62,16 @@ opened the notification center, and Escape closed the overlay. Static utility
 gates passed, including first-party ownership and keyboard-capable controls.
 The shell remained active with zero restarts and no new warning/error/critical
 journal entries.
+
+## Display, Hardware and Wallpaper verification evidence
+
+The promoted runtime opened Display Manager, Hardware Center and Wallpaper
+Manager through their first-party IPC targets. Display Manager rendered the
+two-monitor topology and layout controls; Hardware Center rendered live CPU,
+memory, storage, GPU, battery and sensor cards; Wallpaper Manager rendered the
+preview orbit, category controls, current selection and Cancel/Random/Apply
+actions. Escape closed the active overlay sequence. The shell stayed active
+with zero restarts and no new warning/error/critical journal entries.
 
 ## Keyboard Layout and Lock Status verification evidence
 
