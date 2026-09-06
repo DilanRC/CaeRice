@@ -19,6 +19,12 @@ QtObject {
     property bool enableDangerousActions: true
     property bool useFuzzyApps: true
     property bool useFuzzyWallpapers: true
+    property bool useFuzzyActions: true
+    onUseFuzzyActionsChanged: if (loaded) save()
+    property bool useFuzzySchemes: true
+    onUseFuzzySchemesChanged: if (loaded) save()
+    property bool useFuzzyVariants: true
+    onUseFuzzyVariantsChanged: if (loaded) save()
     property bool smartScheme: true
     property string wallpaperDirectory: "~/Pictures/Wallpapers"
     property bool wallpaperEnabled: true
@@ -59,6 +65,74 @@ QtObject {
     property list<var> idleTimeouts: [{ enabled: true, timeout: 900000, respectInhibitors: true, idleAction: "lock", returnAction: "unlock" }]
     property bool loaded: false
 
+    readonly property QtObject dashboard: QtObject {
+        property bool enabled: true
+        onEnabledChanged: if (root.loaded) root.save()
+        property bool showOnHover: true
+        onShowOnHoverChanged: if (root.loaded) root.save()
+        property bool showDashboard: true
+        onShowDashboardChanged: if (root.loaded) root.save()
+        property bool showMedia: true
+        onShowMediaChanged: if (root.loaded) root.save()
+        property bool showPerformance: true
+        onShowPerformanceChanged: if (root.loaded) root.save()
+        property bool showWeather: true
+        onShowWeatherChanged: if (root.loaded) root.save()
+        property int dragThreshold: 24
+        onDragThresholdChanged: if (root.loaded) root.save()
+        readonly property QtObject performance: QtObject {
+            property bool showCpu: true
+            onShowCpuChanged: if (root.loaded) root.save()
+            property bool showGpu: true
+            onShowGpuChanged: if (root.loaded) root.save()
+            property bool showMemory: true
+            onShowMemoryChanged: if (root.loaded) root.save()
+            property bool showStorage: true
+            onShowStorageChanged: if (root.loaded) root.save()
+            property bool showNetwork: true
+            onShowNetworkChanged: if (root.loaded) root.save()
+            property bool showBattery: true
+            onShowBatteryChanged: if (root.loaded) root.save()
+        }
+    }
+
+    readonly property QtObject launcher: QtObject {
+        property bool enabled: true
+        onEnabledChanged: if (root.loaded) root.save()
+        property bool showOnHover: false
+        onShowOnHoverChanged: if (root.loaded) root.save()
+        property int maxShown: 8
+        onMaxShownChanged: if (root.loaded) root.save()
+        property int maxWallpapers: 8
+        onMaxWallpapersChanged: if (root.loaded) root.save()
+        property int dragThreshold: 24
+        onDragThresholdChanged: if (root.loaded) root.save()
+    }
+
+    readonly property QtObject sidebar: QtObject {
+        property bool enabled: true
+        onEnabledChanged: if (root.loaded) root.save()
+        property bool showOnHover: true
+        onShowOnHoverChanged: if (root.loaded) root.save()
+        property int dragThreshold: 24
+        onDragThresholdChanged: if (root.loaded) root.save()
+        property int minHoverThreshold: 24
+        onMinHoverThresholdChanged: if (root.loaded) root.save()
+    }
+
+    readonly property QtObject utilities: QtObject {
+        property bool enabled: true
+        onEnabledChanged: if (root.loaded) root.save()
+        readonly property QtObject cards: QtObject {
+            property bool keepAwake: true
+            onKeepAwakeChanged: if (root.loaded) root.save()
+            property bool recorder: true
+            onRecorderChanged: if (root.loaded) root.save()
+            property bool quickToggles: true
+            onQuickTogglesChanged: if (root.loaded) root.save()
+        }
+    }
+
     function load(raw: string): void {
         try {
             const data = JSON.parse(raw);
@@ -82,6 +156,34 @@ QtObject {
                 useFuzzyApps = data.useFuzzyApps;
             if (typeof data.useFuzzyWallpapers === "boolean")
                 useFuzzyWallpapers = data.useFuzzyWallpapers;
+            if (typeof data.useFuzzyActions === "boolean")
+                useFuzzyActions = data.useFuzzyActions;
+            if (typeof data.useFuzzySchemes === "boolean")
+                useFuzzySchemes = data.useFuzzySchemes;
+            if (typeof data.useFuzzyVariants === "boolean")
+                useFuzzyVariants = data.useFuzzyVariants;
+            if (data.dashboard && typeof data.dashboard === "object") {
+                for (const key of ["enabled", "showOnHover", "showDashboard", "showMedia", "showPerformance", "showWeather"])
+                    if (typeof data.dashboard[key] === "boolean") dashboard[key] = data.dashboard[key];
+                if (Number.isFinite(data.dashboard.dragThreshold)) dashboard.dragThreshold = Math.max(0, data.dashboard.dragThreshold);
+                if (data.dashboard.performance && typeof data.dashboard.performance === "object") {
+                    for (const key of ["showCpu", "showGpu", "showMemory", "showStorage", "showNetwork", "showBattery"])
+                        if (typeof data.dashboard.performance[key] === "boolean") dashboard.performance[key] = data.dashboard.performance[key];
+                }
+            }
+            for (const group of ["launcher", "sidebar"])
+                if (data[group] && typeof data[group] === "object") {
+                    for (const key of ["enabled", "showOnHover"])
+                        if (typeof data[group][key] === "boolean") root[group][key] = data[group][key];
+                    for (const key of ["maxShown", "maxWallpapers", "dragThreshold", "minHoverThreshold"])
+                        if (Number.isFinite(data[group][key]) && key in root[group]) root[group][key] = Math.max(0, data[group][key]);
+                }
+            if (data.utilities && typeof data.utilities === "object") {
+                if (typeof data.utilities.enabled === "boolean") utilities.enabled = data.utilities.enabled;
+                if (data.utilities.cards && typeof data.utilities.cards === "object")
+                    for (const key of ["keepAwake", "recorder", "quickToggles"])
+                        if (typeof data.utilities.cards[key] === "boolean") utilities.cards[key] = data.utilities.cards[key];
+            }
             if (typeof data.smartScheme === "boolean")
                 smartScheme = data.smartScheme;
             if (typeof data.wallpaperDirectory === "string" && data.wallpaperDirectory.length > 0)
@@ -165,7 +267,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, useFuzzyActions, useFuzzySchemes, useFuzzyVariants, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, dashboard: { enabled: dashboard.enabled, showOnHover: dashboard.showOnHover, showDashboard: dashboard.showDashboard, showMedia: dashboard.showMedia, showPerformance: dashboard.showPerformance, showWeather: dashboard.showWeather, dragThreshold: dashboard.dragThreshold, performance: { showCpu: dashboard.performance.showCpu, showGpu: dashboard.performance.showGpu, showMemory: dashboard.performance.showMemory, showStorage: dashboard.performance.showStorage, showNetwork: dashboard.performance.showNetwork, showBattery: dashboard.performance.showBattery } }, launcher: { enabled: launcher.enabled, showOnHover: launcher.showOnHover, maxShown: launcher.maxShown, maxWallpapers: launcher.maxWallpapers, dragThreshold: launcher.dragThreshold }, sidebar: { enabled: sidebar.enabled, showOnHover: sidebar.showOnHover, dragThreshold: sidebar.dragThreshold, minHoverThreshold: sidebar.minHoverThreshold }, utilities: { enabled: utilities.enabled, cards: { keepAwake: utilities.cards.keepAwake, recorder: utilities.cards.recorder, quickToggles: utilities.cards.quickToggles } }, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

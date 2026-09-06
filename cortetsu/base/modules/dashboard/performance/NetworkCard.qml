@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Components
-import Caelestia.Config
 import Caelestia.Services
 import qs.components
+import qs.modules
 import qs.services
 
 CortetsuSurface {

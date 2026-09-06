@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -25,19 +25,19 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Enabled")
-            checked: Config.sidebar.enabled
-            onToggled: GlobalConfig.sidebar.enabled = checked
+            checked: CortetsuConfig.sidebar.enabled
+            onToggled: CortetsuConfig.sidebar.enabled = checked
         }
 
         StepperRow {
             last: true
             label: qsTr("Drag threshold")
             subtext: qsTr("Pixels dragged before the sidebar opens")
-            value: Config.sidebar.dragThreshold
+            value: CortetsuConfig.sidebar.dragThreshold
             from: 0
             to: 200
             stepSize: 5
-            onMoved: v => GlobalConfig.sidebar.dragThreshold = v
+            onMoved: v => CortetsuConfig.sidebar.dragThreshold = v
         }
     }
 }

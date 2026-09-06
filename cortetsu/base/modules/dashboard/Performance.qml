@@ -2,9 +2,9 @@ import "performance"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import Caelestia.Config
 import Caelestia.Services
 import qs.components
+import qs.modules
 import qs.services
 
 Item {
@@ -17,7 +17,7 @@ Item {
         id: placeholder
 
         anchors.centerIn: parent
-        active: !Config.dashboard.performance.showCpu && !(Config.dashboard.performance.showGpu && Gpu.type !== GpuType.None) && !Config.dashboard.performance.showMemory && !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery)
+        active: !CortetsuConfig.dashboard.performance.showCpu && !(CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== GpuType.None) && !CortetsuConfig.dashboard.performance.showMemory && !CortetsuConfig.dashboard.performance.showStorage && !CortetsuConfig.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && CortetsuConfig.dashboard.performance.showBattery)
         asynchronous: true
 
         sourceComponent: ColumnLayout {
@@ -68,7 +68,7 @@ Item {
                 WrappedLoader {
                     id: cpuCard
 
-                    active: Config.dashboard.performance.showCpu
+                    active: CortetsuConfig.dashboard.performance.showCpu
 
                     sourceComponent: HeroCard {
                         icon: "memory"
@@ -87,7 +87,7 @@ Item {
                 WrappedLoader {
                     id: gpuCard
 
-                    active: Config.dashboard.performance.showGpu && Gpu.type !== GpuType.None
+                    active: CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== GpuType.None
 
                     sourceComponent: HeroCard {
                         icon: "desktop_windows"
@@ -111,21 +111,21 @@ Item {
                 WrappedLoader {
                     id: storageCard
 
-                    active: Config.dashboard.performance.showStorage
+                    active: CortetsuConfig.dashboard.performance.showStorage
                     sourceComponent: StorageCard {}
                 }
 
                 WrappedLoader {
                     id: networkCard
 
-                    active: Config.dashboard.performance.showNetwork
+                    active: CortetsuConfig.dashboard.performance.showNetwork
                     sourceComponent: NetworkCard {}
                 }
 
                 WrappedLoader {
                     id: memoryCard
 
-                    active: Config.dashboard.performance.showMemory
+                    active: CortetsuConfig.dashboard.performance.showMemory
                     sourceComponent: MemoryCard {}
                 }
             }
@@ -133,7 +133,7 @@ Item {
 
         WrappedLoader {
             Layout.fillWidth: false
-            active: UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery
+            active: UPower.displayDevice.isLaptopBattery && CortetsuConfig.dashboard.performance.showBattery
             sourceComponent: BatteryTank {}
         }
     }

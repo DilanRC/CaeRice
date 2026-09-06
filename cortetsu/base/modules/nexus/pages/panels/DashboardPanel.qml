@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -26,16 +26,16 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Enabled")
-            checked: Config.dashboard.enabled
-            onToggled: GlobalConfig.dashboard.enabled = checked
+            checked: CortetsuConfig.dashboard.enabled
+            onToggled: CortetsuConfig.dashboard.enabled = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Show on hover")
             subtext: qsTr("Reveal when the cursor reaches the screen edge")
-            checked: Config.dashboard.showOnHover
-            onToggled: GlobalConfig.dashboard.showOnHover = checked
+            checked: CortetsuConfig.dashboard.showOnHover
+            onToggled: CortetsuConfig.dashboard.showOnHover = checked
         }
 
         // Tabs
@@ -46,27 +46,27 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Dashboard")
-            checked: Config.dashboard.showDashboard
-            onToggled: GlobalConfig.dashboard.showDashboard = checked
+            checked: CortetsuConfig.dashboard.showDashboard
+            onToggled: CortetsuConfig.dashboard.showDashboard = checked
         }
 
         ToggleRow {
             text: qsTr("Media")
-            checked: Config.dashboard.showMedia
-            onToggled: GlobalConfig.dashboard.showMedia = checked
+            checked: CortetsuConfig.dashboard.showMedia
+            onToggled: CortetsuConfig.dashboard.showMedia = checked
         }
 
         ToggleRow {
             text: qsTr("Performance")
-            checked: Config.dashboard.showPerformance
-            onToggled: GlobalConfig.dashboard.showPerformance = checked
+            checked: CortetsuConfig.dashboard.showPerformance
+            onToggled: CortetsuConfig.dashboard.showPerformance = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Weather")
-            checked: Config.dashboard.showWeather
-            onToggled: GlobalConfig.dashboard.showWeather = checked
+            checked: CortetsuConfig.dashboard.showWeather
+            onToggled: CortetsuConfig.dashboard.showWeather = checked
         }
 
         // Performance widgets
@@ -77,39 +77,39 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Battery")
-            checked: Config.dashboard.performance.showBattery
-            onToggled: GlobalConfig.dashboard.performance.showBattery = checked
+            checked: CortetsuConfig.dashboard.performance.showBattery
+            onToggled: CortetsuConfig.dashboard.performance.showBattery = checked
         }
 
         ToggleRow {
             text: qsTr("GPU")
-            checked: Config.dashboard.performance.showGpu
-            onToggled: GlobalConfig.dashboard.performance.showGpu = checked
+            checked: CortetsuConfig.dashboard.performance.showGpu
+            onToggled: CortetsuConfig.dashboard.performance.showGpu = checked
         }
 
         ToggleRow {
             text: qsTr("CPU")
-            checked: Config.dashboard.performance.showCpu
-            onToggled: GlobalConfig.dashboard.performance.showCpu = checked
+            checked: CortetsuConfig.dashboard.performance.showCpu
+            onToggled: CortetsuConfig.dashboard.performance.showCpu = checked
         }
 
         ToggleRow {
             text: qsTr("Memory")
-            checked: Config.dashboard.performance.showMemory
-            onToggled: GlobalConfig.dashboard.performance.showMemory = checked
+            checked: CortetsuConfig.dashboard.performance.showMemory
+            onToggled: CortetsuConfig.dashboard.performance.showMemory = checked
         }
 
         ToggleRow {
             text: qsTr("Storage")
-            checked: Config.dashboard.performance.showStorage
-            onToggled: GlobalConfig.dashboard.performance.showStorage = checked
+            checked: CortetsuConfig.dashboard.performance.showStorage
+            onToggled: CortetsuConfig.dashboard.performance.showStorage = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Network")
-            checked: Config.dashboard.performance.showNetwork
-            onToggled: GlobalConfig.dashboard.performance.showNetwork = checked
+            checked: CortetsuConfig.dashboard.performance.showNetwork
+            onToggled: CortetsuConfig.dashboard.performance.showNetwork = checked
         }
 
         // Behaviour
@@ -122,11 +122,11 @@ PageBase {
             last: true
             label: qsTr("Drag threshold")
             subtext: qsTr("Pixels dragged before the dashboard opens")
-            value: Config.dashboard.dragThreshold
+            value: CortetsuConfig.dashboard.dragThreshold
             from: 0
             to: 200
             stepSize: 5
-            onMoved: v => GlobalConfig.dashboard.dragThreshold = v
+            onMoved: v => CortetsuConfig.dashboard.dragThreshold = v
         }
     }
 }

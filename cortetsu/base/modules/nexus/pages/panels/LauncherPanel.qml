@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import qs.modules
-import Caelestia.Config
 import qs.modules.nexus.common
 
 PageBase {
@@ -27,15 +26,15 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Enabled")
-            checked: Config.launcher.enabled
-            onToggled: GlobalConfig.launcher.enabled = checked
+            checked: CortetsuConfig.launcher.enabled
+            onToggled: CortetsuConfig.launcher.enabled = checked
         }
 
         ToggleRow {
             text: qsTr("Show on hover")
             subtext: qsTr("Reveal when the cursor reaches the screen edge")
-            checked: Config.launcher.showOnHover
-            onToggled: GlobalConfig.launcher.showOnHover = checked
+            checked: CortetsuConfig.launcher.showOnHover
+            onToggled: CortetsuConfig.launcher.showOnHover = checked
         }
 
         TextFieldRow {
@@ -68,31 +67,31 @@ PageBase {
         StepperRow {
             first: true
             label: qsTr("Max items shown")
-            value: Config.launcher.maxShown
+            value: CortetsuConfig.launcher.maxShown
             from: 1
             to: 20
             stepSize: 1
-            onMoved: v => GlobalConfig.launcher.maxShown = v
+            onMoved: v => CortetsuConfig.launcher.maxShown = v
         }
 
         StepperRow {
             label: qsTr("Max wallpapers")
-            value: Config.launcher.maxWallpapers
+            value: CortetsuConfig.launcher.maxWallpapers
             from: 1
             to: 30
             stepSize: 1
-            onMoved: v => GlobalConfig.launcher.maxWallpapers = v
+            onMoved: v => CortetsuConfig.launcher.maxWallpapers = v
         }
 
         StepperRow {
             last: true
             label: qsTr("Drag threshold")
             subtext: qsTr("Pixels dragged before the launcher opens")
-            value: Config.launcher.dragThreshold
+            value: CortetsuConfig.launcher.dragThreshold
             from: 0
             to: 200
             stepSize: 5
-            onMoved: v => GlobalConfig.launcher.dragThreshold = v
+            onMoved: v => CortetsuConfig.launcher.dragThreshold = v
         }
 
         // Behaviour
@@ -124,33 +123,33 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Apps")
-            checked: GlobalConfig.launcher.useFuzzy.apps
-            onToggled: GlobalConfig.launcher.useFuzzy.apps = checked
+            checked: CortetsuConfig.useFuzzyApps
+            onToggled: CortetsuConfig.useFuzzyApps = checked
         }
 
         ToggleRow {
             text: qsTr("Actions")
-            checked: GlobalConfig.launcher.useFuzzy.actions
-            onToggled: GlobalConfig.launcher.useFuzzy.actions = checked
+            checked: CortetsuConfig.useFuzzyActions
+            onToggled: CortetsuConfig.useFuzzyActions = checked
         }
 
         ToggleRow {
             text: qsTr("Schemes")
-            checked: GlobalConfig.launcher.useFuzzy.schemes
-            onToggled: GlobalConfig.launcher.useFuzzy.schemes = checked
+            checked: CortetsuConfig.useFuzzySchemes
+            onToggled: CortetsuConfig.useFuzzySchemes = checked
         }
 
         ToggleRow {
             text: qsTr("Variants")
-            checked: GlobalConfig.launcher.useFuzzy.variants
-            onToggled: GlobalConfig.launcher.useFuzzy.variants = checked
+            checked: CortetsuConfig.useFuzzyVariants
+            onToggled: CortetsuConfig.useFuzzyVariants = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Wallpapers")
-            checked: GlobalConfig.launcher.useFuzzy.wallpapers
-            onToggled: GlobalConfig.launcher.useFuzzy.wallpapers = checked
+            checked: CortetsuConfig.useFuzzyWallpapers
+            onToggled: CortetsuConfig.useFuzzyWallpapers = checked
         }
     }
 }

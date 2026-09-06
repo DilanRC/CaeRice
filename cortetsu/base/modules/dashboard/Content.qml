@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Caelestia
-import Caelestia.Config
 import qs.components
 import qs.components.filedialog
 import qs.modules
@@ -22,25 +21,25 @@ Item {
                 component: dashComponent,
                 iconName: "dashboard",
                 text: qsTr("Dashboard"),
-                enabled: Config.dashboard.showDashboard
+                enabled: CortetsuConfig.dashboard.showDashboard
             },
             {
                 component: mediaComponent,
                 iconName: "queue_music",
                 text: qsTr("Media"),
-                enabled: Config.dashboard.showMedia
+                enabled: CortetsuConfig.dashboard.showMedia
             },
             {
                 component: performanceComponent,
                 iconName: "speed",
                 text: qsTr("Performance"),
-                enabled: Config.dashboard.showPerformance
+                enabled: CortetsuConfig.dashboard.showPerformance
             },
             {
                 component: weatherComponent,
                 iconName: "cloud",
                 text: qsTr("Weather"),
-                enabled: Config.dashboard.showWeather
+                enabled: CortetsuConfig.dashboard.showWeather
             }
         ];
         return allTabs.filter(tab => tab.enabled);

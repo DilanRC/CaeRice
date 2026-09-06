@@ -1,5 +1,6 @@
 import QtQuick.Layouts
 import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -17,7 +18,7 @@ PageBase {
             first: true
             icon: "dashboard"
             text: qsTr("Dashboard")
-            subtext: Config.dashboard.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            subtext: CortetsuConfig.dashboard.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(1)
         }
 
@@ -31,14 +32,14 @@ PageBase {
         NavRow {
             icon: "apps"
             text: qsTr("Launcher")
-            subtext: Config.launcher.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            subtext: CortetsuConfig.launcher.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(3)
         }
 
         NavRow {
             icon: "dock_to_right"
             text: qsTr("Sidebar")
-            subtext: Config.sidebar.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            subtext: CortetsuConfig.sidebar.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(4)
         }
 
@@ -46,7 +47,7 @@ PageBase {
             last: true
             icon: "construction"
             text: qsTr("Utilities")
-            subtext: Config.utilities.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            subtext: CortetsuConfig.utilities.enabled ? qsTr("Enabled") : qsTr("Disabled")
             onClicked: root.nState.openSubPage(5)
         }
     }
