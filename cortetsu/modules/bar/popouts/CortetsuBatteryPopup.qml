@@ -18,6 +18,7 @@ Column {
 
     CortetsuSurface {
         width: parent.width
+        visible: UPower.displayDevice.isLaptopBattery
         implicitHeight: details.implicitHeight + CortetsuDesign.spacingStandard * 2
         color: CortetsuDesign.colorSurfaceGlass
         radius: CortetsuDesign.radiusLarge
@@ -52,6 +53,14 @@ Column {
         }
     }
 
+    CortetsuStateMessage {
+        width: parent.width
+        visible: !UPower.displayDevice.isLaptopBattery
+        kind: "empty"
+        title: qsTr("No battery detected")
+        detail: qsTr("Power profile controls remain available below")
+    }
+
     CortetsuSectionHeader {
         title: qsTr("Profile")
         detail: PowerProfile.toString(PowerProfiles.profile)
@@ -72,12 +81,15 @@ Column {
         required property string label
         implicitWidth: 76
         implicitHeight: 64
+        focus: true
+        activeFocusOnTab: true
 
         CortetsuSurface {
             anchors.fill: parent
             color: PowerProfiles.profile === parent.profile ? CortetsuDesign.colorPrimaryContainer : CortetsuDesign.colorSurfaceGlass
             radius: CortetsuDesign.radiusMedium
             outlined: true
+            focused: parent.activeFocus
         }
         CortetsuStateLayer {
             anchors.fill: parent
@@ -90,5 +102,9 @@ Column {
             CortetsuIcon { anchors.horizontalCenter: parent.horizontalCenter; text: parent.parent.icon; color: CortetsuDesign.colorPrimary }
             CortetsuText { anchors.horizontalCenter: parent.horizontalCenter; text: parent.parent.label }
         }
+
+        Keys.onEnterPressed: PowerProfiles.profile = parent.profile
+        Keys.onReturnPressed: PowerProfiles.profile = parent.profile
+        Keys.onSpacePressed: PowerProfiles.profile = parent.profile
     }
 }

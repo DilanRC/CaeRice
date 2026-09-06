@@ -86,18 +86,21 @@ CortetsuSurface {
 
                 CortetsuButton {
                     compact: true
+                    disabled: !root.client
                     label: root.client?.lastIpcObject.floating ? qsTr("Tile") : qsTr("Float")
                     icon: root.client?.lastIpcObject.floating ? "grid_view" : "picture_in_picture"
                     onClicked: root.dispatchWindow("float")
                 }
                 CortetsuButton {
                     compact: true
+                    disabled: !root.client
                     label: root.client?.lastIpcObject.pinned ? qsTr("Unpin") : qsTr("Pin")
                     icon: "keep"
                     onClicked: root.dispatchWindow("pin")
                 }
                 CortetsuButton {
                     compact: true
+                    disabled: !root.client
                     label: qsTr("Close")
                     icon: "close"
                     danger: true
@@ -123,7 +126,7 @@ CortetsuSurface {
                         compact: true
                         label: String(index + 1)
                         active: root.client?.workspace?.id === index + 1
-                        disabled: active
+                        disabled: !root.client || active
                         onClicked: root.moveToWorkspace(index + 1)
                     }
                 }

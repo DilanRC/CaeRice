@@ -16,6 +16,9 @@ workspaces = (ROOT / "cortetsu/modules/CortetsuWorkspaceDots.qml").read_text()
 state_message = (ROOT / "cortetsu/components/CortetsuStateMessage.qml").read_text()
 toggle = (ROOT / "cortetsu/components/CortetsuToggle.qml").read_text()
 slider = (ROOT / "cortetsu/components/CortetsuSlider.qml").read_text()
+battery = (ROOT / "cortetsu/modules/bar/popouts/CortetsuBatteryPopup.qml").read_text()
+keyboard = (ROOT / "cortetsu/modules/bar/popouts/CortetsuKeyboardPopup.qml").read_text()
+winfo = (ROOT / "cortetsu/modules/bar/popouts/CortetsuWindowInfoPopup.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
@@ -30,6 +33,9 @@ checks = {
     "state message covers async states": all(x in state_message for x in ('property string kind', 'kind === "loading"', 'kind === "error"')),
     "toggle supports keyboard": all(x in toggle for x in ("Keys.onEnterPressed", "Keys.onSpacePressed", "focused: root.activeFocus")),
     "slider supports keyboard": all(x in slider for x in ("Keys.onLeftPressed", "Keys.onRightPressed", "Keys.onHomePressed")),
+    "battery profile supports keyboard": all(x in battery for x in ("activeFocusOnTab", "Keys.onEnterPressed", "focused: parent.activeFocus")),
+    "keyboard popup exposes disabled layouts": "disabled: layoutIndex > 3" in keyboard,
+    "window info disables unavailable actions": winfo.count("disabled: !root.client") >= 4,
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),

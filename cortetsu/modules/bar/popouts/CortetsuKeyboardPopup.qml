@@ -29,14 +29,14 @@ ColumnLayout {
             icon: layoutIndex === layouts.activeIndex ? "check" : "keyboard"
             title: label
             subtitle: layoutIndex > 3 ? qsTr("Unavailable: XKB supports 4 layouts") : ""
-            enabled: layoutIndex <= 3
+            disabled: layoutIndex > 3
             onClicked: layouts.switchTo(layoutIndex)
         }
     }
 
-    CortetsuText {
+    CortetsuStateMessage {
         visible: layouts.visibleModel.count === 0
-        text: qsTr("No additional layouts")
-        color: CortetsuDesign.colorOnSurfaceVariant
+        kind: "empty"
+        title: qsTr("No additional layouts")
     }
 }
