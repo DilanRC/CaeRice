@@ -128,7 +128,7 @@ Item {
         CortetsuIcon {
             text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
             color: CortetsuDesign.colorOnSurfaceVariant
-            fontStyle: CortetsuTypography.iconLargePx
+            iconSize: CortetsuTypography.iconLargePx
 
             anchors.verticalCenter: parent.verticalCenter
         }
