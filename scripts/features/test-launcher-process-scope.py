@@ -8,7 +8,7 @@ REPO = Path(__file__).resolve().parents[2]
 # Launched from a Caelestia patch on top of upstream services/Apps.qml;
 # now a first-party file owned outright under cortetsu/modules/launcher.
 SOURCE = REPO / "cortetsu/modules/launcher/services/Apps.qml"
-MANIFEST = REPO / "caelestia/patches/MANIFEST.tsv"
+MANIFEST = REPO / "cortetsu/contracts/patch-debt.tsv"
 
 text = SOURCE.read_text(encoding="utf-8")
 manifest = MANIFEST.read_text(encoding="utf-8")

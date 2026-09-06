@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-MANIFEST = REPO / "caelestia/patches/MANIFEST.tsv"
+MANIFEST = REPO / "cortetsu/contracts/patch-debt.tsv"
 CHECKER = REPO / "cortetsu/bin/check-bottom-hub-target.py"
 V4_TEST = REPO / "scripts/features/test-bottom-hub-v4.py"
 
@@ -31,7 +31,7 @@ def main() -> None:
     v4_text = V4_TEST.read_text(encoding="utf-8")
 
     for patch_name, (target_path, consumer_needles) in AUDITED_ACTIVE_PATCHES.items():
-        patch_file = REPO / "caelestia/patches" / patch_name
+        patch_file = REPO / "cortetsu/contracts/patches" / patch_name
         assert patch_file.is_file(), f"missing patch: {patch_name}"
 
         assert f"{patch_name}\t{target_path}" in manifest_text, (

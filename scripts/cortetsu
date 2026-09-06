@@ -304,7 +304,7 @@ test_cmd() {
     run_node_test "cortetsu/tests/test-wallpaper-search.node.js"
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
     run_bash_test "cortetsu/tests/test-calendar-readonly.sh"
-    run_bash_test "caelestia/evals/legacy-process-migration-eval.sh"
+    run_bash_test "cortetsu/tests/test-legacy-process-migration-eval.sh"
     printf '\nCortetsu repository regressions passed.\n'
 }
 

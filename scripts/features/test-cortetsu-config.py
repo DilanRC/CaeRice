@@ -12,7 +12,7 @@ apps_service = (modules / "launcher/services/Apps.qml").read_text(encoding="utf-
 actions_service = (modules / "launcher/services/Actions.qml").read_text(encoding="utf-8")
 schemes_service = (modules / "launcher/services/Schemes.qml").read_text(encoding="utf-8")
 variants_service = (modules / "launcher/services/M3Variants.qml").read_text(encoding="utf-8")
-manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
+manifest = (repo / "cortetsu/contracts/patch-debt.tsv").read_text(encoding="utf-8")
 desktop_clock = (modules / "background/DesktopClock.qml").read_text(encoding="utf-8")
 spectrum = (repo / "cortetsu/services/CortetsuSpectrum.qml").read_text(encoding="utf-8")
 visualiser = (modules / "background/Visualiser.qml").read_text(encoding="utf-8")
@@ -308,6 +308,6 @@ gone_patches = (
 )
 for name in gone_patches:
     assert name not in manifest, f"{name} must not be listed in MANIFEST.tsv anymore"
-    assert not (repo / "caelestia/patches" / name).exists(), f"{name} must be deleted"
+    assert not (repo / "cortetsu/contracts/patches" / name).exists(), f"{name} must be deleted"
 
 print("PASS: Cortetsu functional preferences use an XDG-owned contract")

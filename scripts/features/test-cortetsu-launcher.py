@@ -15,8 +15,8 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 launcher = repo / "cortetsu/modules/launcher"
-manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
-patches_dir = repo / "caelestia/patches"
+manifest = (repo / "cortetsu/contracts/patch-debt.tsv").read_text(encoding="utf-8")
+patches_dir = repo / "cortetsu/contracts/patches"
 
 REQUIRED_FILES = (
     "AppList.qml",
