@@ -35,13 +35,12 @@ CortetsuSurface {
             }
         }
 
-        CortetsuText {
+        CortetsuStateMessage {
             Layout.fillWidth: true
             visible: root.devices.length === 0
-            text: qsTr("No devices nearby")
-            textSize: CortetsuDesign.bodySmallPx
-            color: CortetsuDesign.colorOnSurfaceVariant
-            horizontalAlignment: Text.AlignHCenter
+            kind: Bluetooth.defaultAdapter?.enabled ? "empty" : "error"
+            title: Bluetooth.defaultAdapter?.enabled ? qsTr("No devices nearby") : qsTr("Bluetooth unavailable")
+            detail: Bluetooth.defaultAdapter?.enabled ? "" : qsTr("Enable Bluetooth to scan for devices")
         }
 
         ListView {

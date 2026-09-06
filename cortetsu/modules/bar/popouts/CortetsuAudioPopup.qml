@@ -60,5 +60,13 @@ CortetsuSurface {
                 onClicked: CortetsuAudio.setAudioSink(modelData)
             }
         }
+
+        CortetsuStateMessage {
+            Layout.fillWidth: true
+            visible: CortetsuAudio.sinks.length === 0
+            kind: CortetsuAudio.sink ? "empty" : "error"
+            title: CortetsuAudio.sink ? qsTr("No other output devices") : qsTr("Audio unavailable")
+            detail: CortetsuAudio.sink ? "" : qsTr("No output device is ready")
+        }
     }
 }

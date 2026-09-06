@@ -13,6 +13,9 @@ tray = (ROOT / "cortetsu/modules/CortetsuTraySegment.qml").read_text()
 status = (ROOT / "cortetsu/modules/CortetsuStatusSegment.qml").read_text()
 status_pill = (ROOT / "cortetsu/modules/StatusPill.qml").read_text()
 workspaces = (ROOT / "cortetsu/modules/CortetsuWorkspaceDots.qml").read_text()
+state_message = (ROOT / "cortetsu/components/CortetsuStateMessage.qml").read_text()
+toggle = (ROOT / "cortetsu/components/CortetsuToggle.qml").read_text()
+slider = (ROOT / "cortetsu/components/CortetsuSlider.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
@@ -24,6 +27,9 @@ checks = {
     "status clock exposes focus": "focused: parent.activeFocus" in status,
     "status pill exposes focus": "focused: item.activeFocus" in status_pill,
     "workspace exposes focus": "workspaceDot.activeFocus" in workspaces,
+    "state message covers async states": all(x in state_message for x in ('property string kind', 'kind === "loading"', 'kind === "error"')),
+    "toggle supports keyboard": all(x in toggle for x in ("Keys.onEnterPressed", "Keys.onSpacePressed", "focused: root.activeFocus")),
+    "slider supports keyboard": all(x in slider for x in ("Keys.onLeftPressed", "Keys.onRightPressed", "Keys.onHomePressed")),
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),

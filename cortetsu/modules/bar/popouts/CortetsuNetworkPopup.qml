@@ -46,13 +46,12 @@ CortetsuSurface {
             onClicked: root.popouts.hasCurrent = false
         }
 
-        CortetsuText {
+        CortetsuStateMessage {
             Layout.fillWidth: true
-            visible: root.networks.length === 0
-            text: CortetsuNetwork.connecting ? qsTr("Looking for a connection…") : qsTr("No networks available")
-            textSize: CortetsuDesign.bodySmallPx
-            color: CortetsuDesign.colorOnSurfaceVariant
-            horizontalAlignment: Text.AlignHCenter
+            visible: CortetsuNetwork.connecting || !root.device || root.networks.length === 0
+            kind: CortetsuNetwork.connecting ? "loading" : !root.device ? "error" : "empty"
+            title: CortetsuNetwork.connecting ? qsTr("Looking for a connection…") : !root.device ? qsTr("Wi‑Fi unavailable") : qsTr("No networks available")
+            detail: !root.device ? qsTr("The network device is not ready") : ""
         }
 
         ListView {

@@ -22,6 +22,9 @@ tray = (ROOT / "cortetsu/modules/CortetsuTraySegment.qml").read_text()
 status = (ROOT / "cortetsu/modules/CortetsuStatusSegment.qml").read_text()
 status_pill = (ROOT / "cortetsu/modules/StatusPill.qml").read_text()
 workspaces = (ROOT / "cortetsu/modules/CortetsuWorkspaceDots.qml").read_text()
+state_message = (ROOT / "cortetsu/components/CortetsuStateMessage.qml").read_text()
+toggle = (ROOT / "cortetsu/components/CortetsuToggle.qml").read_text()
+slider = (ROOT / "cortetsu/components/CortetsuSlider.qml").read_text()
 inventory = (ROOT / "docs/architecture/qml-surface-inventory.md").read_text()
 
 for needle, label in (
@@ -31,7 +34,7 @@ for needle, label in (
     ("Keys.onEnterPressed", "Enter activation"),
     ("Keys.onSpacePressed", "Space activation"),
 ):
-    require(surface + module_surface + button + row + hub_button + app_rail + tray + status + status_pill + workspaces, needle, label)
+    require(surface + module_surface + button + row + hub_button + app_rail + tray + status + status_pill + workspaces + state_message + toggle + slider, needle, label)
 
 for family in ("BottomHub", "Launcher", "Notifications", "Overview", "OSD", "Toasts"):
     require(inventory, f"| {family} |", f"inventory family {family}")

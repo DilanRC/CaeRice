@@ -4,6 +4,9 @@ import "../modules/CortetsuDesign.js" as CortetsuDesign
 Item {
     id: root
 
+    focus: !disabled
+    activeFocusOnTab: !disabled
+
     property bool checked: false
     property bool disabled: false
     signal toggled(bool checked)
@@ -18,6 +21,7 @@ Item {
         baseColor: root.checked ? CortetsuDesign.colorPrimary : CortetsuDesign.colorSurfaceGlass
         hoverColor: CortetsuDesign.colorSurfaceGlassStrong
         outlined: true
+        focused: root.activeFocus
         hovered: mouse.containsMouse
         pressed: mouse.pressed
     }
@@ -41,4 +45,8 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: root.toggled(!root.checked)
     }
+
+    Keys.onEnterPressed: root.toggled(!root.checked)
+    Keys.onReturnPressed: root.toggled(!root.checked)
+    Keys.onSpacePressed: root.toggled(!root.checked)
 }

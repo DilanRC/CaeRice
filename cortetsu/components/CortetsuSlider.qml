@@ -4,10 +4,14 @@ import "../modules/CortetsuDesign.js" as CortetsuDesign
 Item {
     id: root
 
+    focus: !disabled
+    activeFocusOnTab: !disabled
+
     property real value: 0
     property real from: 0
     property real to: 1
     property bool disabled: false
+    property real step: 0.05
     signal moved(real value)
 
     implicitHeight: 28
@@ -27,6 +31,15 @@ Item {
             radius: parent.radius
             color: CortetsuDesign.colorPrimary
         }
+    }
+
+    Rectangle {
+        id: focusRing
+        anchors.fill: parent
+        color: "transparent"
+        border.width: root.activeFocus ? 1 : 0
+        border.color: CortetsuDesign.colorWashi
+        radius: 4
     }
 
     Rectangle {
@@ -59,4 +72,17 @@ Item {
         root.value = next;
         root.moved(next);
     }
+
+    function adjust(delta: real): void {
+        const next = Math.max(root.from, Math.min(root.to, root.value + delta));
+        root.value = next;
+        root.moved(next);
+    }
+
+    Keys.onLeftPressed: root.adjust(-root.step)
+    Keys.onRightPressed: root.adjust(root.step)
+    Keys.onDownPressed: root.adjust(-root.step)
+    Keys.onUpPressed: root.adjust(root.step)
+    Keys.onHomePressed: { root.value = root.from; root.moved(root.value); }
+    Keys.onEndPressed: { root.value = root.to; root.moved(root.value); }
 }
