@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Quickshell
+import QtQml
 import "../.."
 import qs.utils
 
