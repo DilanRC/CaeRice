@@ -1,8 +1,0 @@
---- a/components/misc/CustomShortcut.qml
-+++ b/components/misc/CustomShortcut.qml
-@@ -4,5 +4,5 @@
- GlobalShortcut {
-     // qmllint enable unresolved-type
--    appid: "caelestia"
-+    appid: "cortetsu"
- }

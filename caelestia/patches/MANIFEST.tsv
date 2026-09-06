@@ -1,6 +1,5 @@
 patch	path
 shell.qml.patch	shell.qml
-components__misc__CustomShortcut.qml.patch	components/misc/CustomShortcut.qml
 services__Hypr.qml.patch	services/Hypr.qml
 utils__Paths__Config.qml.patch	utils/Paths.qml
 services__CoreConfig.qml.patch	services/Time.qml,services/Brightness.qml,services/Audio.qml,services/Players.qml
