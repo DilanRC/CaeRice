@@ -7,7 +7,7 @@ Row {
     property string title
     property string detail
     spacing: CortetsuDesign.spacingCompact
-    implicitHeight: Math.max(titleText.implicitHeight, detailText.implicitHeight)
+    height: Math.max(titleText.implicitHeight, detailText.implicitHeight)
 
     CortetsuText {
         id: titleText

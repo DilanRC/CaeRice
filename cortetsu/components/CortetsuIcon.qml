@@ -4,12 +4,13 @@ import "../modules/CortetsuTypography.js" as CortetsuTypography
 Text {
     id: root
 
+    property int iconSize: CortetsuTypography.iconMediumPx
     property real fill: 0
     property int grade: 0
     property bool animate: false
     property font fontStyle: Qt.font({
         family: CortetsuTypography.iconFamily,
-        pixelSize: CortetsuTypography.iconMediumPx,
+        pixelSize: iconSize,
         weight: Font.Normal
     })
 

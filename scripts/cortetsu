@@ -266,6 +266,8 @@ test_cmd() {
         "scripts/features/test-cortetsu-quality.py"
         "scripts/features/test-cortetsu-native-design-system.py"
         "scripts/features/eval-cortetsu-native-design-system.py"
+        "scripts/features/test-cortetsu-native-popups.py"
+        "scripts/features/eval-cortetsu-native-popups.py"
         "scripts/features/test-native-theme.py"
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"

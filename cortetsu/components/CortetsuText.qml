@@ -8,12 +8,13 @@ Text {
     id: root
 
     property bool animate: false
+    property int textSize: CortetsuTypography.bodyPx
 
     renderType: Text.NativeRendering
     textFormat: Text.PlainText
     color: CortetsuDesign.colorOnSurface
     font.family: CortetsuTypography.uiFamily
-    font.pixelSize: CortetsuTypography.bodyPx
+    font.pixelSize: textSize
     font.weight: Font.Normal
 
     Behavior on color {

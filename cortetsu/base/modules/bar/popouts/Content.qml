@@ -35,9 +35,9 @@ Item {
             id: networkPopout
 
             name: "network"
-            sourceComponent: Network {
+            sourceComponent: CortetsuNetworkPopup {
+                // Cortetsu owns the presentation; the native service contract remains unchanged.
                 popouts: root.popouts
-                view: Nmcli.activeEthernet ? "ethernet" : "wireless"
             }
         }
 
@@ -92,7 +92,7 @@ Item {
 
         Popout {
             name: "bluetooth"
-            sourceComponent: Bluetooth {
+            sourceComponent: CortetsuBluetoothPopup {
                 popouts: root.popouts
             }
         }
@@ -104,7 +104,7 @@ Item {
 
         Popout {
             name: "audio"
-            sourceComponent: AudioPopout {
+            sourceComponent: CortetsuAudioPopup {
                 popouts: root.popouts
             }
         }
