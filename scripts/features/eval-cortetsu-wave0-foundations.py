@@ -7,13 +7,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 button = (ROOT / "cortetsu/components/CortetsuButton.qml").read_text()
 row = (ROOT / "cortetsu/components/CortetsuListRow.qml").read_text()
+hub_button = (ROOT / "cortetsu/modules/HubButton.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
     "button exposes focus": "focused: root.activeFocus" in button,
     "row exposes focus": "focused: root.activeFocus" in row,
+    "hub button exposes focus": "focused: root.activeFocus" in hub_button,
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
+    "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "popup controller untouched": "bottomAnchorCenter" in hub and "closeAllPopouts" in hub,
 }
 

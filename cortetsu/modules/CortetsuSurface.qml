@@ -7,6 +7,8 @@ Rectangle {
     property bool hovered: false
     property bool pressed: false
     property bool active: false
+    property bool focused: false
+    property bool disabled: false
     property bool danger: false
     property bool outlined: true
     property real radiusValue: CortetsuDesign.radiusMedium
@@ -15,7 +17,9 @@ Rectangle {
     property color activeColor: danger
         ? CortetsuDesign.colorVermillion
         : CortetsuDesign.colorIndigo
-    property color outlineColor: active || danger
+    property color outlineColor: focused
+        ? CortetsuDesign.colorWashi
+        : active || danger
         ? CortetsuDesign.colorVermillion
         : Qt.darker(CortetsuDesign.colorMuted, 2.15)
 
@@ -27,7 +31,7 @@ Rectangle {
             : hovered
                 ? hoverColor
                 : baseColor
-    border.width: outlined ? 1 : 0
+    border.width: outlined || focused ? 1 : 0
     border.color: outlineColor
 
     Behavior on color {

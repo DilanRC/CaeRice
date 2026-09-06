@@ -6,10 +6,14 @@ import "CortetsuTypography.js" as CortetsuTypography
 Item {
     id: root
 
+    focus: !disabled
+    activeFocusOnTab: !disabled
+
     property string icon: "circle"
     property string imageSource: ""
     property bool cropImage: false
     property bool active: false
+    property bool disabled: false
     property string tooltip: ""
     property int buttonSize: 48
     property int iconSize: CortetsuTypography.iconMediumPx
@@ -51,6 +55,8 @@ Item {
         hovered: root.hovered
         pressed: root.pressed
         active: root.active
+        focused: root.activeFocus
+        disabled: root.disabled
         outlined: root.active
     }
 
@@ -96,7 +102,7 @@ Item {
         id: tooltipPopup
 
         parent: root
-        visible: root.tooltip.length > 0 && root.hovered
+        visible: root.tooltip.length > 0 && (root.hovered || root.activeFocus)
         delay: CortetsuDesign.motionDeliberateMs
         text: root.tooltip
 
@@ -116,6 +122,7 @@ Item {
     MouseArea {
         id: mouse
         anchors.fill: parent
+        enabled: !root.disabled
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
@@ -124,4 +131,8 @@ Item {
             event.accepted = true;
         }
     }
+
+    Keys.onEnterPressed: root.clicked()
+    Keys.onReturnPressed: root.clicked()
+    Keys.onSpacePressed: root.clicked()
 }

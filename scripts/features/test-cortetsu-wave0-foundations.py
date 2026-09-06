@@ -13,8 +13,10 @@ def require(text: str, needle: str, label: str) -> None:
 
 
 surface = (ROOT / "cortetsu/components/CortetsuSurface.qml").read_text()
+module_surface = (ROOT / "cortetsu/modules/CortetsuSurface.qml").read_text()
 button = (ROOT / "cortetsu/components/CortetsuButton.qml").read_text()
 row = (ROOT / "cortetsu/components/CortetsuListRow.qml").read_text()
+hub_button = (ROOT / "cortetsu/modules/HubButton.qml").read_text()
 inventory = (ROOT / "docs/architecture/qml-surface-inventory.md").read_text()
 
 for needle, label in (
@@ -24,7 +26,7 @@ for needle, label in (
     ("Keys.onEnterPressed", "Enter activation"),
     ("Keys.onSpacePressed", "Space activation"),
 ):
-    require(surface + button + row, needle, label)
+    require(surface + module_surface + button + row + hub_button, needle, label)
 
 for family in ("BottomHub", "Launcher", "Notifications", "Overview", "OSD", "Toasts"):
     require(inventory, f"| {family} |", f"inventory family {family}")
