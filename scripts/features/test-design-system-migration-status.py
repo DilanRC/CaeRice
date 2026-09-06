@@ -28,12 +28,14 @@ REQUIRED_FIRST_PARTY_PRIMITIVES = (
     "CortetsuText.qml",
     "CortetsuIcon.qml",
     "CortetsuDesign.js",
+    "../services/Tokens.qml",
 )
 
 
 def main() -> None:
     for name in REQUIRED_FIRST_PARTY_PRIMITIVES:
-        assert (MODULES / name).is_file(), f"missing first-party primitive: {name}"
+        path = MODULES / name if not name.startswith("../") else REPO / "cortetsu/modules" / name
+        assert path.is_file(), f"missing first-party primitive: {name}"
 
     offenders: list[str] = []
     for path in MODULES.rglob("*.qml"):

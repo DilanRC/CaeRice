@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell.Wayland
 import qs.modules
-import Caelestia.Config
 import qs.components
 import qs.components.images
 import qs.services
@@ -17,8 +16,11 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
-    contentItem.Config.screen: screen.name
-    contentItem.Tokens.screen: screen.name
+    Binding {
+        target: Tokens
+        property: "screen"
+        value: root.screen?.name ?? ""
+    }
 
     color: "transparent"
 
@@ -173,7 +175,7 @@ WlSessionLockSurface {
 
         Loader {
             anchors.fill: parent
-            sourceComponent: Config.lock.useWallpaper ? wallpaperBackground : screencopyBackground
+            sourceComponent: CortetsuConfig.wallpaperEnabled ? wallpaperBackground : screencopyBackground
         }
     }
 
@@ -203,7 +205,7 @@ WlSessionLockSurface {
         implicitWidth: size
         implicitHeight: size
 
-        visible: Config.lock.enabled
+        visible: true
         rotation: 180
         scale: 0
 

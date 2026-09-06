@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.services
 import qs.modules.nexus
@@ -35,11 +34,14 @@ Singleton {
             implicitWidth: nexus.implicitWidth
             implicitHeight: nexus.implicitHeight
 
-            minimumSize.width: contentItem.Tokens.sizes.nexus.minWidth
-            minimumSize.height: contentItem.Tokens.sizes.nexus.minHeight
+            minimumSize.width: Tokens.sizes.nexus.minWidth
+            minimumSize.height: Tokens.sizes.nexus.minHeight
 
-            contentItem.Config.screen: screen.name
-            contentItem.Tokens.screen: screen.name
+            Binding {
+                target: Tokens
+                property: "screen"
+                value: win.screen?.name ?? ""
+            }
 
             title: qsTr("Nexus — %1").arg(PageRegistry.pages[nexus.nState.currentPageIdx].label)
 
