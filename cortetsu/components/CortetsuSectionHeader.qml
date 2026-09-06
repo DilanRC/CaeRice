@@ -1,5 +1,6 @@
 import QtQuick
 import "../modules/CortetsuDesign.js" as CortetsuDesign
+import "../modules/CortetsuTypography.js" as CortetsuTypography
 
 Row {
     id: root
@@ -12,7 +13,7 @@ Row {
     CortetsuText {
         id: titleText
         text: root.title
-        textSize: CortetsuDesign.labelLargePx
+        textSize: CortetsuTypography.labelLargePx
         color: CortetsuDesign.colorOnSurface
         font.weight: Font.DemiBold
     }
@@ -21,7 +22,7 @@ Row {
         id: detailText
         visible: text.length > 0
         text: root.detail
-        textSize: CortetsuDesign.labelSmallPx
+        textSize: CortetsuTypography.labelSmallPx
         color: CortetsuDesign.colorOnSurfaceVariant
         anchors.verticalCenter: titleText.verticalCenter
     }

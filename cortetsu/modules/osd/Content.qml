@@ -1,6 +1,7 @@
 import QtQuick
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
 import "../../services"
 
 Column {
@@ -33,8 +34,8 @@ Column {
                 anchors.fill: parent
                 anchors.margins: CortetsuDesign.spacingStandard
                 spacing: CortetsuDesign.spacingStandard
-                CortetsuIcon { text: modelData.icon; color: CortetsuDesign.colorPrimary; iconSize: CortetsuDesign.iconMediumPx }
-                CortetsuText { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; textSize: CortetsuDesign.bodyPx; anchors.verticalCenter: parent.verticalCenter }
+                CortetsuIcon { text: modelData.icon; color: CortetsuDesign.colorPrimary; iconSize: CortetsuTypography.iconMediumPx }
+                CortetsuText { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; textSize: CortetsuTypography.bodyPx; anchors.verticalCenter: parent.verticalCenter }
             }
             MouseArea {
                 anchors.fill: parent

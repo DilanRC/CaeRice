@@ -174,11 +174,11 @@ Scope {
     }
 
     Connections {
-        function onEnableFprintChanged(): void {
+        function onLockEnableFprintChanged(): void {
             root.restartFprint();
         }
 
-        function onEnableHowdyChanged(): void {
+        function onLockEnableHowdyChanged(): void {
             if (!CortetsuConfig.lockEnableHowdy && howdy.active)
                 howdy.abort();
         }

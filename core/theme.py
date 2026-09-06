@@ -141,6 +141,16 @@ var outlineWidth = {density['outline_width']}
 var controlHeight = {density['control_height']}
 var rowHeight = {density['row_height']}
 
+// Typography aliases keep QML surfaces on the single generated design contract.
+var labelSmallPx = 11
+var labelMediumPx = 12
+var labelLargePx = 14
+var bodySmallPx = 12
+var bodyPx = 13
+var bodyLargePx = 14
+var iconSmallPx = 18
+var iconMediumPx = 22
+
 var hoverScale = {motion['hover_scale']}
 var motionInstantMs = {motion['instant_ms']}
 var motionFastMs = {motion['fast_ms']}

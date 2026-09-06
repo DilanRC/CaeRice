@@ -1,5 +1,6 @@
 import QtQuick
 import "../modules/CortetsuDesign.js" as CortetsuDesign
+import "../modules/CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
@@ -36,7 +37,7 @@ Item {
         CortetsuIcon {
             visible: root.icon.length > 0
             text: root.icon
-            iconSize: root.compact ? CortetsuDesign.iconSmallPx : CortetsuDesign.iconMediumPx
+            iconSize: root.compact ? CortetsuTypography.iconSmallPx : CortetsuTypography.iconMediumPx
             color: root.active ? CortetsuDesign.colorOnPrimary : CortetsuDesign.colorOnSurface
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -44,7 +45,7 @@ Item {
         CortetsuText {
             visible: root.label.length > 0
             text: root.label
-            textSize: root.compact ? CortetsuDesign.labelMediumPx : CortetsuDesign.bodyPx
+            textSize: root.compact ? CortetsuTypography.labelMediumPx : CortetsuTypography.bodyPx
             color: root.active ? CortetsuDesign.colorOnPrimary : CortetsuDesign.colorOnSurface
             anchors.verticalCenter: parent.verticalCenter
         }
