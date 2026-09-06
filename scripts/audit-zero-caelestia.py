@@ -73,10 +73,10 @@ def audit(root: Path) -> dict[str, list[str]]:
         relative = path.relative_to(root)
         if path.suffix == ".patch":
             continue
-            for name, pattern in PATTERNS.items():
-                if name in {"Colours", "Tokens"} and path.suffix not in {".qml", ".js"}:
-                    continue
-                for match in pattern.finditer(text):
+        for name, pattern in PATTERNS.items():
+            if name in {"Colours", "Tokens"} and path.suffix not in {".qml", ".js"}:
+                continue
+            for match in pattern.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1
                 findings[name].append(f"{relative}:{line}")
     patches = sorted((root / "caelestia/patches").glob("*.patch"))
