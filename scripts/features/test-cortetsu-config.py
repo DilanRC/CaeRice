@@ -78,6 +78,18 @@ for wallpaper_page in (
 file_model = (repo / "cortetsu/base/components/filedialog/FileSystemModel.qml").read_text(encoding="utf-8")
 assert "ListModel" in file_model and "find --" in file_model
 assert "nameFilters" in file_model and "sortReverse" in file_model
+for blob_name in ("BlobGroup.qml", "BlobRect.qml", "BlobInvertedRect.qml"):
+    blob = repo / "cortetsu/base/components/blobs" / blob_name
+    assert blob.is_file()
+    blob_text = blob.read_text(encoding="utf-8")
+    assert "property var group" in blob_text or blob_name == "BlobGroup.qml"
+for blob_consumer in (
+    repo / "cortetsu/base/modules/nexus/Nexus.qml",
+    repo / "cortetsu/base/modules/nexus/common/BlobPopup.qml",
+    repo / "cortetsu/base/modules/nexus/common/DialogRowButton.qml",
+    repo / "cortetsu/base/modules/dashboard/media/LyricsInfo.qml",
+):
+    assert "import Caelestia.Blobs" not in blob_consumer.read_text(encoding="utf-8")
 for model_consumer in (
     repo / "cortetsu/base/components/filedialog/FolderContents.qml",
     repo / "cortetsu/base/modules/utilities/cards/RecordingList.qml",

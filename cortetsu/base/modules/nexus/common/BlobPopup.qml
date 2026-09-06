@@ -1,6 +1,6 @@
 import QtQuick
-import Caelestia.Blobs
 import qs.components
+import qs.components.blobs
 import qs.services
 
 Item {
