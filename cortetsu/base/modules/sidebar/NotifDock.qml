@@ -93,7 +93,7 @@ Item {
                 spacing: CortetsuTokens.spacing.extraLarge
 
                 Image {
-                    asynchronous: true
+                    asynchronous: false
                     source: Paths.noNotifsPic
                     fillMode: Image.PreserveAspectFit
                     sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)

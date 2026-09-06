@@ -77,7 +77,7 @@ Item {
         source: root.imageSource
         sourceSize.width: 64
         sourceSize.height: 64
-        asynchronous: true
+        asynchronous: false
         retainWhileLoading: true
         fillMode: root.cropImage ? Image.PreserveAspectCrop : Image.PreserveAspectFit
         smooth: true

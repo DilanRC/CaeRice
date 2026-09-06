@@ -19,7 +19,7 @@ StyledClippingRect {
         anchors.fill: parent
         source: Players.getArtUrl(Players.active)
 
-        asynchronous: true
+        asynchronous: false
         fillMode: Image.PreserveAspectCrop
         sourceSize: {
             const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;

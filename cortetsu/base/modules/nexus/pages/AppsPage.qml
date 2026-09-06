@@ -132,7 +132,7 @@ PageBase {
                         spacing: CortetsuTokens.spacing.medium
 
                         IconImage {
-                            asynchronous: true
+                        asynchronous: false
                             implicitSize: Math.round(CortetsuTokens.font.icon.large.pointSize * 1.8)
                             source: Quickshell.iconPath(appItem.modelData.icon, "image-missing")
                         }

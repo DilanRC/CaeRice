@@ -17,6 +17,13 @@ Scope {
 
     property bool shown: true
 
+    Timer {
+        id: hideTimer
+        interval: 500
+        repeat: false
+        onTriggered: hubRoot.shown = false
+    }
+
     function closeAllLaunchers(): void {
         for (const screen of CortetsuScreens.screens) {
             const state = CortetsuShellState.forScreen(screen);
@@ -32,13 +39,27 @@ Scope {
         }
     }
 
-    function setShown(value): void {
-        shown = value;
-
-        if (!shown) {
-            closeAllLaunchers();
-            closeAllPanels();
+    function closeAllPopouts(): void {
+        for (const screen of CortetsuScreens.screens) {
+            const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
+            if (popouts)
+                popouts.close();
         }
+    }
+
+    function setShown(value): void {
+        if (value) {
+            hideTimer.stop();
+            shown = true;
+            return;
+        }
+
+        // Let attached popouts finish their return-to-icon animation while
+        // the parent panel still owns the full screen geometry.
+        hideTimer.restart();
+        closeAllLaunchers();
+        closeAllPanels();
+        closeAllPopouts();
     }
 
     function toggle(): void {

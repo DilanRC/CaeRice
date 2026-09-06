@@ -48,7 +48,7 @@ ColumnLayout {
                 spacing: CortetsuTokens.spacing.largeIncreased
 
                 Image {
-                    asynchronous: true
+                    asynchronous: false
                     source: Paths.lockNoNotifsPic
                     fillMode: Image.PreserveAspectFit
                     sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)

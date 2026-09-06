@@ -60,7 +60,7 @@ Item {
                     source: trayItem.modelData.iconSource
                     sourceSize.width: 48
                     sourceSize.height: 48
-                    asynchronous: true
+                    asynchronous: false
                     retainWhileLoading: true
                     fillMode: Image.PreserveAspectFit
                     smooth: true

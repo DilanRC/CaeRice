@@ -7,6 +7,7 @@ content = (ROOT / "cortetsu/base/modules/bar/popouts/Content.qml").read_text(enc
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 wrapper = (ROOT / "cortetsu/modules/bar/popouts/Wrapper.qml").read_text(encoding="utf-8")
 content_window = (ROOT / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
+status_segment = (ROOT / "cortetsu/modules/CortetsuStatusSegment.qml").read_text(encoding="utf-8")
 
 for name, service in (
     ("CortetsuNetworkPopup.qml", "CortetsuNetwork"),
@@ -26,6 +27,14 @@ assert "sourceComponent: CortetsuNetworkPopup" in content
 assert "sourceComponent: CortetsuAudioPopup" in content
 assert "sourceComponent: CortetsuBluetoothPopup" in content
 assert "sourceComponent: CortetsuWifiPasswordPopup" in content
+assert "function closeAllPopouts(): void" in hub
+assert "closeAllPopouts();" in hub
+assert "id: hideTimer" in hub and "interval: 500" in hub
+assert "hideTimer.restart();" in hub
+assert 'onClicked: root.attachedControlRequested("network", root.centerFor(networkButton))' in status_segment
+assert 'onClicked: root.attachedControlRequested("bluetooth", root.centerFor(bluetoothButton))' in status_segment
+assert 'onClicked: root.detachedControlRequested("network")' not in status_segment
+assert 'onClicked: root.detachedControlRequested("bluetooth")' not in status_segment
 assert "sourceComponent: CortetsuDetachedPopup" in wrapper
 assert "sourceComponent: Rectangle" not in wrapper
 assert "Nexus" not in wrapper
@@ -39,6 +48,19 @@ assert "anchors.leftMargin: (-implicitWidth - 5)" not in clip_wrapper
 assert "ClipWrapper owns the screen-space placement" in clip_wrapper
 assert "        x: 0\n        transformOrigin: Item.Bottom" in clip_wrapper
 assert "transformOrigin: Item.Bottom" in clip_wrapper
+
+# Native shell icons must stay on the GUI thread. Async image decoding in
+# these always-created surfaces triggers Qt's cross-thread pixmap warning.
+for path in (
+    ROOT / "cortetsu/modules/HubButton.qml",
+    ROOT / "cortetsu/modules/CortetsuAppRail.qml",
+    ROOT / "cortetsu/modules/CortetsuTraySegment.qml",
+    ROOT / "cortetsu/base/components/images/FadeImage.qml",
+    ROOT / "cortetsu/base/components/images/CachingImage.qml",
+    ROOT / "cortetsu/base/components/images/CachingIconImage.qml",
+):
+    assert "asynchronous: true" not in path.read_text(encoding="utf-8"), path
+
 assert "closeTimer" in wrapper
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
 for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):

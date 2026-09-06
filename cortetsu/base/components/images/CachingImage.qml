@@ -7,7 +7,7 @@ Image {
 
     property string path
 
-    asynchronous: true
+    asynchronous: false
     fillMode: Image.PreserveAspectCrop
     source: path.length > 0 ? Qt.resolvedUrl(Paths.absolutePath(path)) : ""
     sourceSize: {

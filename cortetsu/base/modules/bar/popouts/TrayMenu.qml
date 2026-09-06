@@ -128,7 +128,7 @@ StackView {
                             active: item.modelData.icon !== ""
 
                             sourceComponent: IconImage {
-                                asynchronous: true
+                                asynchronous: false
                                 implicitSize: label.implicitHeight
 
                                 source: item.modelData.icon

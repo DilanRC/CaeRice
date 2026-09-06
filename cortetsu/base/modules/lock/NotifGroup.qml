@@ -78,7 +78,7 @@ CortetsuSurface {
                         return Qt.size(size, size);
                     }
                     cache: false
-                    asynchronous: true
+                    asynchronous: false
                     width: TokenConfig.sizes.notifs.image
                     height: TokenConfig.sizes.notifs.image
                 }

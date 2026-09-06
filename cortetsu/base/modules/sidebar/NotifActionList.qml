@@ -170,7 +170,7 @@ Item {
                         id: iconComp
 
                         IconImage {
-                            asynchronous: true
+                            asynchronous: false
                             source: Quickshell.iconPath(action.modelData.identifier)
                         }
                     }

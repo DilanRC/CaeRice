@@ -19,7 +19,7 @@ Image {
         }
     }
 
-    asynchronous: true
+    asynchronous: false
     fillMode: Image.PreserveAspectCrop
 
     sourceSize: {

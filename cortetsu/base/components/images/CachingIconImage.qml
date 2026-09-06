@@ -19,7 +19,7 @@ Item {
     Loader {
         id: loader
 
-        asynchronous: true
+        asynchronous: false
         anchors.fill: parent
         sourceComponent: root.source ? root.source.toString().startsWith("image://icon/") ? iconImage : cachingImage : null
     }
@@ -38,7 +38,7 @@ Item {
 
         IconImage {
             source: root.source
-            asynchronous: true
+            asynchronous: false
         }
     }
 }

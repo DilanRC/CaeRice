@@ -79,7 +79,7 @@ Item {
                 if (hovered)
                     root.attachedControlRequested("network", root.centerFor(networkButton));
             }
-            onClicked: root.detachedControlRequested("network")
+            onClicked: root.attachedControlRequested("network", root.centerFor(networkButton))
         }
 
         HubButton {
@@ -93,7 +93,7 @@ Item {
                 if (hovered)
                     root.attachedControlRequested("bluetooth", root.centerFor(bluetoothButton));
             }
-            onClicked: root.detachedControlRequested("bluetooth")
+            onClicked: root.attachedControlRequested("bluetooth", root.centerFor(bluetoothButton))
         }
 
         HubButton {

@@ -86,7 +86,7 @@ Item {
                         source: appItem.modelData.iconSource
                         sourceSize.width: 64
                         sourceSize.height: 64
-                        asynchronous: true
+                        asynchronous: false
                         retainWhileLoading: true
                         fillMode: Image.PreserveAspectFit
                         smooth: true
