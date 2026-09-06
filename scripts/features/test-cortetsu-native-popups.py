@@ -83,6 +83,8 @@ lock_status = (popouts / "CortetsuLockStatusPopup.qml").read_text(encoding="utf-
 assert 'import "../../../services"' in lock_status
 assert "Hypr.capsLock" in lock_status and "Hypr.numLock" in lock_status
 tray_menu = (popouts / "CortetsuTrayMenu.qml").read_text(encoding="utf-8")
+assert "CortetsuPopupSurface" in tray_menu
+assert "id: stack" in tray_menu
 assert "activeFocusOnTab" in tray_menu
 assert "Keys.onPressed" in tray_menu
 assert "Qt.Key_Right" in tray_menu and "Qt.Key_Left" in tray_menu

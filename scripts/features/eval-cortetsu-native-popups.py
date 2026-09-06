@@ -17,6 +17,7 @@ assert password.count("CortetsuButton") >= 2
 assert "NetworkConnection.connectWithPassword" in password
 tray = (popouts / "CortetsuTrayMenu.qml").read_text(encoding="utf-8")
 assert all(token in tray for token in ("activeFocusOnTab", "Qt.Key_Right", "Qt.Key_Left", "Qt.Key_Escape", "focused: activeFocus"))
+assert "CortetsuPopupSurface" in tray
 content_window = (ROOT / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
 print("PASS: native popup eval covers network, audio and Bluetooth hierarchy and states")

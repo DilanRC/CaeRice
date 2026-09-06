@@ -7,23 +7,29 @@ import Quickshell.Widgets
 import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 
-StackView {
+CortetsuPopupSurface {
     id: root
     required property PopoutState popouts
     required property QsMenuHandle trayItem
-    implicitWidth: currentItem?.implicitWidth ?? 0
-    implicitHeight: currentItem?.implicitHeight ?? 0
-    initialItem: menuComponent.createObject(null, { handle: root.trayItem })
-    pushEnter: Transition {}
-    pushExit: Transition {}
-    popEnter: Transition {}
-    popExit: Transition {}
+    implicitWidth: (stack.currentItem?.implicitWidth ?? 0) + CortetsuDesign.spacingStandard * 2
+    implicitHeight: (stack.currentItem?.implicitHeight ?? 0) + CortetsuDesign.spacingStandard * 2
+
+    StackView {
+        id: stack
+        anchors.fill: parent
+        anchors.margins: CortetsuDesign.spacingStandard
+        initialItem: menuComponent.createObject(null, { handle: root.trayItem })
+        pushEnter: Transition {}
+        pushExit: Transition {}
+        popEnter: Transition {}
+        popExit: Transition {}
+    }
 
     function activateEntry(entry): void {
         if (!entry.enabled)
             return;
         if (entry.hasChildren)
-            root.push(menuComponent.createObject(null, { handle: entry, subMenu: true }));
+            stack.push(menuComponent.createObject(null, { handle: entry, subMenu: true }));
         else {
             entry.triggered();
             root.popouts.hasCurrent = false;
@@ -52,7 +58,7 @@ StackView {
                     color: modelData.isSeparator ? CortetsuDesign.colorOutlineVariant : "transparent"
                     disabled: !modelData.enabled
                     focused: activeFocus && !modelData.isSeparator
-                    hovered: trayMouse.containsMouse
+                    hovered: stateLayer.containsMouse
                     radius: CortetsuDesign.radiusPill
 
                     Row {
@@ -66,6 +72,7 @@ StackView {
                     }
 
                     CortetsuStateLayer {
+                        id: stateLayer
                         anchors.fill: parent
                         radius: parent.radius
                         disabled: !modelData.enabled
@@ -80,7 +87,7 @@ StackView {
                             root.activateEntry(modelData);
                             event.accepted = true;
                         } else if (event.key === Qt.Key_Left && menu.subMenu) {
-                            root.pop();
+                            stack.pop();
                             event.accepted = true;
                         } else if (event.key === Qt.Key_Escape) {
                             root.popouts.hasCurrent = false;
@@ -95,7 +102,7 @@ StackView {
                 compact: true
                 icon: "chevron_left"
                 label: qsTr("Back")
-                onClicked: root.pop()
+                onClicked: stack.pop()
                 Keys.onEscapePressed: root.popouts.hasCurrent = false
             }
         }
