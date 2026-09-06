@@ -263,6 +263,7 @@ test_cmd() {
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"
         "scripts/features/test-shell-lifecycle.py"
+        "scripts/features/test-shell-state-screens.py"
         "cortetsu/tests/test-calendar-credentials.py"
         "cortetsu/tests/test-calendar-polish.py"
         "cortetsu/tests/test-regional.py"
