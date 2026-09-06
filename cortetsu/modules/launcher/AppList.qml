@@ -272,7 +272,7 @@ GridView {
                 anchors.bottomMargin: 10
 
                 text: app.modelData?.name ?? ""
-                font: CortetsuTypography.smallPx
+                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
 
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -369,14 +369,14 @@ GridView {
                 CortetsuText {
                     width: parent.width
                     text: action.modelData?.name ?? ""
-                    font: CortetsuTypography.bodyPx
+                    font: Qt.font({pixelSize: CortetsuTypography.bodyPx})
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     width: parent.width
                     text: action.modelData?.desc ?? ""
-                    font: CortetsuTypography.smallPx
+                    font: Qt.font({pixelSize: CortetsuTypography.smallPx})
                     color: CortetsuDesign.colorOutline
                     elide: Text.ElideRight
                 }
@@ -457,7 +457,7 @@ GridView {
                             ? CortetsuDesign.colorOnSurface
                             : CortetsuDesign.colorOnSurfaceVariant
 
-                    font: CortetsuTypography.bodyPx
+                    font: Qt.font({pixelSize: CortetsuTypography.bodyPx})
                     elide: Text.ElideLeft
                 }
 
@@ -465,7 +465,7 @@ GridView {
                     width: parent.width
                     text: qsTr("Enter: copy result")
                     color: CortetsuDesign.colorOutline
-                    font: CortetsuTypography.smallPx
+                    font: Qt.font({pixelSize: CortetsuTypography.smallPx})
                 }
             }
 
@@ -597,7 +597,7 @@ GridView {
                 anchors.rightMargin: 14
 
                 text: scheme.modelData?.name ?? ""
-                font: CortetsuTypography.bodyPx
+                font: Qt.font({pixelSize: CortetsuTypography.bodyPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
                 maximumLineCount: 1
@@ -613,7 +613,7 @@ GridView {
 
                 text: `${scheme.modelData?.flavour ?? "default"} · ${scheme.previewLight ? qsTr("Light") : qsTr("Dark")}`
                 color: CortetsuDesign.colorOnSurfaceVariant
-                font: CortetsuTypography.smallPx
+                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
@@ -683,7 +683,7 @@ GridView {
                 anchors.rightMargin: 8
 
                 text: variant.modelData?.name ?? ""
-                font: CortetsuTypography.smallPx
+                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
@@ -698,7 +698,7 @@ GridView {
 
                 text: variant.modelData?.description ?? ""
                 color: CortetsuDesign.colorOutline
-                font: CortetsuTypography.smallPx
+                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
