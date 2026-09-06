@@ -159,6 +159,9 @@ for required in \
     modules/CortetsuConfig.qml \
     modules/CortetsuShortcut.qml \
     modules/CortetsuShellState.qml \
+    services/Time.qml \
+    services/Brightness.qml \
+    services/Players.qml \
     modules/CortetsuStateLayer.qml \
     modules/CortetsuMask.qml \
     compatibility.json \

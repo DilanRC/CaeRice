@@ -36,6 +36,9 @@ for marker in (
 assert 'cp -a "$PACKAGE_ROOT' not in build
 assert "/etc/xdg/quickshell/caelestia" not in build
 assert "CAERICE_" not in build and "caerice-" not in build
+assert 'cp -a "$REPO/cortetsu/services/." "$STAGING/services/"' in build
+for service in ("Time.qml", "Brightness.qml", "Players.qml"):
+    assert f"services/{service}" in build
 
 for marker in (
     "CORTETSU_UPSTREAM_SOURCE",
