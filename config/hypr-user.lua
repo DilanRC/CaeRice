@@ -61,7 +61,7 @@ hl.bind(
 )
 
 -- ============================================================
--- CAELESTIA
+-- Cortetsu shell bindings
 -- ============================================================
 
 -- Dock personalizado
@@ -70,7 +70,7 @@ hl.bind(
     hl.dsp.exec_cmd("qs -p ~/.config/quickshell/cortetsu/current ipc call customDock toggle")
 )
 
--- Dashboard de Caelestia
+-- Dashboard del shell
 hl.bind(
     "SUPER + SHIFT + D",
     hl.dsp.global("cortetsu:dashboard")
