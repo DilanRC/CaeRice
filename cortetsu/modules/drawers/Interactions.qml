@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import ".."
-import qs.components
-import qs.components.controls
+import "../../components"
+import "../../components/controls"
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
 

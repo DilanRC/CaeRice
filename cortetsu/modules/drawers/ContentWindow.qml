@@ -8,8 +8,8 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import Caelestia.Blobs
 import ".."
-import qs.components
-import qs.components.containers
+import "../../components"
+import "../../components/containers"
 import "../../services"
 import qs.modules.bar
 
