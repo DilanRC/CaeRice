@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-HELPER = REPO / "core/retire_legacy_theme.py"
+HELPER = REPO / "scripts/maintenance/retire_legacy_theme.py"
 
 with tempfile.TemporaryDirectory(prefix="cortetsu-retire-theme-test-") as tmp:
     root = Path(tmp)
