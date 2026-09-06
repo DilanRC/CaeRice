@@ -24,7 +24,8 @@ Item {
         Repeater {
             model: root.visibleNotifications
             delegate: Notification {
-                required property var modelData
+                required property int index
+                modelData: root.visibleNotifications[index]
                 width: list.width
                 props: ({})
                 expanded: false

@@ -4,15 +4,16 @@ import "../"
 import "../../components"
 import "../../services"
 import qs.utils
+import "../CortetsuDesign.js" as CortetsuDesign
 
 CortetsuSurface {
     id: root
-    required property NotifData modelData
+    required property var modelData
     required property var props
     required property bool expanded
     required property var screenState
     property bool hovered: false
-    readonly property real nonAnimHeight: summary.implicitHeight + body.implicitHeight + CortetsuDesign.spacingComfortable * 2
+    readonly property real nonAnimHeight: contentLayout.implicitHeight + CortetsuDesign.spacingComfortable * 2
     implicitHeight: nonAnimHeight
     radiusValue: CortetsuDesign.radiusMedium
     outlined: false
@@ -39,7 +40,10 @@ CortetsuSurface {
     Keys.onEscapePressed: root.modelData.close()
 
     ColumnLayout {
-        anchors.fill: parent
+        id: contentLayout
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.margins: CortetsuDesign.spacingComfortable
         spacing: CortetsuDesign.spacingCompact
         RowLayout {
@@ -64,11 +68,11 @@ CortetsuSurface {
             Repeater {
                 model: root.modelData.actions
                 delegate: CortetsuButton {
-                    required property var modelData
+                    required property int index
                     Layout.fillWidth: false
                     compact: true
-                    label: modelData.text
-                    onClicked: modelData.invoke()
+                    label: root.modelData.actions[index].text
+                    onClicked: root.modelData.actions[index].invoke()
                 }
             }
             Item { Layout.fillWidth: true }

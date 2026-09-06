@@ -69,7 +69,9 @@ Item {
                 spacing: CortetsuDesign.spacingCompact
                 model: root.active
                 delegate: NotificationComponents.Notification {
+                    required property int index
                     width: activeList.width
+                    modelData: root.active[index]
                     props: ({})
                     expanded: false
                     screenState: root.screenState
