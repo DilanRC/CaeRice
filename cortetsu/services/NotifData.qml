@@ -9,6 +9,7 @@ QtObject {
     property bool popup: false
     property bool closed: false
     property var locks: new Set()
+    property bool dismissalRequested: false
     property date time: new Date()
     property string timeStr: "now"
     property Notification notification
@@ -39,13 +40,29 @@ QtObject {
         else root.timeStr = `${Math.floor(minutes / 1440)}d`;
     }
     function lock(item: Item): void { locks.add(item); }
-    function unlock(item: Item): void { locks.delete(item); if (closed && locks.size === 0) close(); }
+    function unlock(item: Item): void {
+        locks.delete(item);
+        if (closed && locks.size === 0)
+            dismissAndRemove();
+    }
+
+    function dismissAndRemove(): void {
+        if (dismissalRequested)
+            return;
+
+        dismissalRequested = true;
+        if (notification)
+            notification.dismiss();
+        Notifs.remove(root);
+    }
+
     function close(): void {
+        if (closed)
+            return;
+
         closed = true;
-        if (locks.size === 0) {
-            if (notification) notification.dismiss();
-            Notifs.remove(root);
-        }
+        if (locks.size === 0)
+            dismissAndRemove();
     }
 
     Component.onCompleted: {

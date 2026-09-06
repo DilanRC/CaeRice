@@ -82,53 +82,36 @@ untouched `IpcHandler { target: "notifs" }` (`qs ipc call notifs clear`,
 `qs ipc call notifs toggleDnd`) — that code path was never part of the patch
 diff and needed no migration.
 
-## DBus notification ownership (read-only investigation)
+## DBus notification ownership (runtime verification)
 
-On the machine this was investigated on:
+After promoting the Cortetsu runtime, the active owner was rechecked on the
+real session:
 
 ```
-$ busctl --user list | grep -i notif
-org.freedesktop.Notifications   <pid> mako   dilan  :1.670  user@1000.service
+$ busctl --user status org.freedesktop.Notifications
+PID=3361346
+Comm=qs
+CommandLine=/usr/bin/qs -p /home/dilan/.config/quickshell/cortetsu/current -n
 ```
 
-**`mako` currently owns `org.freedesktop.Notifications`, not Quickshell/`qs`.**
-`qs` only owns `org.kde.StatusNotifierWatcher` /
-`org.kde.StatusNotifierHost-*` (the tray, unrelated to notifications) on this
-session. This means the patched `services/Notifs.qml`'s
-`NotificationServer { ... }` is very likely **not** the active notification
-backend right now — `mako` is intercepting `Notify()` calls first, so
-Caelestia/Cortetsu's own DND, expiry-timeout, and toast logic may not be
-exercised for real desktop notifications at all on this host today.
+Quickshell's `NotificationServer` is therefore the live backend in the
+promoted session. A real `notify-send` notification was rendered in the
+Cortetsu notification center, appeared in the two-monitor toast layer, and
+was dismissed with the always-visible `Dismiss` action. Escape closed the
+center. The service remained at `NRestarts=0`, `ExecMainStatus=0`, with no new
+QML warnings or errors.
 
-This is a real architectural fork Dilan should decide, not something to guess
-past:
-
-1. Keep `mako` as the actual notification daemon and treat
-   `CortetsuNotifications`/the patched `Notifs.qml` popup/DND/toast pipeline
-   as effectively dead code for real notifications (it would still work for
-   any notification `mako` doesn't grab first, or if `mako.service` is ever
-   stopped).
-2. Disable `mako.service` and let Quickshell's `NotificationServer` own
-   `org.freedesktop.Notifications`, making Cortetsu's DND/expiry/toast
-   pipeline the live one.
-
-**To verify or change this on the real host (not run from this sandbox, per
-the no-host-mutation constraint on this task):**
+The earlier `mako` ownership observation is historical and no longer describes
+the promoted runtime. No service disablement or backend handoff is required.
 
 ```sh
-# Confirm current owner:
+# Confirm current owner if the runtime is rebuilt:
 busctl --user list | grep -i notif
 busctl --user status org.freedesktop.Notifications
-
-# If Dilan chooses option 2 (hand ownership to qs):
-systemctl --user disable --now mako.service
-# then restart the shell so qs's NotificationServer can claim the name.
 ```
 
-No code in this change assumes either answer — `CortetsuNotifications.qml`
-and `cortetsu-notifications` work identically regardless of which daemon
-currently owns the DBus name, since they only ever touch Cortetsu's own
-XDG-state snapshot files.
+`CortetsuNotifications.qml` and `cortetsu-notifications` continue to use the
+Cortetsu XDG-state boundary for history, DND and external actions.
 
 ## Shared toast channel with Pomodoro
 

@@ -16,6 +16,7 @@ CortetsuPopupSurface {
     implicitHeight: body.implicitHeight + CortetsuDesign.spacingComfortable * 2
 
     readonly property var device: CortetsuNetwork.wifiDevice
+    readonly property bool wiredActive: !!CortetsuNetwork.activeEthernet
     property var passwordNetwork: null
     readonly property var networks: (device?.networks?.values ?? []).slice().sort((a, b) => {
         if (a.connected !== b.connected) return b.connected - a.connected;
@@ -29,8 +30,14 @@ CortetsuPopupSurface {
         spacing: CortetsuDesign.spacingCompact
 
         CortetsuSectionHeader {
-            title: qsTr("Wi‑Fi")
-            detail: CortetsuNetwork.connecting ? qsTr("Connecting") : root.device ? qsTr("%1 networks").arg(root.networks.length) : qsTr("Unavailable")
+            title: qsTr("Network")
+            detail: CortetsuNetwork.connecting
+                ? qsTr("Connecting")
+                : root.wiredActive && !root.device
+                    ? qsTr("Ethernet connected")
+                    : root.device
+                        ? qsTr("%1 networks").arg(root.networks.length)
+                        : qsTr("Unavailable")
         }
 
         CortetsuListRow {
@@ -43,11 +50,25 @@ CortetsuPopupSurface {
             onClicked: root.popouts.hasCurrent = false
         }
 
+        CortetsuListRow {
+            Layout.fillWidth: true
+            visible: root.wiredActive && !root.device
+            icon: "lan"
+            title: qsTr("Ethernet")
+            subtitle: qsTr("Connected")
+            selected: true
+            onClicked: root.popouts.hasCurrent = false
+        }
+
         CortetsuStateMessage {
             Layout.fillWidth: true
-            visible: CortetsuNetwork.connecting || !root.device || root.networks.length === 0
+            visible: CortetsuNetwork.connecting || (!root.device && !root.wiredActive) || (root.device && root.networks.length === 0)
             kind: CortetsuNetwork.connecting ? "loading" : !root.device ? "error" : "empty"
-            title: CortetsuNetwork.connecting ? qsTr("Looking for a connection…") : !root.device ? qsTr("Wi‑Fi unavailable") : qsTr("No networks available")
+            title: CortetsuNetwork.connecting
+                ? qsTr("Looking for a connection…")
+                : !root.device
+                    ? qsTr("Network unavailable")
+                    : qsTr("No networks available")
             detail: !root.device ? qsTr("The network device is not ready") : ""
         }
 

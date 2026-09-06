@@ -105,7 +105,7 @@ CortetsuSurface {
         }
         RowLayout {
             Layout.fillWidth: true
-            visible: root.expanded || root.modelData.actions.length > 0
+            visible: true
             Repeater {
                 model: root.modelData.actions
                 delegate: CortetsuButton {
