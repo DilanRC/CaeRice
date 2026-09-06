@@ -52,6 +52,10 @@ QtObject {
     property bool toastGameModeChanged: true
     property bool vimKeybinds: true
     property int workspacesShown: 5
+    property bool idleInhibitWhenAudio: true
+    property bool idleInhibitWhenCharging: false
+    property bool idleLockBeforeSleep: true
+    property list<var> idleTimeouts: [{ enabled: true, timeout: 900000, respectInhibitors: true, idleAction: "lock", returnAction: "unlock" }]
     property bool loaded: false
 
     function load(raw: string): void {
@@ -143,6 +147,14 @@ QtObject {
                 vimKeybinds = data.vimKeybinds;
             if (Number.isInteger(data.workspacesShown))
                 workspacesShown = Math.max(1, Math.min(20, data.workspacesShown));
+            if (typeof data.idleInhibitWhenAudio === "boolean")
+                idleInhibitWhenAudio = data.idleInhibitWhenAudio;
+            if (typeof data.idleInhibitWhenCharging === "boolean")
+                idleInhibitWhenCharging = data.idleInhibitWhenCharging;
+            if (typeof data.idleLockBeforeSleep === "boolean")
+                idleLockBeforeSleep = data.idleLockBeforeSleep;
+            if (Array.isArray(data.idleTimeouts))
+                idleTimeouts = data.idleTimeouts.filter(value => value && typeof value === "object");
         } catch (_) {}
         loaded = true;
     }
@@ -150,7 +162,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {
