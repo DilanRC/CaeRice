@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.components
 import qs.modules.bar.popouts
 
 Item {
@@ -37,7 +36,7 @@ Item {
         return Math.max(off, 0);
     }
 
-    Behavior on offsetScale { Anim {} }
+    Behavior on offsetScale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
     Wrapper {
         id: content

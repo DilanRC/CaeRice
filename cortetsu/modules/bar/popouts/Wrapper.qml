@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import qs.components
 import qs.modules.nexus
 import qs.modules.windowinfo
 
@@ -124,8 +123,9 @@ Item {
         id: nexus
         shouldBeActive: root.detachedMode === "any"
         anchors.centerIn: parent
-        sourceComponent: StyledClippingRect {
+        sourceComponent: Rectangle {
             radius: 24
+            color: "transparent"
             implicitWidth: nexusInner.implicitWidth
             implicitHeight: nexusInner.implicitHeight
             Nexus {
