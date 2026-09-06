@@ -30,7 +30,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Tray submenus | `base/modules/bar/popouts/TrayMenu.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | menu rows, separators, submenu state | FUNCTIONAL | nested focus and close feedback | P1 |
 | OSD | `modules/osd/Wrapper.qml`, `Content.qml` | OSD host and indicators | FUNCTIONAL | instant legibility and restrained motion | P2 |
 | Toasts | `modules/utilities/toasts/Toasts.qml`, `ToastItem.qml` | toaster service, action rows | VERIFIED | two-monitor runtime, stacking, five-second expiration, mouse and Escape dismissal verified; full notification-center promotion remains separate | P1 |
-| Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | SKELETON | composition, scaling, keyboard and monitor awareness | P0 |
+| Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | FUNCTIONAL | card hierarchy, stronger scrim, keyboard selection and focused-monitor routing still need product polish and full state matrix | P0 |
 | Display | `modules/display/Wrapper.qml`, `Content.qml` | display controller and editor | FUNCTIONAL | dense settings layout and error states | P2 |
 | Hardware | `modules/hardware/Wrapper.qml`, `Content.qml` | hardware controller, metric cards | FUNCTIONAL | information hierarchy and loading states | P2 |
 | Wallpaper | `modules/wallpaper/Wrapper.qml`, `Content.qml` | `CortetsuWallpapers`, orbit controls | FUNCTIONAL | selection feedback and empty/error states | P2 |

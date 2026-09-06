@@ -155,7 +155,10 @@ StyledWindow {
     Rectangle {
         anchors.fill: parent
         opacity: root.screenState.cortetsuState?.overview ? 0.58 : ((root.screenState.session && CortetsuOverlayConfig.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
-        color: Qt.alpha(CortetsuDesign.colorScrim, opacity)
+        // Overview opacity is already applied by the item. Keeping the color
+        // opaque here avoids multiplying the scrim alpha and leaking desktop
+        // content through the window-card composition.
+        color: CortetsuDesign.colorScrim
         Behavior on opacity { NumberAnimation { duration: CortetsuDesign.motionFastMs; easing.type: Easing.OutCubic } }
     }
 

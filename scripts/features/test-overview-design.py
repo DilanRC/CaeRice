@@ -12,5 +12,7 @@ for name in ("Wrapper.qml", "WindowCard.qml", "Content.qml"):
 card = (overview / "WindowCard.qml").read_text()
 assert "CortetsuDesign.colorSurface" in card
 assert "CortetsuText" in card and "CortetsuIcon" in card
+content_window = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text()
+assert "color: CortetsuDesign.colorScrim" in content_window
 
 print("PASS: Overview wrapper and window cards use Cortetsu visual primitives")
