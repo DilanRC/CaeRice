@@ -29,7 +29,9 @@ CortetsuSurface {
             Layout.fillWidth: true
             spacing: CortetsuDesign.spacingCompact
             CortetsuIcon {
-                text: Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)
+                text: CortetsuAudio.muted ? "volume_off"
+                    : CortetsuAudio.volume <= 0 ? "volume_mute"
+                    : CortetsuAudio.volume < 0.5 ? "volume_down" : "volume_up"
                 iconSize: CortetsuDesign.iconMediumPx
                 color: CortetsuDesign.colorPrimary
             }

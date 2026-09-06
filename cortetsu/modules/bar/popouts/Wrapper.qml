@@ -4,7 +4,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import qs.modules.windowinfo
+import ".."
+import "../.."
 
 Item {
     id: root
@@ -40,10 +41,13 @@ Item {
     }
 
     function detach(mode: string): void {
+        closing = false;
+        hasCurrent = true;
         bottomAttached = false;
         bottomAnchorCenter = -1;
         setAnims(true);
         if (mode === "winfo") {
+            queuedMode = "";
             detachedMode = mode;
         } else {
             queuedMode = mode;
@@ -147,7 +151,11 @@ Item {
         id: winfo
         shouldBeActive: root.detachedMode === "winfo"
         anchors.centerIn: parent
-        sourceComponent: WindowInfo { screen: root.screen; client: Hypr.activeToplevel }
+        sourceComponent: CortetsuWindowInfoPopup {
+            screen: root.screen
+            client: CortetsuHypr.activeToplevel
+            popouts: root
+        }
     }
 
     Comp {

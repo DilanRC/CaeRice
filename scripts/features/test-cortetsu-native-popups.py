@@ -28,12 +28,16 @@ assert "sourceComponent: CortetsuWifiPasswordPopup" in content
 assert "sourceComponent: CortetsuDetachedPopup" in wrapper
 assert "sourceComponent: Rectangle" not in wrapper
 assert "Nexus" not in wrapper
+assert "CortetsuWindowInfoPopup" in wrapper
+window_info = (popouts / "CortetsuWindowInfoPopup.qml").read_text(encoding="utf-8")
+assert "CortetsuSurface" in window_info and "CortetsuButton" in window_info
+assert "CortetsuTokens" not in window_info and "CortetsuColours" not in window_info
 clip_wrapper = (ROOT / "cortetsu/modules/bar/popouts/ClipWrapper.qml").read_text(encoding="utf-8")
 assert "content.bottomAttached || content.closing" in clip_wrapper
 assert "anchors.leftMargin: (-implicitWidth - 5)" not in clip_wrapper
 assert "transformOrigin: Item.Bottom" in clip_wrapper
 assert "closeTimer" in wrapper
-for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"'):
+for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):
     assert token in hub, token
 for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "CortetsuKeyboardPopup.qml", "CortetsuLockStatusPopup.qml", "CortetsuTrayMenu.qml"):
     owned = (popouts / name).read_text(encoding="utf-8")
