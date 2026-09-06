@@ -388,6 +388,7 @@ Scope {
                 active: item.windows.some(
                     client => client.lastIpcObject?.address === activeAddress
                 ),
+                title: item.entry?.name ?? item.className,
                 iconSource: item.entry?.icon
                     ? Quickshell.iconPath(item.entry.icon, "image-missing")
                     : Icons.getAppIcon(item.className, "image-missing"),
@@ -398,6 +399,7 @@ Scope {
                 .filter(item => !CortetsuConfig.hiddenTrayIcons.includes(item.id))
                 .map(item => ({
                     id: item.id,
+                    title: item.id,
                     iconSource: item.icon || Icons.getTrayIcon(item.id, item.icon)
                 }))
 

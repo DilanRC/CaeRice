@@ -150,12 +150,16 @@ def assert_view_contract(source: dict[str, str]) -> None:
         assert signal in rail
     assert "CortetsuDesign.hoverScale" in rail
     assert "width: implicitWidth" in rail
+    assert "modelData.title" in rail
+    assert "ToolTip" in rail
 
     tray = source["CortetsuTraySegment.qml"]
     assert "signal hoverRequested(string itemId, real centerX)" in tray
     assert "signal activateRequested(string itemId)" in tray
     assert "signal secondaryRequested(string itemId)" in tray
     assert "width: visible ? implicitWidth : 0" in tray
+    assert "modelData.title" in tray
+    assert "ToolTip" in tray
 
     status = source["CortetsuStatusSegment.qml"]
     for signal in (
@@ -169,6 +173,7 @@ def assert_view_contract(source: dict[str, str]) -> None:
         assert signal in status
     assert "StatusPill {" in status
     assert "width: implicitWidth" in status
+    assert 'root.notificationCount > 9 ? qsTr("9+")' in status
 
     button = source["HubButton.qml"]
     assert "CortetsuIcon {" in button

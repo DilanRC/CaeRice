@@ -139,7 +139,7 @@ Item {
 
                 CortetsuText {
                     anchors.centerIn: parent
-                    text: Math.min(root.notificationCount, 9)
+                    text: root.notificationCount > 9 ? qsTr("9+") : root.notificationCount
                     color: CortetsuDesign.colorWashi
                     textSize: CortetsuTypography.labelSmallPx
                 }

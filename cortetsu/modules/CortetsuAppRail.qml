@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import "CortetsuDesign.js" as CortetsuDesign
 
 Item {
@@ -168,6 +169,15 @@ Item {
                     Keys.onSpacePressed: root.activateRequested(appItem.modelData.key)
                     Keys.onLeftPressed: root.cycleRequested(appItem.modelData.key, -1)
                     Keys.onRightPressed: root.cycleRequested(appItem.modelData.key, 1)
+
+                    ToolTip {
+                        id: appTooltip
+                        parent: appItem
+                        visible: appItem.modelData.title?.length > 0
+                            && (appMouse.containsMouse || appItem.activeFocus)
+                        delay: CortetsuDesign.motionDeliberateMs
+                        text: appItem.modelData.title
+                    }
                 }
             }
         }
