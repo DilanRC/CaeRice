@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import M3Shapes
-import Caelestia.Config
 import qs.components
 import qs.modules
 import qs.services
@@ -52,7 +51,7 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small
-        sourceComponent: Config.bar.workspaces.displayType === BarWorkspaceDisplay.Text ? textComponent : shapeComponent
+        sourceComponent: CortetsuConfig.bar.workspaces.displayType === 1 ? textComponent : shapeComponent
 
         onItemChanged: root.updateShape()
     }
@@ -86,28 +85,28 @@ ColumnLayout {
             animate: true
             text: {
                 if (root.focused) {
-                    const label = Config.bar.workspaces.activeLabel;
+                    const label = CortetsuConfig.bar.workspaces.activeLabel;
                     if (label)
                         return label;
                 }
 
                 if (root.focused || root.isOccupied) {
-                    const label = Config.bar.workspaces.occupiedLabel;
+                    const label = CortetsuConfig.bar.workspaces.occupiedLabel;
                     if (label)
                         return label;
                 }
 
-                const label = Config.bar.workspaces.label;
+                const label = CortetsuConfig.bar.workspaces.label;
                 if (label)
                     return label;
 
                 const ws = Hypr.workspaces.values.find(w => w.id === root.ws);
                 const wsName = !ws || ws.name == root.ws ? root.ws : ws.name[0];
 
-                const capitalisation = Config.bar.workspaces.capitalisation;
-                if (capitalisation === BarWorkspaceCapitalisation.Upper)
+                const capitalisation = CortetsuConfig.bar.workspaces.capitalisation;
+                if (capitalisation === 1)
                     return wsName.toString().toUpperCase();
-                else if (capitalisation === BarWorkspaceCapitalisation.Lower)
+                else if (capitalisation === 2)
                     return wsName.toString().toLowerCase();
                 return wsName;
             }

@@ -6,7 +6,6 @@ import "components/workspaces"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.services
 import qs.modules
@@ -108,7 +107,7 @@ ColumnLayout {
         id: repeater
 
         model: ScriptModel {
-            values: root.Config.bar.entries.values.filter(e => e.enabled)
+            values: CortetsuConfig.bar.entries.filter(e => e.enabled)
         }
 
         DelegateChooser {

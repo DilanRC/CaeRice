@@ -19,6 +19,8 @@ Singleton {
     readonly property string wallsdir: Quickshell.env("CORTETSU_WALLPAPERS_DIR") || absolutePath(CortetsuConfig.wallpaperDirectory)
     readonly property string recsdir: Quickshell.env("CORTETSU_RECORDINGS_DIR") || `${videos}/Recordings`
     readonly property string libdir: `${data}/lib`
+    readonly property string noNotifsPic: Quickshell.shellPath("assets/dino.png")
+    readonly property string lockNoNotifsPic: noNotifsPic
 
     function toLocalFile(path: url): string {
         const resolved = String(Qt.resolvedUrl(path));

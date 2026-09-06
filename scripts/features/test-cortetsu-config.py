@@ -98,6 +98,17 @@ for model_consumer in (
     assert "import Caelestia.Models" not in model_text
     assert "FileSystemEntry" not in model_text
 assert "import qs.components.filedialog" in (repo / "cortetsu/base/modules/utilities/cards/RecordingList.qml").read_text(encoding="utf-8")
+bar_source = (repo / "cortetsu/base/modules/bar/Bar.qml").read_text(encoding="utf-8")
+workspace_source = (repo / "cortetsu/base/modules/bar/components/workspaces/Workspace.qml").read_text(encoding="utf-8")
+assert "import Caelestia.Config" not in bar_source and "CortetsuConfig.bar.entries" in bar_source
+assert "import Caelestia.Config" not in workspace_source and "CortetsuConfig.bar.workspaces" in workspace_source
+for notif_dock in (
+    repo / "cortetsu/base/modules/lock/NotifDock.qml",
+    repo / "cortetsu/base/modules/sidebar/NotifDock.qml",
+):
+    dock_text = notif_dock.read_text(encoding="utf-8")
+    assert "import Caelestia.Config" not in dock_text
+assert "noNotifsPic" in (repo / "cortetsu/utils/Paths.qml").read_text(encoding="utf-8")
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (

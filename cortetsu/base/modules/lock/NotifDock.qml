@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.effects
@@ -50,7 +49,7 @@ ColumnLayout {
 
                 Image {
                     asynchronous: true
-                    source: Paths.absolutePath(Config.paths.lockNoNotifsPic)
+                    source: Paths.lockNoNotifsPic
                     fillMode: Image.PreserveAspectFit
                     sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
 
