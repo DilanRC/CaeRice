@@ -9,23 +9,12 @@ PageBase {
     id: root
 
     function isToggleOn(id: string): bool {
-        const item = Config.utilities.quickToggles.values.find(t => t.id === id);
+        const item = CortetsuConfig.quickToggles.find(t => t.id === id);
         return item?.enabled ?? false;
     }
 
     function setToggleOn(id: string, on: bool): void {
-        const list = GlobalConfig.utilities.quickToggles;
-        for (let i = 0; i < list.count; i++) {
-            const item = list.at(i);
-            if (item.id === id) {
-                item.enabled = on;
-                return;
-            }
-        }
-        list.insert({
-            id,
-            enabled: on
-        });
+        CortetsuConfig.setQuickToggleEnabled(id, on);
     }
 
     title: qsTr("Utilities")

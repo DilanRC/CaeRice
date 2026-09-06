@@ -6,6 +6,7 @@ import Quickshell.Bluetooth
 import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.modules
 import qs.services
 import qs.modules.nexus
 import qs.modules.bar.popouts as BarPopouts
@@ -19,7 +20,7 @@ CortetsuSurface {
     readonly property var quickToggles: {
         const seenIds = new Set();
 
-        return Config.utilities.quickToggles.values.filter(item => {
+        return CortetsuConfig.quickToggles.filter(item => {
             if (!item.enabled)
                 return false;
 
