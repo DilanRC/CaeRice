@@ -9,6 +9,7 @@ import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
 import "../CortetsuSearchBar.qml"
+import "../../components"
 import qs.modules.launcher.services
 
 Item {
@@ -30,6 +31,8 @@ Item {
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight:
         padding +
+        heading.implicitHeight +
+        CortetsuDesign.spacingCompact +
         search.implicitHeight +
         padding +
         listWrapper.implicitHeight +
@@ -40,11 +43,11 @@ Item {
 
         objectName: "launcherSearch"
 
-        anchors.top: parent.top
+        anchors.top: heading.bottom
         anchors.left: parent.left
         anchors.right: parent.right
 
-        anchors.topMargin: root.padding
+        anchors.topMargin: CortetsuDesign.spacingCompact
         anchors.leftMargin: root.padding
         anchors.rightMargin: root.padding
 
@@ -149,6 +152,19 @@ Item {
 
             target: root.screenState
         }
+    }
+
+    CortetsuSectionHeader {
+        id: heading
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: root.padding
+        anchors.leftMargin: root.padding
+        anchors.rightMargin: root.padding
+        title: qsTr("Launcher")
+        detail: qsTr("Applications and commands")
     }
 
     Item {
