@@ -7,7 +7,6 @@ utils__Paths__Config.qml.patch	utils/Paths.qml
 services__CoreConfig.qml.patch	services/Time.qml,services/Brightness.qml,services/Audio.qml,services/Players.qml
 services__NotificationConfig.qml.patch	services/Notifs.qml,services/NotifData.qml,services/GameMode.qml,modules/notifications/Notification.qml
 services__RegionalConfig.qml.patch	services/Weather.qml,modules/background/DesktopClock.qml,modules/lock/weather/Forecast.qml
-services__ShellState__cortetsu-screens.qml.patch	services/ShellState.qml
 utils__NetworkConnection.qml.patch	utils/NetworkConnection.qml
 modules__Shortcuts.qml.patch	modules/Shortcuts.qml
 modules__sidebar__Wrapper.qml.patch	modules/sidebar/Wrapper.qml
