@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""First-party emoji/glyph picker. Replaces `caelestia emoji`.
+"""First-party emoji/glyph picker. Replaces the caelestia-cli emoji picker.
 
 Reads cortetsu/data/emojis.txt (one "<glyph> <label> <tags...>" per line),
 shows it in fuzzel as a dmenu, and copies the chosen glyph to the clipboard
 with wl-copy. `--fetch` refreshes the data file from the same two upstream
-sources the old `caelestia emoji -f` used (emojibase + nerd-fonts), so the
+sources (emojibase + nerd-fonts) the old picker's fetch mode used, so the
 data stays first-party without vendoring a fetch service.
 """
 from __future__ import annotations
