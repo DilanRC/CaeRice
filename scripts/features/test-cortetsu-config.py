@@ -22,6 +22,8 @@ battery_monitor = (modules / "BatteryMonitor.qml").read_text(encoding="utf-8")
 service_loader = (modules / "ServiceLoader.qml").read_text(encoding="utf-8")
 game_mode = (repo / "cortetsu/services/GameMode.qml").read_text(encoding="utf-8")
 requests = (repo / "cortetsu/services/Requests.qml").read_text(encoding="utf-8")
+assert "onExited: code => root.finish(request, code" in requests
+assert "onExited: root.finish(request, exitCode" not in requests
 weather = (repo / "cortetsu/services/Weather.qml").read_text(encoding="utf-8")
 icons = (repo / "cortetsu/utils/Icons.qml").read_text(encoding="utf-8")
 sysinfo = (repo / "cortetsu/utils/SysInfo.qml").read_text(encoding="utf-8")

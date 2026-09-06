@@ -59,7 +59,7 @@ Singleton {
                 command: root.commandFor(request.url, request.headers)
                 stdout: request.stdoutCollector
                 stderr: request.stderrCollector
-                onExited: root.finish(request, exitCode, request.stdoutCollector.text, request.stderrCollector.text)
+                onExited: code => root.finish(request, code, request.stdoutCollector.text, request.stderrCollector.text)
             }
 
             function start(): void { process.running = true; }

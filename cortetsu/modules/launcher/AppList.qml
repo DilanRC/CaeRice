@@ -272,7 +272,7 @@ GridView {
                 anchors.bottomMargin: 10
 
                 text: app.modelData?.name ?? ""
-                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
 
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -376,7 +376,7 @@ GridView {
                 CortetsuText {
                     width: parent.width
                     text: action.modelData?.desc ?? ""
-                    font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                    font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
                     color: CortetsuDesign.colorOutline
                     elide: Text.ElideRight
                 }
@@ -465,7 +465,7 @@ GridView {
                     width: parent.width
                     text: qsTr("Enter: copy result")
                     color: CortetsuDesign.colorOutline
-                    font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                    font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
                 }
             }
 
@@ -613,7 +613,7 @@ GridView {
 
                 text: `${scheme.modelData?.flavour ?? "default"} · ${scheme.previewLight ? qsTr("Light") : qsTr("Dark")}`
                 color: CortetsuDesign.colorOnSurfaceVariant
-                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
@@ -683,7 +683,7 @@ GridView {
                 anchors.rightMargin: 8
 
                 text: variant.modelData?.name ?? ""
-                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
@@ -698,7 +698,7 @@ GridView {
 
                 text: variant.modelData?.description ?? ""
                 color: CortetsuDesign.colorOutline
-                font: Qt.font({pixelSize: CortetsuTypography.smallPx})
+                font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
