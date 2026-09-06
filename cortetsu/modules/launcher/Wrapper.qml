@@ -22,7 +22,7 @@ Item {
     readonly property real dockOffset: 72
 
     readonly property real maxHeight: {
-        let max = screen.height + CortetsuDesign.spacingSpacious - dockOffset;
+        let max = (screen?.height ?? 0) + CortetsuDesign.spacingSpacious - dockOffset;
         if (screenState.dashboard)
             max -= panels.dashboard.nonAnimHeight;
         return max;

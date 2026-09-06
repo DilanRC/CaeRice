@@ -18,7 +18,7 @@ Item {
     readonly property bool shouldBeActive:
         CortetsuConfig.visualiserEnabled
         && (!CortetsuConfig.visualiserAutoHide || root.hasFloatingWorkspace)
-    property real offset: root.shouldBeActive ? 0 : root.screen.height * 0.2
+    property real offset: root.shouldBeActive ? 0 : (root.screen?.height ?? 0) * 0.2
 
     opacity: root.shouldBeActive ? 1 : 0
     anchors.fill: parent

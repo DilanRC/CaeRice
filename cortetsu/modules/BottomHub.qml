@@ -594,7 +594,7 @@ Scope {
             WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
-            implicitWidth: modelData.width - hubMargin * 2
+            implicitWidth: (modelData?.width ?? 0) - hubMargin * 2
             implicitHeight: bottomHubView.implicitHeight + 6
 
             CortetsuBottomHubView {

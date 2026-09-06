@@ -30,6 +30,9 @@ hub = (modules / "HubButton.qml").read_text(encoding="utf-8")
 status = (modules / "StatusPill.qml").read_text(encoding="utf-8")
 surface = (modules / "CortetsuSurface.qml").read_text(encoding="utf-8")
 design = (modules / "CortetsuDesign.js").read_text(encoding="utf-8")
+visualiser = (modules / "background/Visualiser.qml").read_text(encoding="utf-8")
+launcher = (modules / "launcher/Wrapper.qml").read_text(encoding="utf-8")
+bottom_hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")
 
 assert 'import "CortetsuDesign.js" as CortetsuDesign' in hub
 assert 'import "CortetsuDesign.js" as CortetsuDesign' in status
@@ -48,6 +51,9 @@ assert "hoverScale = 1.04" in design
 assert "motionFastMs = 100" in design
 assert "mouse.containsMouse ? 1.06 : 1" not in hub
 assert "duration: 110" not in hub
+assert "root.screen?.height ?? 0" in visualiser
+assert "screen?.height ?? 0" in launcher
+assert "modelData?.width ?? 0" in bottom_hub
 
 # Canonical state belongs to Cortetsu, while Caelestia paths are allowed only
 # where they are genuine upstream configuration contracts.

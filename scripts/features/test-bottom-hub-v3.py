@@ -84,7 +84,7 @@ def main() -> None:
 
     require(bottom, "readonly property bool panelActive:", "panel activity state")
     require(bottom, "readonly property int hubMargin: 8", "full-width hub margin")
-    require(bottom, "implicitWidth: modelData.width - hubMargin * 2", "monitor-width bar")
+    require(bottom, "implicitWidth: (modelData?.width ?? 0) - hubMargin * 2", "monitor-width bar")
     require(bottom, "CortetsuBottomHubView {", "first-party view boundary")
     if "StyledRect {" in bottom or "Colours." in bottom or "Tokens." in bottom:
         raise SystemExit("FAIL: controller must not contain legacy visual primitives")
