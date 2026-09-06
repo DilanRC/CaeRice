@@ -23,6 +23,12 @@ assert "sourceComponent: CortetsuNetworkPopup" in content
 assert "sourceComponent: CortetsuAudioPopup" in content
 assert "sourceComponent: CortetsuBluetoothPopup" in content
 assert "sourceComponent: CortetsuWifiPasswordPopup" in content
+for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "CortetsuKeyboardPopup.qml", "CortetsuLockStatusPopup.qml", "CortetsuTrayMenu.qml"):
+    owned = (popouts / name).read_text(encoding="utf-8")
+    assert "CortetsuSurface" in owned or "CortetsuListRow" in owned or "CortetsuButton" in owned
+    assert "CortetsuDesign" in owned
+for legacy in ("sourceComponent: Battery", "sourceComponent: ActiveWindow", "sourceComponent: KbLayout", "sourceComponent: LockStatus", "sourceComponent: TrayMenu"):
+    assert legacy not in content, legacy
 assert "sourceComponent: Network {" not in content
 assert "sourceComponent: AudioPopout {" not in content
 assert "sourceComponent: Bluetooth {" not in content

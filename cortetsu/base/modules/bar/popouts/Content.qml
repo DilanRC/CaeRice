@@ -26,7 +26,7 @@ Item {
 
         Popout {
             name: "activewindow"
-            sourceComponent: ActiveWindow {
+            sourceComponent: CortetsuActiveWindowPopup {
                 popouts: root.popouts
             }
         }
@@ -99,7 +99,7 @@ Item {
 
         Popout {
             name: "battery"
-            sourceComponent: Battery {}
+            sourceComponent: CortetsuBatteryPopup {}
         }
 
         Popout {
@@ -111,12 +111,12 @@ Item {
 
         Popout {
             name: "kblayout"
-            sourceComponent: KbLayout {}
+            sourceComponent: CortetsuKeyboardPopup {}
         }
 
         Popout {
             name: "lockstatus"
-            sourceComponent: LockStatus {}
+            sourceComponent: CortetsuLockStatusPopup {}
         }
 
         Repeater {
@@ -147,7 +147,7 @@ Item {
                 Component {
                     id: trayMenuComp
 
-                    TrayMenu {
+                    CortetsuTrayMenu {
                         popouts: root.popouts
                         trayItem: trayMenu.modelData.menu // qmllint disable unresolved-type
                     }
