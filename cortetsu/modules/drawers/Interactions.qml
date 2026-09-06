@@ -43,12 +43,12 @@ CustomMouseArea {
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y < Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
+        return y < Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.borderThickness + panelHeight) && withinPanelWidth(panel, x, y);
     }
 
     function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y > height - Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.border.thickness + panelHeight) - (isCorner ? CortetsuOverlayConfig.border.rounding : 0) && withinPanelWidth(panel, x, y);
+        return y > height - Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.borderThickness + panelHeight) - (isCorner ? CortetsuOverlayConfig.border.rounding : 0) && withinPanelWidth(panel, x, y);
     }
 
     function insidePanel(panel: Item, x: real, y: real): bool {

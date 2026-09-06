@@ -41,7 +41,7 @@ PageBase {
 
             Loader {
                 anchors.centerIn: parent
-                opacity: Config.background.wallpaperEnabled ? 0 : 1
+                opacity: CortetsuConfig.wallpaperEnabled ? 0 : 1
                 active: opacity > 0
 
                 sourceComponent: ColumnLayout {
@@ -71,7 +71,7 @@ PageBase {
 
             Item {
                 anchors.fill: parent
-                opacity: Config.background.wallpaperEnabled ? 1 : 0
+                opacity: CortetsuConfig.wallpaperEnabled ? 1 : 0
 
                 Behavior on opacity {
                     Anim {
@@ -154,7 +154,7 @@ PageBase {
                 type: IconTextButton.Tonal
                 horizontalPadding: Tokens.padding.extraLarge
                 verticalPadding: Tokens.padding.medium
-                disabled: !Config.background.wallpaperEnabled
+                disabled: !CortetsuConfig.wallpaperEnabled
                 onClicked: root.nState.openSubPage(1) // Wallpaper page
             }
 
@@ -174,8 +174,8 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Display wallpaper")
-            checked: Config.background.wallpaperEnabled
-            onToggled: GlobalConfig.background.wallpaperEnabled = checked
+            checked: CortetsuConfig.wallpaperEnabled
+            onToggled: GlobalCortetsuConfig.wallpaperEnabled = checked
         }
 
         ToggleRow {
