@@ -4,6 +4,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+REPO = Path(__file__).resolve().parents[2]
+colours = (REPO / "cortetsu/services/Colours.qml").read_text(encoding="utf-8")
+assert 'import "../modules/CortetsuDesign.js" as CortetsuDesign' in colours
+
 script = Path(__file__).resolve().parents[2] / "cortetsu/bin/cortetsu-scheme"
 with tempfile.TemporaryDirectory() as directory:
     env = {**os.environ, "XDG_STATE_HOME": directory}

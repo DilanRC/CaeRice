@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import "../modules"
+import "../modules/CortetsuDesign.js" as CortetsuDesign
 
 Singleton {
     id: root
