@@ -57,6 +57,13 @@ apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 button_row = (repo / "cortetsu/base/components/controls/ButtonRow.qml").read_text(encoding="utf-8")
 assert "RowLayout" in button_row and "property real spacing" in button_row
+for primitive in ("CircularIndicatorManager.qml", "LinearIndicatorManager.qml"):
+    assert (repo / "cortetsu/base/components/controls" / primitive).is_file()
+assert (repo / "cortetsu/base/components/controls/WavyLine.qml").is_file()
+assert (repo / "cortetsu/base/components/controls/LinearIndicatorSegment.qml").is_file()
+for primitive in ("CircularIndicator.qml", "CircularProgress.qml", "StyledProgressBar.qml", "StyledSlider.qml"):
+    primitive_text = (repo / "cortetsu/base/components/controls" / primitive).read_text(encoding="utf-8")
+    assert "Caelestia.Components" not in primitive_text and "CUtils.clamp" not in primitive_text
 assert "GlobalConfig.launcher.favouriteApps" not in hub
 assert "GlobalConfig.bar.tray.hiddenIcons" not in hub
 assert "GlobalConfig.bar.workspaces.shown" not in hub

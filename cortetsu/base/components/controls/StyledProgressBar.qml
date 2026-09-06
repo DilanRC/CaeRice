@@ -2,8 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates
-import Caelestia
-import Caelestia.Components
 import qs.components
 import qs.services
 
@@ -27,15 +25,19 @@ ProgressBar {
 
     property int indeterminateAnimState: StyledProgressBar.Stopped
 
+    function clamp(value: real, low: real, high: real): real {
+        return Math.max(low, Math.min(high, value));
+    }
+
     function toBounds(startFrac: real, endFrac: real, gapSize: real): point {
-        startFrac = CUtils.clamp(startFrac, 0, 1);
-        endFrac = CUtils.clamp(endFrac, 0, 1);
+        startFrac = root.clamp(startFrac, 0, 1);
+        endFrac = root.clamp(endFrac, 0, 1);
 
         // Ramp down gap size
         const GAP_RAMP_DOWN_THRESHOLD = 0.01;
         gapSize += height / 2;
-        const startGapSize = (gapSize * CUtils.clamp(startFrac, 0, GAP_RAMP_DOWN_THRESHOLD) / GAP_RAMP_DOWN_THRESHOLD);
-        const endGapSize = (gapSize * (1 - CUtils.clamp(endFrac, 1 - GAP_RAMP_DOWN_THRESHOLD, 1)) / GAP_RAMP_DOWN_THRESHOLD);
+        const startGapSize = (gapSize * root.clamp(startFrac, 0, GAP_RAMP_DOWN_THRESHOLD) / GAP_RAMP_DOWN_THRESHOLD);
+        const endGapSize = (gapSize * (1 - root.clamp(endFrac, 1 - GAP_RAMP_DOWN_THRESHOLD, 1)) / GAP_RAMP_DOWN_THRESHOLD);
         const start = width * startFrac + startGapSize;
         const end = width * endFrac - endGapSize;
 

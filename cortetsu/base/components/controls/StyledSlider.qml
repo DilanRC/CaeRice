@@ -2,8 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates
-import Caelestia
-import Caelestia.Components
 import qs.components
 import qs.services
 
@@ -25,6 +23,10 @@ Slider {
     property real filledWidth
 
     signal interaction(v: real)
+
+    function clamp(value: real, low: real, high: real): real {
+        return Math.max(low, Math.min(high, value));
+    }
 
     Component.onCompleted: filledWidth = Qt.binding(() => (width - handle.implicitWidth - handle.anchors.leftMargin) * pos)
 
@@ -73,7 +75,7 @@ Slider {
 
             implicitWidth: 4
             implicitHeight: {
-                const t = CUtils.clamp((parent.height - 12) / 16, 0, 1);
+                const t = root.clamp((parent.height - 12) / 16, 0, 1);
                 const lerp = (a, b) => a + (b - a) * t;
                 return parent.height * (mouse.pressed ? lerp(3.5, 1.5) : lerp(3, 1.2));
             }
@@ -147,7 +149,7 @@ Slider {
 
         target: root
         property: "pos"
-        value: CUtils.clamp(mouse.pressStartPos + mouse.dragMovement, 0, 1)
+        value: root.clamp(mouse.pressStartPos + mouse.dragMovement, 0, 1)
         when: mouse.pressed
     }
 
@@ -177,7 +179,7 @@ Slider {
         }
         onReleased: e => {
             const clickPos = e.x / width;
-            const finalPos = mouse.dragMovement !== 0 ? posBinding.value : CUtils.clamp(clickPos, 0, 1);
+            const finalPos = mouse.dragMovement !== 0 ? posBinding.value : root.clamp(clickPos, 0, 1);
             root.interaction(finalPos);
             widthBehavior.enabled = true;
             dragMovement = 0;
