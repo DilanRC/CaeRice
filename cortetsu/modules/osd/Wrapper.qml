@@ -1,4 +1,5 @@
 import QtQuick
+import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../../services"
 
@@ -11,8 +12,8 @@ Item {
     property bool hovered: false
     property real offsetScale: screenState.osd ? 0 : 1
     property real sidebarOffset: sidebarOrSessionVisible ? CortetsuDesign.spacingStandard : 0
-    property real volume: Audio.volume
-    property bool muted: Audio.muted
+    property real volume: CortetsuAudio.volume
+    property bool muted: CortetsuAudio.muted
     property real brightness: monitor?.brightness ?? 0
 
     function show(): void {
@@ -26,7 +27,7 @@ Item {
     implicitHeight: content.implicitHeight
     opacity: 1 - offsetScale
 
-    Connections { target: Audio; function onVolumeChanged(): void { root.volume = Audio.volume; root.show(); } function onMutedChanged(): void { root.muted = Audio.muted; root.show(); } }
+    Connections { target: CortetsuAudio; function onVolumeChanged(): void { root.volume = CortetsuAudio.volume; root.show(); } function onMutedChanged(): void { root.muted = CortetsuAudio.muted; root.show(); } }
     Connections { target: monitor; function onBrightnessChanged(): void { root.brightness = monitor.brightness; root.show(); } }
 
     Behavior on offsetScale { NumberAnimation { duration: CortetsuDesign.motionStandardMs; easing.type: Easing.OutCubic } }

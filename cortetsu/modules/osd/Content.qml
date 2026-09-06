@@ -1,6 +1,6 @@
 import QtQuick
+import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
-import "../CortetsuTypography.js" as CortetsuTypography
 import "../../services"
 
 Column {
@@ -14,7 +14,7 @@ Column {
     spacing: CortetsuDesign.spacingCompact
 
     function adjustVolume(delta: real): void {
-        if (delta > 0) Audio.incrementVolume(); else Audio.decrementVolume();
+        if (delta > 0) CortetsuAudio.incrementVolume(); else CortetsuAudio.decrementVolume();
     }
 
     Repeater {
@@ -22,18 +22,19 @@ Column {
             { icon: root.muted ? "volume_off" : "volume_up", label: qsTr("Volume"), value: root.volume },
             { icon: "brightness_6", label: qsTr("Brightness"), value: root.brightness }
         ]
-        delegate: Rectangle {
+        delegate: CortetsuSurface {
             required property var modelData
             implicitWidth: 240
             implicitHeight: 48
-            radius: CortetsuDesign.radiusMedium
-            color: CortetsuDesign.colorSurface
+            radiusValue: CortetsuDesign.radiusMedium
+            baseColor: CortetsuDesign.colorSurfaceGlass
+            outlined: true
             Row {
                 anchors.fill: parent
                 anchors.margins: CortetsuDesign.spacingStandard
                 spacing: CortetsuDesign.spacingStandard
-                Text { text: modelData.icon; color: CortetsuDesign.colorPrimary; font.family: CortetsuTypography.iconFamily; font.pixelSize: CortetsuTypography.iconMediumPx }
-                Text { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; color: CortetsuDesign.colorWashi; font.family: CortetsuTypography.uiFamily; font.pixelSize: CortetsuTypography.bodyPx; anchors.verticalCenter: parent.verticalCenter }
+                CortetsuIcon { text: modelData.icon; color: CortetsuDesign.colorPrimary; iconSize: CortetsuDesign.iconMediumPx }
+                CortetsuText { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; textSize: CortetsuDesign.bodyPx; anchors.verticalCenter: parent.verticalCenter }
             }
             MouseArea {
                 anchors.fill: parent
