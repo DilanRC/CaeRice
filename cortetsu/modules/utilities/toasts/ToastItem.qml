@@ -1,17 +1,17 @@
 import QtQuick
+import "../.."
 import "../../CortetsuDesign.js" as CortetsuDesign
-import "../../CortetsuTypography.js" as CortetsuTypography
 
-Rectangle {
+CortetsuSurface {
     id: root
 
     required property var toast
     signal dismissed()
     implicitHeight: body.implicitHeight + CortetsuDesign.spacingStandard * 2
-    radius: CortetsuDesign.radiusMedium
-    color: CortetsuDesign.colorSurfaceHigh
-    border.width: 1
-    border.color: toast.type === 2 ? CortetsuDesign.colorVermillion : CortetsuDesign.colorOutlineVariant
+    radiusValue: CortetsuDesign.radiusMedium
+    baseColor: CortetsuDesign.colorSurfaceGlass
+    outlined: true
+    outlineColor: toast.type === 2 ? CortetsuDesign.colorVermillion : CortetsuDesign.colorOutlineVariant
 
     Row {
         id: body
@@ -19,37 +19,31 @@ Rectangle {
         anchors.margins: CortetsuDesign.spacingStandard
         spacing: CortetsuDesign.spacingStandard
 
-        Text {
+        CortetsuIcon {
             width: 28
             height: parent.height
             text: root.toast.icon || "info"
             color: CortetsuDesign.colorTertiary
-            font.family: CortetsuTypography.iconFamily
-            font.pixelSize: CortetsuTypography.iconMediumPx
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+            iconSize: CortetsuDesign.iconMediumPx
         }
 
         Column {
             width: parent.width - 28 - parent.spacing
             spacing: 2
 
-            Text {
+            CortetsuText {
                 width: parent.width
                 text: root.toast.title
-                color: CortetsuDesign.colorWashi
-                font.family: CortetsuTypography.uiFamily
-                font.pixelSize: CortetsuTypography.bodyPx
-                font.bold: true
+                textSize: CortetsuDesign.bodyPx
+                font.weight: Font.DemiBold
                 elide: Text.ElideRight
             }
 
-            Text {
+            CortetsuText {
                 width: parent.width
                 text: root.toast.message
-                color: CortetsuDesign.colorMuted
-                font.family: CortetsuTypography.uiFamily
-                font.pixelSize: CortetsuTypography.bodyPx
+                textSize: CortetsuDesign.bodyPx
+                color: CortetsuDesign.colorOnSurfaceVariant
                 wrapMode: Text.Wrap
             }
         }
