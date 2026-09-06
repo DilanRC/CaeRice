@@ -153,6 +153,7 @@ for required in \
     components/ScreenState.qml \
     components/misc/CustomShortcut.qml \
     utils/NetworkConnection.qml \
+    utils/Paths.qml \
     modules/CortetsuModeSegment.qml \
     modules/CortetsuWorkspaceDots.qml \
     modules/CortetsuAppRail.qml \
