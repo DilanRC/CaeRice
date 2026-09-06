@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import qs.modules
 import Caelestia.Components
 import Caelestia.Config
 import Caelestia.Models
@@ -47,7 +48,7 @@ PageBase {
                     filterLabel: qsTr("Image files")
                     filters: Images.validImageExtensions
                     onAccepted: path => {
-                        Wallpapers.setWallpaper(path);
+                        CortetsuWallpapers.setWallpaper(path);
                         root.nState.closeSubPage();
                     }
                 }
@@ -63,7 +64,7 @@ PageBase {
                 verticalPadding: Tokens.padding.medium
                 type: IconTextButton.Tonal
                 onClicked: {
-                    Wallpapers.setRandom();
+                    CortetsuWallpapers.setRandom();
                     root.nState.closeSubPage();
                 }
             }
@@ -76,7 +77,7 @@ PageBase {
             text: qsTr("Featured wallpaper")
             fillLabel: false
             onClicked: {
-                Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
+                CortetsuWallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
                 root.nState.closeSubPage();
             }
         }
@@ -99,13 +100,13 @@ PageBase {
                 id: localWalls
 
                 model: {
-                    const walls = Wallpapers.list;
+                    const walls = CortetsuWallpapers.list;
                     const baseDir = Paths.wallsdir;
                     const categories = {};
                     const list = [];
                     for (const w of walls) {
                         if (w.parentDir !== baseDir) {
-                            const category = Wallpapers.getCategoryFor(w);
+                            const category = CortetsuWallpapers.getCategoryFor(w);
                             if (category && (!(category in categories) || categories[category].name.localeCompare(w.name) > 0))
                                 categories[category] = w;
                         } else {
@@ -132,17 +133,17 @@ PageBase {
                             return "";
 
                         if (modelData.parentDir !== Paths.wallsdir) {
-                            const category = Wallpapers.getCategoryFor(modelData);
+                            const category = CortetsuWallpapers.getCategoryFor(modelData);
                             return category.slice(0, 1).toUpperCase() + category.slice(1);
                         }
                         return modelData.name;
                     }
                     onClicked: {
                         if (modelData.parentDir !== Paths.wallsdir) {
-                            root.nState.selectedWallpaperCategory = Wallpapers.getCategoryFor(modelData);
+                            root.nState.selectedWallpaperCategory = CortetsuWallpapers.getCategoryFor(modelData);
                             root.nState.openSubPage(2); // Category page
                         } else {
-                            Wallpapers.setWallpaper(modelData.path);
+                            CortetsuWallpapers.setWallpaper(modelData.path);
                             root.nState.closeSubPage();
                         }
                     }

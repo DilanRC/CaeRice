@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 repo = Path(__file__).resolve().parents[2]
 service = (repo / "cortetsu/modules/CortetsuWallpapers.qml").read_text()
@@ -6,6 +7,13 @@ wallpaper_list = (repo / "cortetsu/modules/launcher/WallpaperList.qml").read_tex
 wallpaper_item = (repo / "cortetsu/modules/launcher/WallpaperItem.qml").read_text()
 renderer = (repo / "cortetsu/modules/background/Wallpaper.qml").read_text()
 background = (repo / "cortetsu/modules/background/Background.qml").read_text()
+legacy_service = repo / "cortetsu/base/services/Wallpapers.qml"
+launcher_content = (repo / "cortetsu/modules/launcher/Content.qml").read_text()
+launcher_content_list = (repo / "cortetsu/modules/launcher/ContentList.qml").read_text()
+
+assert not legacy_service.exists()
+assert not re.search(r"(?<!Cortetsu)Wallpapers\.", launcher_content)
+assert not re.search(r"(?<!Cortetsu)Wallpapers\.", launcher_content_list)
 
 for legacy in ("Caelestia", "qs.services", "Searcher", "FileSystemModel", "Colours.", "Paths."):
     assert legacy not in service, legacy

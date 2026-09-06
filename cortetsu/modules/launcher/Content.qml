@@ -57,10 +57,10 @@ Item {
             const currentItem = list.currentList?.currentItem;
             if (currentItem) {
                 if (list.showWallpapers) {
-                    if (false && currentItem.modelData.path !== Wallpapers.actualCurrent)
-                        Wallpapers.previewColourLock = true;
+                    if (false && currentItem.modelData.path !== CortetsuWallpapers.actualCurrent)
+                        CortetsuWallpapers.previewColourLock = true;
 
-                    Wallpapers.setWallpaper(currentItem.modelData.path);
+                    CortetsuWallpapers.setWallpaper(currentItem.modelData.path);
                     root.screenState.launcher = false;
                 } else if (text.startsWith(CortetsuConfig.actionPrefix)) {
                     if (text.startsWith(`${CortetsuConfig.actionPrefix}calc `))

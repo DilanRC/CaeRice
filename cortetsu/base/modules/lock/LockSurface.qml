@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 import Quickshell.Wayland
+import qs.modules
 import Caelestia.Config
 import qs.components
 import qs.components.images
@@ -188,7 +189,7 @@ WlSessionLockSurface {
         id: wallpaperBackground
 
         CachingImage {
-            path: Wallpapers.current
+            path: CortetsuWallpapers.current
         }
     }
 

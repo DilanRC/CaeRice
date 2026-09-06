@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import qs.modules
 import Caelestia.Config
 import Caelestia.Models
 import qs.services
@@ -27,7 +28,7 @@ PageBase {
 
         Repeater {
             model: {
-                const walls = Wallpapers.list.filter(w => Wallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name));
+                const walls = CortetsuWallpapers.list.filter(w => CortetsuWallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name));
                 while (walls.length < Config.nexus.wallpapersPerRow)
                     walls.push(null);
                 return walls;
@@ -43,7 +44,7 @@ PageBase {
                 source: String(modelData?.path ?? "")
                 text: modelData?.name ?? ""
                 onClicked: {
-                    Wallpapers.setWallpaper(modelData.path);
+                    CortetsuWallpapers.setWallpaper(modelData.path);
                     root.nState.closeSubPage();
                     root.nState.closeSubPage();
                 }
