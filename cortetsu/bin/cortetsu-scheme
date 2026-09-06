@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""First-party scheme state command used by the Cortetsu launcher."""
+from __future__ import annotations
+
+import json
+import os
+import sys
+import tempfile
+from pathlib import Path
+
+
+def state_path() -> Path:
+    return Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state")) / "cortetsu/scheme.json"
+
+
+def read_state() -> dict:
+    try:
+        value = json.loads(state_path().read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        value = {}
+    return value if isinstance(value, dict) else {}
+
+
+def write_state(value: dict) -> None:
+    path = state_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
+        json.dump(value, handle, indent=2)
+        handle.write("\n")
+        temporary = Path(handle.name)
+    os.replace(temporary, path)
+
+
+def main(argv: list[str]) -> int:
+    state = read_state()
+    if argv == ["list"]:
+        name = state.get("name", "dynamic")
+        flavour = state.get("flavour", "default")
+        colours = state.get("colours", {})
+        print(json.dumps({name: {flavour: colours}}, separators=(",", ":")))
+        return 0
+    if argv == ["get", "-nfv"]:
+        print(state.get("name", "dynamic"))
+        print(state.get("flavour", "default"))
+        print(state.get("variant", "tonal-spot"))
+        return 0
+    if len(argv) == 4 and argv[:2] == ["set", "-n"] and argv[2]:
+        state["name"], state["flavour"] = argv[2], argv[3]
+        write_state(state)
+        return 0
+    if len(argv) == 3 and argv[:2] == ["set", "-v"] and argv[2]:
+        state["variant"] = argv[2]
+        write_state(state)
+        return 0
+    print("usage: cortetsu-scheme {list|get -nfv|set -n NAME FLAVOUR|set -v VARIANT}", file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

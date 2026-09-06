@@ -19,8 +19,8 @@ for token in ('"--user"', '"--scope"', '"--collect"', '"--unit"', '"--"'):
 assert "entry.execute();" not in text
 assert "entry.workingDirectory" in text
 assert "Date.now()" in text
-assert "function isSteamCommand(command: list<string>): bool" in text
-assert "root.launchDetached(entry, command);" in text
+assert "const steam = command.some(token => token === \"steam\" || token.endsWith(\"/steam\"));" in text
+assert "Quickshell.execDetached({ command, workingDirectory: entry.workingDirectory });" in text
 assert 'token.endsWith("/steam")' in text
 assert "GlobalConfig" not in text
 assert "CortetsuConfig.terminalCommand" in text
