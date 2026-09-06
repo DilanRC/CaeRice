@@ -4,7 +4,7 @@ import QtQml
 import "CortetsuRegional.js" as RegionalLogic
 
 // First-party regional/weather preferences and formatting surface.
-// Zero-Caelestia replacement for the legacy shared-config lookup used for
+// First-party replacement for the legacy shared-config lookup used for
 // the 12h/24h clock, F/C unit and weather location prefs. Preferences are
 // NOT duplicated here --
 // CortetsuConfig (~/.config/cortetsu/preferences.json) stays the single

@@ -1,6 +1,6 @@
 import QtQuick.Layouts
 
-// First-party replacement for Caelestia.Components/ButtonRow.
+// First-party button-row control.
 // The upstream type is a spacing-aware content row; RowLayout provides the
 // same default data property and participates in the existing layout system.
 RowLayout {

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 
-// First-party replacement for Caelestia.Components/WavyLine.
+// First-party wavy-line control.
 // It keeps the caller-facing contract while drawing the wave with ShapePath.
 Shape {
     id: root

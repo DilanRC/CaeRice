@@ -5,7 +5,7 @@ import Quickshell
 import Quickshell.Hyprland
 
 // First-party Hyprland contract. Keep backend access in one adapter so
-// consumers do not depend on Caelestia service names or implementation.
+// consumers do not depend on inherited service names or implementation.
 Singleton {
     id: root
     readonly property var toplevels: Hyprland.toplevels

@@ -1,6 +1,6 @@
 import QtQuick
 
-// First-party replacement for Caelestia.Components/CircularIndicatorManager.
+// First-party circular-indicator manager.
 // The manager exposes the animated arc fractions consumed by CircularIndicator.
 QtObject {
     enum IndeterminateAnimationType {

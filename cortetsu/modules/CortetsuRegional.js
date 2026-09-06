@@ -1,7 +1,7 @@
 .pragma library
 
-// First-party regional/weather logic. Zero-Caelestia: no shared-config
-// singleton, no Caelestia namespace. Pure, deterministic functions only -- no network calls,
+// First-party regional/weather logic. It has no shared-config
+// singleton or external namespace. Pure, deterministic functions only -- no network calls,
 // no QML/Qt globals (Qt.formatDateTime, Requests, etc.) -- so this file can
 // run unmodified under plain Node for tests, and unmodified inside
 // Quickshell's QML JS engine (which is a superset of this dialect).

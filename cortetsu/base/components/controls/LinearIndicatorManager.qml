@@ -1,6 +1,6 @@
 import QtQuick
 
-// First-party replacement for Caelestia.Components/LinearIndicatorManager.
+// First-party linear-indicator manager.
 // It models a single looping segment and splits it when it crosses an edge.
 QtObject {
     property real progress: 0

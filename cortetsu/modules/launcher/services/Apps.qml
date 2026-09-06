@@ -6,7 +6,7 @@ import "../.."
 import qs.utils
 
 // First-party desktop-entry search. The old AppDb type came from the
-// Caelestia plugin and was only used for frequency ranking.
+// inherited plugin and was only used for frequency ranking.
 QtObject {
     id: root
 
