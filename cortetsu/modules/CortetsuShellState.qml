@@ -23,7 +23,8 @@ QtObject {
     }
 
     function forScreen(screen): var {
-        return states.find(entry => entry.screen === screen)?.state ?? null;
+        return states.find(entry => entry.screen === screen)?.state
+            ?? states[0]?.state ?? null;
     }
 
     function anySidebarOpen(): bool {

@@ -37,9 +37,14 @@ assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects"
 assert 'import "../modules"' in screen_component
 assert "cortetsuState" in screen_component
 assert "CortetsuShellState.registerState(modelData, root)" in screen_component
-assert "CortetsuShellState.registerComponents(screen, root)" in panels_patch
+assert 'import ".."' in panels_patch
 assert "import qs.services" not in shell_state
 assert "CortetsuShellState.forScreen(screen)" in shell_service
+assert "states[0]?.state" in shell_state
+assert "model: CortetsuScreens.screens" in shell_service
+assert "ScreenState {}" in shell_service
+assert "component Components: QtObject" in shell_service
+assert "states.instances.find(state => state.modelData === screen)" in shell_service
 assert "import Caelestia" not in shell_service
 assert "import qs.services" not in shell_service
 assert "CortetsuShellState.registerState(modelData, root)" in screen_component
