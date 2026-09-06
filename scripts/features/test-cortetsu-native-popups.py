@@ -79,6 +79,12 @@ for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "Corte
 lock_status = (popouts / "CortetsuLockStatusPopup.qml").read_text(encoding="utf-8")
 assert 'import "../../../services"' in lock_status
 assert "Hypr.capsLock" in lock_status and "Hypr.numLock" in lock_status
+tray_menu = (popouts / "CortetsuTrayMenu.qml").read_text(encoding="utf-8")
+assert "activeFocusOnTab" in tray_menu
+assert "Keys.onPressed" in tray_menu
+assert "Qt.Key_Right" in tray_menu and "Qt.Key_Left" in tray_menu
+assert "Qt.Key_Escape" in tray_menu
+assert "focused: activeFocus" in tray_menu
 for legacy in ("sourceComponent: Battery", "sourceComponent: ActiveWindow", "sourceComponent: KbLayout", "sourceComponent: LockStatus", "sourceComponent: TrayMenu"):
     assert legacy not in content, legacy
 assert "sourceComponent: Network {" not in content
