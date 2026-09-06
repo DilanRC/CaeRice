@@ -1,38 +1,370 @@
 --- a/services/Weather.qml
 +++ b/services/Weather.qml
-@@ -8,1 +8,2 @@
+@@ -6,6 +6,7 @@
+ import Caelestia
+ import Caelestia.Config
  import qs.utils
 +import "../modules"
-@@ -30,2 +31,2 @@
+ 
+ Singleton {
+     id: root
+@@ -27,35 +28,35 @@
+     readonly property string feelsLike: formatTemp(cc?.feelsLikeC)
+     readonly property int humidity: cc?.humidity ?? 0
+     readonly property real windSpeed: cc?.windSpeed ?? 0
 -    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
 -    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
-+    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), CortetsuConfig.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
-+    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), CortetsuConfig.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
-@@ -36,1 +37,1 @@
++    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), CortetsuRegional.clockPattern) : "--:--"
++    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), CortetsuRegional.clockPattern) : "--:--"
+ 
+     readonly property var cachedCities: new Map()
+ 
+     function formatTemp(temp: var): string {
 -        return GlobalConfig.services.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
-+        return CortetsuConfig.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
-@@ -40,1 +41,1 @@
++        return CortetsuRegional.formatTemperature(temp);
+     }
+ 
+     function reload(): void {
 -        const configLocation = GlobalConfig.services.weatherLocation;
-+        const configLocation = CortetsuConfig.weatherLocation;
-@@ -58,1 +59,1 @@
++        const parsedLocation = CortetsuRegional.parseLocationQuery(CortetsuRegional.weatherLocation);
+ 
+-        if (configLocation) {
+-            if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0]))) {
+-                loc = configLocation;
+-                fetchCityFromCoords(configLocation);
++        if (parsedLocation) {
++            if (parsedLocation.type === "coords") {
++                loc = parsedLocation.value;
++                fetchCityFromCoords(parsedLocation.value);
+             } else {
+-                fetchCoordsFromCity(configLocation);
++                fetchCoordsFromCity(parsedLocation.value);
+             }
+         } else if ((!loc || timer.elapsed() > 900) && !ipApiRequestPending && Date.now() >= ipApiBlockedUntil) {
+             ipApiRequestPending = true;
+ 
+-            Requests.get("http://ip-api.com/json?fields=status,message,city,lat,lon", (text, metadata) => {
++            Requests.get(CortetsuRegional.buildIpLookupUrl(), (text, metadata) => {
+                 ipApiRequestPending = false;
+                 recordIpApiRateLimit(metadata);
+ 
+                 // Protect against stale responses overwriting the manually-set location,
+                 // in case the config was updated while this request was in-flight.
 -                if (GlobalConfig.services.weatherLocation)
-+                if (CortetsuConfig.weatherLocation)
-@@ -345,1 +346,1 @@
++                if (CortetsuRegional.weatherLocation)
+                     return;
+ 
+                 let response;
+@@ -66,17 +67,16 @@
+                     return;
+                 }
+ 
+-                const lat = Number(response.lat);
+-                const lon = Number(response.lon);
++                const located = CortetsuRegional.parseIpLookupResponse(response);
+ 
+-                if (response.status !== "success" || !Number.isFinite(lat) || !Number.isFinite(lon)) {
++                if (!located) {
+                     console.warn(lc, `ip-api lookup failed: ${response.message ?? "invalid response"}`);
+                     return;
+                 }
+ 
+-                city = fixCityName(response.city ?? "");
++                city = located.city;
+                 timer.restart();
+-                loc = `${lat},${lon}`;
++                loc = `${located.lat},${located.lon}`;
+             }, (error, metadata) => {
+                 ipApiRequestPending = false;
+ 
+@@ -87,72 +87,20 @@
+     }
+ 
+     function recordIpApiRateLimit(metadata: var): bool {
+-        const remainingHeader = metadata?.headers?.["x-rl"];
+-        const exhausted = remainingHeader !== undefined && Number(remainingHeader) === 0;
++        const result = CortetsuRegional.ipApiRateLimit(metadata?.statusCode, metadata?.headers);
+ 
+-        if (metadata?.statusCode !== 429 && !exhausted)
++        if (!result.limited)
+             return false;
+ 
+-        const ttlHeader = metadata?.headers?.["x-ttl"];
+-        const ttl = Number(ttlHeader);
+-
+-        const delaySeconds = Number.isFinite(ttl) ? Math.max(1, Math.ceil(ttl) + 1) : 61;
+-
+-        const delayMs = delaySeconds * 1000;
+-        ipApiBlockedUntil = Date.now() + delayMs;
+-        ipApiRetryTimer.interval = delayMs;
++        ipApiBlockedUntil = result.blockedUntil;
++        ipApiRetryTimer.interval = result.delayMs;
+         ipApiRetryTimer.restart();
+ 
+         return true;
+     }
+ 
+     function fixCityName(cityName: string): string {
+-        if (!cityName)
+-            return "";
+-        const mapping = {
+-            // Polish
+-            "Poznan": "Poznań",
+-            "Wroclaw": "Wrocław",
+-            "Krakow": "Kraków",
+-            "Gdansk": "Gdańsk",
+-            "Lodz": "Łódź",
+-            "Rzeszow": "Rzeszów",
+-            "Torun": "Toruń",
+-            "Bialystok": "Białystok",
+-            "Czestochowa": "Częstochowa",
+-            "Plock": "Płock",
+-            "Ruda Slaska": "Ruda Śląska",
+-            "Dabrowa Gornicza": "Dąbrowa Górnicza",
+-            "Elblag": "Elbląg",
+-            "Gorzow Wielkopolski": "Gorzów Wielkopolski",
+-            "Zielona Gora": "Zielona Góra",
+-            "Slupsk": "Słupsk",
+-
+-            // German
+-            "Munchen": "München",
+-            "Koln": "Köln",
+-            "Dusseldorf": "Düsseldorf",
+-            "Nurnberg": "Nürnberg",
+-
+-            // French & Spanish & Portuguese
+-            "Sao Paulo": "São Paulo",
+-            "Montreal": "Montréal",
+-            "Quebec": "Québec",
+-            "Bogota": "Bogotá",
+-            "Medellin": "Medellín",
+-            "Cordoba": "Córdoba",
+-
+-            // Turkish
+-            "Istanbul": "İstanbul",
+-            "Izmir": "İzmir",
+-
+-            // Scandinavian & others
+-            "Malmo": "Malmö",
+-            "Goteborg": "Göteborg",
+-            "Zurich": "Zürich",
+-            "Geneve": "Genève"
+-        };
+-        return mapping[cityName] || cityName;
++        return CortetsuRegional.fixCityName(cityName);
+     }
+ 
+     function cacheCity(coords: string, cityName: string): void {
+@@ -175,28 +123,27 @@
+         const [lat, lon] = coords.split(",").map(s => s.trim());
+         const lang = Qt.locale().name.split("_")[0] || "en";
+ 
+-        const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=geocodejson&accept-language=${lang}`;
++        const nominatimUrl = CortetsuRegional.buildReverseGeocodeUrl(lat, lon, lang);
+         const nominatimHeaders = {
+             "User-Agent": `caelestia-shell/${CUtils.version} (+https://github.com/caelestia-dots/shell)`
+         };
+ 
+         Requests.get(nominatimUrl, text => {
+-            let geo;
++            let json;
+             try {
+-                geo = JSON.parse(text).features?.[0]?.properties.geocoding;
++                json = JSON.parse(text);
+             } catch (error) {
+                 console.warn(lc, `Unable to parse response from nominatim: ${error}`);
+                 city = qsTr("Unknown City");
+                 return;
+             }
+ 
+-            if (geo) {
+-                const geoCity = geo.type === "city" ? geo.name : geo.city;
+-                if (geoCity) {
+-                    city = fixCityName(geoCity);
+-                    cacheCity(coords, city);
+-                    return;
+-                }
++            const geoCity = CortetsuRegional.parseReverseGeocodeResponse(json);
++
++            if (geoCity) {
++                city = geoCity;
++                cacheCity(coords, city);
++                return;
+             }
+ 
+             console.warn(lc, "No locality in nominatim response");
+@@ -209,14 +156,13 @@
+ 
+     function fetchCoordsFromCity(cityName: string): void {
+         const lang = Qt.locale().name.split("_")[0] || "en";
+-        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=${lang}&format=json`;
++        const url = CortetsuRegional.buildGeocodeUrl(cityName, lang);
+ 
+         Requests.get(url, text => {
+-            const json = JSON.parse(text);
+-            if (json.results && json.results.length > 0) {
+-                const result = json.results[0];
+-                loc = result.latitude + "," + result.longitude;
+-                city = fixCityName(result.name);
++            const geocoded = CortetsuRegional.parseGeocodeResponse(JSON.parse(text));
++            if (geocoded) {
++                loc = geocoded.lat + "," + geocoded.lon;
++                city = geocoded.name;
+             } else {
+                 loc = "";
+                 reload();
+@@ -230,101 +176,22 @@
+             return;
+ 
+         Requests.get(url, text => {
+-            const json = JSON.parse(text);
+-            if (!json.current || !json.daily)
++            const parsed = CortetsuRegional.parseForecastResponse(JSON.parse(text));
++            if (!parsed)
+                 return;
+ 
+-            cc = {
+-                weatherCode: json.current.weather_code,
+-                weatherDesc: getWeatherCondition(json.current.weather_code),
+-                tempC: json.current.temperature_2m,
+-                feelsLikeC: json.current.apparent_temperature,
+-                humidity: json.current.relative_humidity_2m,
+-                windSpeed: json.current.wind_speed_10m,
+-                isDay: json.current.is_day,
+-                sunrise: json.daily.sunrise[0].replace("T", " "),
+-                sunset: json.daily.sunset[0].replace("T", " ")
+-            };
+-
+-            const forecastList = [];
+-            for (let i = 0; i < json.daily.time.length; i++)
+-                forecastList.push({
+-                    date: json.daily.time[i].replace(/-/g, "/"),
+-                    maxTempC: json.daily.temperature_2m_max[i],
+-                    minTempC: json.daily.temperature_2m_min[i],
+-                    weatherCode: json.daily.weather_code[i],
+-                    icon: Icons.getWeatherIcon(json.daily.weather_code[i])
+-                });
+-            forecast = forecastList;
+-
+-            const hourlyList = [];
+-            const now = new Date();
+-            for (let i = 0; i < json.hourly.time.length; i++) {
+-                const time = new Date(json.hourly.time[i].replace("T", " "));
+-
+-                if (time < now)
+-                    continue;
+-
+-                hourlyList.push({
+-                    timestamp: json.hourly.time[i],
+-                    hour: time.getHours(),
+-                    tempC: Math.round(json.hourly.temperature_2m[i]),
+-                    precipChance: json.hourly.precipitation_probability[i],
+-                    weatherCode: json.hourly.weather_code[i],
+-                    icon: Icons.getWeatherIcon(json.hourly.weather_code[i])
+-                });
+-            }
+-            hourlyForecast = hourlyList;
++            cc = parsed.current;
++            forecast = parsed.forecast.map(day => ({ ...day, icon: Icons.getWeatherIcon(day.weatherCode) }));
++            hourlyForecast = parsed.hourlyForecast.map(hour => ({ ...hour, icon: Icons.getWeatherIcon(hour.weatherCode) }));
+         });
+     }
+ 
+-    function toFahrenheit(celsius: real): real {
+-        return celsius * 9 / 5 + 32;
+-    }
+-
+     function getWeatherUrl(): string {
+         if (!loc || loc.indexOf(",") === -1)
+             return "";
+ 
+         const [lat, lon] = loc.split(",").map(s => s.trim());
+-        const baseUrl = "https://api.open-meteo.com/v1/forecast";
+-        const params = ["latitude=" + lat, "longitude=" + lon, "hourly=weather_code,temperature_2m,precipitation_probability", "daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset", "current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m", "timezone=auto", "forecast_days=7"];
+-
+-        return baseUrl + "?" + params.join("&");
+-    }
+-
+-    function getWeatherCondition(code: string): string {
+-        const conditions = {
+-            "0": "Clear",
+-            "1": "Clear",
+-            "2": "Partly cloudy",
+-            "3": "Overcast",
+-            "45": "Fog",
+-            "48": "Fog",
+-            "51": "Drizzle",
+-            "53": "Drizzle",
+-            "55": "Drizzle",
+-            "56": "Freezing drizzle",
+-            "57": "Freezing drizzle",
+-            "61": "Light rain",
+-            "63": "Rain",
+-            "65": "Heavy rain",
+-            "66": "Light rain",
+-            "67": "Heavy rain",
+-            "71": "Light snow",
+-            "73": "Snow",
+-            "75": "Heavy snow",
+-            "77": "Snow",
+-            "80": "Light rain",
+-            "81": "Rain",
+-            "82": "Heavy rain",
+-            "85": "Light snow showers",
+-            "86": "Heavy snow showers",
+-            "95": "Thunderstorm",
+-            "96": "Thunderstorm with hail",
+-            "99": "Thunderstorm with hail"
+-        };
+-        return conditions[code] || "Unknown";
++        return CortetsuRegional.buildForecastUrl(lat, lon);
+     }
+ 
+     onLocChanged: fetchWeatherData()
+@@ -342,7 +209,7 @@
+             root.reload();
+         }
+ 
 -        target: GlobalConfig.services
-+        target: CortetsuConfig
++        target: CortetsuRegional
+     }
+ 
+     Timer {
 --- a/modules/background/DesktopClock.qml
 +++ b/modules/background/DesktopClock.qml
-@@ -8,1 +8,2 @@
+@@ -6,6 +6,7 @@
+ import Caelestia.Config
+ import qs.components
  import qs.services
 +import ".."
-@@ -107,1 +108,1 @@
+ 
+ Item {
+     id: root
+@@ -104,7 +105,7 @@
+                     Layout.alignment: Qt.AlignTop
+                     Layout.topMargin: Tokens.padding.large * 1.4 * root.clockScale
+ 
 -                    active: GlobalConfig.services.useTwelveHourClock
-+                    active: CortetsuConfig.useTwelveHourClock
++                    active: CortetsuRegional.useTwelveHourClock
+                     visible: active
+ 
+                     sourceComponent: StyledText {
 --- a/modules/lock/weather/Forecast.qml
 +++ b/modules/lock/weather/Forecast.qml
-@@ -7,1 +7,2 @@
+@@ -5,6 +5,7 @@
+ import Caelestia.Config
+ import qs.components
  import qs.services
 +import "../.."
-@@ -98,1 +99,1 @@
+ 
+ StyledRect {
+     id: root
+@@ -95,7 +96,7 @@
+                 StyledText {
+                     Layout.topMargin: Tokens.spacing.extraSmall
+                     Layout.alignment: Qt.AlignHCenter
 -                    text: hour.index === 0 ? qsTr("Now") : Qt.formatDateTime(new Date(hour.cond.timestamp.replace("T", " ")), GlobalConfig.services.useTwelveHourClock ? "ha" : "hh:00")
-+                    text: hour.index === 0 ? qsTr("Now") : Qt.formatDateTime(new Date(hour.cond.timestamp.replace("T", " ")), CortetsuConfig.useTwelveHourClock ? "ha" : "hh:00")
++                    text: hour.index === 0 ? qsTr("Now") : Qt.formatDateTime(new Date(hour.cond.timestamp.replace("T", " ")), CortetsuRegional.hourPattern)
+                     color: Colours.palette.m3onSurfaceVariant
+                     font: Tokens.font.body.medium
+                 }
