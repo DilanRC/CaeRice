@@ -67,9 +67,10 @@ StyledWindow {
     }
 
     name: "drawers"
+    focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: screenState.cortetsuState?.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && CortetsuOverlayConfig.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
-    WlrLayershell.keyboardFocus: screenState.cortetsuState?.requiresWindowKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: (screenState.cortetsuState?.requiresWindowKeyboardFocus || panels.popouts.hasCurrent) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: screenState.cortetsuState?.requiresFullInputMask ? null : (hasFullscreen ? emptyRegion : regions)
 
@@ -79,7 +80,7 @@ StyledWindow {
     anchors.right: true
     Shortcut {
         sequence: "Escape"
-        enabled: focusGrab.active
+        enabled: focusGrab.active || panels.popouts.hasCurrent
         onActivated: {
             root.screenState.launcher = false;
             root.screenState.session = false;

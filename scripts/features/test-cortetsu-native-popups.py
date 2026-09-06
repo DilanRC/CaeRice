@@ -6,6 +6,7 @@ popouts = ROOT / "cortetsu/modules/bar/popouts"
 content = (ROOT / "cortetsu/base/modules/bar/popouts/Content.qml").read_text(encoding="utf-8")
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 wrapper = (ROOT / "cortetsu/modules/bar/popouts/Wrapper.qml").read_text(encoding="utf-8")
+content_window = (ROOT / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
 
 for name, service in (
     ("CortetsuNetworkPopup.qml", "CortetsuNetwork"),
@@ -37,6 +38,7 @@ assert "content.bottomAttached || content.closing" in clip_wrapper
 assert "anchors.leftMargin: (-implicitWidth - 5)" not in clip_wrapper
 assert "transformOrigin: Item.Bottom" in clip_wrapper
 assert "closeTimer" in wrapper
+assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
 for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):
     assert token in hub, token
 for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "CortetsuKeyboardPopup.qml", "CortetsuLockStatusPopup.qml", "CortetsuTrayMenu.qml"):
