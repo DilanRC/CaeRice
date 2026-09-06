@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gate test for Task 22 (patch-debt audit).
 
-Locks in the audit result: the 7 remaining patches this session owned are ACTIVE
+Locks in the audit result: the 6 remaining patches this session owned are ACTIVE
 (they implement or are directly required by the Bottom Hub v4 migration),
 not dead scaffolding. If any of them is removed from the manifest or loses
 its real consumer, this test fails loudly instead of silently rotting.
@@ -17,10 +17,6 @@ V4_TEST = REPO / "scripts/features/test-bottom-hub-v4.py"
 
 # patch file -> (manifest target path, at least one real consumer to grep for)
 AUDITED_ACTIVE_PATCHES = {
-    "modules__Shortcuts.qml.patch": (
-        "modules/Shortcuts.qml",
-        ('"customDock", "launcher"',),
-    ),
     "modules__sidebar__Wrapper.qml.patch": (
         "modules/sidebar/Wrapper.qml",
         ("cortetsuBottomNotificationCenter",),
@@ -84,7 +80,7 @@ def main() -> None:
         "test-bottom-hub-v4.py must keep asserting the native bar retirement patch stays in MANIFEST.tsv"
     )
 
-    print("PASS: all 7 remaining audited patches confirmed ACTIVE (Bottom Hub v4 migration engine)")
+    print("PASS: all 6 remaining audited patches confirmed ACTIVE (Bottom Hub v4 migration engine)")
 
 
 def _grep_repo(needle: str) -> bool:

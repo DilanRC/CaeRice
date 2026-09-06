@@ -16,7 +16,7 @@ renderer = (ROOT / "cortetsu/modules/background/Wallpaper.qml").read_text(encodi
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
 hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")
-shortcuts_patch = (ROOT / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
+shortcuts = (MODULES / "Shortcuts.qml").read_text(encoding="utf-8")
 
 
 def body(name: str) -> str:
@@ -112,7 +112,7 @@ assert "wire_sad_shell.py" in wire_line
 assert "--features" not in wire_line, "canonical wiring must include all retained features"
 assert '"SUPER + SHIFT + W"' in hypr and '"SUPER + W"' in hypr
 assert '"SUPER + SHIFT + E"' not in hypr
-assert "customDock\", \"launcher" in shortcuts_patch
+assert "customDock\", \"launcher" in shortcuts
 for needle in ("previewGeneration += 1", "requestGeneration === root.previewGeneration", "root.showPreview", "previewPalette.running = false"):
     assert needle in service, needle
 assert "caelestia" not in service.lower()
