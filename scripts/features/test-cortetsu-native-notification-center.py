@@ -2,6 +2,8 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+inventory = (ROOT / "docs/architecture/qml-surface-inventory.md").read_text(encoding="utf-8")
+assert "| Notifications | `modules/sidebar/Content.qml`, `modules/notifications/Wrapper.qml`, `Notification.qml` |" in inventory
 content = (ROOT / "cortetsu/modules/sidebar/Content.qml").read_text(encoding="utf-8")
 notification = (ROOT / "cortetsu/modules/notifications/Notification.qml").read_text(encoding="utf-8")
 for token in (
