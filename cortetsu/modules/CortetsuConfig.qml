@@ -21,6 +21,10 @@ QtObject {
     property bool useFuzzyWallpapers: true
     property bool smartScheme: true
     property string wallpaperDirectory: "~/Pictures/Wallpapers"
+    property bool wallpaperEnabled: true
+    property bool desktopClockEnabled: false
+    property string desktopClockPosition: "topLeft"
+    property int borderThickness: 1
     property bool useTwelveHourClock: false
     property bool useFahrenheit: false
     property bool useFahrenheitPerformance: false
@@ -72,6 +76,14 @@ QtObject {
                 smartScheme = data.smartScheme;
             if (typeof data.wallpaperDirectory === "string" && data.wallpaperDirectory.length > 0)
                 wallpaperDirectory = data.wallpaperDirectory;
+            if (typeof data.wallpaperEnabled === "boolean")
+                wallpaperEnabled = data.wallpaperEnabled;
+            if (typeof data.desktopClockEnabled === "boolean")
+                desktopClockEnabled = data.desktopClockEnabled;
+            if (typeof data.desktopClockPosition === "string" && data.desktopClockPosition.length > 0)
+                desktopClockPosition = data.desktopClockPosition;
+            if (Number.isInteger(data.borderThickness))
+                borderThickness = Math.max(0, Math.min(20, data.borderThickness));
             if (typeof data.useTwelveHourClock === "boolean")
                 useTwelveHourClock = data.useTwelveHourClock;
             if (typeof data.useFahrenheit === "boolean")
@@ -123,7 +135,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {
