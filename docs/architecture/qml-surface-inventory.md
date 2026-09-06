@@ -21,7 +21,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Wi-Fi / Network | `modules/bar/popouts/CortetsuNetworkPopup.qml`, `base/modules/bar/popouts/Network.qml` | network service, list rows, password popup | VERIFIED | connected networks, density, first-party rows, IPC open and Escape close verified | P1 |
 | Audio / Volume | `modules/bar/popouts/CortetsuAudioPopup.qml`, `base/modules/bar/popouts/AudioPopout.qml` | audio service, sliders and device rows | VERIFIED | selected output, volume slider, device hierarchy, IPC open and Escape close verified | P1 |
 | Bluetooth | `modules/bar/popouts/CortetsuBluetoothPopup.qml`, `base/modules/bar/popouts/Bluetooth.qml` | Bluetooth service, device rows | VERIFIED | adapter-ready state, paired devices, action surface, IPC open and Escape close verified | P1 |
-| Battery | `modules/bar/popouts/CortetsuBatteryPopup.qml`, `base/modules/bar/popouts/Battery.qml` | UPower state, battery details | COMPONENTIZED | critical/charging/full state communication | P1 |
+| Battery | `modules/bar/popouts/CortetsuBatteryPopup.qml`, `base/modules/bar/popouts/Battery.qml` | UPower state, battery details | VERIFIED | real 100% power state, charge timing, selected profile, profile focus/activation contract and Escape close verified | P1 |
 | Keyboard Layout | `modules/bar/popouts/CortetsuKeyboardPopup.qml`, `base/modules/bar/popouts/kblayout/KbLayout.qml` | layout model, selection rows | COMPONENTIZED | selected/focus states and long labels | P2 |
 | Lock Status | `modules/bar/popouts/CortetsuLockStatusPopup.qml`, `base/modules/bar/popouts/LockStatus.qml` | lock state, action rows | COMPONENTIZED | disabled/error feedback | P2 |
 | Active Window | `modules/bar/popouts/CortetsuActiveWindowPopup.qml`, `base/modules/bar/popouts/ActiveWindow.qml` | Hyprland active toplevel | COMPONENTIZED | missing/long-title states | P2 |
@@ -62,6 +62,15 @@ opened the notification center, and Escape closed the overlay. Static utility
 gates passed, including first-party ownership and keyboard-capable controls.
 The shell remained active with zero restarts and no new warning/error/critical
 journal entries.
+
+## Battery verification evidence
+
+The promoted runtime opened Battery through `bottomHub control battery`. The
+popup rendered the real 100% power state, charge timing text and the selected
+Performance profile. Profile controls expose focus and Enter/Return/Space
+activation; Escape closed the popup and `powerprofilesctl get` remained
+`performance`. The shell stayed active with zero restarts and no new
+warning/error/critical journal entries.
 
 ## Network, Audio and Bluetooth verification evidence
 
