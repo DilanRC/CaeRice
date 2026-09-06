@@ -65,6 +65,13 @@ hits = subprocess.run(
 assert hits.returncode in (0, 1), f"git grep failed:\n{hits.stdout}"
 assert hits.stdout.strip() == "", f"forbidden dependency on deleted Caelestia tree:\n{hits.stdout}"
 
+# 2a. The direct window-to-workspace bindings must use the existing dynamic
+#     workspace action. A static dispatcher with a numeric workspace is not
+#     registered by Hyprland's Lua API and silently drops SUPER+SHIFT+#.
+user_config = (REPO / "config/hypr-user.lua").read_text(encoding="utf-8")
+assert 'local fn = require("utils.functions")' in user_config
+assert 'hl.bind("SUPER + SHIFT + " .. key, fn.wsaction("move", "", i))' in user_config
+
 # 2b. Same gate for the migrated hypr-user.lua: it now lives only at
 # ~/.config/hypr/hypr-user.lua. Reintroducing the caelestia path as an active
 # read/write target (loader, installer script, or manifest target) is exactly

@@ -1,3 +1,5 @@
+local fn = require("utils.functions")
+
 -- ============================================================
 -- MONITORES
 -- HDMI externo a la izquierda, portátil a la derecha
@@ -260,12 +262,7 @@ for i = 1, 10 do
     -- SUPER+SHIFT+# is the direct window-to-workspace shortcut. Keep it
     -- explicit here so the user overlay cannot be shadowed by the grouped
     -- workspace callback from hyprland/keybinds.lua.
-    hl.bind(
-        "SUPER + SHIFT + " .. key,
-        hl.dsp.window.move({
-            workspace = i
-        })
-    )
+    hl.bind("SUPER + SHIFT + " .. key, fn.wsaction("move", "", i))
 
     hl.bind(
         "SUPER + CTRL + " .. key,
