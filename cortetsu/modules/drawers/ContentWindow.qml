@@ -70,7 +70,11 @@ StyledWindow {
     focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: screenState.cortetsuState?.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && CortetsuOverlayConfig.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
-    WlrLayershell.keyboardFocus: (screenState.cortetsuState?.requiresWindowKeyboardFocus || panels.popouts.hasCurrent) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: panels.popouts.hasCurrent
+        ? WlrKeyboardFocus.Exclusive
+        : screenState.cortetsuState?.requiresWindowKeyboardFocus
+            ? WlrKeyboardFocus.OnDemand
+            : WlrKeyboardFocus.None
 
     mask: screenState.cortetsuState?.requiresFullInputMask ? null : (hasFullscreen ? emptyRegion : regions)
 
@@ -123,6 +127,8 @@ StyledWindow {
         active: {
             const s = root.screenState;
             const conf = root.CortetsuOverlayConfig;
+            if (panels.popouts.hasCurrent)
+                return true;
             if (s.cortetsuState?.retainedOverlayOpen)
                 return true;
             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled) || (s.utilities && conf.utilities.enabled))

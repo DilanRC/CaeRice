@@ -91,6 +91,10 @@ for rel in ("services/Apps.qml", "services/Actions.qml", "services/Schemes.qml",
 assert "CortetsuConfig.terminalCommand" in app_list
 assert "CortetsuConfig.terminalCommand" in texts["services/Apps.qml"]
 
+wrapper = texts["Wrapper.qml"]
+assert "active: true" in wrapper
+assert "root.shouldBeActive || root.visible" not in wrapper
+
 # CortetsuConfig itself must actually own these fields with write support.
 config = (repo / "cortetsu/modules/CortetsuConfig.qml").read_text(encoding="utf-8")
 for marker in (

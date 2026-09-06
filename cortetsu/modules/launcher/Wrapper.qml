@@ -58,7 +58,10 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        active: root.shouldBeActive || root.visible
+        // Keep the first-party launcher instance alive through its close
+        // animation. Rapid panel changes must not destroy a delegate while
+        // Qt is still incubating it.
+        active: true
 
         sourceComponent: Content {
             screenState: root.screenState

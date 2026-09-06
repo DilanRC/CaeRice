@@ -86,6 +86,8 @@ Item {
         if (hasCurrent) {
             closing = false;
             closeTimer.stop();
+            root.forceActiveFocus();
+            Qt.callLater(() => root.forceActiveFocus());
             return;
         }
         if (bottomAttached && !closing) {
@@ -137,7 +139,7 @@ Item {
         when: root.isDetached || (root.hasCurrent && root.currentName === "wirelesspassword")
         target: QsWindow.window
         property: "WlrLayershell.keyboardFocus"
-        value: WlrKeyboardFocus.OnDemand
+        value: WlrKeyboardFocus.Exclusive
     }
 
     Comp {

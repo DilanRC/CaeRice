@@ -112,6 +112,7 @@ def main() -> None:
 
     fullscreen = block_between(text, "onHasFullscreenChanged: {", "panels.popouts.close();")
     escape = block_between(text, 'sequence: "Escape"', "        }\n    }")
+    focus_grab = block_between(text, "active: {", "        windows: [root]")
     cleared = block_between(text, "onCleared: {", "bar.closeTray();")
 
     assert "cortetsuState?.closeRetainedOverlays();" in fullscreen, "onHasFullscreenChanged must close every retained overlay"
@@ -130,6 +131,8 @@ def main() -> None:
 
     assert "screenState.cortetsuState?.requiresFullInputMask" in text
     assert "screenState.cortetsuState?.requiresWindowKeyboardFocus" in text
+    assert "WlrKeyboardFocus.Exclusive" in text
+    assert "if (panels.popouts.hasCurrent)" in focus_grab
     assert "root.screenState.cortetsuState?.overview ? 0.58" in text
     print("PASS input-mask-focus-scrim-still-wired")
 

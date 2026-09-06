@@ -7,6 +7,7 @@ content = (ROOT / "cortetsu/base/modules/bar/popouts/Content.qml").read_text(enc
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 wrapper = (ROOT / "cortetsu/modules/bar/popouts/Wrapper.qml").read_text(encoding="utf-8")
 content_window = (ROOT / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
+interactions = (ROOT / "cortetsu/modules/drawers/Interactions.qml").read_text(encoding="utf-8")
 status_segment = (ROOT / "cortetsu/modules/CortetsuStatusSegment.qml").read_text(encoding="utf-8")
 
 for name, service in (
@@ -31,6 +32,8 @@ assert "function closeAllPopouts(): void" in hub
 assert "closeAllPopouts();" in hub
 assert "id: hideTimer" in hub and "interval: 500" in hub
 assert "hideTimer.restart();" in hub
+assert "root.forceActiveFocus();" in wrapper
+assert "value: WlrKeyboardFocus.Exclusive" in wrapper
 assert 'onClicked: root.attachedControlRequested("network", root.centerFor(networkButton))' in status_segment
 assert 'onClicked: root.attachedControlRequested("bluetooth", root.centerFor(bluetoothButton))' in status_segment
 assert 'onClicked: root.detachedControlRequested("network")' not in status_segment
@@ -63,6 +66,7 @@ for path in (
 
 assert "closeTimer" in wrapper
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
+assert "} else if (popouts.bottomAttached) {" not in interactions
 for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):
     assert token in hub, token
 for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "CortetsuKeyboardPopup.qml", "CortetsuLockStatusPopup.qml", "CortetsuTrayMenu.qml"):
