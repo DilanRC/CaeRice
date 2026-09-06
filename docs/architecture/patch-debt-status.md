@@ -17,7 +17,7 @@ For each patch:
    `scripts/features/test-bottom-hub-v4.py`, which assert on these exact
    patches' content and on their presence in `MANIFEST.tsv`.
 
-## Result: 9 remain ACTIVE
+## Result: 7 remain ACTIVE
 
 The working hypothesis going in was that some of these patches might be dead,
 superseded by the Bottom Hub v4 migration. The evidence points the other way:
@@ -32,15 +32,15 @@ would break the shell (bar would reappear) and fail
 these patch files directly and asserts on their content, and asserts
 `modules__bar__BarWrapper.qml.patch` stays listed in `MANIFEST.tsv`).
 
-The remaining four (`shell.qml`, `CustomShortcut`, `Hypr`, `Paths`) are base
-infrastructure as flagged in the task brief, and evidence confirms it.
+The remaining base infrastructure is now first-party (`shell.qml`, `Hypr`, and
+`Paths`); only seven Bottom Hub patches remain active.
 
 | Patch | Capability | Active consumers | Replacement | Status |
 |---|---|---|---|---|
 | `shell.qml.patch` | Retired: `cortetsu/shell.qml` now owns the composition root and the build copies it directly | `cortetsu/shell.qml`, `build-runtime.sh` | first-party shell composition | **RETIRED** |
 | `components__misc__CustomShortcut.qml.patch` | Retired: `cortetsu/components/misc/CustomShortcut.qml` now owns the `cortetsu` app id directly | `scripts/features/test-shortcut-namespace.py` | none | **RETIRED** |
-| `services__Hypr.qml.patch` | Adds `isTaskbarToplevel()` filtering (excludes XWayland ghost windows, `QtWebEngineProcess`, tray/system-tray helper windows) from `activeToplevel` | `cortetsu/modules/CortetsuHypr.qml` (`isTaskbarToplevel`, `activeToplevel`), `cortetsu/modules/overview/Content.qml`, `cortetsu/modules/BottomHub.qml`, `scripts/features/test-cortetsu-hypr-adapters.py` | none | **ACTIVE** |
-| `utils__Paths__Config.qml.patch` | Renames all XDG dirs from `caelestia` to `cortetsu`; repoints `wallsdir` at `CortetsuConfig.wallpaperDirectory` / `CORTETSU_WALLPAPERS_DIR` | `cortetsu/modules/CortetsuWallpapers.qml`, `cortetsu/modules/CortetsuConfig.qml`, `scripts/features/test-cortetsu-xdg-paths.py`, `test-config-migration.py` | none | **ACTIVE** |
+| `services__Hypr.qml.patch` | Retired: `cortetsu/services/Hypr.qml` now owns the compatibility surface and delegates to `CortetsuHypr` | `cortetsu/services/Hypr.qml` | first-party Hypr service | **RETIRED** |
+| `utils__Paths__Config.qml.patch` | Retired: `cortetsu/utils/Paths.qml` now owns all XDG paths | `cortetsu/utils/Paths.qml` | first-party Paths utility | **RETIRED** |
 | `modules__Shortcuts.qml.patch` | Super key -> IPC `customDock launcher` (native launcher toggle) instead of the old `ShellState.forActive().launcher` toggle; Super+N opens sidebar+utilities together | `check_shortcuts()` in `check-bottom-hub-target.py`, asserted verbatim in `test-bottom-hub-v4.py` line 51-53 | replaces old in-process `ShellState` toggle -- this patch **is** the replacement | **ACTIVE** (Bottom Hub v4 engine) |
 | `modules__sidebar__Wrapper.qml.patch` | Re-anchors the sidebar to the bottom edge (`anchors.fill`, capped `520x430` card) instead of the old right-edge slide-in; tags `objectName: "cortetsuBottomNotificationCenter"` | `check_sidebar()` in `check-bottom-hub-target.py` | replaces the old right-edge `Tokens.sizes.sidebar`-driven layout -- this patch **is** the replacement | **ACTIVE** (Bottom Hub v4 engine) |
 | `modules__bar__BarWrapper.qml.patch` | Forces the legacy top bar fully invisible and zero-width (`disabled: true`, `exclusiveZone: 0`, `shouldBeVisible: false`, `implicitWidth: 0`) | `check_bar()` in `check-bottom-hub-target.py`; `test-bottom-hub-v4.py` line 47 asserts this patch stays in `MANIFEST.tsv` ("retiro de barra nativa") | Bottom Hub itself is the replacement UI; this patch is the retirement switch, not dead code | **ACTIVE** (Bottom Hub v4 engine -- retires the old bar) |
