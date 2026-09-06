@@ -13,6 +13,9 @@
 @@ -89 +97 @@
 -            if (Config.sidebar.showOnHover)
 +            if (false && Config.sidebar.showOnHover)
+@@ -117 +125 @@
+-        if (!screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
++        if (screenState && !screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
 @@ -134 +142 @@
 -            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
 +            const showSidebar = false;
