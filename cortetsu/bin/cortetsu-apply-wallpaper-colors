@@ -10,6 +10,6 @@ trap 'rm -f "$tmp"' EXIT
 mkdir -p "$(dirname "$state")"
 
 # Cortetsu owns generation; the output deliberately preserves the M3 contract
-# consumed by the still-compatible upstream Colours.qml service.
+# consumed by the dynamic palette reader.
 "$HOME/.local/bin/cortetsu-wallpaper-colours" "$image" | jq -e 'if .name == "dynamic" and (.colours.primary | type == "string") then . else error("invalid dynamic scheme") end' > "$tmp"
 install -m 0644 "$tmp" "$state"

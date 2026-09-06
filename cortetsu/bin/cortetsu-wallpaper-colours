@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Emit the legacy-compatible Material 3 scheme consumed by Colours.qml."""
+"""Emit the Material 3 scheme consumed by the dynamic palette reader."""
 from __future__ import annotations
 
 import argparse
