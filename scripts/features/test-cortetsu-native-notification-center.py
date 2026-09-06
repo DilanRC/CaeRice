@@ -25,8 +25,13 @@ assert "GlobalConfig" not in content and "Caelestia" not in content
 assert "id: contentLayout" in notification
 assert "contentLayout.implicitHeight" in notification
 assert 'import "../CortetsuDesign.js" as CortetsuDesign' in notification
+assert 'import "../CortetsuTypography.js" as CortetsuTypography' in notification
+assert "modelData.appName" in notification
+assert "modelData.image" in notification
+assert "modelData.urgency >= 2" in notification
 wrapper = (ROOT / "cortetsu/modules/notifications/Wrapper.qml").read_text(encoding="utf-8")
 assert "modelData: root.visibleNotifications[index]" in wrapper
 assert "modelData: root.active[index]" in content
 assert "required property var modelData" in notification
+assert "modelData.timeStr" in content
 print("PASS: notification center owns live, history, DND, clear and empty states")
