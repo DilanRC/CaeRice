@@ -1,6 +1,6 @@
 # Patch debt status (Task 22 audit)
 
-Audited 2026-09-05. Scope: the 10 patches owned by this session. Every other
+Audited 2026-09-05. Scope: the 10 patches originally owned by this session. Every other
 patch in `caelestia/patches/` (Notifications, CoreConfig, Network/BT/Power/Tray,
 Regional, Launcher, Screenshot/Record, Overlay-host) is being worked by parallel
 sessions and was left untouched here.
@@ -17,7 +17,7 @@ For each patch:
    `scripts/features/test-bottom-hub-v4.py`, which assert on these exact
    patches' content and on their presence in `MANIFEST.tsv`.
 
-## Result: all 10 are ACTIVE
+## Result: 9 remain ACTIVE
 
 The working hypothesis going in was that some of these patches might be dead,
 superseded by the Bottom Hub v4 migration. The evidence points the other way:
@@ -37,7 +37,7 @@ infrastructure as flagged in the task brief, and evidence confirms it.
 
 | Patch | Capability | Active consumers | Replacement | Status |
 |---|---|---|---|---|
-| `shell.qml.patch` | Wires `BottomHub {}` + all first-party controllers (`OverviewController`, `CalendarController`, `ClipboardController`, `HardwareController`, `DisplayController`, `WallpaperController`) into the composed shell; disables `watchFiles` for hot-reload safety | `scripts/features/test-shell-normalizer.py`, `test-diagnose-sad-wiring.py`, `check_shell()` in `check-bottom-hub-target.py` | none (this *is* the composition root) | **ACTIVE** |
+| `shell.qml.patch` | Retired: `cortetsu/shell.qml` now owns the composition root and the build copies it directly | `cortetsu/shell.qml`, `build-runtime.sh` | first-party shell composition | **RETIRED** |
 | `components__misc__CustomShortcut.qml.patch` | Retired: `cortetsu/components/misc/CustomShortcut.qml` now owns the `cortetsu` app id directly | `scripts/features/test-shortcut-namespace.py` | none | **RETIRED** |
 | `services__Hypr.qml.patch` | Adds `isTaskbarToplevel()` filtering (excludes XWayland ghost windows, `QtWebEngineProcess`, tray/system-tray helper windows) from `activeToplevel` | `cortetsu/modules/CortetsuHypr.qml` (`isTaskbarToplevel`, `activeToplevel`), `cortetsu/modules/overview/Content.qml`, `cortetsu/modules/BottomHub.qml`, `scripts/features/test-cortetsu-hypr-adapters.py` | none | **ACTIVE** |
 | `utils__Paths__Config.qml.patch` | Renames all XDG dirs from `caelestia` to `cortetsu`; repoints `wallsdir` at `CortetsuConfig.wallpaperDirectory` / `CORTETSU_WALLPAPERS_DIR` | `cortetsu/modules/CortetsuWallpapers.qml`, `cortetsu/modules/CortetsuConfig.qml`, `scripts/features/test-cortetsu-xdg-paths.py`, `test-config-migration.py` | none | **ACTIVE** |
