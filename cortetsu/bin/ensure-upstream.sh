@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-COMPATIBILITY="$REPO/caelestia/compatibility.json"
+COMPATIBILITY="$REPO/cortetsu/contracts/upstream-compatibility.json"
 CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 CANONICAL="${CORTETSU_UPSTREAM_CACHE:-$CACHE_HOME/cortetsu/upstream/caelestia-shell}"
 

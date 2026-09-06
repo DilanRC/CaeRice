@@ -16,8 +16,8 @@ rollback = (repo / "cortetsu/bin/rollback-runtime.sh").read_text(encoding="utf-8
 composer = (repo / "cortetsu/bin/compose-panels.py").read_text(encoding="utf-8")
 content = (repo / "cortetsu/modules/calendar/Content.qml").read_text(encoding="utf-8")
 cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
-compatibility = json.loads((repo / "caelestia/compatibility.json").read_text(encoding="utf-8"))
-composition = json.loads((repo / "caelestia/composition.json").read_text(encoding="utf-8"))
+compatibility = json.loads((repo / "cortetsu/contracts/upstream-compatibility.json").read_text(encoding="utf-8"))
+composition = json.loads((repo / "cortetsu/contracts/composition.json").read_text(encoding="utf-8"))
 
 assert compatibility["project"] == "Cortetsu"
 assert compatibility["caelestiaShell"]["upstreamTag"] == "v2.4.0"

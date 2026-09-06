@@ -305,7 +305,7 @@ verify_generation() {
     resolved="$(resolved_generation "$link")"
     [[ -n "$resolved" ]] || fail "no existe la generación $label: $link"
     is_managed_generation "$resolved" || fail "$label no es una generación Cortetsu administrada: $resolved"
-    python3 - "$resolved/BUILD.json" "$ROOT/caelestia/compatibility.json" <<'PY'
+    python3 - "$resolved/BUILD.json" "$ROOT/cortetsu/contracts/upstream-compatibility.json" <<'PY'
 import json, sys
 from pathlib import Path
 build_path, contract_path = map(Path, sys.argv[1:])
@@ -321,7 +321,7 @@ PY
 
 verify_cmd() {
     require_repo
-    require_file "$ROOT/caelestia/compatibility.json"
+    require_file "$ROOT/cortetsu/contracts/upstream-compatibility.json"
     verify_generation current "$CURRENT"
     local current_resolved previous_resolved archived_resolved
     current_resolved="$(resolved_generation "$CURRENT")"
