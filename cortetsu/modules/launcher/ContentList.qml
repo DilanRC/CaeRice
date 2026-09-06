@@ -7,6 +7,7 @@ import "../CortetsuTypography.js" as CortetsuTypography
 import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
+import "../CortetsuAnim.qml"
 import qs.components
 import qs.components.controls
 import qs.utils
@@ -60,20 +61,20 @@ Item {
 
     Behavior on animState {
         SequentialAnimation {
-            Anim {
+            CortetsuAnim {
                 target: root
                 property: "opacity"
                 from: 1
                 to: 0
-                type: Anim.DefaultEffects
+                type: CortetsuAnim.DefaultEffects
             }
             PropertyAction {}
-            Anim {
+            CortetsuAnim {
                 target: root
                 property: "opacity"
                 from: 0
                 to: 1
-                type: Anim.DefaultEffects
+                type: CortetsuAnim.DefaultEffects
             }
         }
     }
@@ -150,25 +151,25 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {
-                type: Anim.DefaultEffects
+            CortetsuAnim {
+                type: CortetsuAnim.DefaultEffects
             }
         }
 
         Behavior on scale {
-            Anim {}
+            CortetsuAnim {}
         }
     }
 
     Behavior on implicitWidth {
         enabled: root.screenState.launcher
 
-        Anim {}
+        CortetsuAnim {}
     }
 
     Behavior on implicitHeight {
         enabled: root.screenState.launcher
 
-        Anim {}
+        CortetsuAnim {}
     }
 }

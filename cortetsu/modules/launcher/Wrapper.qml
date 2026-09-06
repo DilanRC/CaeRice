@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuAnim.qml"
 import qs.components
 import qs.modules.launcher.services
 
@@ -49,7 +50,7 @@ Item {
     Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
 
     Behavior on offsetScale {
-        Anim {}
+        CortetsuAnim {}
     }
 
     Loader {
