@@ -75,12 +75,11 @@ Item {
                     screenState: root.screenState
                 }
 
-                CortetsuText {
+                CortetsuStateMessage {
                     anchors.centerIn: parent
                     visible: activeList.count === 0
-                    text: qsTr("All clear")
-                    textSize: CortetsuDesign.bodyLargePx
-                    color: CortetsuDesign.colorOnSurfaceVariant
+                    title: qsTr("All clear")
+                    detail: qsTr("New notifications will appear here")
                 }
             }
         }
@@ -112,12 +111,10 @@ Item {
                     onClicked: {}
                 }
 
-                CortetsuText {
+                CortetsuStateMessage {
                     anchors.centerIn: parent
                     visible: historyList.count === 0
-                    text: qsTr("No saved notifications")
-                    textSize: CortetsuDesign.bodySmallPx
-                    color: CortetsuDesign.colorOnSurfaceVariant
+                    title: qsTr("No saved notifications")
                 }
             }
         }

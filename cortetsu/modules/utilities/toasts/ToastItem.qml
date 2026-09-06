@@ -11,6 +11,9 @@ CortetsuSurface {
     radiusValue: CortetsuDesign.radiusMedium
     baseColor: CortetsuDesign.colorSurfaceGlass
     outlined: true
+    focus: true
+    activeFocusOnTab: true
+    focused: root.activeFocus
     outlineColor: toast.type === 2 ? CortetsuDesign.colorVermillion : CortetsuDesign.colorOutlineVariant
 
     Row {
@@ -54,6 +57,11 @@ CortetsuSurface {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         onClicked: root.dismissed()
     }
+
+    Keys.onEnterPressed: root.dismissed()
+    Keys.onReturnPressed: root.dismissed()
+    Keys.onSpacePressed: root.dismissed()
+    Keys.onEscapePressed: root.dismissed()
 
     Timer {
         interval: 5000

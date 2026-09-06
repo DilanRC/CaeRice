@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../"
+import "../../components"
 import "../../services"
 import qs.utils
 
@@ -15,6 +16,9 @@ CortetsuSurface {
     implicitHeight: nonAnimHeight
     radiusValue: CortetsuDesign.radiusMedium
     outlined: false
+    focus: true
+    activeFocusOnTab: true
+    focused: root.activeFocus
     baseColor: modelData.urgency === 2 ? Qt.darker(CortetsuDesign.colorVermillion, 1.8) : CortetsuDesign.colorSurfaceHigh
     opacity: modelData.closed ? 0 : 1
 
@@ -28,6 +32,11 @@ CortetsuSurface {
         onExited: root.hovered = false
         onClicked: root.expanded = !root.expanded
     }
+
+    Keys.onEnterPressed: root.expanded = !root.expanded
+    Keys.onReturnPressed: root.expanded = !root.expanded
+    Keys.onSpacePressed: root.expanded = !root.expanded
+    Keys.onEscapePressed: root.modelData.close()
 
     ColumnLayout {
         anchors.fill: parent
@@ -54,19 +63,21 @@ CortetsuSurface {
             visible: root.expanded || root.modelData.actions.length > 0
             Repeater {
                 model: root.modelData.actions
-                delegate: Rectangle {
+                delegate: CortetsuButton {
                     required property var modelData
-                    implicitWidth: actionText.implicitWidth + 20; implicitHeight: 30; radius: 10
-                    color: CortetsuDesign.colorSecondaryContainer
-                    CortetsuText { id: actionText; anchors.centerIn: parent; text: modelData.text; textSize: 12 }
-                    MouseArea { anchors.fill: parent; onClicked: modelData.invoke() }
+                    Layout.fillWidth: false
+                    compact: true
+                    label: modelData.text
+                    onClicked: modelData.invoke()
                 }
             }
             Item { Layout.fillWidth: true }
-            Rectangle {
-                implicitWidth: 64; implicitHeight: 30; radius: 10; color: CortetsuDesign.colorPrimaryContainer
-                CortetsuText { anchors.centerIn: parent; text: qsTr("Close"); textSize: 12 }
-                MouseArea { anchors.fill: parent; onClicked: root.modelData.close() }
+            CortetsuButton {
+                compact: true
+                label: qsTr("Close")
+                icon: "close"
+                danger: true
+                onClicked: root.modelData.close()
             }
         }
     }

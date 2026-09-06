@@ -19,6 +19,9 @@ slider = (ROOT / "cortetsu/components/CortetsuSlider.qml").read_text()
 battery = (ROOT / "cortetsu/modules/bar/popouts/CortetsuBatteryPopup.qml").read_text()
 keyboard = (ROOT / "cortetsu/modules/bar/popouts/CortetsuKeyboardPopup.qml").read_text()
 winfo = (ROOT / "cortetsu/modules/bar/popouts/CortetsuWindowInfoPopup.qml").read_text()
+notification = (ROOT / "cortetsu/modules/notifications/Notification.qml").read_text()
+toast = (ROOT / "cortetsu/modules/utilities/toasts/ToastItem.qml").read_text()
+sidebar = (ROOT / "cortetsu/modules/sidebar/Content.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
@@ -36,6 +39,9 @@ checks = {
     "battery profile supports keyboard": all(x in battery for x in ("activeFocusOnTab", "Keys.onEnterPressed", "focused: parent.activeFocus")),
     "keyboard popup exposes disabled layouts": "disabled: layoutIndex > 3" in keyboard,
     "window info disables unavailable actions": winfo.count("disabled: !root.client") >= 4,
+    "notification supports keyboard": all(x in notification for x in ("activeFocusOnTab", "Keys.onEnterPressed", "Keys.onEscapePressed", "CortetsuButton")),
+    "toast supports keyboard": all(x in toast for x in ("activeFocusOnTab", "Keys.onEnterPressed", "Keys.onEscapePressed")),
+    "notification center has reusable empty states": sidebar.count("CortetsuStateMessage") >= 2,
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
