@@ -9,6 +9,7 @@ import qs.modules.osd as Osd
 import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import ".."
+import "../../components"
 import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
 import "../utilities/toasts" as Toasts

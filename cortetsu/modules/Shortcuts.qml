@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import "../components/misc"
 import "../services"
 import "nexus"

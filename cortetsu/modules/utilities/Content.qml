@@ -10,7 +10,6 @@ Item {
     required property var props
     required property var screenState
     required property var popouts
-    required property var deformMatrix
     readonly property real nonAnimHeight: column.implicitHeight
     implicitWidth: 480
     implicitHeight: column.implicitHeight

@@ -158,11 +158,17 @@ Item {
         transitions: [
             Transition {
                 from: ""; to: "active"
-                SequentialAnimation { PropertyAction { property: "active" }; NumberAnimation { property: "opacity"; duration: comp.parent.animLength; easing.type: Easing.OutCubic } }
+                SequentialAnimation {
+                    PropertyAction { property: "active" }
+                    NumberAnimation { property: "opacity"; duration: comp.parent.animLength; easing.type: Easing.OutCubic }
+                }
             },
             Transition {
                 from: "active"; to: ""
-                SequentialAnimation { NumberAnimation { property: "opacity"; duration: comp.parent.animLength; easing.type: Easing.OutCubic }; PropertyAction { property: "active" } }
+                SequentialAnimation {
+                    NumberAnimation { property: "opacity"; duration: comp.parent.animLength; easing.type: Easing.OutCubic }
+                    PropertyAction { property: "active" }
+                }
             }
         ]
     }

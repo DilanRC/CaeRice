@@ -1,13 +1,11 @@
 import QtQuick
 import Quickshell
-import "../bar/popouts"
 import "../../services"
 
 Item {
     id: root
     required property var screenState
-    required property Wrapper popouts
-    property matrix4x4 deformMatrix
+    required property var popouts
     readonly property PersistentProperties props: PersistentProperties {
         property bool recordingListExpanded: false
         property string recordingConfirmDelete: ""
@@ -35,7 +33,6 @@ Item {
             props: root.props
             screenState: root.screenState
             popouts: root.popouts
-            deformMatrix: root.deformMatrix
         }
     }
 }

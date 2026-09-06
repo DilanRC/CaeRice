@@ -6,5 +6,9 @@ for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components", "Tok
     assert legacy not in source, legacy
 assert "CortetsuIdleInhibitor" in source
 assert "CortetsuRecorder" in source
-assert "required property var deformMatrix" in source
+assert "deformMatrix" not in source
+wrapper = (path.parent / "Wrapper.qml").read_text(encoding="utf-8")
+assert "deformMatrix" not in wrapper
+assert 'import "../bar/popouts"' not in wrapper
+assert "required property var popouts" in wrapper
 print("PASS: utilities content uses first-party controls")

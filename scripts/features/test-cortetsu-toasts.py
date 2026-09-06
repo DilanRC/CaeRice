@@ -13,6 +13,7 @@ for source in (toaster, view, item, panels, hub):
 
 assert "pragma Singleton" in toaster
 assert "function toast" in toaster
+assert "function toast(title, message, icon, type = 0)" in toaster
 assert "function dismiss" in toaster
 assert "CortetsuToaster.toasts" in view
 assert "onDismissed: CortetsuToaster.dismiss" in view

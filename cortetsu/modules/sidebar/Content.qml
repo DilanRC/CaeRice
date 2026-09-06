@@ -2,9 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import "../CortetsuSurface.qml"
-import "../CortetsuText.qml"
-import "../notifications" as CortetsuNotifications
+import ".."
+import qs.modules.notifications as NotificationComponents
 import "../../services"
 
 Item {
@@ -49,14 +48,14 @@ Item {
                 spacing: 8
                 clip: true
                 model: Notifs.notClosed
-                delegate: CortetsuNotifications.Notification {
+                delegate: NotificationComponents.Notification {
                     width: list.width
                     props: ({})
                     expanded: false
                     screenState: root.screenState
                 }
 
-                CortetsText {
+                CortetsuText {
                     anchors.centerIn: parent
                     visible: list.count === 0
                     text: qsTr("All up to date!")

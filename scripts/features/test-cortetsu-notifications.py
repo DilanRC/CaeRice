@@ -16,6 +16,7 @@ assert "CortetsuNotifications.count" in hub and "CortetsuNotifications.dnd" in h
 assert not re.search(r"(?<!Cortetsu)Notifs\.", hub)
 assert "notification-status.json" in notifs and "property bool dnd" in notifs
 assert "NotificationServer" in notifs and "modelData.close()" in view
+assert "import Quickshell.Io" in notifs
 for text in (notifs, notif_data, view):
     assert "Caelestia" not in text and "GlobalConfig" not in text
 print("PASS: Bottom Hub notification state is Cortetsu-owned and XDG-backed")

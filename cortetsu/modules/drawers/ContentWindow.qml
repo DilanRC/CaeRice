@@ -254,3 +254,4 @@ StyledWindow {
         border.width: root.borderThickness
         border.color: CortetsuDesign.colorOutlineVariant
     }
+}

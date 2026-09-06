@@ -19,16 +19,16 @@ Singleton {
     readonly property QtObject transparency: QtObject { readonly property bool enabled: false; readonly property real base: 0; readonly property real layers: 0 }
     readonly property real wallLuminance: 0
 
-    function layer(colour: color, layerNumber: var = 0): color { return colour; }
-    function on(colour: color): color { return colour.hslLightness < 0.5 ? "#F5F1EA" : "#171B21"; }
-    function load(data: string, isPreview: bool): void {
+    function layer(colour, layerNumber = 0) { return colour; }
+    function on(colour) { return colour.hslLightness < 0.5 ? "#F5F1EA" : "#171B21"; }
+    function load(data, isPreview) {
         try {
             const value = JSON.parse(data);
             if (isPreview) { previewLight = value.mode === "light"; showPreview = true; }
             else { scheme = value.name ?? "cortetsu"; flavour = value.flavour ?? "dark"; currentLight = value.mode === "light"; }
         } catch (_) {}
     }
-    function setMode(mode: string): void { Quickshell.execDetached(["cortetsu", "scheme", "set", "--mode", mode]); }
+    function setMode(mode) { Quickshell.execDetached(["cortetsu", "scheme", "set", "--mode", mode]); }
 
     component CortetsuPalette: QtObject {
         readonly property color m3primary_paletteKeyColor: CortetsuDesign.colorPrimary

@@ -11,16 +11,16 @@ Singleton {
     property var toasts: []
     property int nextId: 0
 
-    function toast(title: string, message: string, icon: string, type: int = 0): void {
+    function toast(title, message, icon, type = 0) {
         const item = { id: nextId++, title, message, icon, type };
         toasts = [item, ...toasts];
     }
 
-    function dismiss(id: int): void {
+    function dismiss(id) {
         toasts = toasts.filter(item => item.id !== id);
     }
 
-    function clear(): void {
+    function clear() {
         toasts = [];
     }
 }

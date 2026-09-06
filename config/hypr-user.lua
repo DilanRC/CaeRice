@@ -257,6 +257,16 @@ for i = 1, 10 do
     local key = tostring(i % 10)
     local workspace = i + 10
 
+    -- SUPER+SHIFT+# is the direct window-to-workspace shortcut. Keep it
+    -- explicit here so the user overlay cannot be shadowed by the grouped
+    -- workspace callback from hyprland/keybinds.lua.
+    hl.bind(
+        "SUPER + SHIFT + " .. key,
+        hl.dsp.window.move({
+            workspace = i
+        })
+    )
+
     hl.bind(
         "SUPER + CTRL + " .. key,
         hl.dsp.focus({
