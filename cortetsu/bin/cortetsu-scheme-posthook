@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Cortetsu post-hook for Cortetsu scheme changes.
-
-Brave Origin is not one of the executable names handled by Caelestia CLI's
-Chromium bridge.  This hook mirrors Caelestia's Brave policy behaviour for the
-`brave-origin` executable while leaving the rest of the upstream theme bridge
-untouched.
-"""
+"""Cortetsu post-hook for Cortetsu scheme changes."""
 from __future__ import annotations
 
 import json
@@ -22,21 +16,6 @@ CORTETSU_BRAVE_ORIGIN_BRIDGE = True
 HOME = Path.home()
 STATE = Path(os.environ.get("XDG_STATE_HOME", HOME / ".local/state")) / "cortetsu/scheme.json"
 POLICY = Path("/etc/brave/policies/managed/cortetsu.json")
-LEGACY_HOOK = HOME / ".local/bin/caelestia-scheme-posthook.legacy"
-
-
-def run_legacy_hook() -> None:
-    if not LEGACY_HOOK.exists() or LEGACY_HOOK.resolve() == Path(__file__).resolve():
-        return
-    try:
-        if os.access(LEGACY_HOOK, os.X_OK):
-            subprocess.run([str(LEGACY_HOOK), *sys.argv[1:]], check=False)
-        else:
-            subprocess.run(["/bin/sh", str(LEGACY_HOOK), *sys.argv[1:]], check=False)
-    except Exception as exc:
-        print(f"Cortetsu postHook: legacy hook warning: {exc}", file=sys.stderr)
-
-
 def load_state() -> dict:
     try:
         obj = json.loads(STATE.read_text(encoding="utf-8"))
@@ -105,5 +84,4 @@ def apply_brave_origin() -> None:
 
 
 if __name__ == "__main__":
-    run_legacy_hook()
     apply_brave_origin()
