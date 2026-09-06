@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.modules
-import Caelestia.Models
 import qs.components
 import qs.components.controls
 import qs.components.filedialog
@@ -119,7 +118,7 @@ PageBase {
                 }
 
                 WallItem {
-                    required property FileSystemEntry modelData
+                    required property var modelData
 
                     // Empty placeholders for sizing
                     opacity: modelData ? 1 : 0

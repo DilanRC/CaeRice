@@ -68,6 +68,13 @@ assert 'sourceColor: "black"' in coloured_icon and "Colouriser" in coloured_icon
 cover_visualiser = (repo / "cortetsu/base/modules/dashboard/media/CoverVisualiser.qml").read_text(encoding="utf-8")
 assert "import Caelestia.Services" not in cover_visualiser and "ServiceRef" not in cover_visualiser
 assert "Audio.cava" in cover_visualiser
+for wallpaper_page in (
+    repo / "cortetsu/base/modules/nexus/pages/wallandstyle/WallpaperCategory.qml",
+    repo / "cortetsu/base/modules/nexus/pages/wallandstyle/WallpaperSelect.qml",
+):
+    wallpaper_text = wallpaper_page.read_text(encoding="utf-8")
+    assert "import Caelestia.Models" not in wallpaper_text
+    assert "FileSystemEntry" not in wallpaper_text
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (

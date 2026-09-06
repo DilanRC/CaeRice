@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import qs.modules
-import Caelestia.Models
 import qs.services
 import qs.modules.nexus.common
 
@@ -34,7 +33,7 @@ PageBase {
             }
 
             WallItem {
-                required property FileSystemEntry modelData
+                required property var modelData
 
                 // Empty placeholders for sizing
                 opacity: modelData ? 1 : 0
