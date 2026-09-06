@@ -16,7 +16,7 @@ for name, service in (
     ("CortetsuBluetoothPopup.qml", "Bluetooth"),
 ):
     text = (popouts / name).read_text(encoding="utf-8")
-    assert "CortetsuSurface" in text and "CortetsuListRow" in text
+    assert "CortetsuPopupSurface" in text and "CortetsuListRow" in text
     assert "CortetsuDesign" in text and service in text
     assert "No devices nearby" in text or "No networks available" in text or "No device" in text
 
@@ -42,6 +42,9 @@ assert "sourceComponent: CortetsuDetachedPopup" in wrapper
 assert "sourceComponent: Rectangle" not in wrapper
 assert "Nexus" not in wrapper
 assert "CortetsuWindowInfoPopup" in wrapper
+popup_surface = (ROOT / "cortetsu/components/CortetsuPopupSurface.qml").read_text(encoding="utf-8")
+assert "colorSurfaceGlassStrong" in popup_surface
+assert "radiusLarge" in popup_surface
 window_info = (popouts / "CortetsuWindowInfoPopup.qml").read_text(encoding="utf-8")
 assert "CortetsuSurface" in window_info and "CortetsuButton" in window_info
 assert "CortetsuTokens" not in window_info and "CortetsuColours" not in window_info

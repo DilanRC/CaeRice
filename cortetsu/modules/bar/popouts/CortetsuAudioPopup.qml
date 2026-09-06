@@ -6,14 +6,11 @@ import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 import "../.."
 
-CortetsuSurface {
+CortetsuPopupSurface {
     id: root
     required property var popouts
     implicitWidth: 336
     implicitHeight: body.implicitHeight + CortetsuDesign.spacingComfortable * 2
-    radiusValue: CortetsuDesign.radiusLarge
-    baseColor: CortetsuDesign.colorSurfaceGlass
-    outlined: true
 
     ColumnLayout {
         id: body

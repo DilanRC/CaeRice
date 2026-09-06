@@ -6,9 +6,11 @@ popouts = ROOT / "cortetsu/modules/bar/popouts"
 required = ("CortetsuNetworkPopup.qml", "CortetsuAudioPopup.qml", "CortetsuBluetoothPopup.qml")
 for name in required:
     text = (popouts / name).read_text(encoding="utf-8")
-    for token in ("CortetsuSurface", "CortetsuSectionHeader", "CortetsuListRow"):
+    for token in ("CortetsuPopupSurface", "CortetsuSectionHeader", "CortetsuListRow"):
         assert token in text, f"{name} lacks {token}"
-    assert "CortetsuDesign.radiusLarge" in text
+popup_surface = (ROOT / "cortetsu/components/CortetsuPopupSurface.qml").read_text(encoding="utf-8")
+assert "CortetsuSurface" in popup_surface
+assert "CortetsuDesign.radiusLarge" in popup_surface
 assert (ROOT / "cortetsu/base/modules/bar/popouts/Content.qml").is_file()
 password = (popouts / "CortetsuWifiPasswordPopup.qml").read_text(encoding="utf-8")
 assert password.count("CortetsuButton") >= 2

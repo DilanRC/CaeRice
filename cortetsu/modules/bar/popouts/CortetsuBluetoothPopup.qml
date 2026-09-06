@@ -8,14 +8,11 @@ import "../../../components"
 import "../../CortetsuDesign.js" as CortetsuDesign
 import "../.."
 
-CortetsuSurface {
+CortetsuPopupSurface {
     id: root
     required property var popouts
     implicitWidth: 324
     implicitHeight: body.implicitHeight + CortetsuDesign.spacingComfortable * 2
-    radiusValue: CortetsuDesign.radiusLarge
-    baseColor: CortetsuDesign.colorSurfaceGlass
-    outlined: true
 
     readonly property var devices: [...Bluetooth.devices.values].sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired) || a.name.localeCompare(b.name))
 
