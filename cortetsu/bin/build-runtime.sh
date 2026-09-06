@@ -89,6 +89,8 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/cortetsu/modules/." "$STAGING/modules/"
+mkdir -p "$STAGING/components"
+cp -a "$REPO/cortetsu/components/." "$STAGING/components/"
 mkdir -p "$STAGING/services"
 cp -a "$REPO/cortetsu/services/." "$STAGING/services/"
 python3 "$REPO/cortetsu/bin/compose-panels.py" "$STAGING"
@@ -145,6 +147,7 @@ for required in \
     shell.qml \
     modules/BottomHub.qml \
     modules/CortetsuBottomHubView.qml \
+    components/ScreenState.qml \
     modules/CortetsuModeSegment.qml \
     modules/CortetsuWorkspaceDots.qml \
     modules/CortetsuAppRail.qml \

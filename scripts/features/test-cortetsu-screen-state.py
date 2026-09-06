@@ -4,10 +4,10 @@ from pathlib import Path
 repo = Path(__file__).resolve().parents[2]
 state = (repo / "cortetsu/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
 policy = (repo / "cortetsu/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
-patch = (repo / "caelestia/patches/components__ScreenState.qml.patch").read_text(encoding="utf-8")
 panels_patch = (repo / "caelestia/patches/modules__drawers__Panels__cortetsu-shell-state.qml.patch").read_text(encoding="utf-8")
 shell_state = (repo / "cortetsu/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
 shell_service = (repo / "cortetsu/services/ShellState.qml").read_text(encoding="utf-8")
+screen_component = (repo / "cortetsu/components/ScreenState.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__adapter.qml.patch").read_text(encoding="utf-8")
 scrim_patch = (repo / "caelestia/patches/modules__drawers__ContentWindow__scrim-adapter.qml.patch").read_text(encoding="utf-8")
 shortcuts_patch = (repo / "caelestia/patches/modules__Shortcuts.qml.patch").read_text(encoding="utf-8")
@@ -25,7 +25,7 @@ for flag in ("overview", "calendar", "clipboard", "hardware", "displayManager", 
     assert f"property bool {flag}" in state, flag
     assert flag in policy, flag
 for derived in ("retainedOverlayOpen", "requiresOverlayLayer", "requiresFullInputMask", "requiresWindowKeyboardFocus"):
-    assert derived in state and derived in patch, derived
+    assert derived in state and derived in screen_component, derived
 assert "required property QtObject legacyState" in state
 assert "function closeRetainedOverlays" in state
 assert "function closeRetainedOverlaysExcept(exceptFlag: string): void" in state
@@ -34,14 +34,17 @@ assert "function openExclusive" in policy
 assert "function isRetainedFlag(flag)" in policy
 assert "function closeOtherRetained(state, exceptFlag)" in policy
 assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects" in policy
-assert 'import "../modules"' in patch
-assert "cortetsuState" in patch
-assert "CortetsuShellState.registerState(modelData, root)" in patch
+assert 'import "../modules"' in screen_component
+assert "cortetsuState" in screen_component
+assert "CortetsuShellState.registerState(modelData, root)" in screen_component
 assert "CortetsuShellState.registerComponents(screen, root)" in panels_patch
 assert "import qs.services" not in shell_state
 assert "CortetsuShellState.forScreen(screen)" in shell_service
 assert "import Caelestia" not in shell_service
 assert "import qs.services" not in shell_service
+assert "CortetsuShellState.registerState(modelData, root)" in screen_component
+assert "CortetsuScreenState" in screen_component
+assert "import Caelestia" not in screen_component
 for marker in ("registerState", "unregisterState", "registerComponents", "unregisterComponents", "CortetsuHypr.focusedMonitor"):
     assert marker in shell_state, marker
 assert "function anySidebarOpen" in shell_state
