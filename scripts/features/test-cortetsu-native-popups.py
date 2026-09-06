@@ -77,7 +77,7 @@ assert 'visible: popoutsWrapper.content.detachedMode === "winfo"' in panels
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
 assert "!popouts.bottomAttached &&" in interactions
 assert "visible: panel.width > 0 && panel.height > 0 && (panel.offsetScale ?? 0) < 1" in content_window
-for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"kblayout"', '"lockstatus"', '"winfo"'):
+for token in ('function control(mode: string): bool', 'function detachedControl(mode: string): bool', 'componentsFor(screen)?.popouts', '"activewindow"', '"kblayout"', '"lockstatus"', '"winfo"'):
     assert token in hub, token
 assert 'if (mode === "winfo")' in hub
 assert "hubRoot.toggleDetachedControlFor(screen, mode);" in hub

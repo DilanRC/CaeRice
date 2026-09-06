@@ -227,7 +227,7 @@ Scope {
             hubRoot.toggleUtilitiesFor(CortetsuShellState.forActive()?.modelData);
         }
         function control(mode: string): bool {
-            const allowed = ["audio", "network", "bluetooth", "battery", "kblayout", "lockstatus", "winfo"];
+            const allowed = ["activewindow", "audio", "network", "bluetooth", "battery", "kblayout", "lockstatus", "winfo"];
             const screen = CortetsuShellState.forActive()?.modelData;
             if (!screen || !allowed.includes(mode))
                 return false;
@@ -242,7 +242,7 @@ Scope {
             return true;
         }
         function detachedControl(mode: string): bool {
-            const allowed = ["audio", "network", "bluetooth", "battery", "kblayout", "lockstatus", "winfo"];
+            const allowed = ["activewindow", "audio", "network", "bluetooth", "battery", "kblayout", "lockstatus", "winfo"];
             const screen = CortetsuShellState.forActive()?.modelData;
             if (!screen || !allowed.includes(mode))
                 return false;
