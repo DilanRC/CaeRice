@@ -48,10 +48,10 @@ PageBase {
 
             z: 1
             first: true
-            values: Config.bar.statusIcons.values
-            onItemMoved: (from, to) => GlobalConfig.bar.statusIcons.move(from, to)
-            onItemRemoved: index => GlobalConfig.bar.statusIcons.remove(index)
-            onItemToggled: (index, checked) => GlobalConfig.bar.statusIcons.at(index).enabled = checked
+            values: CortetsuConfig.statusIcons
+            onItemMoved: (from, to) => CortetsuConfig.moveStatusIcon(from, to)
+            onItemRemoved: index => CortetsuConfig.removeStatusIcon(index)
+            onItemToggled: (index, checked) => CortetsuConfig.setStatusIconEnabled(index, checked)
         }
 
         DialogSelectButton {
@@ -75,7 +75,7 @@ PageBase {
                 if (!selectedItem) // Should never happen but just in case
                     return;
 
-                GlobalConfig.bar.statusIcons.insert({
+                CortetsuConfig.insertStatusIcon({
                     id: selectedItem,
                     enabled: true
                 });

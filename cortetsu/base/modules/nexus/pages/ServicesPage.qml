@@ -209,8 +209,8 @@ PageBase {
             subtext: Gpu.name ? qsTr("Monitoring: %1").arg(Gpu.name) : qsTr("Override for GPU type")
             menuOnTop: true
             menuItems: root.gpuItems
-            active: root.gpuItems[GlobalConfig.services.gpuType]
-            onSelected: item => GlobalConfig.services.gpuType = root.gpuItems.indexOf(item)
+            active: root.gpuItems[CortetsuConfig.gpuType]
+            onSelected: item => CortetsuConfig.gpuType = root.gpuItems.indexOf(item)
         }
     }
 }

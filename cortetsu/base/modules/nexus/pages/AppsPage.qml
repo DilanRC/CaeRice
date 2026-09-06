@@ -8,6 +8,7 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.containers
+import qs.modules
 import qs.services
 import qs.utils
 import qs.modules.nexus.common
@@ -33,30 +34,30 @@ PageBase {
             first: true
             icon: "terminal"
             label: qsTr("Terminal")
-            status: GlobalConfig.general.apps.terminal.join(" ")
-            onSelected: app => GlobalConfig.general.apps.terminal = app.command
+            status: CortetsuConfig.terminalCommand.join(" ")
+            onSelected: app => CortetsuConfig.terminalCommand = app.command
         }
 
         DefaultRow {
             icon: "volume_up"
             label: qsTr("Audio")
-            status: GlobalConfig.general.apps.audio.join(" ")
-            onSelected: app => GlobalConfig.general.apps.audio = app.command
+            status: CortetsuConfig.audioCommand.join(" ")
+            onSelected: app => CortetsuConfig.audioCommand = app.command
         }
 
         DefaultRow {
             icon: "play_circle"
             label: qsTr("Media playback")
-            status: GlobalConfig.general.apps.playback.join(" ")
-            onSelected: app => GlobalConfig.general.apps.playback = app.command
+            status: CortetsuConfig.playbackCommand.join(" ")
+            onSelected: app => CortetsuConfig.playbackCommand = app.command
         }
 
         DefaultRow {
             last: true
             icon: "folder"
             label: qsTr("File manager")
-            status: GlobalConfig.general.apps.explorer.join(" ")
-            onSelected: app => GlobalConfig.general.apps.explorer = app.command
+            status: CortetsuConfig.explorerCommand.join(" ")
+            onSelected: app => CortetsuConfig.explorerCommand = app.command
         }
 
         // Library
