@@ -15,6 +15,7 @@ if not path.is_file():
 text = path.read_text(encoding="utf-8")
 
 required_imports = (
+    'import "../CortetsuDesign.js" as CortetsuDesign',
     "import qs.modules.overview as Overview",
     "import qs.modules.clipboard as Clipboard",
     "import qs.modules.hardware as Hardware",
@@ -93,7 +94,7 @@ wrappers = (
         "        screenState: root.screenState\n"
         "        anchors.horizontalCenter: parent.horizontalCenter\n"
         "        anchors.bottom: parent.bottom\n"
-        "        anchors.bottomMargin: bar.implicitHeight + Tokens.padding.medium\n"
+        "        anchors.bottomMargin: bar.implicitHeight + CortetsuDesign.spacingStandard\n"
         "    }\n\n",
     ),
 )
