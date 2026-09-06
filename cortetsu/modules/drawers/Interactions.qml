@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
-import Caelestia.Config
+import ".."
 import qs.components
 import qs.components.controls
 import qs.modules.bar as Bar
@@ -25,12 +25,12 @@ CustomMouseArea {
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
-        return y >= panelY - Config.border.rounding && y <= panelY + panel.height + Config.border.rounding;
+        return y >= panelY - CortetsuOverlayCortetsuOverlayConfig.border.rounding && y <= panelY + panel.height + CortetsuOverlayCortetsuOverlayConfig.border.rounding;
     }
 
     function withinPanelWidth(panel: Item, x: real, y: real): bool {
         const panelX = bar.implicitWidth + panel.x;
-        return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding;
+        return x >= panelX - CortetsuOverlayCortetsuOverlayConfig.border.rounding && x <= panelX + panel.width + CortetsuOverlayCortetsuOverlayConfig.border.rounding;
     }
 
     function inLeftPanel(panel: Item, x: real, y: real): bool {
@@ -38,17 +38,17 @@ CustomMouseArea {
     }
 
     function inRightPanel(panel: Item, x: real, y: real): bool {
-        return x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
+        return x > Math.min(width - CortetsuOverlayCortetsuOverlayConfig.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y < Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
+        return y < Math.max(CortetsuOverlayCortetsuOverlayConfig.border.minThickness, CortetsuOverlayCortetsuOverlayConfig.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
     }
 
     function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y > height - Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) - (isCorner ? Config.border.rounding : 0) && withinPanelWidth(panel, x, y);
+        return y > height - Math.max(CortetsuOverlayCortetsuOverlayConfig.border.minThickness, CortetsuOverlayCortetsuOverlayConfig.border.thickness + panelHeight) - (isCorner ? CortetsuOverlayCortetsuOverlayConfig.border.rounding : 0) && withinPanelWidth(panel, x, y);
     }
 
     function insidePanel(panel: Item, x: real, y: real): bool {
@@ -91,10 +91,10 @@ CustomMouseArea {
                 bar.closeTray();
             }
 
-            if (Config.bar.showOnHover)
+            if (CortetsuOverlayConfig.bar.showOnHover)
                 bar.isHovered = false;
 
-            if (false && Config.sidebar.showOnHover)
+            if (false && CortetsuOverlayConfig.sidebar.showOnHover)
                 screenState.sidebar = false;
         }
     }
@@ -114,14 +114,14 @@ CustomMouseArea {
         }
 
         // Show bar in non-exclusive mode on hover
-        if (screenState && !screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
+        if (screenState && !screenState.bar && CortetsuOverlayConfig.bar.showOnHover && x < bar.clampedWidth)
             bar.isHovered = true;
 
         // Show/hide bar on drag
         if (pressed && dragStart.x < bar.clampedWidth) {
-            if (dragX > Config.bar.dragThreshold)
+            if (dragX > CortetsuOverlayConfig.bar.dragThreshold)
                 screenState.bar = true;
-            else if (dragX < -Config.bar.dragThreshold)
+            else if (dragX < -CortetsuOverlayConfig.bar.dragThreshold)
                 screenState.bar = false;
         }
 
@@ -142,24 +142,24 @@ CustomMouseArea {
             const showSidebar = false;
 
             // Show sidebar on hover (top-right corner, bounded by notification panel height)
-            if (false && Config.sidebar.showOnHover) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+            if (false && CortetsuOverlayConfig.sidebar.showOnHover) {
+                const sidebarTriggerY = Math.max(CortetsuOverlayConfig.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
+                const showSidebarHover = x > Math.min(width - CortetsuOverlayConfig.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
                 if (showSidebarHover && !screenState.sidebar)
                     screenState.sidebar = true;
             }
 
             // Show/hide session on drag
             if (pressed && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
+                if (dragX < -CortetsuOverlayConfig.session.dragThreshold)
                     screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
+                else if (dragX > CortetsuOverlayConfig.session.dragThreshold)
                     screenState.session = false;
 
                 // Show sidebar on drag if in session area and session is nearly fully visible
-                if (showSidebar && panels.session.offsetScale <= 0 && dragX < -Config.sidebar.dragThreshold)
+                if (showSidebar && panels.session.offsetScale <= 0 && dragX < -CortetsuOverlayConfig.sidebar.dragThreshold)
                     screenState.sidebar = true;
-            } else if (showSidebar && dragX < -Config.sidebar.dragThreshold) {
+            } else if (showSidebar && dragX < -CortetsuOverlayConfig.sidebar.dragThreshold) {
                 // Show sidebar on drag if not in session area
                 screenState.sidebar = true;
             }
@@ -180,16 +180,16 @@ CustomMouseArea {
 
             // Show/hide session on drag
             if (pressed && outOfSidebar && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
+                if (dragX < -CortetsuOverlayConfig.session.dragThreshold)
                     screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
+                else if (dragX > CortetsuOverlayConfig.session.dragThreshold)
                     screenState.session = false;
             }
 
             // Show/hide sidebar on hover
-            if (false && Config.sidebar.showOnHover && !pressed) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+            if (false && CortetsuOverlayConfig.sidebar.showOnHover && !pressed) {
+                const sidebarTriggerY = Math.max(CortetsuOverlayConfig.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
+                const showSidebarHover = x > Math.min(width - CortetsuOverlayConfig.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
                 if (showSidebarHover && !screenState.sidebar) {
                     screenState.sidebar = true;
                 } else {
@@ -200,23 +200,23 @@ CustomMouseArea {
             }
 
             // Hide sidebar on drag
-            if (false && pressed && inRightPanel(panels.sidebar, dragStart.x, 0) && dragX > Config.sidebar.dragThreshold)
+            if (false && pressed && inRightPanel(panels.sidebar, dragStart.x, 0) && dragX > CortetsuOverlayConfig.sidebar.dragThreshold)
                 screenState.sidebar = false;
         }
 
         // Show launcher on hover, or show/hide on drag if hover is disabled
-        if (Config.launcher.showOnHover) {
+        if (CortetsuOverlayConfig.launcher.showOnHover) {
             if (!screenState.launcher && inBottomPanel(panels.launcher, x, y))
                 screenState.launcher = true;
         } else if (pressed && inBottomPanel(panels.launcher, dragStart.x, dragStart.y) && withinPanelWidth(panels.launcher, x, y)) {
-            if (dragY < -Config.launcher.dragThreshold)
+            if (dragY < -CortetsuOverlayConfig.launcher.dragThreshold)
                 screenState.launcher = true;
-            else if (dragY > Config.launcher.dragThreshold)
+            else if (dragY > CortetsuOverlayConfig.launcher.dragThreshold)
                 screenState.launcher = false;
         }
 
         // Show dashboard on hover
-        const showDashboard = Config.dashboard.showOnHover && inTopPanel(panels.dashboard, x, y);
+        const showDashboard = CortetsuOverlayConfig.dashboard.showOnHover && inTopPanel(panels.dashboard, x, y);
 
         // Always update visibility based on hover if not in shortcut mode
         if (!dashboardShortcutActive) {
@@ -228,9 +228,9 @@ CustomMouseArea {
 
         // Show/hide dashboard on drag (for touchscreen devices)
         if (pressed && inTopPanel(panels.dashboard, dragStart.x, dragStart.y) && withinPanelWidth(panels.dashboard, x, y)) {
-            if (dragY > Config.dashboard.dragThreshold)
+            if (dragY > CortetsuOverlayConfig.dashboard.dragThreshold)
                 screenState.dashboard = true;
-            else if (dragY < -Config.dashboard.dragThreshold)
+            else if (dragY < -CortetsuOverlayConfig.dashboard.dragThreshold)
                 screenState.dashboard = false;
         }
 
@@ -313,4 +313,3 @@ CustomMouseArea {
         target: root.screenState
     }
 }
-

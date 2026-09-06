@@ -7,10 +7,10 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import Caelestia.Blobs
-import Caelestia.Config
+import ".."
 import qs.components
 import qs.components.containers
-import qs.services
+import "../../services"
 import qs.modules.bar
 
 StyledWindow {
@@ -37,10 +37,10 @@ StyledWindow {
 
     property real fsTransitionProg: hasFullscreen ? 1 : 0
     readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
-    readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
-    readonly property real borderRounding: contentItem.Config.border.rounding * (1 - fsTransitionProg)
+    readonly property real borderThickness: CortetsuOverlayConfig.border.thickness * (1 - fsTransitionProg)
+    readonly property real borderRounding: CortetsuOverlayConfig.border.rounding * (1 - fsTransitionProg)
     readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
-    readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
+    readonly property real borderLayoutThickness: hasFullscreen ? 0 : CortetsuOverlayConfig.border.thickness
 
     property color surfaceColour: Colours.tPalette.m3surface
 
@@ -53,8 +53,8 @@ StyledWindow {
 
         const thresholds = [];
         for (const panel of ["dashboard", "launcher", "session", "sidebar"])
-            if (contentItem.Config[panel].enabled)
-                thresholds.push(contentItem.Config[panel].dragThreshold);
+            if (CortetsuOverlayConfig[panel].enabled)
+                thresholds.push(CortetsuOverlayConfig[panel].dragThreshold);
         return Math.max(...thresholds);
     }
 
@@ -68,7 +68,7 @@ StyledWindow {
 
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: screenState.cortetsuState?.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
+    WlrLayershell.layer: screenState.cortetsuState?.overview ? WlrLayer.Overlay : ((fsTransitionProg > 0 && CortetsuOverlayConfig.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top)
     WlrLayershell.keyboardFocus: screenState.cortetsuState?.requiresWindowKeyboardFocus ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     mask: screenState.cortetsuState?.requiresFullInputMask ? null : (hasFullscreen ? emptyRegion : regions)
@@ -129,7 +129,7 @@ StyledWindow {
 
         active: {
             const s = root.screenState;
-            const conf = root.contentItem.Config;
+            const conf = root.CortetsuOverlayConfig;
             if (s.cortetsuState?.retainedOverlayOpen)
                 return true;
             if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled) || (s.utilities && conf.utilities.enabled))
@@ -155,7 +155,7 @@ StyledWindow {
 
     StyledRect {
         anchors.fill: parent
-        opacity: root.screenState.cortetsuState?.overview ? 0.58 : ((root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
+        opacity: root.screenState.cortetsuState?.overview ? 0.58 : ((root.screenState.session && CortetsuOverlayConfig.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0)
         color: Colours.palette.m3scrim
 
         Behavior on opacity {
@@ -179,7 +179,7 @@ StyledWindow {
             id: blobGroup
 
             color: root.surfaceColour
-            smoothing: root.contentItem.Config.border.smoothing
+            smoothing: root.CortetsuOverlayConfig.border.smoothing
         }
 
         BlobInvertedRect {
@@ -358,7 +358,6 @@ StyledWindow {
         implicitWidth: panel.width
         implicitHeight: panel.height
         radius: Tokens.rounding.extraLarge
-        deformScale: (deformAmount * Config.appearance.deformScale) / 10000
+        deformScale: (deformAmount * CortetsuOverlayConfig.appearance.deformScale) / 10000
     }
 }
-
