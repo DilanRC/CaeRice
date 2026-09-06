@@ -184,7 +184,6 @@ status_cmd() {
     show_generation current "$CURRENT"
     show_generation previous "$PREVIOUS"
     if [[ -e "$LEGACY_PREVIOUS" || -L "$LEGACY_PREVIOUS" ]]; then show_generation archived_previous "$LEGACY_PREVIOUS"; fi
-    printf '  package_reference=/etc/xdg/quickshell/caelestia (read-only)\n'
     if [[ -n "$ROOT" && -f "$ROOT/core/dotfiles.py" ]]; then
         printf '\n'; dotfiles_cmd status
     fi
