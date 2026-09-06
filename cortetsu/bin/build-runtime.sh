@@ -194,6 +194,8 @@ for required in \
     services/ShellState.qml \
     modules/CortetsuStateLayer.qml \
     modules/CortetsuMask.qml \
+    modules/areapicker/AreaPicker.qml \
+    modules/areapicker/Picker.qml \
     compatibility.json \
     composition.json
 do
