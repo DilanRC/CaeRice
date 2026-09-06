@@ -20,6 +20,7 @@ bar_clock = (modules / "bar/components/Clock.qml").read_text(encoding="utf-8")
 status_icons = (modules / "bar/components/StatusIcons.qml").read_text(encoding="utf-8")
 battery_monitor = (modules / "BatteryMonitor.qml").read_text(encoding="utf-8")
 service_loader = (modules / "ServiceLoader.qml").read_text(encoding="utf-8")
+game_mode = (repo / "cortetsu/services/GameMode.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -50,6 +51,9 @@ assert "notify-send" in battery_monitor and '"systemctl", "hibernate"' in batter
 for legacy in ("Caelestia", "GlobalConfig", "GameMode", "Notifs", "Weather", "VPN"):
     assert legacy not in service_loader, legacy
 assert "CortetsuAudio" in service_loader and "CortetsuNotifications" in service_loader
+for legacy in ("Caelestia", "GlobalConfig", "Toaster", "SessionManager", "Hypr.extras"):
+    assert legacy not in game_mode, legacy
+assert "CortetsuHypr.dispatch" in game_mode and "target: \"gameMode\"" in game_mode
 assert "import Caelestia" not in visualiser
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
