@@ -154,6 +154,8 @@ for required in \
     components/misc/CustomShortcut.qml \
     utils/NetworkConnection.qml \
     utils/Paths.qml \
+    utils/Icons.qml \
+    utils/SysInfo.qml \
     modules/CortetsuModeSegment.qml \
     modules/CortetsuWorkspaceDots.qml \
     modules/CortetsuAppRail.qml \
