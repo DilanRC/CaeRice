@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LIVE="${CORTETSU_LIVE_ROOT:-/etc/xdg/quickshell/caelestia}"
+LIVE="${CORTETSU_LIVE_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu/current}"
 BASE="$HOME/.local/share/cortetsu/upstream"
 
 # Runtime QML.

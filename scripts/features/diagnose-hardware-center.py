@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-LIVE = Path("/etc/xdg/quickshell/caelestia")
+LIVE = Path(os.environ.get("CORTETSU_LIVE_ROOT", str(Path.home() / ".config/quickshell/cortetsu/current")))
 HOME = Path.home()
 RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"))
 
@@ -65,7 +65,7 @@ print_json_command("POWER TELEMETRY", HOME / ".local/bin/cortetsu-hardware-power
 print_json_command("POWER AUTOMATION", HOME / ".local/bin/cortetsu-power-auto-control", "status")
 
 print("\n===== IPC =====")
-ipc = run("qs", "-c", "caelestia", "ipc", "call", "hardware", "isOpen")
+ipc = run("qs", "-p", str(LIVE), "ipc", "call", "hardware", "isOpen")
 print(f"hardware isOpen: {(ipc.stdout or ipc.stderr).strip()}")
 
 print("\n===== SYSTEMD AUTO SERVICE =====")

@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$REPO" ]] || { echo "ERROR: ejecuta dentro de Cortetsu" >&2; exit 1; }
-LIVE="/etc/xdg/quickshell/caelestia"
+LIVE="${CORTETSU_LIVE_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu/current}"
 USERCFG="$HOME/.config/hypr/hypr-user.lua"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.local/share/cortetsu/upstream/snapshots/update-sad-$STAMP"
@@ -28,10 +28,10 @@ WIRE_JSON="$(python3 "$REPO/scripts/features/wire_sad_shell.py" --live "$LIVE" -
 echo "Wiring: $WIRE_JSON"
 python3 -c 'import json,sys; d=json.loads(sys.argv[1]); sys.exit(0 if d.get("ok") else 1)' "$WIRE_JSON" || exit 2
 
-sudo install -m 0644 "$STAGE/shell.qml" "$LIVE/shell.qml"
-sudo install -m 0644 "$STAGE/components/ScreenState.qml" "$LIVE/components/ScreenState.qml"
-sudo install -m 0644 "$STAGE/modules/drawers/Panels.qml" "$LIVE/modules/drawers/Panels.qml"
-sudo install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/ContentWindow.qml"
+install -m 0644 "$STAGE/shell.qml" "$LIVE/shell.qml"
+install -m 0644 "$STAGE/components/ScreenState.qml" "$LIVE/components/ScreenState.qml"
+install -m 0644 "$STAGE/modules/drawers/Panels.qml" "$LIVE/modules/drawers/Panels.qml"
+install -m 0644 "$STAGE/modules/drawers/ContentWindow.qml" "$LIVE/modules/drawers/ContentWindow.qml"
 install -m 0644 "$STAGE/user-config/hypr-user.lua" "$USERCFG"
 
 echo "Canonical Hardware/Display/Wallpaper wiring applied."

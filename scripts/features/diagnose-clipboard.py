@@ -10,7 +10,7 @@ from pathlib import Path
 
 HOME = Path.home()
 UID = os.getuid()
-LIVE = Path("/etc/xdg/quickshell/caelestia")
+LIVE = Path(os.environ.get("CORTETSU_LIVE_ROOT", str(Path.home() / ".config/quickshell/cortetsu/current")))
 REPO = HOME / "Cortetsu"
 
 
@@ -46,18 +46,18 @@ print(f"Log: {log}")
 start = log.stat().st_size
 
 # Ensure a deterministic initial state, then reproduce the bug without keyboard input.
-run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "close")
+run("qs", "-p", str(LIVE), "ipc", "call", "clipboard", "close")
 time.sleep(0.4)
 
-open_result = run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "open")
+open_result = run("qs", "-p", str(LIVE), "ipc", "call", "clipboard", "open")
 if open_result.returncode != 0:
     print(open_result.stdout, end="")
     print(open_result.stderr, end="")
     raise SystemExit("ERROR: no pude abrir clipboard por IPC")
 
 time.sleep(3.0)
-is_open = run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "isOpen")
-run("qs", "-c", "caelestia", "ipc", "call", "clipboard", "close")
+is_open = run("qs", "-p", str(LIVE), "ipc", "call", "clipboard", "isOpen")
+run("qs", "-p", str(LIVE), "ipc", "call", "clipboard", "close")
 time.sleep(0.5)
 
 with log.open("rb") as f:
@@ -104,8 +104,8 @@ for rel in files:
 
 print_section("SCHEME")
 scheme_candidates = [
-    HOME / ".local/state/caelestia/scheme.json",
-    HOME / ".local/share/caelestia/scheme.json",
+    HOME / ".local/state/cortetsu/scheme.json",
+    HOME / ".local/share/cortetsu/scheme.json",
 ]
 found = False
 for scheme in scheme_candidates:

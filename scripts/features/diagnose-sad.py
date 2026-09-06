@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-LIVE = Path(os.environ.get("CORTETSU_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"))
+LIVE = Path(os.environ.get("CORTETSU_LIVE_ROOT", str(Path.home() / ".config/quickshell/cortetsu/current")))
 UID = os.getuid()
 errors: list[str] = []
 warnings: list[str] = []
@@ -184,7 +184,7 @@ def main() -> None:
     ipc: dict[str, dict] = {}
     for feature, spec in WIRING.items():
         target = spec["ipc"]
-        cp = cmd(["qs", "-c", "caelestia", "ipc", "call", target, "isOpen"], 8)
+        cp = cmd(["qs", "-p", str(LIVE), "ipc", "call", target, "isOpen"], 8)
         out = cp.stdout.strip() if cp else ""
         ok = bool(cp and cp.returncode == 0 and out in ("true", "false"))
         ipc[feature] = {"target": target, "ok": ok, "output": out}
@@ -193,7 +193,7 @@ def main() -> None:
 
     retired_ipc: dict[str, str] = {}
     for target in ["gaming", "updater"]:
-        cp = cmd(["qs", "-c", "caelestia", "ipc", "call", target, "isOpen"], 8)
+        cp = cmd(["qs", "-p", str(LIVE), "ipc", "call", target, "isOpen"], 8)
         out = cp.stdout.strip() if cp else ""
         retired_ipc[target] = out
         if out in ("true", "false"):
