@@ -55,7 +55,7 @@ def desktop_entries():
 
 shell_json = HOME / ".config/caelestia/shell.json"
 cli_json = HOME / ".config/caelestia/cli.json"
-scheme_json = HOME / ".local/state/caelestia/scheme.json"
+scheme_json = Path(os.environ.get("XDG_STATE_HOME", HOME / ".local/state")) / "cortetsu/scheme.json"
 
 section("CURRENT SCHEME")
 scheme = load_json(scheme_json)
