@@ -55,6 +55,8 @@ assert "GlobalConfig" not in wallpaper_style and "GlobalCortetsuConfig" not in w
 assert "CortetsuConfig.transparencyEnabled" in wallpaper_style
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
+button_row = (repo / "cortetsu/base/components/controls/ButtonRow.qml").read_text(encoding="utf-8")
+assert "RowLayout" in button_row and "property real spacing" in button_row
 assert "GlobalConfig.launcher.favouriteApps" not in hub
 assert "GlobalConfig.bar.tray.hiddenIcons" not in hub
 assert "GlobalConfig.bar.workspaces.shown" not in hub
