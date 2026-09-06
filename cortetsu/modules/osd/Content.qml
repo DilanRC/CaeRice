@@ -26,16 +26,36 @@ Column {
         delegate: CortetsuSurface {
             required property var modelData
             implicitWidth: 240
-            implicitHeight: 48
+            implicitHeight: 62
             radiusValue: CortetsuDesign.radiusMedium
             baseColor: CortetsuDesign.colorSurfaceGlass
             outlined: true
-            Row {
+
+            Column {
                 anchors.fill: parent
                 anchors.margins: CortetsuDesign.spacingStandard
-                spacing: CortetsuDesign.spacingStandard
-                CortetsuIcon { text: modelData.icon; color: CortetsuDesign.colorPrimary; iconSize: CortetsuTypography.iconMediumPx }
-                CortetsuText { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; textSize: CortetsuTypography.bodyPx; anchors.verticalCenter: parent.verticalCenter }
+                spacing: CortetsuDesign.spacingCompact
+
+                Row {
+                    width: parent.width
+                    spacing: CortetsuDesign.spacingStandard
+                    CortetsuIcon { text: modelData.icon; color: root.muted && index === 0 ? CortetsuDesign.colorOnSurfaceVariant : CortetsuDesign.colorPrimary; iconSize: CortetsuTypography.iconMediumPx }
+                    CortetsuText { text: `${modelData.label}  ${Math.round(modelData.value * 100)}%`; textSize: CortetsuTypography.bodyPx; anchors.verticalCenter: parent.verticalCenter }
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: 4
+                    radius: 2
+                    color: CortetsuDesign.colorOutlineVariant
+
+                    Rectangle {
+                        width: parent.width * Math.max(0, Math.min(1, modelData.value))
+                        height: parent.height
+                        radius: parent.radius
+                        color: root.muted && index === 0 ? CortetsuDesign.colorOnSurfaceVariant : CortetsuDesign.colorPrimary
+                    }
+                }
             }
             MouseArea {
                 anchors.fill: parent

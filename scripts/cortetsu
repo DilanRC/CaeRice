@@ -269,6 +269,8 @@ test_cmd() {
         "scripts/features/eval-overview-popout-exclusivity.py"
         "scripts/features/test-cortetsu-wave0-foundations.py"
         "scripts/features/eval-cortetsu-wave0-foundations.py"
+        "scripts/features/test-cortetsu-wave4-quick-settings-osd.py"
+        "scripts/features/eval-cortetsu-wave4-quick-settings-osd.py"
         "scripts/features/test-cortetsu-native-design-system.py"
         "scripts/features/eval-cortetsu-native-design-system.py"
         "scripts/features/test-cortetsu-native-popups.py"
