@@ -360,7 +360,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--live",
-        default=os.environ.get("CORTETSU_LIVE_ROOT", "/etc/xdg/quickshell/caelestia"),
+        default=os.environ.get(
+            "CORTETSU_LIVE_ROOT",
+            str(Path.home() / ".config/quickshell/cortetsu/current"),
+        ),
     )
     parser.add_argument(
         "--usercfg",
