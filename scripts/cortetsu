@@ -194,6 +194,7 @@ status_cmd() {
 }
 
 run_python_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; python3 "$ROOT/$relative"; }
+run_node_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; node "$ROOT/$relative"; }
 run_bash_test() { local relative="$1"; require_repo; require_file "$ROOT/$relative"; printf '==> %s\n' "$relative"; bash "$ROOT/$relative"; }
 
 legacy_processes_cmd() {
@@ -295,6 +296,7 @@ test_cmd() {
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
+    run_node_test "cortetsu/tests/test-wallpaper-search.node.js"
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
     run_bash_test "scripts/features/test-upstream-bootstrap.sh"
     run_bash_test "cortetsu/tests/test-calendar-readonly.sh"

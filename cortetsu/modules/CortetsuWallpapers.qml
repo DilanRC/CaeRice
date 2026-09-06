@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "."
+import "CortetsuWallpaperSearch.js" as WallpaperSearch
 
 Singleton {
     id: root
@@ -37,10 +38,14 @@ Singleton {
     }
 
     function query(search: string): var {
-        const needle = String(search ?? "").trim().toLowerCase();
+        const needle = String(search ?? "").trim();
         if (!needle)
             return list;
-        return list.filter(w => `${w.name} ${w.relativePath}`.toLowerCase().includes(needle));
+        return list.filter(w => WallpaperSearch.matches(
+            `${w.name} ${w.relativePath}`,
+            needle,
+            CortetsuConfig.useFuzzyWallpapers
+        ));
     }
 
     function reload(): void {

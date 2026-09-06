@@ -16,6 +16,7 @@ manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
 desktop_clock = (modules / "background/DesktopClock.qml").read_text(encoding="utf-8")
 spectrum = (repo / "cortetsu/services/CortetsuSpectrum.qml").read_text(encoding="utf-8")
 visualiser = (modules / "background/Visualiser.qml").read_text(encoding="utf-8")
+wallpaper_service = (modules / "CortetsuWallpapers.qml").read_text(encoding="utf-8")
 bar_clock = (modules / "bar/components/Clock.qml").read_text(encoding="utf-8")
 status_icons = (modules / "bar/components/StatusIcons.qml").read_text(encoding="utf-8")
 battery_monitor = (modules / "BatteryMonitor.qml").read_text(encoding="utf-8")
@@ -45,6 +46,8 @@ assert "import Caelestia" not in desktop_clock
 assert "CortetsuRegional.useTwelveHourClock" in desktop_clock
 assert "Time.hourStr" in desktop_clock and "Time.format" in desktop_clock
 assert "CortetsuConfig.visualiserBars" in spectrum
+assert "CortetsuConfig.useFuzzyWallpapers" in wallpaper_service
+assert "WallpaperSearch.matches" in wallpaper_service
 assert "command -v cava" in spectrum
 assert "Caelestia" not in spectrum
 assert "CortetsuSpectrum.values" in visualiser
