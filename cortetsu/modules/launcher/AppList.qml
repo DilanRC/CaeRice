@@ -715,7 +715,6 @@ GridView {
                 anchors.rightMargin: 8
 
                 text: "check"
-                fill: 1
                 color: CortetsuDesign.colorPrimary
             }
         }
