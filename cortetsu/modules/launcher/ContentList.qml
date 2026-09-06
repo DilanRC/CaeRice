@@ -8,7 +8,7 @@ import "../CortetsuTypography.js" as CortetsuTypography
 import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
-import "../CortetsuAnim.qml"
+import ".."
 import qs.utils
 
 Item {

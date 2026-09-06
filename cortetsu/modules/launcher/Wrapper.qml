@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import "../CortetsuDesign.js" as CortetsuDesign
-import "../CortetsuAnim.qml"
+import ".."
 import qs.modules.launcher.services
 
 Item {
