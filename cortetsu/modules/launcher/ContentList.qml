@@ -37,7 +37,7 @@ Item {
             name: "apps"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(root.760, 760)
+                root.implicitWidth: Math.max(760, 760)
                 root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
             }
@@ -51,8 +51,8 @@ Item {
             name: "wallpapers"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(root.760 * 1.2, wallpaperList.implicitWidth)
-                root.implicitHeight: root.300
+                root.implicitWidth: Math.max(760 * 1.2, wallpaperList.implicitWidth)
+                root.implicitHeight: 300
                 wallpaperList.active: true
             }
         }

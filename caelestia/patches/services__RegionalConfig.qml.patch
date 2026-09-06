@@ -265,8 +265,8 @@
 -            }
 -            hourlyForecast = hourlyList;
 +            cc = parsed.current;
-+            forecast = parsed.forecast.map(day => ({ ...day, icon: Icons.getWeatherIcon(day.weatherCode) }));
-+            hourlyForecast = parsed.hourlyForecast.map(hour => ({ ...hour, icon: Icons.getWeatherIcon(hour.weatherCode) }));
++            forecast = parsed.forecast.map(day => Object.assign({}, day, { icon: Icons.getWeatherIcon(day.weatherCode) }));
++            hourlyForecast = parsed.hourlyForecast.map(hour => Object.assign({}, hour, { icon: Icons.getWeatherIcon(hour.weatherCode) }));
          });
      }
  
