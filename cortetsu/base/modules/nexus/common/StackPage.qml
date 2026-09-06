@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
-import Caelestia.Config
 import qs.components
 import qs.modules.nexus
+import qs.services
 
 StackView {
     id: root

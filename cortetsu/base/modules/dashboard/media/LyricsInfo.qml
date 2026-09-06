@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia
 import Caelestia.Blobs
-import Caelestia.Config
 import Caelestia.Services
 import qs.components
 import qs.services
