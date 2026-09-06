@@ -5,6 +5,7 @@ repo = Path(__file__).resolve().parents[2]
 modules = repo / "cortetsu/modules"
 hypr = (modules / "CortetsuHypr.qml").read_text(encoding="utf-8")
 screens = (modules / "CortetsuScreens.qml").read_text(encoding="utf-8")
+service = (repo / "cortetsu/services/Hypr.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in hypr and "pragma Singleton" in screens
 for marker in ("toplevels", "workspaces", "monitors", "activeToplevel", "focusedWorkspace", "focusedMonitor", "activeWsId", "usingLua", "dispatch", "isTaskbarToplevel"):
@@ -17,6 +18,11 @@ assert "import Quickshell.Hyprland" in hypr
 assert "Hyprland.dispatch(request)" in hypr
 assert "Hyprland.monitorFor(screen)" in hypr
 assert "Quickshell.screens" in screens
+assert "CortetsuHypr" in service
+assert "import Caelestia" not in service
+assert "import Caelestia.Config" not in service
+assert "import Caelestia.Services" not in service
+assert "Hyprland.dispatch(message)" in service
 
 for path in modules.rglob("*.qml"):
     if path.name in {"CortetsuHypr.qml", "CortetsuScreens.qml"}:

@@ -169,6 +169,7 @@ for required in \
     modules/CortetsuShortcut.qml \
     modules/CortetsuShellState.qml \
     services/Time.qml \
+    services/Hypr.qml \
     services/Brightness.qml \
     services/Audio.qml \
     services/Players.qml \
