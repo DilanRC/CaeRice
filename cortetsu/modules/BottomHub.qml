@@ -11,6 +11,7 @@ import "../services"
 import qs.utils
 import qs.modules.launcher.services
 import "OverlayPolicy.js" as OverlayPolicy
+import "utilities/toasts" as Toasts
 
 Scope {
     id: hubRoot
@@ -628,6 +629,26 @@ Scope {
             visible: hubRoot.shown
             color: "transparent"
 
+            mask: Region {
+                Region {
+                    x: 0
+                    y: win.height - bottomHubView.height
+                    width: win.width
+                    height: bottomHubView.height
+                }
+                Region {
+                    x: toasts.x
+                    y: toasts.y
+                    width: toasts.width
+                    height: toasts.height
+                }
+            }
+
+            focusable: toasts.visibleToasts.length > 0
+            WlrLayershell.keyboardFocus: toasts.visibleToasts.length > 0
+                ? WlrKeyboardFocus.Exclusive
+                : WlrKeyboardFocus.None
+
             anchors.bottom: true
             margins.bottom: 2
 
@@ -635,7 +656,7 @@ Scope {
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
 
             implicitWidth: (modelData?.width ?? 0) - hubMargin * 2
-            implicitHeight: bottomHubView.implicitHeight + 6
+            implicitHeight: bottomHubView.implicitHeight + 6 + toasts.implicitHeight + toasts.spacing
 
             CortetsuBottomHubView {
                 id: bottomHubView
@@ -708,6 +729,14 @@ Scope {
                 onToggleIdleInhibitorRequested: CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled
                 onCalendarRequested: hubRoot.openCalendarFor(win.modelData)
                 onSessionRequested: win.toggleSession()
+            }
+
+            Toasts.Toasts {
+                id: toasts
+                anchors.right: parent.right
+                anchors.bottom: bottomHubView.top
+                anchors.margins: toasts.spacing
+                z: 100
             }
         }
     }

@@ -4,14 +4,18 @@ repo = Path(__file__).resolve().parents[2]
 toaster = (repo / "cortetsu/services/CortetsuToaster.qml").read_text(encoding="utf-8")
 view = (repo / "cortetsu/modules/utilities/toasts/Toasts.qml").read_text(encoding="utf-8")
 item = (repo / "cortetsu/modules/utilities/toasts/ToastItem.qml").read_text(encoding="utf-8")
-panels = (repo / "cortetsu/modules/drawers/Panels.qml").read_text(encoding="utf-8")
+bottom_hub = (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 
 criteria = {
     "host has an effective width": "width: implicitWidth" in view,
     "host has an effective height": "height: implicitHeight" in view,
     "host tracks repeater children": "implicitHeight: column.childrenRect.height" in view,
     "toast host stays above panels": "z: 100" in view,
-    "toast avoids the bottom bar": "anchors.bottom: utilities.top" in panels,
+    "toast requests active keyboard focus": "forceActiveFocus()" in view,
+    "mouse dismissal exists": "MouseArea" in view and "CortetsuToaster.dismiss(root.visibleToasts[0].id)" in view,
+    "toast shares the bar layer": 'import "utilities/toasts" as Toasts' in bottom_hub,
+    "toast sits above the bar": "anchors.bottom: bottomHubView.top" in bottom_hub,
+    "toast window expands for content": "toasts.implicitHeight" in bottom_hub,
     "event watcher deduplicates per host": "property var consumed" in (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8"),
     "file changes debounce event reload": "onFileChanged: pomodoroNotificationReload.restart()" in (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8"),
     "event reload runs after debounce": "onTriggered: pomodoroNotification.reload()" in (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8"),
@@ -23,6 +27,7 @@ criteria = {
     "long messages wrap": "wrapMode: Text.Wrap" in item,
     "critical toasts use urgency color": "toast.type === 2" in item,
     "keyboard dismissal exists": "Keys.onEscapePressed" in item,
+    "toast window captures Escape": "WlrKeyboardFocus.Exclusive" in bottom_hub,
     "automatic expiration exists": "interval: 5000" in item,
 }
 

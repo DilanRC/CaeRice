@@ -12,7 +12,6 @@ import ".."
 import "../../components"
 import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
-import "../utilities/toasts" as Toasts
 import "../CortetsuDesign.js" as CortetsuDesign
 import qs.modules.clipboard as Clipboard
 import qs.modules.hardware as Hardware
@@ -43,7 +42,6 @@ Item {
     readonly property alias popouts: popoutsWrapper.content
     readonly property alias popoutsWrapper: popoutsWrapper
     readonly property alias utilities: utilities
-    readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
 
     anchors.fill: parent
@@ -131,13 +129,6 @@ Item {
         popouts: popoutsWrapper.content
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-    }
-    Toasts.Toasts {
-        id: toasts
-        anchors.bottom: utilities.top
-        anchors.right: parent.right
-        anchors.margins: CortetsuDesign.spacingStandard
-        z: 1000
     }
     Sidebar.Wrapper {
         id: sidebar

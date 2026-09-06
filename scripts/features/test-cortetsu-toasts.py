@@ -4,8 +4,8 @@ repo = Path(__file__).resolve().parents[2]
 toaster = (repo / "cortetsu/services/CortetsuToaster.qml").read_text(encoding="utf-8")
 view = (repo / "cortetsu/modules/utilities/toasts/Toasts.qml").read_text(encoding="utf-8")
 item = (repo / "cortetsu/modules/utilities/toasts/ToastItem.qml").read_text(encoding="utf-8")
+bottom_hub = (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 panels = (repo / "cortetsu/modules/drawers/Panels.qml").read_text(encoding="utf-8")
-content_window = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
 hub = (repo / "cortetsu/modules/BottomHub.qml").read_text(encoding="utf-8")
 
 for source in (toaster, view, item, panels, hub):
@@ -24,6 +24,10 @@ assert "width: implicitWidth" in view
 assert "height: implicitHeight" in view
 assert "implicitHeight: column.childrenRect.height" in view
 assert "z: 100" in view
+assert "onVisibleToastsChanged" in view
+assert "forceActiveFocus()" in view
+assert "MouseArea" in view
+assert "CortetsuToaster.dismiss(root.visibleToasts[0].id)" in view
 assert "height: implicitHeight" in item
 assert "pomodoroNotification" in hub
 assert "property var consumed" in hub
@@ -32,8 +36,12 @@ assert "onFileChanged: pomodoroNotificationReload.restart()" in hub
 assert "onTriggered: pomodoroNotification.reload()" in hub
 assert "onTextChanged: consumeEvent(text())" in hub
 assert "onLoaded" in hub
-assert 'import "../utilities/toasts" as Toasts' in panels
-assert "anchors.bottom: utilities.top" in panels
-assert "z: 1000" in panels
-assert 'import "../utilities/toasts" as Toasts' not in content_window
+assert 'import "utilities/toasts" as Toasts' in bottom_hub
+assert "anchors.bottom: bottomHubView.top" in bottom_hub
+assert "toasts.implicitHeight" in bottom_hub
+assert "toasts.spacing" in bottom_hub
+assert "x: toasts.x" in bottom_hub
+assert "WlrLayershell.keyboardFocus" in bottom_hub
+assert "WlrKeyboardFocus.Exclusive" in bottom_hub
+assert 'import "../utilities/toasts" as Toasts' not in panels
 print("PASS: Cortetsu owns toast state, rendering, and event calls")

@@ -12,6 +12,12 @@ Item {
     width: implicitWidth
     height: implicitHeight
     z: 100
+    focus: visibleToasts.length > 0
+
+    onVisibleToastsChanged: {
+        if (visibleToasts.length > 0)
+            forceActiveFocus();
+    }
 
     Column {
         id: column
@@ -28,5 +34,21 @@ Item {
                 onDismissed: CortetsuToaster.dismiss(root.visibleToasts[index].id)
             }
         }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        z: 1000
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        onClicked: {
+            root.forceActiveFocus();
+            if (root.visibleToasts.length > 0)
+                CortetsuToaster.dismiss(root.visibleToasts[0].id);
+        }
+    }
+
+    Keys.onEscapePressed: {
+        if (root.visibleToasts.length > 0)
+            CortetsuToaster.dismiss(root.visibleToasts[0].id);
     }
 }

@@ -36,6 +36,18 @@ upstream singleton directly:
   (shortcuts, scripts), mirroring the `WallpaperController`/`CortetsuRecorder`
   pattern already used for wallpaper and screen recording.
 
+## Toast surface contract
+
+Visible toasts are rendered by `cortetsu/modules/BottomHub.qml` inside each
+monitor's top-layer `PanelWindow`, immediately above the BottomHub bar. The
+window grows to fit the toast stack and uses a click mask so the toast region
+and bar remain interactive without intercepting the rest of the screen.
+
+Mouse click, Escape, and the per-item action keys dismiss the newest visible
+toast. Toasts take exclusive keyboard focus only while the stack is visible,
+then release it when the stack becomes empty. The current implementation caps
+the visible stack at five items and expires each item after five seconds.
+
 ## What is explicitly out of scope, and why
 
 Fully eliminating the patch (deleting
