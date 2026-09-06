@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQml
+import Quickshell
 import "../modules"
 
 // Compatibility name for upstream callers while the remaining surfaces move
