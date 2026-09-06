@@ -8,9 +8,10 @@ Item {
     readonly property int spacing: CortetsuDesign.spacingStandard
     readonly property var visibleToasts: CortetsuToaster.toasts.slice(0, 5)
     implicitWidth: 360
-    implicitHeight: column.implicitHeight
+    implicitHeight: column.childrenRect.height
     width: implicitWidth
     height: implicitHeight
+    z: 100
 
     Column {
         id: column

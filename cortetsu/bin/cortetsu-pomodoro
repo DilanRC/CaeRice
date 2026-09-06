@@ -155,11 +155,13 @@ def write_event(title: str, message: str) -> None:
     destination = event_path()
     destination.parent.mkdir(parents=True, exist_ok=True)
     payload = {"sequence": time.time_ns(), "title": title, "message": message}
-    with destination.open("w", encoding="utf-8") as stream:
+    temporary = destination.with_name(f".{destination.name}.tmp.{os.getpid()}")
+    with temporary.open("w", encoding="utf-8") as stream:
         stream.write(json.dumps(payload) + "\n")
         stream.flush()
         os.fsync(stream.fileno())
-    destination.chmod(0o600)
+    temporary.chmod(0o600)
+    temporary.replace(destination)
 
 
 def ensure_event_file() -> None:

@@ -137,6 +137,7 @@ Item {
         anchors.bottom: utilities.top
         anchors.right: parent.right
         anchors.margins: CortetsuDesign.spacingStandard
+        z: 1000
     }
     Sidebar.Wrapper {
         id: sidebar

@@ -91,9 +91,9 @@ Scope {
         printErrors: false
         property var consumed: 0
         onFileChanged: pomodoroNotificationReload.restart()
-        onLoaded: {
+        function consumeEvent(raw): void {
             try {
-                const event = JSON.parse(text());
+                const event = JSON.parse(raw);
                 if (event.sequence !== consumed) {
                     consumed = event.sequence;
                     if (event.title && event.message)
@@ -101,6 +101,8 @@ Scope {
                 }
             } catch (_) {}
         }
+        onLoaded: consumeEvent(text())
+        onTextChanged: consumeEvent(text())
     }
 
     function openCalendarFor(screen): void {
