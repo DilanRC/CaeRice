@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs.modules
+import Caelestia.Components
 import Caelestia.Config
 import Caelestia.Models
 import qs.components
