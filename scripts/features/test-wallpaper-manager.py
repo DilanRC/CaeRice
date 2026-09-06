@@ -12,6 +12,7 @@ orbit = (MODULES / "wallpaper/OrbitModel.js").read_text(encoding="utf-8")
 policy = (MODULES / "OverlayPolicy.js").read_text(encoding="utf-8")
 wallpaper_controller = (MODULES / "WallpaperController.qml").read_text(encoding="utf-8")
 service = (ROOT / "cortetsu/modules/CortetsuWallpapers.qml").read_text(encoding="utf-8")
+renderer = (ROOT / "cortetsu/modules/background/Wallpaper.qml").read_text(encoding="utf-8")
 canonical = (ROOT / "scripts/features/apply-canonical-sad-wiring.sh").read_text(encoding="utf-8")
 hypr = (ROOT / "config/hypr-user.lua").read_text(encoding="utf-8")
 hub = (MODULES / "BottomHub.qml").read_text(encoding="utf-8")
@@ -115,5 +116,8 @@ assert "customDock\", \"launcher" in shortcuts_patch
 for needle in ("previewGeneration += 1", "requestGeneration === root.previewGeneration", "root.showPreview", "previewPalette.running = false"):
     assert needle in service, needle
 assert "caelestia" not in service.lower()
+for legacy in ("Caelestia.Config", "qs.services", "qs.components", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon"):
+    assert legacy not in renderer, legacy
+assert "CortetsuWallpapers.current" in renderer and "CortetsuWallpapers.fallback" in renderer
 
 print("test-wallpaper-manager: OK (neutral open, final-candidate debounce, cancellation, wheel reversal, canonical retained wiring, and two-way overlay exclusion)")
