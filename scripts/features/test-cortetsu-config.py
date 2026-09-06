@@ -16,6 +16,7 @@ manifest = (repo / "caelestia/patches/MANIFEST.tsv").read_text(encoding="utf-8")
 desktop_clock = (modules / "background/DesktopClock.qml").read_text(encoding="utf-8")
 spectrum = (repo / "cortetsu/services/CortetsuSpectrum.qml").read_text(encoding="utf-8")
 visualiser = (modules / "background/Visualiser.qml").read_text(encoding="utf-8")
+bar_clock = (modules / "bar/components/Clock.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -33,6 +34,9 @@ assert "Caelestia" not in spectrum
 assert "CortetsuSpectrum.values" in visualiser
 assert "VisualiserBars" not in visualiser
 assert "Audio.cava" not in visualiser
+for legacy in ("Caelestia.Config", "qs.services", "qs.components", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon", "GlobalConfig"):
+    assert legacy not in bar_clock, legacy
+assert "Time.hourStr" in bar_clock and "CortetsuDesign.colorTertiary" in bar_clock
 assert "import Caelestia" not in visualiser
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
