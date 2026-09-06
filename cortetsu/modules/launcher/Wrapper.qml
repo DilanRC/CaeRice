@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import "../CortetsuDesign.js" as CortetsuDesign
 import qs.components
 import qs.modules.launcher.services
 
