@@ -134,6 +134,10 @@ for metric_consumer in (
     assert "import Caelestia.Services" not in metric_text, metric_consumer
     assert "ServiceRef" not in metric_text, metric_consumer
 assert "SparklineItem" not in (repo / "cortetsu/base/modules/dashboard/performance/NetworkCard.qml").read_text(encoding="utf-8")
+session_service = (repo / "cortetsu/services/CortetsuSession.qml").read_text(encoding="utf-8")
+assert 'org.freedesktop.login1.Manager' in session_service and 'signal resumed' in session_service
+assert "import Caelestia.Services" not in (repo / "cortetsu/base/modules/lock/Pam.qml").read_text(encoding="utf-8")
+assert "CortetsuSession" in (repo / "cortetsu/base/modules/lock/Pam.qml").read_text(encoding="utf-8")
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (

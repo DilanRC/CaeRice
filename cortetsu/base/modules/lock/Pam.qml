@@ -5,8 +5,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
-import Caelestia.Services
 import qs.modules
+import qs.services
 
 Scope {
     id: root
@@ -148,7 +148,7 @@ Scope {
                 howdy.start();
         }
 
-        target: SessionManager
+        target: CortetsuSession
     }
 
     Connections {
