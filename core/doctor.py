@@ -15,9 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dotfiles
 import shell_lifecycle
 
-THEME_KEYS = ("enableTerm", "enableHypr", "enableGtk", "enableQt")
-
-
 def check(name: str, status: str, detail: str, required: bool = False) -> dict:
     return {"name": name, "status": status, "detail": detail, "required": required}
 
@@ -29,24 +26,18 @@ def package_installed(package: str) -> bool | None:
 
 
 def theme_ownership_check(home: Path) -> dict:
-    cli = home / ".config/caelestia/cli.json"
-    if not cli.is_file():
-        return check("theme-ownership", "warn", f"Caelestia CLI config missing: {cli}")
+    del home
+    source = Path(__file__).resolve().parents[1] / "dotfiles/home/.config/cortetsu/ui.toml"
+    if not source.is_file():
+        return check("theme-ownership", "error", f"Cortetsu theme source missing: {source}", True)
     try:
-        payload = json.loads(cli.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return check("theme-ownership", "error", f"cannot read {cli}: {exc}", True)
-    theme = payload.get("theme") if isinstance(payload, dict) else None
-    if not isinstance(theme, dict):
-        return check("theme-ownership", "error", "theme in Caelestia cli.json is not an object", True)
-    enabled = [key for key in THEME_KEYS if theme.get(key) is not False]
-    if enabled:
-        return check(
-            "theme-ownership",
-            "error",
-            "Caelestia can still mutate Cortetsu-owned surfaces: " + ", ".join(enabled),
-            True,
-        )
+        import tomllib
+        with source.open("rb") as handle:
+            payload = tomllib.load(handle)
+    except (OSError, tomllib.TOMLDecodeError) as exc:
+        return check("theme-ownership", "error", f"cannot read {source}: {exc}", True)
+    if payload.get("schema") != 1 or not isinstance(payload.get("palette"), dict):
+        return check("theme-ownership", "error", "Cortetsu ui.toml has an invalid schema", True)
     return check("theme-ownership", "ok", "Cortetsu owns terminal/Hyprland/GTK/Qt theme surfaces", True)
 
 
