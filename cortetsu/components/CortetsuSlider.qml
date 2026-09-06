@@ -83,6 +83,15 @@ Item {
     Keys.onRightPressed: root.adjust(root.step)
     Keys.onDownPressed: root.adjust(-root.step)
     Keys.onUpPressed: root.adjust(root.step)
-    Keys.onHomePressed: { root.value = root.from; root.moved(root.value); }
-    Keys.onEndPressed: { root.value = root.to; root.moved(root.value); }
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Home) {
+            root.value = root.from;
+            root.moved(root.value);
+            event.accepted = true;
+        } else if (event.key === Qt.Key_End) {
+            root.value = root.to;
+            root.moved(root.value);
+            event.accepted = true;
+        }
+    }
 }

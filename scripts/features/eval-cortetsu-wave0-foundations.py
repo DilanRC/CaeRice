@@ -37,7 +37,7 @@ checks = {
     "workspace exposes focus": "workspaceDot.activeFocus" in workspaces,
     "state message covers async states": all(x in state_message for x in ('property string kind', 'kind === "loading"', 'kind === "error"')),
     "toggle supports keyboard": all(x in toggle for x in ("Keys.onEnterPressed", "Keys.onSpacePressed", "focused: root.activeFocus")),
-    "slider supports keyboard": all(x in slider for x in ("Keys.onLeftPressed", "Keys.onRightPressed", "Keys.onHomePressed")),
+    "slider supports keyboard": all(x in slider for x in ("Keys.onLeftPressed", "Keys.onRightPressed", "Qt.Key_Home", "Qt.Key_End")),
     "battery profile supports keyboard": all(x in battery for x in ("activeFocusOnTab", "Keys.onEnterPressed", "focused: parent.activeFocus")),
     "keyboard popup exposes disabled layouts": "disabled: layoutIndex > 3" in keyboard,
     "window info disables unavailable actions": winfo.count("disabled: !root.client") >= 4,
