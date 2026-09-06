@@ -626,7 +626,6 @@ GridView {
                 anchors.topMargin: 9
                 anchors.rightMargin: 10
                 text: "check_circle"
-                fill: 1
                 color: CortetsuDesign.colorPrimary
                 iconSize: CortetsuTypography.iconSmallPx
             }
