@@ -1,0 +1,7 @@
+--- a/modules/background/Background.qml
++++ b/modules/background/Background.qml
+@@ -7,0 +8 @@
++import qs.modules
+@@ -11 +11 @@
+-    model: Screens.screens.filter(s => GlobalConfig.forScreen(s.name).background.enabled)
++    model: CortetsuScreens.screens

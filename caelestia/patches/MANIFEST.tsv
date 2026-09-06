@@ -18,3 +18,4 @@ modules__drawers__Panels__cortetsu-shell-state.qml.patch	modules/drawers/Panels.
 modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml
 modules__drawers__ContentWindow__adapter.qml.patch	modules/drawers/ContentWindow.qml
 modules__drawers__ContentWindow__scrim-adapter.qml.patch	modules/drawers/ContentWindow.qml
+modules__background__Background.qml.patch	modules/background/Background.qml
