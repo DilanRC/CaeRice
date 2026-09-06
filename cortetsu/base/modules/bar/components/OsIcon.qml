@@ -22,11 +22,11 @@ Item {
     Loader {
         asynchronous: true
         anchors.centerIn: parent
-        sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
+        sourceComponent: SysInfo.isDefaultLogo ? cortetsuLogo : distroIcon
     }
 
     Component {
-        id: caelestiaLogo
+        id: cortetsuLogo
 
         Logo {
             implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.6)

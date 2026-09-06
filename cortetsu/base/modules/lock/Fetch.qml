@@ -56,7 +56,7 @@ CortetsuSurface {
 
             MonoText {
                 Layout.fillWidth: true
-                text: "caelestiafetch.sh"
+                text: "cortetsufetch.sh"
                 elide: Text.ElideRight
             }
 
@@ -66,7 +66,7 @@ CortetsuSurface {
                 Layout.preferredHeight: 0
                 active: !iconLoader.active
 
-                sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
+                sourceComponent: SysInfo.isDefaultLogo ? cortetsuLogo : distroIcon
             }
         }
 
@@ -81,7 +81,7 @@ CortetsuSurface {
                 Layout.fillHeight: true
                 active: root.width > Tokens.sizes.lock.largeLogoWidth
 
-                sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
+                sourceComponent: SysInfo.isDefaultLogo ? cortetsuLogo : distroIcon
             }
 
             ColumnLayout {
@@ -153,7 +153,7 @@ CortetsuSurface {
     }
 
     Component {
-        id: caelestiaLogo
+        id: cortetsuLogo
 
         Logo {
             width: height

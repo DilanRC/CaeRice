@@ -120,6 +120,14 @@ assert "Caelestia" not in "\n".join(
         "cortetsu/base/modules/nexus/pages/AboutPage.qml",
     )
 )
+assert "caelestia" not in (repo / "cortetsu/base/assets/wrap_term_launch.sh").read_text(encoding="utf-8")
+for logo_consumer in (
+    repo / "cortetsu/base/modules/lock/Fetch.qml",
+    repo / "cortetsu/base/modules/dashboard/dash/User.qml",
+    repo / "cortetsu/base/modules/bar/components/OsIcon.qml",
+):
+    logo_text = logo_consumer.read_text(encoding="utf-8")
+    assert "caelestiaLogo" not in logo_text and "caelestiafetch" not in logo_text, logo_consumer
 metrics = {
     "Cpu.qml": ("/proc/stat", "property real percentage"),
     "Memory.qml": ("/proc/meminfo", "property real used"),

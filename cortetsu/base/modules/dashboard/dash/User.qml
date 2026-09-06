@@ -144,7 +144,7 @@ Item {
 
         Loader {
             anchors.centerIn: parent
-            sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : osLogo
+            sourceComponent: SysInfo.isDefaultLogo ? cortetsuLogo : osLogo
         }
     }
 
@@ -161,7 +161,7 @@ Item {
     }
 
     Component {
-        id: caelestiaLogo
+        id: cortetsuLogo
 
         Logo {
             implicitWidth: Tokens.sizes.dashboard.logoSize
