@@ -9,6 +9,7 @@ import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
 import ".."
+import "../../components"
 import qs.utils
 
 Item {
@@ -113,41 +114,20 @@ Item {
         }
     }
 
-    Row {
+    CortetsuStateMessage {
         id: empty
 
         opacity: root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
-        spacing: CortetsuDesign.spacingStandard
-        padding: CortetsuDesign.spacingComfortable
-
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-
-        CortetsuIcon {
-            text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
-            color: CortetsuDesign.colorOnSurfaceVariant
-            iconSize: CortetsuTypography.iconLargePx
-
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-
-            CortetsuText {
-                text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
-                color: CortetsuDesign.colorOnSurfaceVariant
-                font: Qt.font({pixelSize: CortetsuTypography.bodyPx, weight: Font.Medium})
-            }
-
-            CortetsuText {
-                text: root.state === "wallpapers" && CortetsuWallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(CortetsuWallpapers.wallsdir)) : qsTr("Try searching for something else")
-                color: CortetsuDesign.colorOnSurfaceVariant
-                font: Qt.font({pixelSize: CortetsuTypography.bodyPx})
-            }
-        }
+        width: 360
+        icon: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
+        title: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
+        detail: root.state === "wallpapers" && CortetsuWallpapers.list.length === 0
+            ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(CortetsuWallpapers.wallsdir))
+            : qsTr("Try searching for something else")
 
         Behavior on opacity {
             CortetsuAnim {
