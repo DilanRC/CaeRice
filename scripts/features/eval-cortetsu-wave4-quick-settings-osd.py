@@ -9,7 +9,8 @@ utilities = (ROOT / "cortetsu/modules/utilities/Content.qml").read_text(encoding
 osd = (ROOT / "cortetsu/modules/osd/Content.qml").read_text(encoding="utf-8")
 
 checks = {
-    "quick settings has a native surface": "CortetsuSurface" in utilities,
+    "quick settings has a shared popup surface": "CortetsuPopupSurface" in utilities,
+    "quick settings balances primary controls": "RowLayout" in utilities and "Layout.fillWidth" in utilities,
     "quick settings has a status summary": "Recording active" in utilities and "Ready" in utilities,
     "keep-awake remains actionable": "CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled" in utilities,
     "recording remains actionable": "CortetsuRecorder.stop()" in utilities and '"cortetsu-record", "start"' in utilities,

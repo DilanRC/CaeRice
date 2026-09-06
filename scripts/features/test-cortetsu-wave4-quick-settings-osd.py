@@ -9,7 +9,7 @@ for source in (utilities, osd):
     for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components", "Tokens", "Colours"):
         assert legacy not in source, legacy
 
-assert "CortetsuSurface" in utilities
+assert "CortetsuPopupSurface" in utilities
 assert "Recording active" in utilities
 assert "CortetsuIdleInhibitor.enabled" in utilities
 assert "CortetsuRecorder.running" in utilities
