@@ -975,6 +975,17 @@ FocusScope {
                         : ScrollBar.AlwaysOff
                 }
 
+            MouseArea {
+                id: viewportBackground
+
+                z: -1
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+
+                onClicked:
+                    root.screenState.cortetsuState?.setRetained("overview", false)
+            }
+
             Grid {
                 id: windowGrid
 
