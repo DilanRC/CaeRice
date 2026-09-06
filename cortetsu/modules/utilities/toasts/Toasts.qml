@@ -6,6 +6,7 @@ Item {
     id: root
 
     readonly property int spacing: CortetsuDesign.spacingStandard
+    readonly property var visibleToasts: CortetsuToaster.toasts.slice(0, 5)
     implicitWidth: 360
     implicitHeight: column.implicitHeight
 
@@ -15,13 +16,13 @@ Item {
         spacing: root.spacing
 
         Repeater {
-            model: CortetsuToaster.toasts.slice(0, 5)
+            model: root.visibleToasts
 
             delegate: ToastItem {
-                required property var modelData
+                required property int index
                 width: root.width
-                toast: modelData
-                onDismissed: CortetsuToaster.dismiss(modelData.id)
+                toast: root.visibleToasts[index]
+                onDismissed: CortetsuToaster.dismiss(root.visibleToasts[index].id)
             }
         }
     }

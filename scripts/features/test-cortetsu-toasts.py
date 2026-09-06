@@ -17,6 +17,8 @@ assert "function toast(title, message, icon, type = 0)" in toaster
 assert "function dismiss" in toaster
 assert "CortetsuToaster.toasts" in view
 assert "onDismissed: CortetsuToaster.dismiss" in view
+assert "visibleToasts" in view
+assert "toast: root.visibleToasts[index]" in view
 assert 'import "../utilities/toasts" as Toasts' in panels
 assert "CortetsuToaster.toast" in hub
 print("PASS: Cortetsu owns toast state, rendering, and event calls")
