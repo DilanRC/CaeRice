@@ -2,19 +2,12 @@
 """E2E gate: unmanaged runtime -> two unified Cortetsu systems -> rollback."""
 from __future__ import annotations
 
-import os
 import subprocess
 import tempfile
+import os
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-upstream = Path(
-    os.environ.get(
-        "CORTETSU_UPSTREAM_SOURCE",
-        str(Path.home() / ".cache/cortetsu/upstream/caelestia-shell"),
-    )
-)
-
 with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     root = Path(temporary)
     home = root / "home"
@@ -27,14 +20,13 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-e2e-") as temporary:
     (unmanaged / "shell.qml").write_text("// pre-v2 runtime without BUILD.json\n", encoding="utf-8")
     (runtime / "current").symlink_to(unmanaged, target_is_directory=True)
 
-    env = os.environ.copy()
-    env.update(
-        HOME=str(home),
-        XDG_CONFIG_HOME=str(home / ".config"),
-        CORTETSU_DATA_ROOT=str(data),
-        CORTETSU_RUNTIME_ROOT=str(runtime),
-        CORTETSU_UPSTREAM_SOURCE=str(upstream),
-    )
+    env = {
+        **os.environ,
+        "HOME": str(home),
+        "XDG_CONFIG_HOME": str(home / ".config"),
+        "CORTETSU_DATA_ROOT": str(data),
+        "CORTETSU_RUNTIME_ROOT": str(runtime),
+    }
 
     build = repo / "cortetsu/bin/build-runtime.sh"
     dotfiles = repo / "core/dotfiles.py"

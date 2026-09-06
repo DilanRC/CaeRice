@@ -1,6 +1,6 @@
 # Runtime versionado de Cortetsu
 
-Cortetsu nunca escribe `/etc/xdg/quickshell/caelestia`; ese árbol pertenece al paquete y se usa sólo como referencia. El constructor toma la revisión upstream exacta, aplica adapters y módulos en staging, ejecuta gates y sólo entonces promueve una generación.
+Cortetsu nunca escribe `/etc/xdg/quickshell/caelestia`. El constructor toma el baseline vendorizado bajo `cortetsu/base`, ejecuta gates en staging y sólo entonces promueve una generación. `cortetsu/base/PROVENANCE.md` conserva la procedencia y licencia de los archivos aún en migración.
 
 ```text
 ~/.local/share/cortetsu/builds/<build-id>
@@ -14,12 +14,11 @@ Variables canónicas:
 ```text
 CORTETSU_DATA_ROOT
 CORTETSU_RUNTIME_ROOT
-CORTETSU_UPSTREAM_SOURCE
 ```
 
 No existen fallbacks activos a variables CaeRice.
 
-El flujo verifica que `v2.4.0` resuelva al commit `24aa15eefdb146350d2548c0a015b04eddbd1008`, construye en `.staging-*`, genera `BUILD.json`, convierte la salida en una ruta inmutable y conmuta `current` mediante symlink temporal + `mv -T`.
+El flujo construye desde el repositorio en `.staging-*`, genera `BUILD.json`, convierte la salida en una ruta inmutable y conmuta `current` mediante symlink temporal + `mv -T`.
 
 ## Generaciones
 

@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
-UPSTREAM="$(bash "$REPO/cortetsu/bin/ensure-upstream.sh")"
+SOURCE_BASE="$REPO/cortetsu/base"
 COMPATIBILITY="$REPO/cortetsu/contracts/upstream-compatibility.json"
 BUILD_ROOT="$DATA_ROOT/builds"
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
@@ -36,7 +36,7 @@ cleanup() {
 trap cleanup EXIT
 
 require_file "$COMPATIBILITY"
-require_file "$REPO/caelestia/patches/MANIFEST.tsv"
+require_file "$SOURCE_BASE/PROVENANCE.md"
 require_file "$REPO/cortetsu/modules/BottomHub.qml"
 require_file "$REPO/cortetsu/modules/CortetsuBottomHubView.qml"
 
@@ -60,32 +60,8 @@ flock -n 9 || fail "ya hay una construcción de Cortetsu en curso"
 [[ ! -e "$FINAL" ]] || fail "la generación ya existe: $FINAL"
 mkdir -p "$STAGING"
 
-printf '==> Base upstream %s (%s)\n' "$UPSTREAM_TAG" "$UPSTREAM_COMMIT"
-if git -C "$UPSTREAM" cat-file -e "$UPSTREAM_TAG^{commit}" 2>/dev/null; then
-    resolved="$(git -C "$UPSTREAM" rev-list -n 1 "$UPSTREAM_TAG")"
-    [[ "$resolved" == "$UPSTREAM_COMMIT" ]] || fail "el tag $UPSTREAM_TAG resuelve a $resolved, se esperaba $UPSTREAM_COMMIT"
-    git -C "$UPSTREAM" archive "$UPSTREAM_TAG" | tar -x -C "$STAGING"
-elif git -C "$UPSTREAM" cat-file -e "$UPSTREAM_COMMIT^{commit}" 2>/dev/null; then
-    git -C "$UPSTREAM" archive "$UPSTREAM_COMMIT" | tar -x -C "$STAGING"
-else
-    fail "el checkout upstream no contiene $UPSTREAM_TAG ni $UPSTREAM_COMMIT"
-fi
-
-printf '==> Patches en staging\n'
-while IFS=$'\t' read -r patch_name relative_path; do
-    [[ "$patch_name" == "patch" || -z "$patch_name" ]] && continue
-    patch_file="$REPO/caelestia/patches/$patch_name"
-    require_file "$patch_file"
-
-    if patch --dry-run -p1 -d "$STAGING" < "$patch_file" >/dev/null 2>&1; then
-        patch -p1 -d "$STAGING" < "$patch_file" >/dev/null
-        printf 'PATCH     %s\n' "$relative_path"
-    elif patch --dry-run -R -p1 -d "$STAGING" < "$patch_file" >/dev/null 2>&1; then
-        printf 'PRESENT   %s\n' "$relative_path"
-    else
-        fail "conflicto de patch en staging: $relative_path"
-    fi
-done < "$REPO/caelestia/patches/MANIFEST.tsv"
+printf '==> Base source-only Cortetsu\n'
+cp -a "$SOURCE_BASE/." "$STAGING/"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/cortetsu/modules/." "$STAGING/modules/"

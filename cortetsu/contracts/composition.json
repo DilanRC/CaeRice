@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "description": "Single staged Cortetsu composition over a verified Caelestia upstream revision",
+  "description": "Single staged Cortetsu composition over the repository-owned runtime base",
   "ownedModules": [
     "BottomHub",
     "StatusPill",
