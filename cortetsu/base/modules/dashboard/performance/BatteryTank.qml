@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import Caelestia.Services
 import qs.components
 import qs.modules
 import qs.services
@@ -14,7 +13,7 @@ StyledClippingRect {
     color: Colours.palette.m3secondaryContainer
     radius: Tokens.rounding.large
 
-    implicitWidth: CortetsuConfig.dashboard.performance.showCpu || (CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== GpuType.None) || CortetsuConfig.dashboard.performance.showStorage || CortetsuConfig.dashboard.performance.showMemory ? Tokens.sizes.dashboard.perfBattWidth : Tokens.sizes.dashboard.perfBattWidthSingle
+    implicitWidth: CortetsuConfig.dashboard.performance.showCpu || (CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== Gpu.noneType) || CortetsuConfig.dashboard.performance.showStorage || CortetsuConfig.dashboard.performance.showMemory ? Tokens.sizes.dashboard.perfBattWidth : Tokens.sizes.dashboard.perfBattWidthSingle
     implicitHeight: Tokens.sizes.dashboard.perfBattHeight
 
     Behavior on animPerc {

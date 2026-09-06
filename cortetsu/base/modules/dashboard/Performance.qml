@@ -2,7 +2,6 @@ import "performance"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import Caelestia.Services
 import qs.components
 import qs.modules
 import qs.services
@@ -17,7 +16,7 @@ Item {
         id: placeholder
 
         anchors.centerIn: parent
-        active: !CortetsuConfig.dashboard.performance.showCpu && !(CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== GpuType.None) && !CortetsuConfig.dashboard.performance.showMemory && !CortetsuConfig.dashboard.performance.showStorage && !CortetsuConfig.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && CortetsuConfig.dashboard.performance.showBattery)
+        active: !CortetsuConfig.dashboard.performance.showCpu && !(CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== Gpu.noneType) && !CortetsuConfig.dashboard.performance.showMemory && !CortetsuConfig.dashboard.performance.showStorage && !CortetsuConfig.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && CortetsuConfig.dashboard.performance.showBattery)
         asynchronous: true
 
         sourceComponent: ColumnLayout {
@@ -78,16 +77,13 @@ Item {
                         temperature: Cpu.temperature
                         accent: Colours.palette.m3primary
 
-                        ServiceRef {
-                            service: Cpu
-                        }
                     }
                 }
 
                 WrappedLoader {
                     id: gpuCard
 
-                    active: CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== GpuType.None
+                    active: CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== Gpu.noneType
 
                     sourceComponent: HeroCard {
                         icon: "desktop_windows"
@@ -97,9 +93,6 @@ Item {
                         temperature: Gpu.temperature
                         accent: Colours.palette.m3secondary
 
-                        ServiceRef {
-                            service: Gpu
-                        }
                     }
                 }
             }

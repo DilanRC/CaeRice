@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -17,10 +16,6 @@ CortetsuSurface {
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
     implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
-
-    ServiceRef {
-        service: Storage
-    }
 
     ColumnLayout {
         id: layout

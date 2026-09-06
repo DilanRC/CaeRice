@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Services
 import qs.components
 import qs.modules
 import qs.services
@@ -13,10 +12,6 @@ CortetsuSurface {
 
     implicitWidth: Tokens.sizes.dashboard.perfNetworkCardWidth
     implicitHeight: Tokens.sizes.dashboard.perfNetworkCardHeight
-
-    ServiceRef {
-        service: NetworkUsage
-    }
 
     ColumnLayout {
         id: layout
@@ -48,44 +43,23 @@ CortetsuSurface {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            SparklineItem {
-                id: sparkline
-
-                property real targetMax: 1024
-                property real smoothMax: targetMax
-
+            Row {
                 anchors.fill: parent
-                line1: NetworkUsage.uploadBuffer // qmllint disable missing-type
-                line1Color: Colours.palette.m3secondary
-                line1FillAlpha: 0.15
-                line2: NetworkUsage.downloadBuffer // qmllint disable missing-type
-                line2Color: Colours.palette.m3tertiary
-                line2FillAlpha: 0.2
-                maxValue: smoothMax
-                historyLength: NetworkUsage.historyLength
+                spacing: 2
+                anchors.margins: Tokens.padding.small
 
-                Connections {
-                    function onValuesChanged(): void {
-                        sparkline.targetMax = Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024);
-                        slideAnim.restart();
+                Repeater {
+                    model: NetworkUsage.historyLength
+
+                    Rectangle {
+                        required property int index
+                        width: Math.max(1, (parent.width - (NetworkUsage.historyLength - 1) * 2) / NetworkUsage.historyLength)
+                        height: parent.height * Math.max(NetworkUsage.downloadHistory[index] ?? 0, NetworkUsage.uploadHistory[index] ?? 0) / Math.max(1024, Math.max(...NetworkUsage.downloadHistory, ...NetworkUsage.uploadHistory, 1))
+                        anchors.bottom: parent.bottom
+                        radius: 2
+                        color: index % 2 ? Colours.palette.m3tertiary : Colours.palette.m3secondary
+                        opacity: 0.75
                     }
-
-                    target: NetworkUsage.downloadBuffer
-                }
-
-                NumberAnimation {
-                    id: slideAnim
-
-                    target: sparkline
-                    property: "slideProgress"
-                    from: 0
-                    to: 1
-                    easing.type: Easing.Linear
-                    duration: CortetsuConfig.dashboardResourceUpdateInterval
-                }
-
-                Behavior on smoothMax {
-                    Anim {}
                 }
             }
 
@@ -95,7 +69,7 @@ CortetsuSurface {
                 text: qsTr("Collecting data...")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3outline
-                visible: NetworkUsage.downloadBuffer.count < 2
+                visible: NetworkUsage.downloadHistory.length < 2
             }
         }
 

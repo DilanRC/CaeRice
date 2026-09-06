@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -12,18 +11,6 @@ Item {
     anchors.bottom: parent.bottom
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
-
-    ServiceRef {
-        service: Cpu
-    }
-
-    ServiceRef {
-        service: Memory
-    }
-
-    ServiceRef {
-        service: Storage
-    }
 
     ColumnLayout {
         id: layout

@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import M3Shapes
-import Caelestia.Services
 import qs.components
 import qs.components.effects
 import qs.components.widgets
@@ -21,18 +20,6 @@ CortetsuSurface {
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
     radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
-
-    ServiceRef {
-        service: Cpu
-    }
-
-    ServiceRef {
-        service: Memory
-    }
-
-    ServiceRef {
-        service: Storage
-    }
 
     RowLayout {
         id: layout

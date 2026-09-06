@@ -109,6 +109,31 @@ for notif_dock in (
     dock_text = notif_dock.read_text(encoding="utf-8")
     assert "import Caelestia.Config" not in dock_text
 assert "noNotifsPic" in (repo / "cortetsu/utils/Paths.qml").read_text(encoding="utf-8")
+metrics = {
+    "Cpu.qml": ("/proc/stat", "property real percentage"),
+    "Memory.qml": ("/proc/meminfo", "property real used"),
+    "Storage.qml": ("df -kP", "property list<var> disks"),
+    "NetworkUsage.qml": ("/proc/net/dev", "property real downloadSpeed"),
+    "Gpu.qml": ("nvidia-smi", "property int noneType"),
+    "UsageFmt.qml": ("formatKib", "QtObject"),
+}
+for filename, markers in metrics.items():
+    service_text = (repo / "cortetsu/services" / filename).read_text(encoding="utf-8")
+    for marker in markers:
+        assert marker in service_text, (filename, marker)
+for metric_consumer in (
+    repo / "cortetsu/base/modules/dashboard/Performance.qml",
+    repo / "cortetsu/base/modules/dashboard/dash/Resources.qml",
+    repo / "cortetsu/base/modules/dashboard/performance/BatteryTank.qml",
+    repo / "cortetsu/base/modules/dashboard/performance/MemoryCard.qml",
+    repo / "cortetsu/base/modules/dashboard/performance/NetworkCard.qml",
+    repo / "cortetsu/base/modules/dashboard/performance/StorageCard.qml",
+    repo / "cortetsu/base/modules/lock/Resources.qml",
+):
+    metric_text = metric_consumer.read_text(encoding="utf-8")
+    assert "import Caelestia.Services" not in metric_text, metric_consumer
+    assert "ServiceRef" not in metric_text, metric_consumer
+assert "SparklineItem" not in (repo / "cortetsu/base/modules/dashboard/performance/NetworkCard.qml").read_text(encoding="utf-8")
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (
