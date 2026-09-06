@@ -44,7 +44,7 @@ Searcher {
                 list.search.text = `${CortetsuConfig.actionPrefix}${command[1]} `;
             } else if (command[0] === "setMode" && command.length > 1) {
                 list.screenState.launcher = false;
-                Colours.setMode(command[1]);
+                Quickshell.execDetached(["cortetsu", "theme", "set", command[1]]);
             } else {
                 list.screenState.launcher = false;
                 if (!SessionManager.exec(command))

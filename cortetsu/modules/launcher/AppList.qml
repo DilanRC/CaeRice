@@ -10,6 +10,11 @@ import qs.components.controls
 import qs.services
 import qs.utils
 import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
+import "../CortetsuSurface.qml"
+import "../CortetsuText.qml"
+import "../CortetsuIcon.qml"
 import qs.modules.launcher.services
 
 GridView {
@@ -223,12 +228,12 @@ GridView {
                     modelData.id
                 )
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
                 color: app.selected
-                    ? Colours.palette.m3secondaryContainer
+                    ? CortetsuDesign.colorSecondaryContainer
                     : "transparent"
             }
 
@@ -237,7 +242,7 @@ GridView {
 
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
 
                 onEntered: root.currentIndex = index
 
@@ -261,7 +266,7 @@ GridView {
                 )
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
@@ -271,7 +276,7 @@ GridView {
                 anchors.bottomMargin: 10
 
                 text: app.modelData?.name ?? ""
-                font: Tokens.font.body.small
+                font: CortetsuTypography.smallPx
 
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -324,25 +329,25 @@ GridView {
 
             readonly property bool selected: GridView.isCurrentItem
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
                 color: action.selected
-                    ? Colours.palette.m3secondaryContainer
+                    ? CortetsuDesign.colorSecondaryContainer
                     : "transparent"
             }
 
             StateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
 
                 onEntered: root.currentIndex = index
                 onClicked: action.modelData?.onClicked(root)
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: actionIcon
 
                 anchors.left: parent.left
@@ -351,11 +356,11 @@ GridView {
 
                 text: action.modelData?.icon ?? "help_outline"
                 color: action.modelData?.dangerous
-                    ? Colours.palette.m3error
-                    : Colours.palette.m3onSurfaceVariant
+                    ? CortetsuDesign.colorVermillion
+                    : CortetsuDesign.colorOnSurfaceVariant
 
                 fontStyle:
-                    Tokens.font.icon.builders.large.scale(1.3).build()
+                    Qt.font({pixelSize: CortetsuTypography.iconLargePx * 1.3})
             }
 
             Column {
@@ -366,18 +371,18 @@ GridView {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 1
 
-                StyledText {
+                CortetsuText {
                     width: parent.width
                     text: action.modelData?.name ?? ""
-                    font: Tokens.font.body.medium
+                    font: CortetsuTypography.bodyPx
                     elide: Text.ElideRight
                 }
 
-                StyledText {
+                CortetsuText {
                     width: parent.width
                     text: action.modelData?.desc ?? ""
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3outline
+                    font: CortetsuTypography.smallPx
+                    color: CortetsuDesign.colorOutline
                     elide: Text.ElideRight
                 }
             }
@@ -419,13 +424,13 @@ GridView {
             StateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
 
                 onEntered: root.currentIndex = index
                 onClicked: calc.onClicked()
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: calcIcon
 
                 anchors.left: parent.left
@@ -433,7 +438,7 @@ GridView {
                 anchors.verticalCenter: parent.verticalCenter
 
                 text: "function"
-                fontStyle: Tokens.font.icon.extraLarge
+                fontStyle: CortetsuTypography.iconLargePx
             }
 
             Column {
@@ -443,7 +448,7 @@ GridView {
                 anchors.rightMargin: 15
                 anchors.verticalCenter: parent.verticalCenter
 
-                StyledText {
+                CortetsuText {
                     width: parent.width
 
                     text: calc.math.length > 0
@@ -452,24 +457,24 @@ GridView {
 
                     color: text.includes("error: ") ||
                         text.includes("warning: ")
-                        ? Colours.palette.m3error
+                        ? CortetsuDesign.colorVermillion
                         : calc.math
-                            ? Colours.palette.m3onSurface
-                            : Colours.palette.m3onSurfaceVariant
+                            ? CortetsuDesign.colorOnSurface
+                            : CortetsuDesign.colorOnSurfaceVariant
 
-                    font: Tokens.font.body.medium
+                    font: CortetsuTypography.bodyPx
                     elide: Text.ElideLeft
                 }
 
-                StyledText {
+                CortetsuText {
                     width: parent.width
                     text: qsTr("Enter: copy result")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuDesign.colorOutline
+                    font: CortetsuTypography.smallPx
                 }
             }
 
-            StyledRect {
+            CortetsuSurface {
                 id: openCalc
 
                 anchors.right: parent.right
@@ -480,8 +485,8 @@ GridView {
 
                 implicitWidth: 46
                 implicitHeight: 46
-                radius: Tokens.rounding.large
-                color: Colours.palette.m3tertiaryContainer
+                radius: CortetsuDesign.radiusLarge
+                color: CortetsuDesign.colorPrimaryContainer
 
                 StateLayer {
                     radius: parent.radius
@@ -498,10 +503,10 @@ GridView {
                     }
                 }
 
-                MaterialIcon {
+                CortetsuIcon {
                     anchors.centerIn: parent
                     text: "open_in_new"
-                    fontStyle: Tokens.font.icon.large
+                    fontStyle: CortetsuTypography.iconMediumPx
                 }
             }
         }
@@ -542,21 +547,21 @@ GridView {
                 return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.56;
             }
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
                 color: scheme.selected
-                    ? Colours.palette.m3secondaryContainer
-                    : Colours.palette.m3surfaceContainerLow
+                    ? CortetsuDesign.colorSecondaryContainer
+                    : CortetsuDesign.colorSurface
                 border.width: scheme.current ? 1 : 0
-                border.color: Colours.palette.m3primary
+                border.color: CortetsuDesign.colorPrimary
             }
 
             StateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
                 onEntered: root.currentIndex = index
                 onClicked: scheme.modelData?.onClicked(root)
             }
@@ -581,14 +586,14 @@ GridView {
                         radius: 8
                         color: modelData
                             ? `#${modelData}`
-                            : Colours.palette.m3surfaceContainerHighest
+                            : CortetsuDesign.colorSurfaceHigh
                         border.width: 1
-                        border.color: Qt.alpha(Colours.palette.m3outline, 0.34)
+                        border.color: Qt.alpha(CortetsuDesign.colorOutline, 0.34)
                     }
                 }
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: swatches.bottom
@@ -597,13 +602,13 @@ GridView {
                 anchors.rightMargin: 14
 
                 text: scheme.modelData?.name ?? ""
-                font: Tokens.font.body.medium
+                font: CortetsuTypography.bodyPx
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
                 maximumLineCount: 1
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
@@ -612,13 +617,13 @@ GridView {
                 anchors.rightMargin: 12
 
                 text: `${scheme.modelData?.flavour ?? "default"} · ${scheme.previewLight ? qsTr("Light") : qsTr("Dark")}`
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.label.small
+                color: CortetsuDesign.colorOnSurfaceVariant
+                font: CortetsuTypography.smallPx
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 visible: scheme.current
                 anchors.top: parent.top
                 anchors.right: parent.right
@@ -626,8 +631,8 @@ GridView {
                 anchors.rightMargin: 10
                 text: "check_circle"
                 fill: 1
-                color: Colours.palette.m3primary
-                fontStyle: Tokens.font.icon.small
+                color: CortetsuDesign.colorPrimary
+                fontStyle: CortetsuTypography.iconSmallPx
             }
         }
     }
@@ -646,25 +651,25 @@ GridView {
 
             readonly property bool selected: GridView.isCurrentItem
 
-            StyledRect {
+            CortetsuSurface {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
                 color: variant.selected
-                    ? Colours.palette.m3secondaryContainer
+                    ? CortetsuDesign.colorSecondaryContainer
                     : "transparent"
             }
 
             StateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
-                radius: Tokens.rounding.large
+                radius: CortetsuDesign.radiusLarge
 
                 onEntered: root.currentIndex = index
                 onClicked: variant.modelData?.onClicked(root)
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 id: variantIcon
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -672,10 +677,10 @@ GridView {
                 anchors.topMargin: 11
 
                 text: variant.modelData?.icon ?? ""
-                fontStyle: Tokens.font.icon.extraLarge
+                fontStyle: CortetsuTypography.iconLargePx
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: variantIcon.bottom
@@ -684,12 +689,12 @@ GridView {
                 anchors.rightMargin: 8
 
                 text: variant.modelData?.name ?? ""
-                font: Tokens.font.body.small
+                font: CortetsuTypography.smallPx
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
 
-            StyledText {
+            CortetsuText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
@@ -698,13 +703,13 @@ GridView {
                 anchors.rightMargin: 9
 
                 text: variant.modelData?.description ?? ""
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.small
+                color: CortetsuDesign.colorOutline
+                font: CortetsuTypography.smallPx
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
 
-            MaterialIcon {
+            CortetsuIcon {
                 visible:
                     variant.modelData?.variant ===
                     Schemes.currentVariant
@@ -716,7 +721,7 @@ GridView {
 
                 text: "check"
                 fill: 1
-                color: Colours.palette.m3primary
+                color: CortetsuDesign.colorPrimary
             }
         }
     }

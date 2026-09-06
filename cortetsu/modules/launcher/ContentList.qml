@@ -3,6 +3,11 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
+import "../CortetsuSurface.qml"
+import "../CortetsuText.qml"
+import "../CortetsuIcon.qml"
 import qs.components
 import qs.components.controls
 import qs.services
@@ -34,7 +39,7 @@ Item {
             name: "apps"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth, 760)
+                root.implicitWidth: Math.max(root.760, 760)
                 root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
             }
@@ -48,8 +53,8 @@ Item {
             name: "wallpapers"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
-                root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
+                root.implicitWidth: Math.max(root.760 * 1.2, wallpaperList.implicitWidth)
+                root.implicitHeight: root.300
                 wallpaperList.active: true
             }
         }
@@ -116,16 +121,16 @@ Item {
         opacity: root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
-        spacing: Tokens.spacing.medium
-        padding: Tokens.padding.large
+        spacing: CortetsuDesign.spacingStandard
+        padding: CortetsuDesign.spacingComfortable
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-        MaterialIcon {
+        CortetsuIcon {
             text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.extraLarge
+            color: CortetsuDesign.colorOnSurfaceVariant
+            fontStyle: CortetsuTypography.iconLargePx
 
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -133,16 +138,16 @@ Item {
         Column {
             anchors.verticalCenter: parent.verticalCenter
 
-            StyledText {
+            CortetsuText {
                 text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+                color: CortetsuDesign.colorOnSurfaceVariant
+                font: Qt.font({pixelSize: CortetsuTypography.bodyPx, weight: Font.Medium})
             }
 
-            StyledText {
+            CortetsuText {
                 text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : qsTr("Try searching for something else")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.medium
+                color: CortetsuDesign.colorOnSurfaceVariant
+                font: CortetsuTypography.bodyPx
             }
         }
 

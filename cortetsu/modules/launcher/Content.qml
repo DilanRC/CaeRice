@@ -4,6 +4,11 @@ import QtQuick
 import Caelestia
 import Caelestia.Config
 import ".."
+import "../CortetsuDesign.js" as CortetsuDesign
+import "../CortetsuTypography.js" as CortetsuTypography
+import "../CortetsuSurface.qml"
+import "../CortetsuText.qml"
+import "../CortetsuIcon.qml"
 import qs.components
 import qs.components.controls
 import qs.services
@@ -16,8 +21,8 @@ Item {
     required property var panels
     required property real maxHeight
 
-    readonly property int padding: Tokens.padding.large
-    readonly property int rounding: Tokens.rounding.extraLarge
+    readonly property int padding: CortetsuDesign.spacingComfortable
+    readonly property int rounding: CortetsuDesign.radiusLarge
 
     /*
      * Search on top, results underneath.
@@ -46,8 +51,8 @@ Item {
         anchors.leftMargin: root.padding
         anchors.rightMargin: root.padding
 
-        topPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
-        bottomPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
+        topPadding: Math.round((CortetsuDesign.spacingStandard + CortetsuDesign.spacingComfortable) / 2)
+        bottomPadding: Math.round((CortetsuDesign.spacingStandard + CortetsuDesign.spacingComfortable) / 2)
 
         placeholderText: qsTr("Type \"%1\" for commands").arg(CortetsuConfig.actionPrefix)
 
@@ -55,7 +60,7 @@ Item {
             const currentItem = list.currentList?.currentItem;
             if (currentItem) {
                 if (list.showWallpapers) {
-                    if (Colours.scheme === "dynamic" && currentItem.modelData.path !== Wallpapers.actualCurrent)
+                    if (false && currentItem.modelData.path !== Wallpapers.actualCurrent)
                         Wallpapers.previewColourLock = true;
 
                     Wallpapers.setWallpaper(currentItem.modelData.path);
