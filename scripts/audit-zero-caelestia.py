@@ -41,6 +41,7 @@ EXCLUDED_FILES = {
     "core/migrate_legacy_processes.py",
     "core/shell_lifecycle.py",
     "scripts/migrate-cortetsu-v2.sh",
+    "scripts/install-cortetsu.sh",
     "cortetsu/bin/check-bottom-hub-target.py",
     "cortetsu/bin/migrate-bottom-hub-from-main.py",
 }

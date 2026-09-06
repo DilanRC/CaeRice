@@ -55,6 +55,8 @@ for marker in (
 assert "install-theme-bridge.py" not in installer
 assert "canonical=" not in installer
 assert "sudo " not in installer
+assert "legacy_state_present=0" in installer
+assert 'if [[ "$legacy_state_present" == 1' in installer
 assert "legacy-processes) legacy_processes_cmd" in cli
 assert "screenshot) screenshot_cmd" in cli
 assert "/usr/bin/caelestia" not in cli

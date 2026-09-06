@@ -17,8 +17,23 @@ atomic_symlink() {
     mv -Tf "$temporary" "$link"
 }
 
-if [[ -x "$REPO/scripts/migrate-cortetsu-v2.sh" ]]; then
+legacy_state_present=0
+for legacy_candidate in \
+    "${XDG_CONFIG_HOME:-$HOME/.config}/caelestia" \
+    "${XDG_STATE_HOME:-$HOME/.local/state}/caelestia" \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/caelestia" \
+    "${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/caelestia" \
+    "${XDG_CONFIG_HOME:-$HOME/.config}/caerice" \
+    "${XDG_STATE_HOME:-$HOME/.local/state}/caerice"; do
+    if [[ -e "$legacy_candidate" ]]; then
+        legacy_state_present=1
+        break
+    fi
+done
+if [[ "$legacy_state_present" == 1 && -x "$REPO/scripts/migrate-cortetsu-v2.sh" ]]; then
     "$REPO/scripts/migrate-cortetsu-v2.sh"
+else
+    printf 'Migración legacy: no hay estado anterior; se omite.\n'
 fi
 
 printf '==> Cortetsu: validación y construcción aislada\n'
