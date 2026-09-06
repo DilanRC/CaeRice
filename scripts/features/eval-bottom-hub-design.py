@@ -1,40 +1,44 @@
 #!/usr/bin/env python3
+"""Evaluate the current first-party BottomHub composition and visual contract."""
 from pathlib import Path
 
-hub = (Path(__file__).resolve().parents[2] / "cortetsu/modules/BottomHub.qml").read_text()
+ROOT = Path(__file__).resolve().parents[2]
+modules = ROOT / "cortetsu/modules"
+
+hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")
+view = (modules / "CortetsuBottomHubView.qml").read_text(encoding="utf-8")
+rail = (modules / "CortetsuAppRail.qml").read_text(encoding="utf-8")
+tray = (modules / "CortetsuTraySegment.qml").read_text(encoding="utf-8")
+status = (modules / "CortetsuStatusSegment.qml").read_text(encoding="utf-8")
+mode = (modules / "CortetsuModeSegment.qml").read_text(encoding="utf-8")
 
 criteria = {
-    "superficie exterior transparente": 'color: "transparent"\n                border.width: 0',
-    "segmentos ligados al scheme": "Colours.tPalette.m3surfaceContainer",
-    "launcher CachyOS": 'imageSource: "file:///usr/share/icons/cachyos.svg"',
-    "esferas de workspace": "id: workspaceDots",
-    "volumen Cortetsu": "Icons.getVolumeIcon(CortetsuAudio.volume, CortetsuAudio.muted)",
-    "audio único": 'id: volumeButton',
-    "wifi Cortetsu": "Icons.getNetworkIcon(CortetsuNetwork.active.strength ?? 0)",
-    "Bluetooth con estado": '"bluetooth_connected"',
-    "bateria Caelestia": "Icons.getBatteryIcon(",
-    "iconos de sistema compactos": "iconFontStyle: Tokens.font.icon.medium",
-    "tray como isla separada": "id: traySegment",
-    "tray usa icono SNI original": "modelData.icon\n                                        || Icons.getTrayIcon",
-    "menus tray conservan indice SNI": "`traymenu${trayItem.sourceIndex}`",
-    "centro adaptativo": "implicitWidth: Math.min(appRailContent.implicitWidth + 14, win.appRailMaxWidth)",
-    "centro geometrico": "anchors.horizontalCenter: parent.horizontalCenter",
-    "hover nativo anclado": "win.popoutAnchorCenter(",
-    "quick toggles por fecha": "onClicked: hubRoot.toggleUtilitiesFor(win.modelData)",
+    "superficie exterior transparente": 'color: "transparent"' in hub,
+    "segmentos con CortetsuDesign": all("CortetsuDesign" in text for text in (rail, tray, status, mode)),
+    "launcher first-party": "CortetsuModeSegment" in view and "launcherRequested" in view,
+    "workspace state": "occupiedWorkspaceIds" in view and "activeWsId" in view,
+    "centro adaptativo": "appRailMaxWidth" in view and "maxWidth: root.appRailMaxWidth" in view,
+    "centro geometrico": "anchors.horizontalCenter: parent.horizontalCenter" in view,
+    "hover con escala contenida": "CortetsuDesign.hoverScale" in rail,
+    "animacion corta": "CortetsuDesign.motionFastMs" in rail,
+    "audio Cortetsu": "volumeIcon" in status and "volumeWheel" in status,
+    "wifi first-party": 'attachedControlRequested("network"' in status,
+    "Bluetooth first-party": 'attachedControlRequested("bluetooth"' in status,
+    "bateria first-party": "batteryIcon" in status and "batteryCritical" in status,
+    "tray como isla": "CortetsuTraySegment" in view and "CortetsuSurface" in tray,
+    "icono SNI conservado": "iconSource" in tray,
+    "quick settings first-party": "toggleUtilitiesFor" in hub,
+    "notificaciones first-party": "toggleSidebarFor" in hub,
+    "anclaje de popups": "attachedControlRequested" in view and "bottomAnchorCenter" in hub,
 }
 
-passed = [name for name, needle in criteria.items() if needle in hub]
 if "toggleOverviewFor" in hub or 'icon: "view_quilt"' in hub:
     raise SystemExit("FAIL: BottomHub conserva el control Overview retirado")
 if 'icon: "speaker_group"' in hub:
     raise SystemExit("FAIL: BottomHub conserva el segundo control de audio duplicado")
-if "Layout.fillWidth: true" in hub:
-    raise SystemExit("FAIL: el rail central conserva ancho fijo")
-if "Icons.getTrayIcon(trayItem.modelData.id, trayItem.modelData.icon)" in hub:
-    raise SystemExit("FAIL: el tray ignora primero el icono entregado por SNI")
 
-score = len(passed) / len(criteria)
-print(f"BottomHub design eval: {len(passed)}/{len(criteria)} ({score:.0%})")
-if score < 1:
-    missing = sorted(set(criteria) - set(passed))
+missing = sorted(name for name, passed in criteria.items() if not passed)
+score = (len(criteria) - len(missing)) / len(criteria)
+print(f"BottomHub design eval: {len(criteria) - len(missing)}/{len(criteria)} ({score:.0%})")
+if missing:
     raise SystemExit("FAIL: " + ", ".join(missing))
