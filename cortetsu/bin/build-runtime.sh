@@ -5,7 +5,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DATA_ROOT="${CORTETSU_DATA_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/cortetsu}"
 RUNTIME_ROOT="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/cortetsu}"
 SOURCE_BASE="$REPO/cortetsu/base"
-COMPATIBILITY="$REPO/cortetsu/contracts/upstream-compatibility.json"
+PROVENANCE="$REPO/cortetsu/contracts/runtime-provenance.json"
 BUILD_ROOT="$DATA_ROOT/builds"
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 STAGING="$BUILD_ROOT/.staging-$STAMP"
@@ -26,7 +26,7 @@ is_managed_generation() {
     [[ -f "$root/shell.qml" ]] || return 1
     [[ -f "$root/BUILD_ID" ]] || return 1
     [[ -f "$root/BUILD.json" ]] || return 1
-    [[ -f "$root/compatibility.json" ]] || return 1
+    [[ -f "$root/provenance.json" ]] || return 1
     [[ -f "$root/composition.json" ]] || return 1
 }
 
@@ -35,24 +35,10 @@ cleanup() {
 }
 trap cleanup EXIT
 
-require_file "$COMPATIBILITY"
+require_file "$PROVENANCE"
 require_file "$SOURCE_BASE/PROVENANCE.md"
 require_file "$REPO/cortetsu/modules/BottomHub.qml"
 require_file "$REPO/cortetsu/modules/CortetsuBottomHubView.qml"
-
-readarray -t upstream_contract < <(
-    python3 - "$COMPATIBILITY" <<'PY'
-import json
-import sys
-from pathlib import Path
-payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
-base = payload["caelestiaShell"]
-print(base["upstreamTag"])
-print(base["upstreamCommit"])
-PY
-)
-UPSTREAM_TAG="${upstream_contract[0]}"
-UPSTREAM_COMMIT="${upstream_contract[1]}"
 
 mkdir -p "$BUILD_ROOT" "$RUNTIME_ROOT"
 exec 9>"$DATA_ROOT/build.lock"
@@ -73,7 +59,7 @@ cp -a "$REPO/cortetsu/utils/." "$STAGING/utils/"
 mkdir -p "$STAGING/services"
 cp -a "$REPO/cortetsu/services/." "$STAGING/services/"
 python3 "$REPO/cortetsu/bin/compose-panels.py" "$STAGING"
-install -m 0644 "$COMPATIBILITY" "$STAGING/compatibility.json"
+install -m 0644 "$PROVENANCE" "$STAGING/provenance.json"
 install -m 0644 "$REPO/cortetsu/contracts/composition.json" "$STAGING/composition.json"
 
 printf '==> Regresiones\n'
@@ -174,7 +160,7 @@ for required in \
     modules/CortetsuMask.qml \
     modules/areapicker/AreaPicker.qml \
     modules/areapicker/Picker.qml \
-    compatibility.json \
+    provenance.json \
     composition.json
 do
     require_file "$STAGING/$required"
@@ -182,19 +168,18 @@ done
 
 repo_revision="$(git -C "$REPO" rev-parse HEAD 2>/dev/null || printf unknown)"
 printf '%s\n' "$STAMP" > "$STAGING/BUILD_ID"
-python3 - "$STAGING/BUILD.json" "$STAMP" "$repo_revision" "$UPSTREAM_TAG" "$UPSTREAM_COMMIT" <<'PY'
+python3 - "$STAGING/BUILD.json" "$STAMP" "$repo_revision" <<'PY'
 import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-path, build_id, revision, tag, commit = sys.argv[1:]
+path, build_id, revision = sys.argv[1:]
 payload = {
     "schema": 1,
+    "sourceProject": "Cortetsu",
     "buildId": build_id,
     "builtAt": datetime.now(timezone.utc).isoformat(),
     "repositoryRevision": revision,
-    "upstreamTag": tag,
-    "upstreamCommit": commit,
 }
 Path(path).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 PY

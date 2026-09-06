@@ -38,9 +38,8 @@ with tempfile.TemporaryDirectory(prefix="cortetsu-system-recovery-") as tmp:
     (shell / "BUILD_ID").write_text("shell-1\n", encoding="utf-8")
     (shell / "BUILD.json").write_text(json.dumps({
         "schema": 1,
+        "sourceProject": "Cortetsu",
         "buildId": "shell-1",
-        "upstreamTag": "v2.4.0",
-        "upstreamCommit": "24aa15eefdb146350d2548c0a015b04eddbd1008",
     }) + "\n", encoding="utf-8")
     env = os.environ.copy()
     env.update(

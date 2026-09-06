@@ -15,14 +15,12 @@ rollback = (repo / "cortetsu/bin/rollback-runtime.sh").read_text(encoding="utf-8
 composer = (repo / "cortetsu/bin/compose-panels.py").read_text(encoding="utf-8")
 content = (repo / "cortetsu/modules/calendar/Content.qml").read_text(encoding="utf-8")
 cli = (repo / "scripts/cortetsu").read_text(encoding="utf-8")
-compatibility = json.loads((repo / "cortetsu/contracts/upstream-compatibility.json").read_text(encoding="utf-8"))
+provenance = json.loads((repo / "cortetsu/contracts/runtime-provenance.json").read_text(encoding="utf-8"))
 composition = json.loads((repo / "cortetsu/contracts/composition.json").read_text(encoding="utf-8"))
 
-assert compatibility["project"] == "Cortetsu"
-assert compatibility["caelestiaShell"]["upstreamTag"] == "v2.4.0"
-assert compatibility["caelestiaShell"]["upstreamCommit"] == "24aa15eefdb146350d2548c0a015b04eddbd1008"
-assert compatibility["caelestiaShell"]["upstreamRepo"] == "https://github.com/caelestia-dots/shell.git"
-assert compatibility["sourceOfTruth"] == "https://github.com/DilanRC/Cortetsu.git"
+assert provenance["project"] == "Cortetsu"
+assert provenance["sourceOfTruth"] == "https://github.com/DilanRC/Cortetsu.git"
+assert provenance["baseProvenance"] == "cortetsu/base/PROVENANCE.md"
 assert composition["description"].startswith("Single staged Cortetsu")
 
 for marker in (
@@ -34,12 +32,14 @@ for marker in (
     assert marker in build, marker
 assert 'cp -a "$PACKAGE_ROOT' not in build
 assert "ensure-upstream.sh" not in build
+assert "upstreamCommit" not in build and "upstreamTag" not in build
 assert 'git -C "$UPSTREAM" archive' not in build
 assert "/etc/xdg/quickshell/caelestia" not in build
 assert "CAERICE_" not in build and "caerice-" not in build
 assert 'cp -a "$REPO/cortetsu/services/." "$STAGING/services/"' in build
 for service in ("Time.qml", "Brightness.qml", "Audio.qml", "Players.qml"):
     assert f"services/{service}" in build
+assert "provenance.json" in build
 
 for marker in (
     "scripts/migrate-cortetsu-v2.sh",

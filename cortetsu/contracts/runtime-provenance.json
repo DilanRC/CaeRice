@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "project": "Cortetsu",
+  "sourceOfTruth": "https://github.com/DilanRC/Cortetsu.git",
+  "runtime": "~/.config/quickshell/cortetsu/current",
+  "baseProvenance": "cortetsu/base/PROVENANCE.md",
+  "policy": "The runtime is built only from the Cortetsu repository; upstream attribution remains in base/PROVENANCE.md."
+}

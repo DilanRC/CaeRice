@@ -26,7 +26,7 @@ is_managed_generation() {
         shell.qml \
         BUILD_ID \
         BUILD.json \
-        compatibility.json \
+        provenance.json \
         composition.json \
         modules/BottomHub.qml \
         modules/calendar/Content.qml \
