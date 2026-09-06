@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell
 import ".."
+import "../../components"
 import "../CortetsuDesign.js" as CortetsuDesign
-import "../CortetsuTypography.js" as CortetsuTypography
 import "../../services"
 
 Item {
@@ -19,57 +19,38 @@ Item {
         anchors.fill: parent
         spacing: CortetsuDesign.spacingStandard
 
-        Rectangle {
-            width: parent.width
-            height: 58
-            radius: CortetsuDesign.radiusMedium
-            color: CortetsuIdleInhibitor.enabled ? CortetsuDesign.colorPrimaryContainer : CortetsuDesign.colorSurface
-            Text {
-                anchors.centerIn: parent
-                text: CortetsuIdleInhibitor.enabled ? qsTr("Keep-awake enabled") : qsTr("Keep-awake disabled")
-                color: CortetsuDesign.colorWashi
-                font.family: CortetsuTypography.uiFamily
-                font.pixelSize: CortetsuTypography.bodyPx
-            }
-            MouseArea { anchors.fill: parent; onClicked: CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled }
+        CortetsuSectionHeader {
+            title: qsTr("Quick settings")
+            detail: qsTr("Cortetsu controls")
         }
 
-        Rectangle {
+        CortetsuButton {
             width: parent.width
-            height: 58
-            radius: CortetsuDesign.radiusMedium
-            color: CortetsuRecorder.running ? CortetsuDesign.colorVermillion : CortetsuDesign.colorSurface
-            Text {
-                anchors.centerIn: parent
-                text: CortetsuRecorder.running ? qsTr("Stop recording") : qsTr("Start recording")
-                color: CortetsuDesign.colorWashi
-                font.family: CortetsuTypography.uiFamily
-                font.pixelSize: CortetsuTypography.bodyPx
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (CortetsuRecorder.running)
-                        CortetsuRecorder.stop();
-                    else
-                        Quickshell.execDetached(["cortetsu-record", "start"]);
-                }
+            label: CortetsuIdleInhibitor.enabled ? qsTr("Keep-awake enabled") : qsTr("Keep-awake disabled")
+            icon: CortetsuIdleInhibitor.enabled ? "bedtime_off" : "bedtime"
+            active: CortetsuIdleInhibitor.enabled
+            onClicked: CortetsuIdleInhibitor.enabled = !CortetsuIdleInhibitor.enabled
+        }
+
+        CortetsuButton {
+            width: parent.width
+            label: CortetsuRecorder.running ? qsTr("Stop recording") : qsTr("Start recording")
+            icon: CortetsuRecorder.running ? "stop_circle" : "radio_button_checked"
+            active: CortetsuRecorder.running
+            danger: CortetsuRecorder.running
+            onClicked: {
+                if (CortetsuRecorder.running)
+                    CortetsuRecorder.stop();
+                else
+                    Quickshell.execDetached(["cortetsu-record", "start"]);
             }
         }
 
-        Rectangle {
+        CortetsuButton {
             width: parent.width
-            height: 58
-            radius: CortetsuDesign.radiusMedium
-            color: CortetsuDesign.colorSurface
-            Text {
-                anchors.centerIn: parent
-                text: qsTr("Open notification controls")
-                color: CortetsuDesign.colorWashi
-                font.family: CortetsuTypography.uiFamily
-                font.pixelSize: CortetsuTypography.bodyPx
-            }
-            MouseArea { anchors.fill: parent; onClicked: root.screenState.sidebar = true }
+            label: qsTr("Open notification controls")
+            icon: "notifications"
+            onClicked: root.screenState.sidebar = true
         }
     }
 }
