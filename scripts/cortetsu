@@ -59,6 +59,11 @@ Usage:
 EOF
 }
 
+version_cmd() {
+    require_repo
+    printf 'Cortetsu %s\n' "$(awk -F'"' '/^installed_version[[:space:]]*=/{print $2; exit}' "$ROOT/cortetsu.toml")"
+}
+
 fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 require_repo() { [[ -n "$ROOT" ]] || fail "no se encontró el repositorio Cortetsu; ejecuta desde el clon o define CORTETSU_REPO_ROOT"; }
 require_file() { [[ -f "$1" ]] || fail "falta archivo requerido: $1"; }
@@ -365,6 +370,7 @@ install_cmd() { require_repo; require_file "$ROOT/scripts/install-cortetsu.sh"; 
 command="${1:-help}"
 shift || true
 case "$command" in
+    --version|-V|version) version_cmd "$@" ;;
     status) status_cmd "$@" ;;
     plan) plan_cmd "$@" ;;
     apply) apply_cmd "$@" ;;

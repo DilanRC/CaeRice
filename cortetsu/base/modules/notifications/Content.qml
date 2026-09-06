@@ -3,11 +3,11 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
-import Caelestia
 import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
+import qs.utils
 import qs.modules.utilities as Utilities
 
 Item {
@@ -18,7 +18,7 @@ Item {
     required property Item sessionPanel
     required property Item utilitiesPanel
     readonly property int padding: Tokens.padding.large
-    readonly property int clampedPadding: CUtils.clamp(padding - CortetsuConfig.borderThickness, 0, padding)
+    readonly property int clampedPadding: CortetsuUtils.clamp(padding - CortetsuConfig.borderThickness, 0, padding)
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom

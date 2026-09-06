@@ -109,6 +109,17 @@ for notif_dock in (
     dock_text = notif_dock.read_text(encoding="utf-8")
     assert "import Caelestia.Config" not in dock_text
 assert "noNotifsPic" in (repo / "cortetsu/utils/Paths.qml").read_text(encoding="utf-8")
+utils_service = (repo / "cortetsu/utils/CortetsuUtils.qml").read_text(encoding="utf-8")
+assert "function clamp" in utils_service and "function deleteFile" in utils_service
+assert "Caelestia" not in "\n".join(
+    (repo / path).read_text(encoding="utf-8")
+    for path in (
+        "cortetsu/base/modules/utilities/RecordingDeleteModal.qml",
+        "cortetsu/base/modules/notifications/Content.qml",
+        "cortetsu/base/modules/dashboard/Content.qml",
+        "cortetsu/base/modules/nexus/pages/AboutPage.qml",
+    )
+)
 metrics = {
     "Cpu.qml": ("/proc/stat", "property real percentage"),
     "Memory.qml": ("/proc/meminfo", "property real used"),

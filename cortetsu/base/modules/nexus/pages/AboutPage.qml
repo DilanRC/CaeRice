@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Io
-import Caelestia
 import qs.components
 import qs.services
 import qs.utils
@@ -33,14 +32,13 @@ PageBase {
             }
         }
 
-        // Parsed from the caelestia CLI's package listing; the sh wrapper avoids a
-        // warning when the (optional) CLI isn't installed
+        // Read the optional first-party CLI without making the shell depend on it.
         Process {
             running: true
-            command: ["sh", "-c", "caelestia --version 2>/dev/null"]
+            command: ["sh", "-c", "command -v cortetsu >/dev/null 2>&1 && cortetsu --version"]
             stdout: StdioCollector {
                 onStreamFinished: {
-                    const m = text.match(/caelestia-cli\S*\s+(\d+(?:\.\d+)*)/);
+                    const m = text.match(/Cortetsu\s+(\S+)/);
                     root.cliVersion = m ? m[1] : "";
                 }
             }
@@ -69,13 +67,13 @@ PageBase {
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.topMargin: Tokens.spacing.small
-                    text: "Caelestia"
+                    text: "Cortetsu"
                     font: Tokens.font.headline.builders.large.width(110).build()
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: CUtils.version ? `v${CUtils.version}` : "…"
+                    text: CortetsuUtils.version ? `v${CortetsuUtils.version}` : "…"
                     color: Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.body.medium
                 }
@@ -122,7 +120,7 @@ PageBase {
         InfoRow {
             first: true
             label: qsTr("Shell")
-            value: CUtils.version || "…"
+            value: CortetsuUtils.version || "…"
         }
 
         InfoRow {
@@ -138,7 +136,7 @@ PageBase {
         InfoRow {
             last: true
             label: qsTr("Qt")
-            value: CUtils.qtVersion || "…"
+            value: CortetsuUtils.qtVersion || "…"
         }
 
         // Plugins

@@ -3,11 +3,11 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Shapes
-import Caelestia
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import qs.utils
 import qs.modules
 
 Loader {
@@ -194,7 +194,7 @@ Loader {
                         text: qsTr("Delete")
                         type: TextButton.Text
                         onClicked: {
-                            CUtils.deleteFile(Qt.resolvedUrl(root.props.recordingConfirmDelete));
+                            CortetsuUtils.deleteFile(Qt.resolvedUrl(root.props.recordingConfirmDelete));
                             root.props.recordingConfirmDelete = "";
                         }
                     }

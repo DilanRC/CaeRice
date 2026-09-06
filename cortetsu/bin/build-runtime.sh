@@ -143,6 +143,7 @@ for required in \
     utils/NetworkConnection.qml \
     utils/Paths.qml \
     utils/Icons.qml \
+    utils/CortetsuUtils.qml \
     utils/SysInfo.qml \
     modules/CortetsuModeSegment.qml \
     modules/CortetsuWorkspaceDots.qml \
