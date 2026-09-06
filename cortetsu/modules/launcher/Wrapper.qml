@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.modules.launcher.services
 
@@ -13,7 +12,7 @@ Item {
     required property ScreenState screenState
     required property var panels
 
-    readonly property bool shouldBeActive: screenState.launcher && Config.launcher.enabled
+    readonly property bool shouldBeActive: screenState.launcher
 
     /*
      * 62px dock + 2px bottom margin + 8px breathing room.
@@ -22,7 +21,7 @@ Item {
     readonly property real dockOffset: 72
 
     readonly property real maxHeight: {
-        let max = screen.height - Config.border.thickness * 2 + CortetsuDesign.spacingSpacious - dockOffset;
+        let max = screen.height + CortetsuDesign.spacingSpacious - dockOffset;
         if (screenState.dashboard)
             max -= panels.dashboard.nonAnimHeight;
         return max;

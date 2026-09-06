@@ -4,9 +4,6 @@ import ".."
 import "../.."
 import QtQuick
 import Quickshell
-import Caelestia.Config
-import Caelestia.Services
-import qs.services
 import qs.utils
 
 Searcher {
@@ -47,8 +44,7 @@ Searcher {
                 Quickshell.execDetached(["cortetsu", "theme", "set", command[1]]);
             } else {
                 list.screenState.launcher = false;
-                if (!SessionManager.exec(command))
-                    Quickshell.execDetached(command);
+                Quickshell.execDetached(command);
             }
         }
     }

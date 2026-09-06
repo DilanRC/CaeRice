@@ -1,8 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia
-import Caelestia.Config
 import ".."
 import "../CortetsuDesign.js" as CortetsuDesign
 import "../CortetsuTypography.js" as CortetsuTypography
@@ -11,7 +9,6 @@ import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
 import qs.components
 import qs.components.controls
-import qs.services
 import qs.modules.launcher.services
 
 Item {
