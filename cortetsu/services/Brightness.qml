@@ -65,8 +65,11 @@ Singleton {
         id: monitor
         required property ShellScreen modelData
         property real brightness: 0
+        readonly property string monitorName: modelData?.name ?? ""
         readonly property Process readProcess: Process {
-            command: ["brightnessctl", "-d", "*" + monitor.modelData.name + "*", "g"]
+            command: monitor.monitorName.length > 0
+                ? ["brightnessctl", "-d", "*" + monitor.monitorName + "*", "g"]
+                : ["true"]
             stdout: StdioCollector { onStreamFinished: monitor.brightness = Math.max(0, Math.min(1, Number(text.trim()) / 100)) }
         }
         function setBrightness(value: real): void {

@@ -9,6 +9,10 @@ assert "function onEnableFprintChanged" not in pam and "function onEnableHowdyCh
 assert 'import "../modules"' in service
 assert "CortetsuShellState.forScreen(screen)" in service
 assert "CortetsuShellState.forActive()" in service
+assert "id: legacyComponents" in service
+assert "function compatibilityComponentsFor(screen): var" in service
+assert "readonly property var target: ShellState.compatibilityComponentsFor(screen)" in service
+assert "readonly property var target: ShellState.componentsFor(screen)" not in service
 assert "import Caelestia" not in service
 assert "import qs.services" not in service
 print("PASS: ShellState compatibility service delegates to Cortetsu state")

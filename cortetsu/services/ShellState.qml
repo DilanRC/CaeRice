@@ -22,7 +22,7 @@ Singleton {
     }
 
     Variants {
-        id: components
+        id: legacyComponents
 
         model: CortetsuScreens.screens
 
@@ -57,22 +57,30 @@ Singleton {
     }
 
     function componentsFor(screen): var {
-        return components.instances.find(component => component.modelData === screen)
+        return legacyComponents.instances.find(component => component.modelData === screen)
             ?? CortetsuShellState.componentsFor(screen);
     }
 
     function componentsForActive(): var {
         const monitor = CortetsuHypr.focusedMonitor;
-        return components.instances.find(component => CortetsuHypr.monitorFor(component.modelData) === monitor)
-            ?? components.instances[0]
+        return legacyComponents.instances.find(component => CortetsuHypr.monitorFor(component.modelData) === monitor)
+            ?? legacyComponents.instances[0]
             ?? null;
+    }
+
+    function compatibilityComponentsFor(screen): var {
+        return legacyComponents.instances.find(component => component.modelData === screen) ?? null;
     }
 
     component ComponentRef: QtObject {
         required property var screen
         required property string slot
         required property var component
-        readonly property var target: ShellState.componentsFor(screen)
+        // ComponentRef writes legacy slots only on the compatibility object.
+        // Falling back to CortetsuShellState here returns Panels/Background,
+        // which intentionally do not expose those legacy properties during
+        // dynamic monitor creation.
+        readonly property var target: ShellState.compatibilityComponentsFor(screen)
 
         onTargetChanged: {
             if (target)
