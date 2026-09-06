@@ -52,7 +52,7 @@ printf '==> Dotfiles Cortetsu\n'
 python3 "$REPO/core/dotfiles.py" apply --repo "$REPO"
 
 printf '==> Retiro de tema heredado\n'
-python3 "$REPO/core/retire_legacy_theme.py"
+python3 "$REPO/scripts/maintenance/retire_legacy_theme.py"
 
 printf '==> Ciclo de vida del shell\n'
 python3 "$REPO/core/shell_lifecycle.py" migrate
