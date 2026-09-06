@@ -83,7 +83,7 @@ hl.bind(
 
 hl.bind(
     "SUPER + I",
-    hl.dsp.global("cortetsu:nexus")
+    hl.dsp.global("cortetsu:utilities")
 )
 
 -- Clipboard QML nativo

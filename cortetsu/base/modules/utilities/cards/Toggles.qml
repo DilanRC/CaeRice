@@ -7,7 +7,6 @@ import qs.components
 import qs.components.controls
 import qs.modules
 import qs.services
-import qs.modules.nexus
 import qs.modules.bar.popouts as BarPopouts
 
 CortetsuSurface {
@@ -116,8 +115,7 @@ CortetsuSurface {
                         inactiveOnColour: CortetsuColours.palette.m3onSurfaceVariant
                         isToggle: false
                         onClicked: {
-                            root.screenState.utilities = false;
-                            WindowFactory.create();
+                            root.screenState.utilities = true;
                         }
                     }
                 }

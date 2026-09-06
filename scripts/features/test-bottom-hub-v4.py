@@ -47,7 +47,7 @@ def main() -> None:
     require(CHECKER, 'qml_block(text, "Launcher.Wrapper", "launcher")', "validación scoped del launcher")
     require(BAR, "readonly property bool disabled: true", "retiro de barra nativa")
     require(BAR, "implicitWidth: 0", "ancho de barra retirada")
-    require(HYPR, '"SUPER + I",\n    hl.dsp.global("cortetsu:nexus")', "SUPER+I a Nexus")
+    require(HYPR, '"SUPER + I",\n    hl.dsp.global("cortetsu:utilities")', "SUPER+I a Quick settings")
     require(HYPR, '"SUPER + H",\n    hl.dsp.global("cortetsu:hardware")', "SUPER+H a Hardware Center")
     require(HUB, "hubRoot.toggleLauncherFor(state.modelData);", "SUPER alterna el launcher")
     require(SHORTCUTS, "const state = ShellState.forActive(), open = !(state.sidebar || state.utilities);", "SUPER+N abre ambos centros")

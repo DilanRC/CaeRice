@@ -3,14 +3,12 @@ import Quickshell
 import Quickshell.Io
 import "../components/misc"
 import "../services"
-import "nexus"
 
 Scope {
     id: root
     property bool launcherInterrupted: false
     readonly property bool hasFullscreen: CortetsuHypr.focusedWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false
 
-    CustomShortcut { name: "nexus"; description: "Open nexus"; onPressed: WindowFactory.create() }
     CustomShortcut {
         name: "showall"; description: "Toggle launcher, dashboard and osd"
         onPressed: {
@@ -52,5 +50,4 @@ Scope {
         function list(): string { const state = ShellState.forActive(); return state ? Object.keys(state).filter(k => typeof state[k] === "boolean").join("\n") : ""; }
         function isOpen(drawer: string): string { const state = ShellState.forActive(); return !state || typeof state[drawer] !== "boolean" ? "unknown" : state[drawer] ? "1" : "0"; }
     }
-    IpcHandler { target: "nexus"; function open(): void { WindowFactory.create(); } }
 }
