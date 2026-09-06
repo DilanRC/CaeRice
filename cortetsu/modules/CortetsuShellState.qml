@@ -32,7 +32,8 @@ QtObject {
 
     function forActive(): var {
         const monitor = CortetsuHypr.focusedMonitor;
-        return states.find(entry => CortetsuHypr.monitorFor(entry.screen) === monitor)?.state ?? null;
+        return states.find(entry => CortetsuHypr.monitorFor(entry.screen) === monitor)?.state
+            ?? states[0]?.state ?? null;
     }
 
     function componentsFor(screen): var {
