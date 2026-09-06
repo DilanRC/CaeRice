@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+"""Deterministic actions on Cortetsu's own notification history and DND state.
+
+Owns two XDG-state files that CortetsuNotifications.qml (cortetsu/modules) already
+watches reactively:
+  - $XDG_STATE_HOME/cortetsu/notifs.json             (persisted notification history)
+  - $XDG_STATE_HOME/cortetsu/notification-status.json (dnd flag)
+
+This script never touches the live DBus notification server (Quickshell's
+NotificationServer in the patched services/Notifs.qml, or a competing daemon
+such as mako). It only edits the persisted JSON snapshot Cortetsu renders in
+the bottom hub. Clearing/dismissing here removes entries from that snapshot;
+a notification the live server still considers open can be re-persisted by
+the live service on its next save cycle. See docs/notifications.md for the
+DBus ownership investigation this script's design is based on.
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+
+def state_home() -> Path:
+    override = os.environ.get("XDG_STATE_HOME")
+    return Path(override).expanduser() if override else Path.home() / ".local/state"
+
+
+def history_path() -> Path:
+    return state_home() / "cortetsu/notifs.json"
+
+
+def status_path() -> Path:
+    return state_home() / "cortetsu/notification-status.json"
+
+
+def load_history() -> list[dict[str, Any]]:
+    try:
+        data = json.loads(history_path().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    return data if isinstance(data, list) else []
+
+
+def save_history(entries: list[dict[str, Any]]) -> None:
+    path = history_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(entries) + "\n", encoding="utf-8")
+
+
+def entry_id(entry: dict[str, Any]) -> Any:
+    return entry.get("notificationId", entry.get("id"))
+
+
+def load_status() -> dict[str, Any]:
+    try:
+        data = json.loads(status_path().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"dnd": False}
+    return data if isinstance(data, dict) else {"dnd": False}
+
+
+def save_status(status: dict[str, Any]) -> None:
+    path = status_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(status) + "\n", encoding="utf-8")
+
+
+def cmd_count() -> int:
+    print(len(load_history()))
+    return 0
+
+
+def cmd_history() -> int:
+    print(json.dumps(load_history()))
+    return 0
+
+
+def cmd_dismiss(raw_id: str) -> int:
+    try:
+        target = int(raw_id)
+    except ValueError:
+        target = raw_id
+    entries = load_history()
+    remaining = [entry for entry in entries if str(entry_id(entry)) != str(target)]
+    save_history(remaining)
+    print(len(remaining))
+    return 0
+
+
+def cmd_clear() -> int:
+    save_history([])
+    print(0)
+    return 0
+
+
+def cmd_dnd(action: str) -> int:
+    status = load_status()
+    current = status.get("dnd") is True
+    if action == "status":
+        pass
+    elif action == "on":
+        current = True
+    elif action == "off":
+        current = False
+    elif action == "toggle":
+        current = not current
+    else:
+        print(f"usage: cortetsu-notifications dnd [status|on|off|toggle]", file=sys.stderr)
+        return 64
+    status["dnd"] = current
+    if action != "status":
+        save_status(status)
+    print("on" if current else "off")
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    if not argv:
+        print("usage: cortetsu-notifications <count|history|dismiss ID|clear|dnd ACTION>", file=sys.stderr)
+        return 64
+    command, rest = argv[0], argv[1:]
+    if command == "count" and not rest:
+        return cmd_count()
+    if command == "history" and not rest:
+        return cmd_history()
+    if command == "dismiss" and len(rest) == 1:
+        return cmd_dismiss(rest[0])
+    if command == "clear" and not rest:
+        return cmd_clear()
+    if command == "dnd" and len(rest) == 1:
+        return cmd_dnd(rest[0])
+    print(f"usage: cortetsu-notifications <count|history|dismiss ID|clear|dnd ACTION>", file=sys.stderr)
+    return 64
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
