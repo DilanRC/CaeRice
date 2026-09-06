@@ -1,6 +1,5 @@
 patch	path
 modules__drawers__Interactions.qml.patch	modules/drawers/Interactions.qml
-modules__drawers__Regions.qml.patch	modules/drawers/Regions.qml
 modules__drawers__Panels.qml.patch	modules/drawers/Panels.qml
 modules__drawers__Panels__cortetsu-shell-state.qml.patch	modules/drawers/Panels.qml
 modules__drawers__ContentWindow.qml.patch	modules/drawers/ContentWindow.qml

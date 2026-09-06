@@ -1,7 +1,0 @@
---- a/modules/drawers/Regions.qml
-+++ b/modules/drawers/Regions.qml
-@@ -31 +31 @@
--        y: root.win.height - height
-+        y: root.win.height - height - panel.dockOffset
-@@ -63 +62,0 @@
--        y: root.win.height - height
