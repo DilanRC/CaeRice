@@ -43,7 +43,10 @@ Item {
         screen: root.screen
         offsetScale: root.offsetScale
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
+        // ClipWrapper owns the screen-space placement. Keeping the animated
+        // content at the local origin prevents a second horizontal offset
+        // from pulling popouts away from their BottomHub/tray icon.
+        x: 0
         transformOrigin: Item.Bottom
         scale: 1 - root.offsetScale
     }
