@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Shapes
 import Quickshell
 import M3Shapes
-import Caelestia.Services
 import qs.components
 import qs.components.widgets
 import qs.services
@@ -17,10 +16,6 @@ Item {
     readonly property real centerY: height / 2
     readonly property real spacing: Tokens.spacing.medium
     readonly property real maxMagnitude: (implicitWidth - cover.implicitWidth) / 2 - spacing
-
-    ServiceRef {
-        service: Audio.cava
-    }
 
     Shape {
         anchors.fill: parent

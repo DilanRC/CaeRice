@@ -65,6 +65,9 @@ assert "import Caelestia.Images" not in cached_image and "IUtils." not in cached
 assert "Paths.absolutePath(path)" in cached_image
 assert "import Caelestia.Images" not in coloured_icon and "ImageAnalyser" not in coloured_icon
 assert 'sourceColor: "black"' in coloured_icon and "Colouriser" in coloured_icon
+cover_visualiser = (repo / "cortetsu/base/modules/dashboard/media/CoverVisualiser.qml").read_text(encoding="utf-8")
+assert "import Caelestia.Services" not in cover_visualiser and "ServiceRef" not in cover_visualiser
+assert "Audio.cava" in cover_visualiser
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (
