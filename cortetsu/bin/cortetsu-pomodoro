@@ -155,13 +155,26 @@ def write_event(title: str, message: str) -> None:
     destination = event_path()
     destination.parent.mkdir(parents=True, exist_ok=True)
     payload = {"sequence": time.time_ns(), "title": title, "message": message}
+    with destination.open("w", encoding="utf-8") as stream:
+        stream.write(json.dumps(payload) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    destination.chmod(0o600)
+
+
+def ensure_event_file() -> None:
+    destination = event_path()
+    if destination.exists():
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_name(f".{destination.name}.tmp.{os.getpid()}")
-    temporary.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+    temporary.write_text(json.dumps({"sequence": 0}) + "\n", encoding="utf-8")
     temporary.chmod(0o600)
     temporary.replace(destination)
 
 
 def daemon() -> int:
+    ensure_event_file()
     lock_path = daemon_lock_path()
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     with lock_path.open("w", encoding="utf-8") as daemon_lock:

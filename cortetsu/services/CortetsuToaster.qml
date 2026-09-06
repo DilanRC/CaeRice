@@ -10,7 +10,6 @@ Singleton {
 
     property var toasts: []
     property int nextId: 0
-
     function toast(title, message, icon, type = 0) {
         const item = { id: nextId++, title, message, icon, type };
         toasts = [item, ...toasts];

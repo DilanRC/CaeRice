@@ -279,6 +279,8 @@ test_cmd() {
         "scripts/features/eval-cortetsu-native-popups.py"
         "scripts/features/test-cortetsu-native-notification-center.py"
         "scripts/features/eval-cortetsu-native-notification-center.py"
+        "scripts/features/test-cortetsu-toasts.py"
+        "scripts/features/eval-cortetsu-toasts.py"
         "scripts/features/test-native-theme.py"
         "scripts/features/test-dotfiles-platform.py"
         "scripts/features/test-system-generations.py"

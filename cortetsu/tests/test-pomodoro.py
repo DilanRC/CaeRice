@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import fcntl
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -50,6 +51,10 @@ with tempfile.TemporaryDirectory() as directory:
     assert module.load()["phase"] == "LONG_BREAK"
     module.write_event("Title", "Message")
     assert module.event_path().is_file()
+    assert json.loads(module.event_path().read_text(encoding="utf-8"))["title"] == "Title"
+    module.event_path().unlink()
+    module.ensure_event_file()
+    assert module.event_path().read_text(encoding="utf-8").strip() == '{"sequence": 0}'
 
     daemon_lock = module.daemon_lock_path()
     daemon_lock.parent.mkdir(parents=True, exist_ok=True)

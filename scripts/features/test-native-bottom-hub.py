@@ -107,8 +107,10 @@ def assert_controller(text: str) -> None:
     ):
         assert fingerprint in text, f"BottomHub controller lost behavior: {fingerprint}"
 
+    toaster = (repo / "cortetsu/services/CortetsuToaster.qml").read_text(encoding="utf-8")
     assert "/cortetsu/pomodoro-notification.json" in text
-    assert "/caelestia/pomodoro-notification.json" not in text
+    assert "/cortetsu/pomodoro-notification.json" not in toaster
+    assert "/caelestia/pomodoro-notification.json" not in toaster
 
 
 def assert_view_file(path: Path, text: str) -> None:

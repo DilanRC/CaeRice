@@ -19,6 +19,14 @@ assert "CortetsuToaster.toasts" in view
 assert "onDismissed: CortetsuToaster.dismiss" in view
 assert "visibleToasts" in view
 assert "toast: root.visibleToasts[index]" in view
+assert "width: implicitWidth" in view
+assert "height: implicitHeight" in view
+assert "height: implicitHeight" in item
+assert "pomodoroNotification" in hub
+assert "property var consumed" in hub
+assert "CortetsuToaster.toast(event.title, event.message, \"timer\")" in hub
+assert "onFileChanged: pomodoroNotificationReload.restart()" in hub
+assert "onTriggered: pomodoroNotification.reload()" in hub
+assert "onLoaded" in hub
 assert 'import "../utilities/toasts" as Toasts' in panels
-assert "CortetsuToaster.toast" in hub
 print("PASS: Cortetsu owns toast state, rendering, and event calls")

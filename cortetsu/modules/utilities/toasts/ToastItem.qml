@@ -8,6 +8,8 @@ CortetsuSurface {
     required property var toast
     signal dismissed()
     implicitHeight: body.implicitHeight + CortetsuDesign.spacingStandard * 2
+    width: parent ? parent.width : implicitWidth
+    height: implicitHeight
     radiusValue: CortetsuDesign.radiusMedium
     baseColor: CortetsuDesign.colorSurfaceGlass
     outlined: true

@@ -77,18 +77,27 @@ Scope {
         running: true
     }
 
+    Timer {
+        id: pomodoroNotificationReload
+        interval: 120
+        repeat: false
+        onTriggered: pomodoroNotification.reload()
+    }
+
     FileView {
         id: pomodoroNotification
         path: `${Quickshell.env("XDG_STATE_HOME") || `${Paths.home}/.local/state`}/cortetsu/pomodoro-notification.json`
         watchChanges: true
         printErrors: false
-        property string consumed: ""
-        onFileChanged: {
+        property var consumed: 0
+        onFileChanged: pomodoroNotificationReload.restart()
+        onLoaded: {
             try {
                 const event = JSON.parse(text());
                 if (event.sequence !== consumed) {
                     consumed = event.sequence;
-                    CortetsuToaster.toast(event.title, event.message, "timer");
+                    if (event.title && event.message)
+                        CortetsuToaster.toast(event.title, event.message, "timer");
                 }
             } catch (_) {}
         }

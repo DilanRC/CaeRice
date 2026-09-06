@@ -9,6 +9,8 @@ Item {
     readonly property var visibleToasts: CortetsuToaster.toasts.slice(0, 5)
     implicitWidth: 360
     implicitHeight: column.implicitHeight
+    width: implicitWidth
+    height: implicitHeight
 
     Column {
         id: column
