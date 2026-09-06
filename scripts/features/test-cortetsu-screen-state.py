@@ -35,6 +35,7 @@ assert "function isRetainedFlag(flag)" in policy
 assert "function closeOtherRetained(state, exceptFlag)" in policy
 assert "Geometry" in policy and "popouts" in policy and "wallpaper side effects" in policy
 assert 'import "../modules"' in screen_component
+assert "import QtQml" in screen_component
 assert "cortetsuState" in screen_component
 assert "CortetsuShellState.registerState(modelData, root)" in screen_component
 assert 'import ".."' in panels_patch

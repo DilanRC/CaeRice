@@ -3,6 +3,7 @@ pragma Singleton
 import QtQml
 import Quickshell
 import "../modules"
+import "../components"
 
 // Compatibility name for upstream callers while the remaining surfaces move
 // to CortetsuShellState. The state registry and component slots are owned by
@@ -12,25 +13,59 @@ Singleton {
 
     property var shellRoot
 
+    Variants {
+        id: states
+
+        model: CortetsuScreens.screens
+
+        ScreenState {}
+    }
+
+    Variants {
+        id: components
+
+        model: CortetsuScreens.screens
+
+        component Components: QtObject {
+            required property ShellScreen modelData
+
+            property var background
+            property var rootWindow
+            property var interactionWrapper
+            property var bar
+            property var panels
+        }
+
+        Components {}
+    }
+
     function anySidebarOpen(): bool {
         return CortetsuShellState.anySidebarOpen();
     }
 
     function forScreen(screen): var {
-        return CortetsuShellState.forScreen(screen) ?? CortetsuShellState.forActive();
+        return states.instances.find(state => state.modelData === screen)
+            ?? CortetsuShellState.forScreen(screen)
+            ?? CortetsuShellState.forActive();
     }
 
     function forActive(): var {
-        return CortetsuShellState.forActive();
+        const monitor = CortetsuHypr.focusedMonitor;
+        return states.instances.find(state => CortetsuHypr.monitorFor(state.modelData) === monitor)
+            ?? states.instances[0]
+            ?? CortetsuShellState.forActive();
     }
 
     function componentsFor(screen): var {
-        return CortetsuShellState.componentsFor(screen);
+        return components.instances.find(component => component.modelData === screen)
+            ?? CortetsuShellState.componentsFor(screen);
     }
 
     function componentsForActive(): var {
-        const active = CortetsuShellState.forActive();
-        return active ? CortetsuShellState.componentsFor(active.modelData) : null;
+        const monitor = CortetsuHypr.focusedMonitor;
+        return components.instances.find(component => CortetsuHypr.monitorFor(component.modelData) === monitor)
+            ?? components.instances[0]
+            ?? null;
     }
 
     component ComponentRef: QtObject {
