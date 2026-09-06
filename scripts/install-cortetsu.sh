@@ -109,7 +109,7 @@ runtime_root="${CORTETSU_RUNTIME_ROOT:-${XDG_CONFIG_HOME:-$HOME/.config}/quicksh
 printf '\nCortetsu runtime: %s/current\n' "$runtime_root"
 printf 'Dotfiles runtime: %s/dotfiles/current\n' "$DATA_ROOT"
 printf 'System runtime: %s/system/current\n' "$DATA_ROOT"
-printf 'No se escribió /etc/xdg/quickshell/caelestia.\n'
+printf 'No se escribió ningún runtime legacy de Caelestia.\n'
 printf 'Tema desktop: ui.toml -> CortetsuDesign/Kitty/GTK/KDE; Caelestia queda sin ownership de esas superficies.\n'
 printf 'Shell personal: Fish es dependencia del perfil personal y se importa de forma explícita con core/import_fish.py.\n'
 printf 'cortetsu-shell.service no se habilita implícitamente; una adopción existente sí se conserva.\n'
