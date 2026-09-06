@@ -5,6 +5,8 @@ repo = Path(__file__).resolve().parents[2]
 state = (repo / "cortetsu/modules/CortetsuScreenState.qml").read_text(encoding="utf-8")
 policy = (repo / "cortetsu/modules/CortetsuOverlayPolicy.js").read_text(encoding="utf-8")
 panels_patch = (repo / "cortetsu/modules/drawers/Panels.qml").read_text(encoding="utf-8")
+assert "registerComponents(root.screen, root)" in panels_patch
+assert "unregisterComponents(root.screen, root)" in panels_patch
 shell_state = (repo / "cortetsu/modules/CortetsuShellState.qml").read_text(encoding="utf-8")
 shell_service = (repo / "cortetsu/services/ShellState.qml").read_text(encoding="utf-8")
 screen_component = (repo / "cortetsu/components/ScreenState.qml").read_text(encoding="utf-8")

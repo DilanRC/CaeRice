@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
-import qs.modules.nexus
 import qs.modules.windowinfo
 
 Item {
@@ -27,6 +26,7 @@ Item {
     property string detachedMode
     property string queuedMode
     property bool bottomAttached
+    property bool closing
     property real bottomOffset: 54
     property real bottomRightMargin: 4
     property real bottomAnchorCenter: -1
@@ -54,13 +54,44 @@ Item {
     }
 
     function close(): void {
+        if (bottomAttached && hasCurrent) {
+            closing = true;
+            closeTimer.restart();
+            return;
+        }
         hasCurrent = false;
         detachedMode = "";
         bottomAttached = false;
         bottomAnchorCenter = -1;
     }
 
+    Timer {
+        id: closeTimer
+        interval: 180
+        repeat: false
+        onTriggered: {
+            root.hasCurrent = false;
+            root.detachedMode = "";
+            root.bottomAttached = false;
+            root.bottomAnchorCenter = -1;
+            root.closing = false;
+        }
+    }
+
     onHasCurrentChanged: {
+        if (hasCurrent) {
+            closing = false;
+            closeTimer.stop();
+            return;
+        }
+        if (bottomAttached && !closing) {
+            // Hover/click state can clear the popout directly. Keep its anchor
+            // alive long enough for the close animation to return to the icon.
+            hasCurrent = true;
+            closing = true;
+            closeTimer.restart();
+            return;
+        }
         if (!hasCurrent) {
             bottomAttached = false;
             bottomAnchorCenter = -1;
@@ -123,19 +154,9 @@ Item {
         id: nexus
         shouldBeActive: root.detachedMode === "any"
         anchors.centerIn: parent
-        sourceComponent: Rectangle {
-            radius: 24
-            color: "transparent"
-            implicitWidth: nexusInner.implicitWidth
-            implicitHeight: nexusInner.implicitHeight
-            Nexus {
-                id: nexusInner
-                anchors.fill: parent
-                nState.screen: root.screen
-                nState.animatingContainer: nexus.opacity < 1
-                nState.currentPageIdx: ["appearance", "network", "bluetooth", "audio"].indexOf(root.queuedMode)
-                onClose: root.close()
-            }
+        sourceComponent: CortetsuDetachedPopup {
+            mode: root.queuedMode
+            popouts: root
         }
     }
 

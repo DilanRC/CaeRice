@@ -10,16 +10,16 @@ Item {
     required property ShellScreen screen
     required property real borderThickness
     readonly property alias content: content
-    property real offsetScale: x > 0 || content.hasCurrent ? 0 : 1
+    property real offsetScale: content.hasCurrent && !content.closing ? 0 : 1
 
     visible: width > 0 && height > 0
-    clip: true
-    implicitWidth: content.implicitWidth * (1 - offsetScale)
+    clip: false
+    implicitWidth: content.implicitWidth
     implicitHeight: content.implicitHeight
 
     x: content.isDetached
         ? (parent.width - content.nonAnimWidth) / 2
-        : content.bottomAttached
+        : (content.bottomAttached || content.closing)
             ? content.bottomAnchorCenter >= 0
                 ? Math.max(8, Math.min(parent.width - content.nonAnimWidth - 8, content.bottomAnchorCenter - content.nonAnimWidth / 2))
                 : parent.width - content.nonAnimWidth - content.bottomRightMargin
@@ -44,6 +44,7 @@ Item {
         offsetScale: root.offsetScale
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: (-implicitWidth - 5) * root.offsetScale
+        transformOrigin: Item.Bottom
+        scale: 1 - root.offsetScale
     }
 }

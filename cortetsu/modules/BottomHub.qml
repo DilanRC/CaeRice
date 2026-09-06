@@ -136,7 +136,7 @@ Scope {
     }
 
     function toggleDetachedControlFor(screen, mode): void {
-        const popouts = CortetsuShellState.componentsFor(screen)?.panels?.popouts;
+        const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
         if (!popouts)
             return;
 
@@ -153,7 +153,7 @@ Scope {
     }
 
     function showAttachedControlFor(screen, mode, anchorCenter = -1): void {
-        const popouts = CortetsuShellState.componentsFor(screen)?.panels?.popouts;
+        const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
         if (!popouts)
             return;
 
@@ -184,6 +184,28 @@ Scope {
         }
         function quickSettings(): void {
             hubRoot.toggleUtilitiesFor(CortetsuShellState.forActive()?.modelData);
+        }
+        function control(mode: string): bool {
+            const allowed = ["audio", "network", "bluetooth", "battery", "kblayout", "lockstatus"];
+            const screen = CortetsuShellState.forActive()?.modelData;
+            if (!screen || !allowed.includes(mode))
+                return false;
+            const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
+            if (!popouts)
+                return false;
+            hubRoot.showAttachedControlFor(screen, mode);
+            return true;
+        }
+        function detachedControl(mode: string): bool {
+            const allowed = ["audio", "network", "bluetooth", "battery", "kblayout", "lockstatus"];
+            const screen = CortetsuShellState.forActive()?.modelData;
+            if (!screen || !allowed.includes(mode))
+                return false;
+            const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
+            if (!popouts)
+                return false;
+            hubRoot.toggleDetachedControlFor(screen, mode);
+            return true;
         }
     }
 

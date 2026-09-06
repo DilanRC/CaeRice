@@ -50,6 +50,9 @@ Item {
     anchors.margins: borderThickness
     anchors.leftMargin: bar.implicitWidth
 
+    Component.onCompleted: CortetsuShellState.registerComponents(root.screen, root)
+    Component.onDestruction: CortetsuShellState.unregisterComponents(root.screen, root)
+
     Item {
         id: osdWrapper
         anchors.verticalCenter: parent.verticalCenter
