@@ -127,6 +127,7 @@ python3 "$REPO/scripts/features/test-cortetsu-notifications.py"
 python3 "$REPO/scripts/features/test-cortetsu-notification-actions.py"
 python3 "$REPO/cortetsu/tests/test-notifications.py"
 python3 -m py_compile "$REPO/cortetsu/bin/cortetsu-notifications"
+python3 -m py_compile "$REPO/cortetsu/bin/cortetsu-record"
 python3 "$REPO/scripts/features/test-cortetsu-recorder.py"
 python3 "$REPO/scripts/features/test-cortetsu-config.py"
 python3 "$REPO/scripts/features/test-config-migration.py"
@@ -170,6 +171,7 @@ for required in \
     services/Brightness.qml \
     services/Audio.qml \
     services/Players.qml \
+    services/Recorder.qml \
     services/ShellState.qml \
     modules/CortetsuStateLayer.qml \
     modules/CortetsuMask.qml \
