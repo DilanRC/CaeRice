@@ -68,9 +68,9 @@ ColumnLayout {
         }
     }
 
-    spacing: Tokens.spacing.medium
+    spacing: CortetsuTokens.spacing.medium
     implicitWidth: 400
-    implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
+    implicitHeight: content.implicitHeight + CortetsuTokens.padding.extraLargeIncreased
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
@@ -127,9 +127,9 @@ ColumnLayout {
     CortetsuSurface {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
-        implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
-        radius: Tokens.rounding.large
-        color: Colours.tPalette.m3surfaceContainer
+        implicitHeight: content.implicitHeight + CortetsuTokens.padding.extraLargeIncreased
+        radius: CortetsuTokens.rounding.large
+        color: CortetsuColours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
         opacity: root.shouldBeVisible && !root.isClosing ? 1 : 0
         scale: root.shouldBeVisible && !root.isClosing ? 1 : 0.7
@@ -172,20 +172,20 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Tokens.padding.large
+            anchors.margins: CortetsuTokens.padding.large
 
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
-                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
+                fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(2).build()
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
-                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+                font: CortetsuTokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             CortetsuText {
@@ -201,8 +201,8 @@ ColumnLayout {
                     }
                     return qsTr("Network: Unknown");
                 }
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.small
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.body.small
             }
 
             Timer {
@@ -238,7 +238,7 @@ ColumnLayout {
                 id: statusText
 
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Tokens.spacing.small
+                Layout.topMargin: CortetsuTokens.spacing.small
                 visible: connectButton.connecting || connectButton.hasError
                 text: {
                     if (connectButton.hasError) {
@@ -249,10 +249,10 @@ ColumnLayout {
                     }
                     return "";
                 }
-                color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.builders.small.weight(Font.Normal).build()
+                color: connectButton.hasError ? CortetsuColours.palette.m3error : CortetsuColours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.builders.small.weight(Font.Normal).build()
                 wrapMode: Text.WordWrap
-                Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
+                Layout.maximumWidth: parent.width - CortetsuTokens.padding.extraLargeIncreased
             }
 
             FocusScope {
@@ -261,9 +261,9 @@ ColumnLayout {
                 property string passwordBuffer: ""
 
                 objectName: "passwordContainer"
-                Layout.topMargin: Tokens.spacing.largeIncreased
+                Layout.topMargin: CortetsuTokens.spacing.largeIncreased
                 Layout.fillWidth: true
-                implicitHeight: Math.max(48, charList.implicitHeight + Tokens.padding.medium * 2)
+                implicitHeight: Math.max(48, charList.implicitHeight + CortetsuTokens.padding.medium * 2)
                 focus: true
                 activeFocusOnTab: true
 
@@ -336,17 +336,17 @@ ColumnLayout {
 
                 CortetsuSurface {
                     anchors.fill: parent
-                    radius: Tokens.rounding.large
-                    color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
+                    radius: CortetsuTokens.rounding.large
+                    color: passwordContainer.activeFocus ? Qt.lighter(CortetsuColours.tPalette.m3surfaceContainer, 1.05) : CortetsuColours.tPalette.m3surfaceContainer
                     border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.shouldBeVisible ? 1 : 0)
                     border.color: {
                         if (connectButton.hasError) {
-                            return Colours.palette.m3error;
+                            return CortetsuColours.palette.m3error;
                         }
                         if (passwordContainer.activeFocus) {
-                            return Colours.palette.m3primary;
+                            return CortetsuColours.palette.m3primary;
                         }
-                        return root.shouldBeVisible ? Colours.palette.m3outline : "transparent";
+                        return root.shouldBeVisible ? CortetsuColours.palette.m3outline : "transparent";
                     }
 
                     Behavior on border.color {
@@ -365,7 +365,7 @@ ColumnLayout {
                 CortetsuStateLayer {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
-                    radius: Tokens.rounding.large
+                    radius: CortetsuTokens.rounding.large
                     onClicked: passwordContainer.forceActiveFocus()
                 }
 
@@ -374,8 +374,8 @@ ColumnLayout {
 
                     anchors.centerIn: parent
                     text: qsTr("Password")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.mono.medium
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.mono.medium
                     opacity: passwordContainer.passwordBuffer ? 0 : 1
 
                     Behavior on opacity {
@@ -392,10 +392,10 @@ ColumnLayout {
 
                     anchors.centerIn: parent
                     implicitWidth: fullWidth
-                    implicitHeight: Tokens.font.body.medium.pointSize
+                    implicitHeight: CortetsuTokens.font.body.medium.pointSize
 
                     orientation: Qt.Horizontal
-                    spacing: Tokens.spacing.extraSmall
+                    spacing: CortetsuTokens.spacing.extraSmall
                     interactive: false
 
                     model: ScriptModel {
@@ -408,8 +408,8 @@ ColumnLayout {
                         implicitWidth: implicitHeight
                         implicitHeight: charList.implicitHeight
 
-                        color: Colours.palette.m3onSurface
-                        radius: Tokens.rounding.medium / 2
+                        color: CortetsuColours.palette.m3onSurface
+                        radius: CortetsuTokens.rounding.medium / 2
 
                         opacity: 0
                         scale: 0
@@ -467,17 +467,17 @@ ColumnLayout {
             }
 
             RowLayout {
-                Layout.topMargin: Tokens.spacing.medium
+                Layout.topMargin: CortetsuTokens.spacing.medium
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.medium
+                spacing: CortetsuTokens.spacing.medium
 
                 TextButton {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
-                    inactiveColour: Colours.palette.m3secondaryContainer
-                    inactiveOnColour: Colours.palette.m3onSecondaryContainer
+                    Layout.minimumHeight: CortetsuTokens.font.body.medium.pointSize + CortetsuTokens.padding.medium * 2
+                    inactiveColour: CortetsuColours.palette.m3secondaryContainer
+                    inactiveOnColour: CortetsuColours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
 
                     onClicked: root.closeDialog()
@@ -490,9 +490,9 @@ ColumnLayout {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
-                    inactiveColour: Colours.palette.m3primary
-                    inactiveOnColour: Colours.palette.m3onPrimary
+                    Layout.minimumHeight: CortetsuTokens.font.body.medium.pointSize + CortetsuTokens.padding.medium * 2
+                    inactiveColour: CortetsuColours.palette.m3primary
+                    inactiveOnColour: CortetsuColours.palette.m3onPrimary
                     text: qsTr("Connect")
                     enabled: passwordContainer.passwordBuffer.length > 0 && !connecting
 

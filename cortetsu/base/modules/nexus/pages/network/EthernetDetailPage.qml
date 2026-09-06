@@ -106,14 +106,14 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // ---- Action button --------------------------------------------------
         ButtonRow {
-            Layout.bottomMargin: Tokens.spacing.large - parent.spacing
+            Layout.bottomMargin: CortetsuTokens.spacing.large - parent.spacing
             Layout.alignment: Qt.AlignHCenter
             Layout.minimumWidth: Math.round(root.cappedWidth * 0.5)
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             ButtonBase {
                 id: connectBtn
@@ -121,11 +121,11 @@ PageBase {
                 fillWidth: true
                 shapeMorph: true
                 isRound: true
-                inactiveColour: root.device?.connected ? Colours.palette.m3primaryContainer : Colours.palette.m3secondaryContainer
-                inactiveOnColour: root.device?.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSecondaryContainer
+                inactiveColour: root.device?.connected ? CortetsuColours.palette.m3primaryContainer : CortetsuColours.palette.m3secondaryContainer
+                inactiveOnColour: root.device?.connected ? CortetsuColours.palette.m3onPrimaryContainer : CortetsuColours.palette.m3onSecondaryContainer
 
-                implicitWidth: connectLayout.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: connectLayout.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: connectLayout.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: connectLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     if (root.device?.connected)
@@ -144,7 +144,7 @@ PageBase {
                         Layout.alignment: Qt.AlignHCenter
                         text: root.device?.connected ? "link_off" : "link"
                         color: connectBtn.onColour
-                        fontStyle: Tokens.font.icon.medium
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     CortetsuText {
@@ -244,8 +244,8 @@ PageBase {
 
         ColumnLayout {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.large
-            spacing: Tokens.spacing.large
+            Layout.topMargin: CortetsuTokens.spacing.large
+            spacing: CortetsuTokens.spacing.large
             visible: root.ipMethod === "manual" || root.ipMethod === "auto-dns"
 
             StyledTextField {
@@ -290,8 +290,8 @@ PageBase {
         // when the IP assignment has unsaved changes.
         RowLayout {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.large
-            spacing: Tokens.spacing.medium
+            Layout.topMargin: CortetsuTokens.spacing.large
+            spacing: CortetsuTokens.spacing.medium
             visible: root.hasChanges || root.savingIp
 
             Item {
@@ -303,12 +303,12 @@ PageBase {
 
                 shapeMorph: true
                 isRound: true
-                inactiveColour: Colours.palette.m3primary
-                inactiveOnColour: Colours.palette.m3onPrimary
+                inactiveColour: CortetsuColours.palette.m3primary
+                inactiveOnColour: CortetsuColours.palette.m3onPrimary
                 stateLayer.disabled: !root.ipLoaded || root.savingIp
 
-                implicitWidth: applyContent.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: applyContent.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: applyContent.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: applyContent.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: if (root.ipLoaded && !root.savingIp)
                     root.saveIpConfig()
@@ -326,7 +326,7 @@ PageBase {
                     id: applyLoadingComp
 
                     LoadingIndicator {
-                        implicitSize: Math.round(Tokens.font.body.medium.pointSize * 1.4)
+                        implicitSize: Math.round(CortetsuTokens.font.body.medium.pointSize * 1.4)
                         color: applyBtn.onColour
                     }
                 }

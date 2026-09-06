@@ -12,13 +12,13 @@ Item {
     required property DesktopEntry modelData
     required property ScreenState screenState
 
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: CortetsuTokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     CortetsuStateLayer {
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         onClicked: {
             Apps.launch(root.modelData);
             root.screenState.launcher = false;
@@ -27,9 +27,9 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.medium
-        anchors.rightMargin: Tokens.padding.medium
-        anchors.margins: Tokens.padding.small
+        anchors.leftMargin: CortetsuTokens.padding.medium
+        anchors.rightMargin: CortetsuTokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.small
 
         IconImage {
             id: icon
@@ -43,7 +43,7 @@ Item {
 
         Item {
             anchors.left: icon.right
-            anchors.leftMargin: Tokens.spacing.medium
+            anchors.leftMargin: CortetsuTokens.spacing.medium
             anchors.verticalCenter: icon.verticalCenter
 
             implicitWidth: parent.width - icon.width - favouriteIcon.width
@@ -53,18 +53,18 @@ Item {
                 id: name
 
                 text: root.modelData?.name ?? ""
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             CortetsuText {
                 id: comment
 
                 text: (root.modelData?.comment || root.modelData?.genericName || root.modelData?.name) ?? ""
-                font: Tokens.font.body.small
-                color: Colours.palette.m3outline
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3outline
 
                 elide: Text.ElideRight
-                width: root.width - icon.width - favouriteIcon.width - Tokens.rounding.extraLargeIncreased
+                width: root.width - icon.width - favouriteIcon.width - CortetsuTokens.rounding.extraLargeIncreased
 
                 anchors.top: name.bottom
             }
@@ -81,7 +81,7 @@ Item {
             sourceComponent: CortetsuIcon {
                 text: "favorite"
                 fill: 1
-                color: Colours.palette.m3primary
+                color: CortetsuColours.palette.m3primary
             }
         }
     }

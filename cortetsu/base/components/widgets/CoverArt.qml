@@ -15,14 +15,14 @@ Item {
     readonly property alias shape: shape
 
     property bool hadPrevious
-    property color fallbackColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+    property color fallbackColour: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, 2)
 
     // Slight glow to separate from bg
     layer.enabled: true
     layer.effect: MultiEffect {
         shadowEnabled: true
         blurMax: 1
-        shadowColor: Colours.palette.m3outline
+        shadowColor: CortetsuColours.palette.m3outline
         shadowOpacity: 0.3
     }
 
@@ -61,8 +61,8 @@ Item {
 
         grade: 200
         text: image.status === Image.Error ? "broken_image" : "art_track"
-        color: Colours.palette.m3onSurfaceVariant
-        fontStyle: Tokens.font.icon.size((parent.width * 0.35) || 1).build()
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        fontStyle: CortetsuTokens.font.icon.size((parent.width * 0.35) || 1).build()
         opacity: image.status === Image.Null || image.status === Image.Error ? 1 : 0
         animate: true
 
@@ -81,7 +81,7 @@ Item {
 
         sourceComponent: LoadingIndicator {
             implicitSize: root.width * 0.3
-            color: Colours.palette.m3primaryContainer
+            color: CortetsuColours.palette.m3primaryContainer
         }
 
         Behavior on opacity {

@@ -18,7 +18,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.large
+        spacing: CortetsuTokens.spacing.large
 
         StyledClippingRect {
             id: wallWrapper
@@ -34,8 +34,8 @@ PageBase {
                 return Math.min(Math.round(cWidth * 0.4), cWidth / screen.width * screen.height);
             }
 
-            color: Colours.tPalette.m3surfaceContainer
-            radius: Tokens.rounding.large
+            color: CortetsuColours.tPalette.m3surfaceContainer
+            radius: CortetsuTokens.rounding.large
 
             Loader {
                 anchors.centerIn: parent
@@ -43,20 +43,20 @@ PageBase {
                 active: opacity > 0
 
                 sourceComponent: ColumnLayout {
-                    spacing: Tokens.spacing.extraSmall
+                    spacing: CortetsuTokens.spacing.extraSmall
 
                     CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hide_image"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.extraLarge
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.extraLarge
                     }
 
                     CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Wallpaper disabled")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.large
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        font: CortetsuTokens.font.body.large
                     }
                 }
 
@@ -86,11 +86,11 @@ PageBase {
                     active: opacity > 0
 
                     sourceComponent: CortetsuSurface {
-                        implicitWidth: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
-                        implicitHeight: wallLoadingIndicator.implicitSize + Tokens.padding.largeIncreased * 2
+                        implicitWidth: wallLoadingIndicator.implicitSize + CortetsuTokens.padding.largeIncreased * 2
+                        implicitHeight: wallLoadingIndicator.implicitSize + CortetsuTokens.padding.largeIncreased * 2
 
-                        color: Colours.palette.m3primaryContainer
-                        radius: Tokens.rounding.full
+                        color: CortetsuColours.palette.m3primaryContainer
+                        radius: CortetsuTokens.rounding.full
 
                         LoadingIndicator {
                             id: wallLoadingIndicator
@@ -141,31 +141,31 @@ PageBase {
 
         ButtonRow {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             IconTextButton {
                 icon: "wallpaper"
                 text: qsTr("Wallpapers")
-                font: Tokens.font.body.large
+                font: CortetsuTokens.font.body.large
                 isRound: true
                 shapeMorph: true
                 type: IconTextButton.Tonal
-                horizontalPadding: Tokens.padding.extraLarge
-                verticalPadding: Tokens.padding.medium
+                horizontalPadding: CortetsuTokens.padding.extraLarge
+                verticalPadding: CortetsuTokens.padding.medium
                 disabled: !CortetsuConfig.wallpaperEnabled
                 onClicked: root.nState.openSubPage(1) // Wallpaper page
             }
 
             IconTextButton {
                 icon: "palette"
-                text: qsTr("Colours")
-                font: Tokens.font.body.large
+                text: qsTr("CortetsuColours")
+                font: CortetsuTokens.font.body.large
                 isRound: true
                 shapeMorph: true
                 type: IconTextButton.Tonal
-                horizontalPadding: Tokens.padding.extraLarge
-                verticalPadding: Tokens.padding.medium
-                onClicked: root.nState.openSubPage(3) // Colours page
+                horizontalPadding: CortetsuTokens.padding.extraLarge
+                verticalPadding: CortetsuTokens.padding.medium
+                onClicked: root.nState.openSubPage(3) // CortetsuColours page
             }
         }
 
@@ -177,21 +177,21 @@ PageBase {
         }
 
         ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.extraSmall / 2 - parent.spacing
 
             text: qsTr("Transparency")
-            subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
-            checked: Colours.transparency.enabled
+            subtext: qsTr("Base %1, layers %2").arg(CortetsuColours.transparency.base).arg(CortetsuColours.transparency.layers)
+            checked: CortetsuColours.transparency.enabled
             onToggled: CortetsuConfig.transparencyEnabled = checked
         }
 
         ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.extraSmall / 2 - parent.spacing
 
             last: true
             text: qsTr("Dark theme")
-            checked: !Colours.light
-            onToggled: Colours.setMode(checked ? "dark" : "light")
+            checked: !CortetsuColours.light
+            onToggled: CortetsuColours.setMode(checked ? "dark" : "light")
         }
     }
 }

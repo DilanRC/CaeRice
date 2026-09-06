@@ -17,12 +17,12 @@ CortetsuSurface {
 
     implicitWidth: {
         const w = centerWidth * 0.8;
-        return lock.pam.buffer ? w : Math.min(w, inputField.placeholderWidth + iconWrapper.implicitWidth + enterButton.implicitWidth + input.spacing * 2 + Tokens.padding.medium * 2);
+        return lock.pam.buffer ? w : Math.min(w, inputField.placeholderWidth + iconWrapper.implicitWidth + enterButton.implicitWidth + input.spacing * 2 + CortetsuTokens.padding.medium * 2);
     }
-    implicitHeight: input.implicitHeight + Tokens.padding.small
+    implicitHeight: input.implicitHeight + CortetsuTokens.padding.small
 
-    color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.full
+    color: CortetsuColours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.full
 
     focus: true
     onActiveFocusChanged: {
@@ -54,8 +54,8 @@ CortetsuSurface {
         id: input
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.extraSmall
+        spacing: CortetsuTokens.spacing.medium
 
         Item {
             id: iconWrapper
@@ -86,8 +86,8 @@ CortetsuSurface {
                             return "face";
                         return "lock";
                     }
-                    color: !root.lock.pam.howdy.canAttempt && root.lock.pam.fprint.tries >= CortetsuConfig.lockMaxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale).build()
+                    color: !root.lock.pam.howdy.canAttempt && root.lock.pam.fprint.tries >= CortetsuConfig.lockMaxFprintTries ? CortetsuColours.palette.m3error : CortetsuColours.palette.m3onSurfaceVariant
+                    fontStyle: CortetsuTokens.font.icon.builders.medium.scale(root.centerScale).build()
                     fill: text === "face"
                 }
             }
@@ -96,7 +96,7 @@ CortetsuSurface {
                 id: loadingComp
 
                 LoadingIndicator {
-                    implicitSize: iconWrapper.height - Tokens.padding.small * 2
+                    implicitSize: iconWrapper.height - CortetsuTokens.padding.small * 2
                 }
             }
         }
@@ -116,14 +116,14 @@ CortetsuSurface {
 
             implicitWidth: implicitHeight
             implicitHeight: {
-                const h = enterIcon.implicitHeight + Tokens.padding.extraSmall * 2;
+                const h = enterIcon.implicitHeight + CortetsuTokens.padding.extraSmall * 2;
                 return h % 2 === 0 ? h : h + 1;
             }
 
             MaterialShape {
                 anchors.fill: parent
 
-                color: root.lock.pam.buffer ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+                color: root.lock.pam.buffer ? CortetsuColours.palette.m3primary : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 2)
                 shape: root.lock.pam.buffer ? MaterialShape.Arrow : MaterialShape.Circle
                 scale: !root.lock.pam.buffer ? 1 : mouse.pressed ? 0.6 : mouse.containsMouse ? 0.8 : 0.7
                 rotation: 90
@@ -153,8 +153,8 @@ CortetsuSurface {
 
                 anchors.centerIn: parent
                 text: "arrow_forward"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale * 1.2).build()
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.builders.medium.scale(root.centerScale * 1.2).build()
                 opacity: root.lock.pam.buffer ? 0 : 1
 
                 Behavior on opacity {

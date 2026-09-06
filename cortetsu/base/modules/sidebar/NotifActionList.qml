@@ -97,7 +97,7 @@ Item {
             id: actionList
 
             anchors.fill: parent
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             Repeater {
                 model: [
@@ -117,12 +117,12 @@ Item {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    implicitWidth: actionInner.implicitWidth + Tokens.padding.medium * 2
-                    implicitHeight: actionInner.implicitHeight + Tokens.padding.small
+                    implicitWidth: actionInner.implicitWidth + CortetsuTokens.padding.medium * 2
+                    implicitHeight: actionInner.implicitHeight + CortetsuTokens.padding.small
 
-                    Layout.preferredWidth: implicitWidth + (actionStateLayer.pressed ? Tokens.padding.large : 0)
-                    radius: actionStateLayer.pressed ? Tokens.rounding.medium / 2 : Tokens.rounding.medium
-                    color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 4)
+                    Layout.preferredWidth: implicitWidth + (actionStateLayer.pressed ? CortetsuTokens.padding.large : 0)
+                    radius: actionStateLayer.pressed ? CortetsuTokens.rounding.medium / 2 : CortetsuTokens.rounding.medium
+                    color: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, 4)
 
                     Timer {
                         id: copyTimer
@@ -162,7 +162,7 @@ Item {
                         CortetsuIcon {
                             animate: action.modelData.isCopy ?? false
                             text: action.modelData.isCopy ? "content_copy" : "close"
-                            color: Colours.palette.m3onSurfaceVariant
+                            color: CortetsuColours.palette.m3onSurfaceVariant
                         }
                     }
 
@@ -180,7 +180,7 @@ Item {
 
                         CortetsuText {
                             text: action.modelData.text
-                            color: Colours.palette.m3onSurfaceVariant
+                            color: CortetsuColours.palette.m3onSurfaceVariant
                         }
                     }
 

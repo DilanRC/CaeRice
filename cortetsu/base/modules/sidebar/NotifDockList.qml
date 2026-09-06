@@ -17,7 +17,7 @@ LazyListView {
     anchors.right: parent?.right
     implicitHeight: contentHeight
 
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
     readyDelay: 1
     cacheBuffer: 400
     asynchronous: true
@@ -32,7 +32,7 @@ LazyListView {
     useCustomViewport: true
     viewport: Qt.rect(0, container.contentY, width, container.height)
 
-    removeDuration: Tokens.anim.durations.normal
+    removeDuration: CortetsuTokens.anim.durations.normal
 
     model: ScriptModel {
         values: {

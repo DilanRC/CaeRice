@@ -88,14 +88,14 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.large
+        spacing: CortetsuTokens.spacing.large
 
         CortetsuText {
             Layout.fillWidth: true
-            Layout.leftMargin: Tokens.padding.small
+            Layout.leftMargin: CortetsuTokens.padding.small
             text: qsTr("Built-in names (wireguard, warp, tailscale, netbird) auto-fill their commands. For others, provide the connect/disconnect commands.")
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.body.small
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.body.small
             wrapMode: Text.WordWrap
         }
 
@@ -103,7 +103,7 @@ PageBase {
             id: nameField
 
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.small
+            Layout.topMargin: CortetsuTokens.spacing.small
             placeholderText: qsTr("Provider name")
             leadingIcon: "vpn_key"
             supportingText: qsTr("Built-in id or a custom name")
@@ -167,16 +167,16 @@ PageBase {
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.topMargin: (root.editing ? Tokens.spacing.medium : Tokens.spacing.extraSmall) - parent.spacing
-            spacing: Tokens.spacing.small
+            Layout.topMargin: (root.editing ? CortetsuTokens.spacing.medium : CortetsuTokens.spacing.extraSmall) - parent.spacing
+            spacing: CortetsuTokens.spacing.small
 
             IconTextButton {
                 visible: root.editing
                 isRound: true
-                horizontalPadding: Tokens.padding.extraLarge
-                verticalPadding: Tokens.padding.medium
-                inactiveColour: Colours.palette.m3errorContainer
-                inactiveOnColour: Colours.palette.m3onErrorContainer
+                horizontalPadding: CortetsuTokens.padding.extraLarge
+                verticalPadding: CortetsuTokens.padding.medium
+                inactiveColour: CortetsuColours.palette.m3errorContainer
+                inactiveOnColour: CortetsuColours.palette.m3onErrorContainer
                 iconLabel.fill: 1
                 iconLabel.grade: 25
                 icon: "delete_forever"
@@ -199,8 +199,8 @@ PageBase {
                 TextButton {
                     isRound: true
                     shapeMorph: true
-                    horizontalPadding: Tokens.padding.extraLarge
-                    verticalPadding: Tokens.padding.medium
+                    horizontalPadding: CortetsuTokens.padding.extraLarge
+                    verticalPadding: CortetsuTokens.padding.medium
                     type: TextButton.Tonal
                     text: qsTr("Cancel")
                     onClicked: root.nState.closeSubPage()
@@ -209,8 +209,8 @@ PageBase {
                 TextButton {
                     isRound: true
                     shapeMorph: true
-                    horizontalPadding: Tokens.padding.extraLarge
-                    verticalPadding: Tokens.padding.medium
+                    horizontalPadding: CortetsuTokens.padding.extraLarge
+                    verticalPadding: CortetsuTokens.padding.medium
                     text: root.editing ? qsTr("Save") : qsTr("Add")
                     disabled: !nameField.text.trim()
                     onClicked: root.submit()

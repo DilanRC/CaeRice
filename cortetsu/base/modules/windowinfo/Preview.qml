@@ -14,7 +14,7 @@ Item {
     required property ShellScreen screen
     required property HyprlandToplevel client
 
-    Layout.preferredWidth: preview.implicitWidth + Tokens.padding.extraLargeIncreased
+    Layout.preferredWidth: preview.implicitWidth + CortetsuTokens.padding.extraLargeIncreased
     Layout.fillHeight: true
 
     StyledClippingRect {
@@ -23,13 +23,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.bottom: label.top
-        anchors.topMargin: Tokens.padding.large
-        anchors.bottomMargin: Tokens.spacing.medium
+        anchors.topMargin: CortetsuTokens.padding.large
+        anchors.bottomMargin: CortetsuTokens.spacing.medium
 
         implicitWidth: view.implicitWidth
 
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.medium
+        color: CortetsuColours.tPalette.m3surfaceContainer
+        radius: CortetsuTokens.rounding.medium
 
         Loader {
             asynchronous: true
@@ -42,22 +42,22 @@ Item {
                 CortetsuIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "web_asset_off"
-                    color: Colours.palette.m3outline
-                    fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).build()
+                    color: CortetsuColours.palette.m3outline
+                    fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(3).build()
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("No active client")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.builders.large.size(28).weight(Font.Medium).build()
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Try switching to a window")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.large
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.large
                 }
             }
         }
@@ -80,7 +80,7 @@ Item {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Tokens.padding.large
+        anchors.bottomMargin: CortetsuTokens.padding.large
 
         animate: true
         text: {

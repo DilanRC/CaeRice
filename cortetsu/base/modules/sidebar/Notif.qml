@@ -14,13 +14,13 @@ CortetsuSurface {
     required property ScreenState screenState
 
     readonly property CortetsuText body: (expandedContent.item as ExpandedBody)?.body ?? null
-    readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + Tokens.padding.medium * 2 : summaryHeightMetrics.height
+    readonly property real nonAnimHeight: expanded ? summary.implicitHeight + expandedContent.implicitHeight + expandedContent.anchors.topMargin + CortetsuTokens.padding.medium * 2 : summaryHeightMetrics.height
 
     implicitHeight: nonAnimHeight
 
-    radius: Tokens.rounding.medium
+    radius: CortetsuTokens.rounding.medium
     color: {
-        const c = root.modelData?.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
+        const c = root.modelData?.urgency === "critical" ? CortetsuColours.palette.m3secondaryContainer : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 2);
         return expanded ? c : Qt.alpha(c, 0);
     }
 
@@ -30,12 +30,12 @@ CortetsuSurface {
         name: "expanded"
 
         PropertyChanges {
-            summary.anchors.margins: root.Tokens.padding.medium
-            dummySummary.anchors.margins: root.Tokens.padding.medium
-            compactBody.anchors.margins: root.Tokens.padding.medium
-            timeStr.anchors.margins: root.Tokens.padding.medium
-            expandedContent.anchors.margins: root.Tokens.padding.medium
-            summary.width: root.width - root.Tokens.padding.medium * 2 - timeStr.implicitWidth - root.Tokens.spacing.small
+            summary.anchors.margins: root.CortetsuTokens.padding.medium
+            dummySummary.anchors.margins: root.CortetsuTokens.padding.medium
+            compactBody.anchors.margins: root.CortetsuTokens.padding.medium
+            timeStr.anchors.margins: root.CortetsuTokens.padding.medium
+            expandedContent.anchors.margins: root.CortetsuTokens.padding.medium
+            summary.width: root.width - root.CortetsuTokens.padding.medium * 2 - timeStr.implicitWidth - root.CortetsuTokens.spacing.small
             summary.maximumLineCount: Number.MAX_SAFE_INTEGER
         }
     }
@@ -61,7 +61,7 @@ CortetsuSurface {
 
         width: parent.width
         text: root.modelData?.summary ?? ""
-        color: root.modelData?.urgency === "critical" ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+        color: root.modelData?.urgency === "critical" ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurface
         elide: Text.ElideRight
         wrapMode: Text.WordWrap
         maximumLineCount: 1
@@ -84,11 +84,11 @@ CortetsuSurface {
         anchors.top: parent.top
         anchors.left: dummySummary.right
         anchors.right: parent.right
-        anchors.leftMargin: Tokens.spacing.small
+        anchors.leftMargin: CortetsuTokens.spacing.small
 
         sourceComponent: CortetsuText {
             text: String(root.modelData?.body ?? "").replace(/\n/g, " ")
-            color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
+            color: root.modelData?.urgency === "critical" ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3outline
             elide: Text.ElideRight
         }
     }
@@ -103,8 +103,8 @@ CortetsuSurface {
         sourceComponent: CortetsuText {
             animate: true
             text: root.modelData?.timeStr ?? ""
-            color: Colours.palette.m3outline
-            font: Tokens.font.body.small
+            color: CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.body.small
         }
     }
 
@@ -115,7 +115,7 @@ CortetsuSurface {
         anchors.top: summary.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Tokens.spacing.extraSmall
+        anchors.topMargin: CortetsuTokens.spacing.extraSmall
 
         sourceComponent: ExpandedBody {}
     }
@@ -127,7 +127,7 @@ CortetsuSurface {
     component ExpandedBody: ColumnLayout {
         readonly property alias body: bodyText
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             id: bodyText
@@ -135,7 +135,7 @@ CortetsuSurface {
             Layout.fillWidth: true
             textFormat: Text.MarkdownText
             text: String(root.modelData?.body ?? "").replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
-            color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
+            color: root.modelData?.urgency === "critical" ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3outline
             wrapMode: Text.WordWrap
 
             onLinkActivated: link => {

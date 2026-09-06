@@ -9,12 +9,12 @@ TextField {
     implicitWidth: contentWidth + leftPadding + rightPadding
     implicitHeight: contentHeight + topPadding + bottomPadding
 
-    color: Colours.palette.m3onSurface
-    placeholderTextColor: Colours.palette.m3onSurfaceVariant // No anim cause placeholder is custom
-    selectionColor: Qt.alpha(Colours.palette.m3primary, 0.4)
+    color: CortetsuColours.palette.m3onSurface
+    placeholderTextColor: CortetsuColours.palette.m3onSurfaceVariant // No anim cause placeholder is custom
+    selectionColor: Qt.alpha(CortetsuColours.palette.m3primary, 0.4)
     selectedTextColor: color
 
-    font: Tokens.font.body.small
+    font: CortetsuTokens.font.body.small
     renderType: echoMode === TextField.Password ? TextField.QtRendering : TextField.NativeRendering
     cursorVisible: !readOnly
     verticalAlignment: TextInput.AlignVCenter
@@ -39,8 +39,8 @@ TextField {
         implicitWidth: 1.5
         implicitHeight: root.cursorRectangle.height
 
-        color: Colours.palette.m3primary
-        radius: Tokens.rounding.large
+        color: CortetsuColours.palette.m3primary
+        radius: CortetsuTokens.rounding.large
 
         Connections {
             function onCursorPositionChanged(): void {
@@ -77,7 +77,7 @@ TextField {
         Behavior on x {
             Anim {
                 easing.bezierCurve: [0.2, 1, 0.21, 1, 1, 1] // Damped variant of fast spatial curve
-                duration: Tokens.anim.durations.expressiveFastEffects
+                duration: CortetsuTokens.anim.durations.expressiveFastEffects
             }
         }
 

@@ -6,7 +6,7 @@ import qs.services
 RadioButton {
     id: root
 
-    font: Tokens.font.body.small
+    font: CortetsuTokens.font.body.small
 
     implicitWidth: implicitIndicatorWidth + implicitContentWidth + contentItem.anchors.leftMargin
     implicitHeight: Math.max(implicitIndicatorHeight, implicitContentHeight)
@@ -16,15 +16,15 @@ RadioButton {
 
         implicitWidth: 20
         implicitHeight: 20
-        radius: Tokens.rounding.full
+        radius: CortetsuTokens.rounding.full
         color: "transparent"
-        border.color: root.checked ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+        border.color: root.checked ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
         border.width: 2
         anchors.verticalCenter: parent.verticalCenter
 
         CortetsuStateLayer {
-            anchors.margins: -Tokens.padding.small
-            color: root.checked ? Colours.palette.m3onSurface : Colours.palette.m3primary
+            anchors.margins: -CortetsuTokens.padding.small
+            color: root.checked ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3primary
             z: -1
             onClicked: root.click()
         }
@@ -34,8 +34,8 @@ RadioButton {
             implicitWidth: 8
             implicitHeight: 8
 
-            radius: Tokens.rounding.full
-            color: Qt.alpha(Colours.palette.m3primary, root.checked ? 1 : 0)
+            radius: CortetsuTokens.rounding.full
+            color: Qt.alpha(CortetsuColours.palette.m3primary, root.checked ? 1 : 0)
         }
 
         Behavior on border.color {
@@ -48,6 +48,6 @@ RadioButton {
         font: root.font
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: outerCircle.right
-        anchors.leftMargin: Tokens.spacing.medium
+        anchors.leftMargin: CortetsuTokens.spacing.medium
     }
 }

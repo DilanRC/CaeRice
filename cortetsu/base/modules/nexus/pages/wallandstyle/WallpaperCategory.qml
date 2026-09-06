@@ -21,8 +21,8 @@ PageBase {
         width: root.cappedWidth
 
         columns: CortetsuConfig.nexusWallpapersPerRow
-        rowSpacing: Tokens.spacing.medium
-        columnSpacing: Tokens.spacing.large
+        rowSpacing: CortetsuTokens.spacing.medium
+        columnSpacing: CortetsuTokens.spacing.large
 
         Repeater {
             model: {

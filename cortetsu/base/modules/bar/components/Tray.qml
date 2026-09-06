@@ -14,15 +14,15 @@ CortetsuSurface {
     readonly property alias items: items
     readonly property alias expandIcon: expandIcon
 
-    readonly property int padding: CortetsuConfig.bar.tray.background ? Tokens.padding.medium : Tokens.padding.extraSmall
-    readonly property int spacing: CortetsuConfig.bar.tray.background ? Tokens.spacing.medium : Tokens.spacing.extraSmall
+    readonly property int padding: CortetsuConfig.bar.tray.background ? CortetsuTokens.padding.medium : CortetsuTokens.padding.extraSmall
+    readonly property int spacing: CortetsuConfig.bar.tray.background ? CortetsuTokens.spacing.medium : CortetsuTokens.spacing.extraSmall
 
     property bool expanded
 
     readonly property real nonAnimHeight: {
         if (!CortetsuConfig.bar.tray.compact)
             return layout.implicitHeight + padding * 2;
-        const pad = (CortetsuConfig.bar.tray.background ? Tokens.padding.extraSmall : 0) + padding;
+        const pad = (CortetsuConfig.bar.tray.background ? CortetsuTokens.padding.extraSmall : 0) + padding;
         if (expanded)
             return expandIcon.implicitHeight + layout.implicitHeight + spacing + pad;
         return Math.max(CortetsuConfig.bar.tray.background ? width : 0, expandIcon.implicitHeight + pad);
@@ -31,11 +31,11 @@ CortetsuSurface {
     clip: true
     visible: height > 0
 
-    implicitWidth: Tokens.sizes.bar.innerWidth
+    implicitWidth: CortetsuTokens.sizes.bar.innerWidth
     implicitHeight: nonAnimHeight
 
-    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (CortetsuConfig.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
-    radius: Tokens.rounding.full
+    color: Qt.alpha(CortetsuColours.tPalette.m3surfaceContainer, (CortetsuConfig.bar.tray.background && items.count > 0) ? CortetsuColours.tPalette.m3surfaceContainer.a : 0)
+    radius: CortetsuTokens.rounding.full
 
     Column {
         id: layout
@@ -43,7 +43,7 @@ CortetsuSurface {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: root.padding
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         opacity: root.expanded || !CortetsuConfig.bar.tray.compact ? 1 : 0
 
@@ -52,7 +52,7 @@ CortetsuSurface {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
         }
 
@@ -60,7 +60,7 @@ CortetsuSurface {
             Anim {
                 properties: "scale"
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -96,17 +96,17 @@ CortetsuSurface {
 
         sourceComponent: Item {
             implicitWidth: expandIconInner.implicitWidth
-            implicitHeight: expandIconInner.implicitHeight - Tokens.padding.small
+            implicitHeight: expandIconInner.implicitHeight - CortetsuTokens.padding.small
 
             CortetsuIcon {
                 id: expandIconInner
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: CortetsuConfig.bar.tray.background ? Tokens.padding.extraSmall : -Tokens.padding.small
+                anchors.bottomMargin: CortetsuConfig.bar.tray.background ? CortetsuTokens.padding.extraSmall : -CortetsuTokens.padding.small
                 text: "expand_less"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.medium
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.medium
                 rotation: root.expanded ? 180 : 0
 
                 Behavior on rotation {

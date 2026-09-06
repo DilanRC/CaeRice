@@ -20,7 +20,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // Default applications
         SectionHeader {
@@ -76,7 +76,7 @@ PageBase {
     component DefaultRow: PopupRow {
         id: row
 
-        readonly property int popupHeight: root.flickable.height - y + root.flickable.contentY - Tokens.padding.large - Tokens.padding.extraExtraLarge
+        readonly property int popupHeight: root.flickable.height - y + root.flickable.contentY - CortetsuTokens.padding.large - CortetsuTokens.padding.extraExtraLarge
 
         signal selected(app: DesktopEntry)
 
@@ -89,7 +89,7 @@ PageBase {
                 p = p.parent;
             return p?.opacity < 1;
         }
-        popup.topMovement: Math.max(Tokens.sizes.nexus.minPopupHeight - popupHeight, Tokens.padding.large)
+        popup.topMovement: Math.max(CortetsuTokens.sizes.nexus.minPopupHeight - popupHeight, CortetsuTokens.padding.large)
 
         Loader {
             anchors.centerIn: parent
@@ -98,8 +98,8 @@ PageBase {
             sourceComponent: VerticalFadeListView {
                 id: list
 
-                implicitWidth: Tokens.sizes.nexus.popupWidth
-                                implicitHeight: Math.max(Tokens.sizes.nexus.minPopupHeight, Math.min(row.popupHeight, Tokens.sizes.nexus.maxPopupHeight))
+                implicitWidth: CortetsuTokens.sizes.nexus.popupWidth
+                                implicitHeight: Math.max(CortetsuTokens.sizes.nexus.minPopupHeight, Math.min(row.popupHeight, CortetsuTokens.sizes.nexus.maxPopupHeight))
 
                 model: {
                     const apps = [...DesktopEntries.applications.values];
@@ -117,7 +117,7 @@ PageBase {
                     anchors.left: list.contentItem.left
                     anchors.right: list.contentItem.right
                     implicitHeight: itemLayout.implicitHeight + itemLayout.anchors.margins * 2
-                    radius: Tokens.rounding.small
+                    radius: CortetsuTokens.rounding.small
 
                     onClicked: {
                         row.popup.open = false;
@@ -128,12 +128,12 @@ PageBase {
                         id: itemLayout
 
                         anchors.fill: parent
-                        anchors.margins: Tokens.padding.medium
-                        spacing: Tokens.spacing.medium
+                        anchors.margins: CortetsuTokens.padding.medium
+                        spacing: CortetsuTokens.spacing.medium
 
                         IconImage {
                             asynchronous: true
-                            implicitSize: Math.round(Tokens.font.icon.large.pointSize * 1.8)
+                            implicitSize: Math.round(CortetsuTokens.font.icon.large.pointSize * 1.8)
                             source: Quickshell.iconPath(appItem.modelData.icon, "image-missing")
                         }
 
@@ -144,7 +144,7 @@ PageBase {
                             CortetsuText {
                                 Layout.fillWidth: true
                                 text: appItem.modelData.name
-                                font: Tokens.font.body.small
+                                font: CortetsuTokens.font.body.small
                                 elide: Text.ElideRight
                             }
 
@@ -152,8 +152,8 @@ PageBase {
                                 Layout.fillWidth: true
                                 visible: text
                                 text: (appItem.modelData.comment || appItem.modelData.genericName) ?? ""
-                                color: Colours.palette.m3outline
-                                font: Tokens.font.label.small
+                                color: CortetsuColours.palette.m3outline
+                                font: CortetsuTokens.font.label.small
                                 elide: Text.ElideRight
                             }
                         }
@@ -162,8 +162,8 @@ PageBase {
                             visible: Strings.testRegexList(CortetsuConfig.favouriteApps, appItem.modelData.id)
                             text: "favorite"
                             fill: 1
-                            color: Colours.palette.m3primary
-                            fontStyle: Tokens.font.icon.small
+                            color: CortetsuColours.palette.m3primary
+                            fontStyle: CortetsuTokens.font.icon.small
                         }
                     }
                 }

@@ -9,48 +9,48 @@ Item {
     required property M3Variants.Variant modelData
     required property var list
 
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: CortetsuTokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     CortetsuStateLayer {
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         onClicked: root.modelData?.onClicked(root.list)
     }
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.medium
-        anchors.rightMargin: Tokens.padding.medium
-        anchors.margins: Tokens.padding.small
+        anchors.leftMargin: CortetsuTokens.padding.medium
+        anchors.rightMargin: CortetsuTokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.small
 
         CortetsuIcon {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            fontStyle: Tokens.font.icon.extraLarge
+            fontStyle: CortetsuTokens.font.icon.extraLarge
 
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Column {
             anchors.left: icon.right
-            anchors.leftMargin: Tokens.spacing.large
+            anchors.leftMargin: CortetsuTokens.spacing.large
             anchors.verticalCenter: icon.verticalCenter
 
-            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.medium : 0)
+            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + CortetsuTokens.spacing.medium : 0)
             spacing: 0
 
             CortetsuText {
                 text: root.modelData?.name ?? ""
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             CortetsuText {
                 text: root.modelData?.description ?? ""
-                font: Tokens.font.body.small
-                color: Colours.palette.m3outline
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3outline
 
                 elide: Text.ElideRight
                 anchors.left: parent.left
@@ -69,8 +69,8 @@ Item {
 
             sourceComponent: CortetsuIcon {
                 text: "check"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.large
             }
         }
     }

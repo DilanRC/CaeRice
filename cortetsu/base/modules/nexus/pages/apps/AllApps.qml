@@ -19,7 +19,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         Repeater {
             id: list
@@ -48,14 +48,14 @@ PageBase {
                     id: appRow
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.largeIncreased
-                    anchors.rightMargin: Tokens.padding.largeIncreased
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.medium
+                    anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                    anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+                    spacing: CortetsuTokens.spacing.medium
 
                     IconImage {
                         asynchronous: true
-                        implicitSize: Math.round(Tokens.font.icon.large.pointSize * 1.8)
+                        implicitSize: Math.round(CortetsuTokens.font.icon.large.pointSize * 1.8)
                         source: Quickshell.iconPath(appItem.modelData.icon, "image-missing")
                     }
 
@@ -66,7 +66,7 @@ PageBase {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: appItem.modelData.name
-                            font: Tokens.font.body.small
+                            font: CortetsuTokens.font.body.small
                             elide: Text.ElideRight
                         }
 
@@ -74,8 +74,8 @@ PageBase {
                             Layout.fillWidth: true
                             visible: text
                             text: (appItem.modelData.comment || appItem.modelData.genericName) ?? ""
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuColours.palette.m3outline
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                         }
                     }
@@ -84,14 +84,14 @@ PageBase {
                         visible: Strings.testRegexList(CortetsuConfig.favouriteApps, appItem.modelData.id)
                         text: "favorite"
                         fill: 1
-                        color: Colours.palette.m3primary
-                        fontStyle: Tokens.font.icon.small
+                        color: CortetsuColours.palette.m3primary
+                        fontStyle: CortetsuTokens.font.icon.small
                     }
 
                     CortetsuIcon {
                         text: "chevron_right"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
                 }
             }

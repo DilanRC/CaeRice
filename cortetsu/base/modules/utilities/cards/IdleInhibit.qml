@@ -8,12 +8,12 @@ import qs.modules
 CortetsuSurface {
     id: root
 
-    readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + Tokens.padding.extraLargeIncreased
+    readonly property real nonAnimHeight: layout.implicitHeight + (IdleInhibitor.enabled ? activeChip.implicitHeight + activeChip.anchors.topMargin : 0) + CortetsuTokens.padding.extraLargeIncreased
 
     implicitHeight: nonAnimHeight
 
-    radius: Tokens.rounding.large
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.large
+    color: CortetsuColours.tPalette.m3surfaceContainer
     clip: true
 
     RowLayout {
@@ -22,23 +22,23 @@ CortetsuSurface {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuSurface {
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Tokens.padding.large
+            implicitHeight: icon.implicitHeight + CortetsuTokens.padding.large
 
-            radius: Tokens.rounding.full
-            color: IdleInhibitor.enabled ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+            radius: CortetsuTokens.rounding.full
+            color: IdleInhibitor.enabled ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3secondaryContainer
 
             CortetsuIcon {
                 id: icon
 
                 anchors.centerIn: parent
                 text: "coffee"
-                color: IdleInhibitor.enabled ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                fontStyle: Tokens.font.icon.large
+                color: IdleInhibitor.enabled ? CortetsuColours.palette.m3onSecondary : CortetsuColours.palette.m3onSecondaryContainer
+                fontStyle: CortetsuTokens.font.icon.large
             }
         }
 
@@ -49,15 +49,15 @@ CortetsuSurface {
             CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Keep Awake")
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
                 elide: Text.ElideRight
             }
 
             CortetsuText {
                 Layout.fillWidth: true
                 text: IdleInhibitor.enabled ? qsTr("Preventing sleep mode") : qsTr("Normal power management")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.small
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
         }
@@ -74,9 +74,9 @@ CortetsuSurface {
         asynchronous: true
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.topMargin: Tokens.spacing.large
-        anchors.bottomMargin: IdleInhibitor.enabled ? Tokens.padding.large : -implicitHeight
-        anchors.leftMargin: Tokens.padding.large
+        anchors.topMargin: CortetsuTokens.spacing.large
+        anchors.bottomMargin: IdleInhibitor.enabled ? CortetsuTokens.padding.large : -implicitHeight
+        anchors.leftMargin: CortetsuTokens.padding.large
 
         opacity: IdleInhibitor.enabled ? 1 : 0
         scale: IdleInhibitor.enabled ? 1 : 0.5
@@ -84,19 +84,19 @@ CortetsuSurface {
         Component.onCompleted: active = Qt.binding(() => opacity > 0)
 
         sourceComponent: CortetsuSurface {
-            implicitWidth: activeText.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: activeText.implicitHeight + Tokens.padding.small
+            implicitWidth: activeText.implicitWidth + CortetsuTokens.padding.medium * 2
+            implicitHeight: activeText.implicitHeight + CortetsuTokens.padding.small
 
-            radius: Tokens.rounding.full
-            color: Colours.palette.m3primary
+            radius: CortetsuTokens.rounding.full
+            color: CortetsuColours.palette.m3primary
 
             CortetsuText {
                 id: activeText
 
                 anchors.centerIn: parent
                 text: qsTr("Active since %1").arg(Qt.formatTime(IdleInhibitor.enabledSince, CortetsuConfig.useTwelveHourClock ? "hh:mm a" : "hh:mm"))
-                color: Colours.palette.m3onPrimary
-                font: Tokens.font.body.builders.small.size(Math.round(Tokens.font.body.small.pointSize * 0.9)).build()
+                color: CortetsuColours.palette.m3onPrimary
+                font: CortetsuTokens.font.body.builders.small.size(Math.round(CortetsuTokens.font.body.small.pointSize * 0.9)).build()
             }
         }
 

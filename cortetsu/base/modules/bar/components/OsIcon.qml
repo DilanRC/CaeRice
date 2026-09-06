@@ -7,8 +7,8 @@ import qs.utils
 Item {
     id: root
 
-    implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.2)
-    implicitHeight: Math.round(Tokens.font.body.large.pointSize * 1.2)
+    implicitWidth: Math.round(CortetsuTokens.font.body.large.pointSize * 1.2)
+    implicitHeight: Math.round(CortetsuTokens.font.body.large.pointSize * 1.2)
 
     MouseArea {
         anchors.fill: parent
@@ -29,8 +29,8 @@ Item {
         id: cortetsuLogo
 
         Logo {
-            implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.6)
-            implicitHeight: Math.round(Tokens.font.body.large.pointSize * 1.6)
+            implicitWidth: Math.round(CortetsuTokens.font.body.large.pointSize * 1.6)
+            implicitHeight: Math.round(CortetsuTokens.font.body.large.pointSize * 1.6)
         }
     }
 
@@ -39,8 +39,8 @@ Item {
 
         ColouredIcon {
             source: SysInfo.osLogo
-            implicitSize: Math.round(Tokens.font.body.large.pointSize * 1.2)
-            colour: Colours.palette.m3tertiary
+            implicitSize: Math.round(CortetsuTokens.font.body.large.pointSize * 1.2)
+            colour: CortetsuColours.palette.m3tertiary
         }
     }
 }

@@ -17,15 +17,15 @@ ColumnLayout {
     required property var lock
 
     anchors.fill: parent
-    anchors.margins: Tokens.padding.large
+    anchors.margins: CortetsuTokens.padding.large
 
-    spacing: Tokens.spacing.medium
+    spacing: CortetsuTokens.spacing.medium
 
     CortetsuText {
         Layout.fillWidth: true
         text: Notifs.list.length > 0 ? qsTr("%1 notification%2").arg(Notifs.list.length).arg(Notifs.list.length === 1 ? "" : "s") : qsTr("Notifications")
-        color: Colours.palette.m3outline
-        font: Tokens.font.mono.builders.small.weight(Font.Medium).build()
+        color: CortetsuColours.palette.m3outline
+        font: CortetsuTokens.font.mono.builders.small.weight(Font.Medium).build()
         elide: Text.ElideRight
     }
 
@@ -35,7 +35,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        radius: Tokens.rounding.medium
+        radius: CortetsuTokens.rounding.medium
         color: "transparent"
 
         Loader {
@@ -45,7 +45,7 @@ ColumnLayout {
             opacity: Notifs.list.length > 0 && !CortetsuConfig.lockHideNotifs ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.largeIncreased
+                spacing: CortetsuTokens.spacing.largeIncreased
 
                 Image {
                     asynchronous: true
@@ -55,7 +55,7 @@ ColumnLayout {
 
                     layer.enabled: true
                     layer.effect: Colouriser {
-                        colorizationColor: Colours.palette.m3outlineVariant
+                        colorizationColor: CortetsuColours.palette.m3outlineVariant
                         brightness: 1
                     }
                 }
@@ -63,8 +63,8 @@ ColumnLayout {
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: CortetsuConfig.lockHideNotifs ? qsTr("Unlock for Notifications") : qsTr("No Notifications")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.mono.builders.large.weight(Font.Medium).build()
+                    color: CortetsuColours.palette.m3outlineVariant
+                    font: CortetsuTokens.font.mono.builders.large.weight(Font.Medium).build()
                 }
             }
 
@@ -78,7 +78,7 @@ ColumnLayout {
         StyledListView {
             anchors.fill: parent
             visible: !CortetsuConfig.lockHideNotifs
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
             clip: true
 
             model: ScriptModel {

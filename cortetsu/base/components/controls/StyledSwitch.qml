@@ -16,36 +16,36 @@ Switch {
     implicitHeight: implicitIndicatorHeight
 
     indicator: CortetsuSurface {
-        radius: Tokens.rounding.full
+        radius: CortetsuTokens.rounding.full
         color: {
             if (root.disabled)
-                return root.checked ? Qt.alpha(Colours.palette.m3onSurface, 0.12) : Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.38);
-            return root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer);
+                return root.checked ? Qt.alpha(CortetsuColours.palette.m3onSurface, 0.12) : Qt.alpha(CortetsuColours.palette.m3surfaceContainerHighest, 0.38);
+            return root.checked ? CortetsuColours.palette.m3primary : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, root.cLayer);
         }
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.body.medium.pointSize + Tokens.padding.small * 2
+        implicitHeight: CortetsuTokens.font.body.medium.pointSize + CortetsuTokens.padding.small * 2
 
         CortetsuSurface {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.2 : implicitHeight
 
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             color: {
                 if (root.disabled)
-                    return root.checked ? Colours.palette.m3surface : Qt.alpha(Colours.palette.m3onSurface, 0.12);
-                return root.checked ? Colours.palette.m3onPrimary : Colours.layer(Colours.palette.m3outline, root.cLayer + 1);
+                    return root.checked ? CortetsuColours.palette.m3surface : Qt.alpha(CortetsuColours.palette.m3onSurface, 0.12);
+                return root.checked ? CortetsuColours.palette.m3onPrimary : CortetsuColours.layer(CortetsuColours.palette.m3outline, root.cLayer + 1);
             }
 
-            x: root.checked ? parent.implicitWidth - nonAnimWidth - Tokens.padding.extraSmall / 2 : Tokens.padding.extraSmall / 2
+            x: root.checked ? parent.implicitWidth - nonAnimWidth - CortetsuTokens.padding.extraSmall / 2 : CortetsuTokens.padding.extraSmall / 2
             implicitWidth: nonAnimWidth
-            implicitHeight: parent.implicitHeight - Tokens.padding.extraSmall
+            implicitHeight: parent.implicitHeight - CortetsuTokens.padding.extraSmall
             anchors.verticalCenter: parent.verticalCenter
 
             CortetsuSurface {
                 anchors.fill: parent
                 radius: parent.radius
 
-                color: root.checked ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                color: root.checked ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurface
                 opacity: root.pressed ? 0.1 : root.hovered ? 0.08 : 0
 
                 Behavior on opacity {
@@ -95,19 +95,19 @@ Switch {
 
                 anchors.centerIn: parent
                 width: height
-                height: parent.implicitHeight - Tokens.padding.medium
+                height: parent.implicitHeight - CortetsuTokens.padding.medium
                 preferredRendererType: Shape.CurveRenderer
                 asynchronous: true
 
                 ShapePath {
-                    strokeWidth: root.Tokens.font.body.large.pointSize * 0.15
+                    strokeWidth: root.CortetsuTokens.font.body.large.pointSize * 0.15
                     strokeColor: {
                         if (root.disabled)
-                            return root.checked ? Colours.palette.m3outline : Colours.palette.m3surfaceContainer;
-                        return root.checked ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHighest;
+                            return root.checked ? CortetsuColours.palette.m3outline : CortetsuColours.palette.m3surfaceContainer;
+                        return root.checked ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3surfaceContainerHighest;
                     }
                     fillColor: "transparent"
-                    capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+                    capStyle: root.CortetsuTokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
                     startX: icon.start1.x
                     startY: icon.start1.y
@@ -165,7 +165,7 @@ Switch {
     }
 
     component PropAnim: PropertyAnimation {
-        duration: Tokens.anim.durations.expressiveFastSpatial
-        easing: Tokens.anim.expressiveFastSpatial
+        duration: CortetsuTokens.anim.durations.expressiveFastSpatial
+        easing: CortetsuTokens.anim.expressiveFastSpatial
     }
 }

@@ -23,7 +23,7 @@ Singleton {
         FloatingWindow {
             id: win
 
-            color: Colours.tPalette.m3surface
+            color: CortetsuColours.tPalette.m3surface
             surfaceFormat.opaque: false
 
             onVisibleChanged: {
@@ -34,11 +34,11 @@ Singleton {
             implicitWidth: nexus.implicitWidth
             implicitHeight: nexus.implicitHeight
 
-            minimumSize.width: Tokens.sizes.nexus.minWidth
-            minimumSize.height: Tokens.sizes.nexus.minHeight
+            minimumSize.width: CortetsuTokens.sizes.nexus.minWidth
+            minimumSize.height: CortetsuTokens.sizes.nexus.minHeight
 
             Binding {
-                target: Tokens
+                target: CortetsuTokens
                 property: "screen"
                 value: win.screen?.name ?? ""
             }

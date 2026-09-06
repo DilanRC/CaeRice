@@ -17,7 +17,7 @@ WlSessionLockSurface {
     readonly property alias unlocking: unlockAnim.running
 
     Binding {
-        target: Tokens
+        target: CortetsuTokens
         property: "screen"
         value: root.screen?.name ?? ""
     }
@@ -71,7 +71,7 @@ WlSessionLockSurface {
             }
             SequentialAnimation {
                 PauseAnimation {
-                    duration: Tokens.anim.durations.small
+                    duration: CortetsuTokens.anim.durations.small
                 }
                 Anim {
                     type: Anim.Standard
@@ -111,8 +111,8 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "rotation"
                     to: 360
-                    duration: Tokens.anim.durations.expressiveFastSpatial
-                    easing: Tokens.anim.standardAccel
+                    duration: CortetsuTokens.anim.durations.expressiveFastSpatial
+                    easing: CortetsuTokens.anim.standardAccel
                 }
             }
             ParallelAnimation {
@@ -120,7 +120,7 @@ WlSessionLockSurface {
                     target: lockIcon
                     property: "rotation"
                     to: 360
-                    easing: Tokens.anim.standardDecel
+                    easing: CortetsuTokens.anim.standardDecel
                 }
                 Anim {
                     type: Anim.DefaultEffects
@@ -142,17 +142,17 @@ WlSessionLockSurface {
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: lockContent.Tokens.rounding.extraLarge * 1.5
+                    to: lockContent.CortetsuTokens.rounding.extraLarge * 1.5
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult * lockContent.Tokens.sizes.lock.ratio
+                    to: (root.screen?.height ?? 0) * lockContent.CortetsuTokens.sizes.lock.heightMult * lockContent.CortetsuTokens.sizes.lock.ratio
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult
+                    to: (root.screen?.height ?? 0) * lockContent.CortetsuTokens.sizes.lock.heightMult
                 }
             }
         }
@@ -198,8 +198,8 @@ WlSessionLockSurface {
     Item {
         id: lockContent
 
-        readonly property int size: lockIcon.implicitHeight + Tokens.padding.large * 4
-        readonly property int radius: size / 4 * Tokens.rounding.scale
+        readonly property int size: lockIcon.implicitHeight + CortetsuTokens.padding.large * 4
+        readonly property int radius: size / 4 * CortetsuTokens.rounding.scale
 
         anchors.centerIn: parent
         implicitWidth: size
@@ -213,15 +213,15 @@ WlSessionLockSurface {
             id: lockBg
 
             anchors.fill: parent
-            color: Colours.palette.m3surface
+            color: CortetsuColours.palette.m3surface
             radius: parent.radius
-            opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+            opacity: CortetsuColours.transparency.enabled ? CortetsuColours.transparency.base : 1
 
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 blurMax: 15
-                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
+                shadowColor: Qt.alpha(CortetsuColours.palette.m3shadow, 0.7)
             }
         }
 
@@ -230,7 +230,7 @@ WlSessionLockSurface {
 
             anchors.centerIn: parent
             text: "lock"
-            fontStyle: Tokens.font.icon.builders.extraLarge.scale(4).weight(Font.Bold).build()
+            fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(4).weight(Font.Bold).build()
             rotation: 180
         }
 
@@ -238,8 +238,8 @@ WlSessionLockSurface {
             id: content
 
             anchors.centerIn: parent
-            width: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio - Tokens.padding.extraLargeIncreased
-            height: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult - Tokens.padding.extraLargeIncreased
+            width: (root.screen?.height ?? 0) * CortetsuTokens.sizes.lock.heightMult * CortetsuTokens.sizes.lock.ratio - CortetsuTokens.padding.extraLargeIncreased
+            height: (root.screen?.height ?? 0) * CortetsuTokens.sizes.lock.heightMult - CortetsuTokens.padding.extraLargeIncreased
 
             lock: root
             opacity: 0

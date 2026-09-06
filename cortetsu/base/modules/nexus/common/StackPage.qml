@@ -9,7 +9,7 @@ StackView {
 
     required property NexusState nState
     default property list<Component> pages
-    readonly property int animMovement: Tokens.padding.extraExtraLarge * 2
+    readonly property int animMovement: CortetsuTokens.padding.extraExtraLarge * 2
 
     function openSubPage(idx: int, immediate: bool): void {
         const page = pages[idx];
@@ -38,7 +38,7 @@ StackView {
                 value: 0
             }
             PauseAnimation {
-                duration: Tokens.anim.durations.expressiveDefaultEffects
+                duration: CortetsuTokens.anim.durations.expressiveDefaultEffects
             }
             ParallelAnimation {
                 Anim {
@@ -71,7 +71,7 @@ StackView {
                 value: 0
             }
             PauseAnimation {
-                duration: Tokens.anim.durations.expressiveDefaultEffects
+                duration: CortetsuTokens.anim.durations.expressiveDefaultEffects
             }
             ParallelAnimation {
                 Anim {

@@ -21,8 +21,8 @@ Item {
     property bool separateContent
     property int horizontalContentMargin
 
-    property real openWidth: Math.min(rootParent.width * 0.8, Tokens.sizes.nexus.maxDialogWidth)
-    property real openHeight: Math.min(rootParent.height * 0.8, Tokens.sizes.nexus.maxDialogHeight)
+    property real openWidth: Math.min(rootParent.width * 0.8, CortetsuTokens.sizes.nexus.maxDialogWidth)
+    property real openHeight: Math.min(rootParent.height * 0.8, CortetsuTokens.sizes.nexus.maxDialogHeight)
     property bool open
 
     signal accepted
@@ -43,7 +43,7 @@ Item {
     BlobGroup {
         id: blobGroup
 
-        color: root.open ? Colours.palette.m3surfaceContainerHighest : Colours.tPalette.m3surfaceContainer
+        color: root.open ? CortetsuColours.palette.m3surfaceContainerHighest : CortetsuColours.tPalette.m3surfaceContainer
 
         Behavior on color {
             CAnim {}
@@ -76,9 +76,9 @@ Item {
                 elevation.opacity: 1
                 openButton.opacity: 0
                 dialogContent.opacity: 1
-                dialogBg.radius: root.Tokens.rounding.extraLargeIncreased
-                dialogBg.bottomLeftRadius: root.Tokens.rounding.extraLargeIncreased
-                dialogBg.bottomRightRadius: root.Tokens.rounding.extraLargeIncreased
+                dialogBg.radius: root.CortetsuTokens.rounding.extraLargeIncreased
+                dialogBg.bottomLeftRadius: root.CortetsuTokens.rounding.extraLargeIncreased
+                dialogBg.bottomRightRadius: root.CortetsuTokens.rounding.extraLargeIncreased
                 dialogWrapper.x: (root.rootParent.width - root.openWidth) / 2
                 dialogWrapper.y: (root.rootParent.height - root.openHeight) / 2
                 dialogWrapper.width: root.openWidth
@@ -133,9 +133,9 @@ Item {
             group: blobGroup
             opacity: blobGroup.color.a
 
-            radius: Tokens.rounding.extraSmall
-            bottomLeftRadius: Tokens.rounding.extraLarge
-            bottomRightRadius: Tokens.rounding.extraLarge
+            radius: CortetsuTokens.rounding.extraSmall
+            bottomLeftRadius: CortetsuTokens.rounding.extraLarge
+            bottomRightRadius: CortetsuTokens.rounding.extraLarge
         }
 
         RowButton {
@@ -174,22 +174,22 @@ Item {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.extraLarge
-                    anchors.bottomMargin: Tokens.padding.largeIncreased
+                    anchors.margins: CortetsuTokens.padding.extraLarge
+                    anchors.bottomMargin: CortetsuTokens.padding.largeIncreased
                     spacing: 0
 
                     CortetsuText {
                         text: root.header
-                        font: Tokens.font.title.builders.large.weight(Font.Normal).build()
+                        font: CortetsuTokens.font.title.builders.large.weight(Font.Normal).build()
                     }
 
                     Loader {
-                        Layout.topMargin: Tokens.spacing.medium
+                        Layout.topMargin: CortetsuTokens.spacing.medium
                         Layout.fillWidth: true
                         active: root.separateContent
                         sourceComponent: CortetsuSurface {
                             implicitHeight: 1
-                            color: Colours.palette.m3outline
+                            color: CortetsuColours.palette.m3outline
                         }
                     }
 
@@ -202,24 +202,24 @@ Item {
                     }
 
                     Loader {
-                        Layout.bottomMargin: Tokens.spacing.medium
+                        Layout.bottomMargin: CortetsuTokens.spacing.medium
                         Layout.fillWidth: true
                         active: root.separateContent
                         sourceComponent: CortetsuSurface {
                             implicitHeight: 1
-                            color: Colours.palette.m3outline
+                            color: CortetsuColours.palette.m3outline
                         }
                     }
 
                     RowLayout {
                         Layout.alignment: Qt.AlignRight
-                        spacing: Tokens.spacing.extraSmall
+                        spacing: CortetsuTokens.spacing.extraSmall
 
                         TextButton {
                             type: TextButton.Text
                             isRound: true
-                            horizontalPadding: Tokens.padding.largeIncreased
-                            verticalPadding: Tokens.padding.medium
+                            horizontalPadding: CortetsuTokens.padding.largeIncreased
+                            verticalPadding: CortetsuTokens.padding.medium
                             text: qsTr("Cancel")
                             onClicked: {
                                 root.cancelled();
@@ -230,8 +230,8 @@ Item {
                         TextButton {
                             type: TextButton.Text
                             isRound: true
-                            horizontalPadding: Tokens.padding.largeIncreased
-                            verticalPadding: Tokens.padding.medium
+                            horizontalPadding: CortetsuTokens.padding.largeIncreased
+                            verticalPadding: CortetsuTokens.padding.medium
                             disabled: !root.acceptAllowed
                             text: root.acceptLabel
                             onClicked: {

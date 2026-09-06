@@ -167,28 +167,28 @@ Item {
         opacity: 0
 
         sourceComponent: ColumnLayout {
-            spacing: Tokens.spacing.large
+            spacing: CortetsuTokens.spacing.large
 
             CortetsuSurface {
                 Layout.alignment: Qt.AlignHCenter
-                implicitWidth: shape.implicitSize + Tokens.padding.medium * 2
-                implicitHeight: shape.implicitSize + Tokens.padding.medium * 2
-                color: Colours.palette.m3primaryContainer
-                radius: Tokens.rounding.full
+                implicitWidth: shape.implicitSize + CortetsuTokens.padding.medium * 2
+                implicitHeight: shape.implicitSize + CortetsuTokens.padding.medium * 2
+                color: CortetsuColours.palette.m3primaryContainer
+                radius: CortetsuTokens.rounding.full
 
                 LoadingIndicator {
                     id: shape
 
                     anchors.centerIn: parent
-                    implicitSize: Math.round(Tokens.sizes.dashboard.mediaSectionWidth / 5)
+                    implicitSize: Math.round(CortetsuTokens.sizes.dashboard.mediaSectionWidth / 5)
                     containsIcon: true // This removes the pentagon, which is not centered
                 }
             }
 
             CortetsuText {
                 text: qsTr("Loading lyrics...")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.title.medium
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.title.medium
             }
         }
 
@@ -208,19 +208,19 @@ Item {
         opacity: 0
 
         sourceComponent: ColumnLayout {
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "sentiment_sad"
-                fontStyle: Tokens.font.icon.builders.large.scale(2).build()
-                color: Colours.palette.m3outline
+                fontStyle: CortetsuTokens.font.icon.builders.large.scale(2).build()
+                color: CortetsuColours.palette.m3outline
             }
 
             CortetsuText {
                 text: qsTr("No lyrics found")
-                color: Colours.palette.m3outline
-                font: Tokens.font.title.medium
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.title.medium
             }
         }
     }
@@ -246,12 +246,12 @@ Item {
         onModelChanged: Qt.callLater(() => positionViewAtIndex(currentIndex, ListView.Center))
 
         highlightRangeMode: ListView.ApplyRange
-        highlightMoveDuration: Tokens.anim.durations.large
+        highlightMoveDuration: CortetsuTokens.anim.durations.large
         highlightMoveVelocity: -1
         preferredHighlightBegin: (height - (currentItem?.implicitHeight ?? 0)) / 2
         preferredHighlightEnd: (height + (currentItem?.implicitHeight ?? 0)) / 2
 
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
         opacity: 0
         enabled: opacity > 0
 
@@ -266,14 +266,14 @@ Item {
             anchors.right: lyrics.contentItem.right
 
             text: modelData || ". . ."
-            color: ListView.isCurrentItem ? Colours.palette.m3primary : mouse.containsMouse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font: Tokens.font.body.medium
+            color: ListView.isCurrentItem ? CortetsuColours.palette.m3primary : mouse.containsMouse ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.body.medium
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
             layer.enabled: effectScale > 0
             layer.effect: MultiEffect {
                 shadowEnabled: true
-                shadowColor: Colours.palette.m3primary
+                shadowColor: CortetsuColours.palette.m3primary
                 shadowOpacity: 0.5 * lyric.effectScale
                 shadowBlur: 0.6 * lyric.effectScale
                 blur: 0.4 * lyric.effectScale

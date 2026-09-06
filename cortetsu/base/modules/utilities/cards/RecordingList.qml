@@ -27,19 +27,19 @@ ColumnLayout {
         onClicked: root.props.recordingListExpanded = !root.props.recordingListExpanded
 
         RowLayout {
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignVCenter
                 text: "list"
-                fontStyle: Tokens.font.icon.large
+                fontStyle: CortetsuTokens.font.icon.large
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
                 text: qsTr("Recordings")
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             IconButton {
@@ -61,8 +61,8 @@ ColumnLayout {
         }
 
         Layout.fillWidth: true
-        Layout.rightMargin: -Tokens.spacing.small
-        implicitHeight: (Tokens.font.body.large.pointSize + Tokens.padding.small) * (root.props.recordingListExpanded ? 10 : 3)
+        Layout.rightMargin: -CortetsuTokens.spacing.small
+        implicitHeight: (CortetsuTokens.font.body.large.pointSize + CortetsuTokens.padding.small) * (root.props.recordingListExpanded ? 10 : 3)
         clip: true
 
         StyledScrollBar.vertical: StyledScrollBar {
@@ -77,14 +77,14 @@ ColumnLayout {
 
             anchors.left: list.contentItem.left
             anchors.right: list.contentItem.right
-            anchors.rightMargin: Tokens.spacing.small
-            spacing: Tokens.spacing.extraSmall
+            anchors.rightMargin: CortetsuTokens.spacing.small
+            spacing: CortetsuTokens.spacing.extraSmall
 
             Component.onCompleted: baseName = modelData.baseName
 
             CortetsuText {
                 Layout.fillWidth: true
-                Layout.rightMargin: Tokens.spacing.extraSmall
+                Layout.rightMargin: CortetsuTokens.spacing.extraSmall
                 text: {
                     const time = recording.baseName;
                     const matches = time.match(/^recording_(\d{4})(\d{2})(\d{2})_(\d{2})-(\d{2})-(\d{2})/);
@@ -94,7 +94,7 @@ ColumnLayout {
                     date.setMonth(date.getMonth() - 1); // Woe (months start from 0)
                     return qsTr("Recording at %1").arg(Qt.formatDateTime(date, Qt.locale()));
                 }
-                color: Colours.palette.m3onSurfaceVariant
+                color: CortetsuColours.palette.m3onSurfaceVariant
                 elide: Text.ElideRight
             }
 
@@ -121,8 +121,8 @@ ColumnLayout {
             IconButton {
                 icon: "delete_forever"
                 type: IconButton.Text
-                label.color: Colours.palette.m3error
-                stateLayer.color: Colours.palette.m3error
+                label.color: CortetsuColours.palette.m3error
+                stateLayer.color: CortetsuColours.palette.m3error
                 onClicked: root.props.recordingConfirmDelete = recording.modelData.path
             }
         }
@@ -163,13 +163,13 @@ ColumnLayout {
             active: opacity > 0
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.small
+                spacing: CortetsuTokens.spacing.small
 
                 CortetsuIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "scan_delete"
-                    color: Colours.palette.m3outline
-                    fontStyle: Tokens.font.icon.extraLarge
+                    color: CortetsuColours.palette.m3outline
+                    fontStyle: CortetsuTokens.font.icon.extraLarge
 
                     opacity: root.props.recordingListExpanded ? 1 : 0
                     scale: root.props.recordingListExpanded ? 1 : 0
@@ -191,12 +191,12 @@ ColumnLayout {
                 }
 
                 RowLayout {
-                    spacing: Tokens.spacing.medium
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "scan_delete"
-                        color: Colours.palette.m3outline
+                        color: CortetsuColours.palette.m3outline
 
                         opacity: !root.props.recordingListExpanded ? 1 : 0
                         scale: !root.props.recordingListExpanded ? 1 : 0
@@ -219,7 +219,7 @@ ColumnLayout {
 
                     CortetsuText {
                         text: qsTr("No recordings found")
-                        color: Colours.palette.m3outline
+                        color: CortetsuColours.palette.m3outline
                     }
                 }
             }

@@ -11,7 +11,7 @@ Item {
     readonly property alias hovered: btn.containsMouse
     property bool open
     property int padding
-    property int topMovement: Tokens.padding.large
+    property int topMovement: CortetsuTokens.padding.large
     property bool pressOverride
     property bool hoverOverride
     property real animDriver
@@ -29,8 +29,8 @@ Item {
     BlobGroup {
         id: blobGroup
 
-        color: Colours.palette.m3surfaceContainerHighest
-        smoothing: root.Tokens.rounding.medium
+        color: CortetsuColours.palette.m3surfaceContainerHighest
+        smoothing: root.CortetsuTokens.rounding.medium
         cornerFill: false
 
         Behavior on color {
@@ -42,9 +42,9 @@ Item {
         id: btnRect
 
         anchors.fill: parent
-        anchors.margins: (!(btn.pressed || root.pressOverride) && (btn.containsMouse || root.hoverOverride) ? -Tokens.padding.extraSmall : 0) + (root.open ? -Tokens.padding.extraSmall : 0)
+        anchors.margins: (!(btn.pressed || root.pressOverride) && (btn.containsMouse || root.hoverOverride) ? -CortetsuTokens.padding.extraSmall : 0) + (root.open ? -CortetsuTokens.padding.extraSmall : 0)
         group: blobGroup
-        radius: root.open ? Tokens.rounding.large : Tokens.rounding.medium
+        radius: root.open ? CortetsuTokens.rounding.large : CortetsuTokens.rounding.medium
 
         Behavior on anchors.margins {
             Anim {}
@@ -67,7 +67,7 @@ Item {
         implicitHeight: parent.height
 
         group: blobGroup
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         deformScale: 0.00001
 
         states: State {
@@ -75,7 +75,7 @@ Item {
             when: root.open
 
             PropertyChanges {
-                rect.anchors.rightMargin: root.width - root.Tokens.spacing.small
+                rect.anchors.rightMargin: root.width - root.CortetsuTokens.spacing.small
                 rect.anchors.topMargin: -root.topMovement
                 rect.implicitWidth: root.content.implicitWidth + root.padding * 2
                 rect.implicitHeight: root.content.implicitHeight + root.padding * 2
@@ -89,7 +89,7 @@ Item {
             }
             Anim {
                 properties: "topMargin,implicitHeight"
-                easing: root.Tokens.anim.expressiveFastSpatial
+                easing: root.CortetsuTokens.anim.expressiveFastSpatial
             }
             Anim {
                 property: "animDriver"
@@ -109,7 +109,7 @@ Item {
 
         anchors.centerIn: parent
         implicitWidth: implicitHeight
-        implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: icon.implicitHeight + CortetsuTokens.padding.extraSmall * 2
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: root.open = !root.open
@@ -119,8 +119,8 @@ Item {
 
             anchors.centerIn: parent
             text: "view_apps"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.medium
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.medium
         }
     }
 }

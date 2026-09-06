@@ -44,7 +44,7 @@ CustomMouseArea {
         running: false
         target: root
         property: "animTranslate"
-        to: root.Tokens.padding.extraLarge * root.animDirection
+        to: root.CortetsuTokens.padding.extraLarge * root.animDirection
         type: Anim.FastSpatial
     }
 
@@ -64,7 +64,7 @@ CustomMouseArea {
             ScriptAction {
                 script: {
                     trOutAnim.complete();
-                    root.animTranslate = root.Tokens.padding.extraLarge * -root.animDirection;
+                    root.animTranslate = root.CortetsuTokens.padding.extraLarge * -root.animDirection;
                 }
             }
             PropertyAction {}
@@ -89,21 +89,21 @@ CustomMouseArea {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.extraSmall
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.extraSmall
 
         RowLayout {
             id: monthNavigationRow
 
             Layout.fillWidth: true
-            spacing: Tokens.spacing.extraSmall
+            spacing: CortetsuTokens.spacing.extraSmall
 
             IconButton {
                 isRound: true
                 icon: "chevron_left"
                 type: IconButton.Text
-                font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
-                padding: Tokens.padding.small
+                font: CortetsuTokens.font.icon.builders.small.weight(Font.Bold).build()
+                padding: CortetsuTokens.padding.small
                 onClicked: root.screenState.dashboardDate = new Date(root.nonAnimCurrYear, root.nonAnimCurrMonth - 1, 1)
             }
 
@@ -111,12 +111,12 @@ CustomMouseArea {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                implicitWidth: monthYearDisplay.implicitWidth + Tokens.padding.large * 2
-                implicitHeight: monthYearDisplay.implicitHeight + Tokens.padding.extraSmall * 2
+                implicitWidth: monthYearDisplay.implicitWidth + CortetsuTokens.padding.large * 2
+                implicitHeight: monthYearDisplay.implicitHeight + CortetsuTokens.padding.extraSmall * 2
 
                 CortetsuStateLayer {
-                    color: Colours.palette.m3primary
-                    radius: pressed ? Tokens.rounding.small : height / 2
+                    color: CortetsuColours.palette.m3primary
+                    radius: pressed ? CortetsuTokens.rounding.small : height / 2
                     disabled: {
                         const now = new Date();
                         return root.nonAnimCurrMonth === now.getMonth() && root.nonAnimCurrYear === now.getFullYear();
@@ -140,8 +140,8 @@ CustomMouseArea {
 
                     anchors.centerIn: parent
                     text: grid.title
-                    color: Colours.palette.m3primary
-                    font: Tokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
+                    color: CortetsuColours.palette.m3primary
+                    font: CortetsuTokens.font.title.builders.small.capitalisation(Font.Capitalize).build()
                 }
             }
 
@@ -149,8 +149,8 @@ CustomMouseArea {
                 isRound: true
                 icon: "chevron_right"
                 type: IconButton.Text
-                font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
-                padding: Tokens.padding.small
+                font: CortetsuTokens.font.icon.builders.small.weight(Font.Bold).build()
+                padding: CortetsuTokens.padding.small
                 onClicked: root.screenState.dashboardDate = new Date(root.nonAnimCurrYear, root.nonAnimCurrMonth + 1, 1)
             }
         }
@@ -166,8 +166,8 @@ CustomMouseArea {
 
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
-                font: Tokens.font.body.builders.small.weight(Font.Medium).build()
-                color: (model.day === 0 || model.day === 6) ? Colours.palette.m3tertiary : Colours.palette.m3onSurface
+                font: CortetsuTokens.font.body.builders.small.weight(Font.Medium).build()
+                color: (model.day === 0 || model.day === 6) ? CortetsuColours.palette.m3tertiary : CortetsuColours.palette.m3onSurface
             }
         }
 
@@ -197,7 +197,7 @@ CustomMouseArea {
                     required property var model
 
                     implicitWidth: implicitHeight
-                    implicitHeight: text.implicitHeight + Tokens.padding.small
+                    implicitHeight: text.implicitHeight + CortetsuTokens.padding.small
 
                     CortetsuText {
                         id: text
@@ -209,12 +209,12 @@ CustomMouseArea {
                         color: {
                             const dayOfWeek = dayItem.model.date.getDay();
                             if (dayOfWeek === 0 || dayOfWeek === 6)
-                                return Colours.palette.m3tertiary;
+                                return CortetsuColours.palette.m3tertiary;
 
-                            return Colours.palette.m3onSurfaceVariant;
+                            return CortetsuColours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font: Tokens.font.body.small
+                        font: CortetsuTokens.font.body.small
                     }
                 }
             }
@@ -231,13 +231,13 @@ CustomMouseArea {
                 }
 
                 x: today ? today.x + (today.width - implicitWidth) / 2 : 0
-                y: today ? today.y - Tokens.padding.extraSmall - 1 : 0
+                y: today ? today.y - CortetsuTokens.padding.extraSmall - 1 : 0
 
-                implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + Tokens.padding.extraSmall * 2 : 0
+                implicitSize: today ? Math.max(today.implicitWidth, today.implicitHeight) + CortetsuTokens.padding.extraSmall * 2 : 0
                 shape: MaterialShape.Sunny
 
                 clip: true
-                color: Colours.palette.m3primary
+                color: CortetsuColours.palette.m3primary
 
                 opacity: todayItem ? 1 : 0
 
@@ -249,8 +249,8 @@ CustomMouseArea {
                     implicitHeight: grid.height
 
                     source: grid
-                    sourceColor: Colours.palette.m3onSurface
-                    colorizationColor: Colours.palette.m3onPrimary
+                    sourceColor: CortetsuColours.palette.m3onSurface
+                    colorizationColor: CortetsuColours.palette.m3onPrimary
                 }
             }
         }

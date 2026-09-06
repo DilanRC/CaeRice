@@ -21,7 +21,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // e.g. "Quickshell 0.3.0 (revision ...)"
         Process {
@@ -49,14 +49,14 @@ PageBase {
             Layout.fillWidth: true
             first: true
             last: true
-            implicitHeight: hero.implicitHeight + Tokens.padding.extraLarge * 2
+            implicitHeight: hero.implicitHeight + CortetsuTokens.padding.extraLarge * 2
 
             ColumnLayout {
                 id: hero
 
                 anchors.centerIn: parent
-                width: parent.width - Tokens.padding.largeIncreased * 2
-                spacing: Tokens.spacing.small
+                width: parent.width - CortetsuTokens.padding.largeIncreased * 2
+                spacing: CortetsuTokens.spacing.small
 
                 AnimatedLogo {
                     Layout.alignment: Qt.AlignHCenter
@@ -66,16 +66,16 @@ PageBase {
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: Tokens.spacing.small
+                    Layout.topMargin: CortetsuTokens.spacing.small
                     text: "Cortetsu"
-                    font: Tokens.font.headline.builders.large.width(110).build()
+                    font: CortetsuTokens.font.headline.builders.large.width(110).build()
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: CortetsuUtils.version ? `v${CortetsuUtils.version}` : "…"
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.medium
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.medium
                 }
             }
         }

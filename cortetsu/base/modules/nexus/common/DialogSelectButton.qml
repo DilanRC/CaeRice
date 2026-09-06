@@ -27,13 +27,13 @@ DialogRowButton {
 
     acceptAllowed: !!selectedItem
     separateContent: true
-    horizontalContentMargin: -Tokens.padding.small
+    horizontalContentMargin: -CortetsuTokens.padding.small
 
     content: Component {
         VerticalFadeListView {
             spacing: 0
-            topMargin: Tokens.padding.large
-            bottomMargin: Tokens.padding.large
+            topMargin: CortetsuTokens.padding.large
+            bottomMargin: CortetsuTokens.padding.large
 
             model: root.model
 
@@ -46,10 +46,10 @@ DialogRowButton {
                 anchors.left: ListView.view.contentItem.left
                 anchors.right: ListView.view.contentItem.right
                 anchors.margins: 1 // Gets cut off for some reason without this
-                implicitHeight: label.implicitHeight + Tokens.padding.medium * 2
+                implicitHeight: label.implicitHeight + CortetsuTokens.padding.medium * 2
 
-                radius: stateLayer.pressed ? Tokens.rounding.extraSmall : selected ? Tokens.rounding.largeIncreased : Tokens.rounding.medium
-                color: Qt.alpha(Colours.palette.m3tertiaryContainer, selected ? 1 : 0)
+                radius: stateLayer.pressed ? CortetsuTokens.rounding.extraSmall : selected ? CortetsuTokens.rounding.largeIncreased : CortetsuTokens.rounding.medium
+                color: Qt.alpha(CortetsuColours.palette.m3tertiaryContainer, selected ? 1 : 0)
 
                 Behavior on radius {
                     Anim {
@@ -69,11 +69,11 @@ DialogRowButton {
                     anchors.left: parent.left
                     anchors.right: item.selected ? checkIcon.left : parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Tokens.padding.large
-                    anchors.rightMargin: item.selected ? Tokens.spacing.medium : anchors.margins
+                    anchors.margins: CortetsuTokens.padding.large
+                    anchors.rightMargin: item.selected ? CortetsuTokens.spacing.medium : anchors.margins
 
                     text: root.labelFor(item.modelData)
-                    color: item.selected ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                    color: item.selected ? CortetsuColours.palette.m3onTertiaryContainer : CortetsuColours.palette.m3onSurface
                     elide: Text.ElideRight
                 }
 
@@ -82,11 +82,11 @@ DialogRowButton {
 
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: Tokens.padding.large
+                    anchors.margins: CortetsuTokens.padding.large
 
                     text: "check"
-                    color: Colours.palette.m3onTertiaryContainer
-                    fontStyle: Tokens.font.icon.medium
+                    color: CortetsuColours.palette.m3onTertiaryContainer
+                    fontStyle: CortetsuTokens.font.icon.medium
                     opacity: item.selected ? 1 : 0
 
                     Behavior on opacity {

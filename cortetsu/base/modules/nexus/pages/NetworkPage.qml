@@ -18,7 +18,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         Timer {
             running: root.visible && Nmcli.wifiEnabled
@@ -57,11 +57,11 @@ PageBase {
         }
 
         ToggleRow {
-            Layout.topMargin: Nmcli.hasAvailableEthernet ? Tokens.spacing.large : 0
+            Layout.topMargin: Nmcli.hasAvailableEthernet ? CortetsuTokens.spacing.large : 0
             first: true
             text: qsTr("Wi-Fi")
-            font: Tokens.font.body.medium
-            horizontalPadding: Tokens.padding.largeIncreased
+            font: CortetsuTokens.font.body.medium
+            horizontalPadding: CortetsuTokens.padding.largeIncreased
             checked: Nmcli.wifiEnabled
             onToggled: Nmcli.enableWifi(checked)
         }
@@ -113,12 +113,12 @@ PageBase {
 
         // ---- VPN -------------------------------------------------------------
         ToggleRow {
-            Layout.topMargin: Tokens.spacing.large
+            Layout.topMargin: CortetsuTokens.spacing.large
             Layout.fillWidth: true
             first: true
             text: qsTr("VPN")
-            font: Tokens.font.body.medium
-            horizontalPadding: Tokens.padding.largeIncreased
+            font: CortetsuTokens.font.body.medium
+            horizontalPadding: CortetsuTokens.padding.largeIncreased
             checked: VPN.connected
             // Connectable as long as there's a provider and we're not mid-switch.
             disabled: VPN.connecting || VPN.disconnecting || VPN.providers.length === 0
@@ -161,7 +161,7 @@ PageBase {
 
                 CortetsuStateLayer {
                     enabled: !provider.isSelected
-                    radius: Tokens.rounding.extraSmall
+                    radius: CortetsuTokens.rounding.extraSmall
                     onClicked: {
                         if (!provider.isSelected)
                             VPN.setActiveProvider(provider.modelData.index);
@@ -172,16 +172,16 @@ PageBase {
                     id: providerLayout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.largeIncreased
-                    anchors.rightMargin: Tokens.padding.medium
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.medium
+                    anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                    anchors.rightMargin: CortetsuTokens.padding.medium
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuSurface {
                         implicitWidth: implicitHeight
-                        implicitHeight: providerIcon.implicitHeight + Tokens.padding.small * 2
-                        radius: Tokens.rounding.full
-                        color: provider.isConnected ? Colours.palette.m3primaryContainer : provider.isSelected ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                        implicitHeight: providerIcon.implicitHeight + CortetsuTokens.padding.small * 2
+                        radius: CortetsuTokens.rounding.full
+                        color: provider.isConnected ? CortetsuColours.palette.m3primaryContainer : provider.isSelected ? CortetsuColours.palette.m3secondaryContainer : CortetsuColours.palette.m3surfaceContainerHighest
 
                         CortetsuIcon {
                             id: providerIcon
@@ -189,8 +189,8 @@ PageBase {
                             anchors.centerIn: parent
                             text: provider.isConnected || provider.isSelected ? "vpn_key" : "vpn_key_off"
                             fill: provider.isConnected ? 1 : 0
-                            color: provider.isConnected ? Colours.palette.m3onPrimaryContainer : provider.isSelected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
-                            fontStyle: Tokens.font.icon.medium
+                            color: provider.isConnected ? CortetsuColours.palette.m3onPrimaryContainer : provider.isSelected ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurfaceVariant
+                            fontStyle: CortetsuTokens.font.icon.medium
                             animate: true
                         }
                     }
@@ -202,7 +202,7 @@ PageBase {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: provider.modelData.displayName
-                            font: Tokens.font.body.medium
+                            font: CortetsuTokens.font.body.medium
                             elide: Text.ElideRight
                         }
 
@@ -228,29 +228,29 @@ PageBase {
                             }
                             color: {
                                 if (!provider.isSelected)
-                                    return Colours.palette.m3onSurfaceVariant;
+                                    return CortetsuColours.palette.m3onSurfaceVariant;
                                 switch (VPN.status.state) {
                                 case "connected":
-                                    return Colours.palette.m3primary;
+                                    return CortetsuColours.palette.m3primary;
                                 case "needs-auth":
                                 case "error":
-                                    return Colours.palette.m3error;
+                                    return CortetsuColours.palette.m3error;
                                 default:
-                                    return Colours.palette.m3secondary;
+                                    return CortetsuColours.palette.m3secondary;
                                 }
                             }
-                            font: Tokens.font.label.small
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                             animate: true
                         }
                     }
 
                     Item {
-                        Layout.rightMargin: Tokens.spacing.small
-                        opacity: provider.isConnected && root?.cappedWidth > Tokens.sizes.nexus.networkShowVpnDetailWidth ? 1 : 0
+                        Layout.rightMargin: CortetsuTokens.spacing.small
+                        opacity: provider.isConnected && root?.cappedWidth > CortetsuTokens.sizes.nexus.networkShowVpnDetailWidth ? 1 : 0
                         visible: opacity > 0
 
-                        implicitWidth: provider.isConnected && root?.cappedWidth > Tokens.sizes.nexus.networkShowVpnDetailWidth ? providerDetailRow.implicitWidth : 0
+                        implicitWidth: provider.isConnected && root?.cappedWidth > CortetsuTokens.sizes.nexus.networkShowVpnDetailWidth ? providerDetailRow.implicitWidth : 0
                         implicitHeight: providerDetailRow.implicitHeight
 
                         Behavior on opacity {
@@ -263,7 +263,7 @@ PageBase {
                             id: providerDetailRow
 
                             anchors.right: parent.right
-                            spacing: Tokens.spacing.large
+                            spacing: CortetsuTokens.spacing.large
 
                             ColumnLayout {
                                 spacing: 0
@@ -271,8 +271,8 @@ PageBase {
                                 CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: qsTr("Interface")
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuColours.palette.m3onSurfaceVariant
+                                    font: CortetsuTokens.font.label.small
                                     elide: Text.ElideRight
                                     horizontalAlignment: Text.AlignRight
                                 }
@@ -280,8 +280,8 @@ PageBase {
                                 CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: provider.modelData.iface
-                                    color: Colours.palette.m3outline
-                                    font: Tokens.font.label.small
+                                    color: CortetsuColours.palette.m3outline
+                                    font: CortetsuTokens.font.label.small
                                     elide: Text.ElideRight
                                     horizontalAlignment: Text.AlignRight
                                 }
@@ -293,28 +293,28 @@ PageBase {
                                 CortetsuText {
                                     Layout.alignment: Qt.AlignRight
                                     text: qsTr("Current Ping")
-                                    color: Colours.palette.m3onSurfaceVariant
-                                    font: Tokens.font.label.small
+                                    color: CortetsuColours.palette.m3onSurfaceVariant
+                                    font: CortetsuTokens.font.label.small
                                     elide: Text.ElideRight
                                     horizontalAlignment: Text.AlignRight
                                 }
 
                                 RowLayout {
                                     Layout.alignment: Qt.AlignRight
-                                    spacing: Tokens.spacing.small
+                                    spacing: CortetsuTokens.spacing.small
 
                                     CortetsuSurface {
                                         Layout.alignment: Qt.AlignVCenter
-                                        implicitWidth: Math.round(Tokens.font.body.small.pointSize * 0.7)
+                                        implicitWidth: Math.round(CortetsuTokens.font.body.small.pointSize * 0.7)
                                         implicitHeight: implicitWidth
-                                        radius: Tokens.rounding.full
-                                        color: VPN.pingMs <= 80 ? Colours.palette.m3primary : VPN.pingMs <= 150 ? Colours.palette.m3tertiary : Colours.palette.m3error
+                                        radius: CortetsuTokens.rounding.full
+                                        color: VPN.pingMs <= 80 ? CortetsuColours.palette.m3primary : VPN.pingMs <= 150 ? CortetsuColours.palette.m3tertiary : CortetsuColours.palette.m3error
                                     }
 
                                     CortetsuText {
                                         text: qsTr("%1 ms").arg(VPN.pingMs)
-                                        color: Colours.palette.m3outline
-                                        font: Tokens.font.label.small
+                                        color: CortetsuColours.palette.m3outline
+                                        font: CortetsuTokens.font.label.small
                                         elide: Text.ElideRight
                                         horizontalAlignment: Text.AlignRight
                                     }
@@ -324,7 +324,7 @@ PageBase {
                     }
 
                     IconButton {
-                        implicitWidth: implicitHeight + (Tokens.padding.large - padding) * 2
+                        implicitWidth: implicitHeight + (CortetsuTokens.padding.large - padding) * 2
                         type: IconButton.Tonal
                         isRound: true
                         icon: "edit"

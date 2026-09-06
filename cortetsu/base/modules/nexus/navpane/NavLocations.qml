@@ -12,8 +12,8 @@ VerticalFadeFlickable {
 
     required property NexusState nState
 
-    topMargin: Tokens.padding.large
-    bottomMargin: Tokens.padding.large
+    topMargin: CortetsuTokens.padding.large
+    bottomMargin: CortetsuTokens.padding.large
     contentHeight: content.implicitHeight
 
     TapHandler {
@@ -25,7 +25,7 @@ VerticalFadeFlickable {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: Tokens.spacing.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
 
         Repeater {
             id: list
@@ -43,18 +43,18 @@ VerticalFadeFlickable {
                 readonly property bool isCategoryEnd: index === list.model.length - 1 || PageRegistry.pages[index + 1].category !== modelData.category
 
                 Layout.fillWidth: true
-                Layout.topMargin: index !== 0 && isCategoryStart ? Tokens.spacing.medium : 0
+                Layout.topMargin: index !== 0 && isCategoryStart ? CortetsuTokens.spacing.medium : 0
                 implicitHeight: {
                     const h = layout.implicitHeight + layout.anchors.margins * 2;
                     return h % 2 === 0 ? h : h + 1;
                 }
 
-                color: isCurrentPage ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+                color: isCurrentPage ? CortetsuColours.palette.m3secondaryContainer : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 2)
 
-                topLeftRadius: stateLayer.pressed ? Tokens.rounding.medium : isCurrentPage ? Tokens.rounding.extraLargeIncreased : isCategoryStart ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-                topRightRadius: stateLayer.pressed ? Tokens.rounding.medium : isCurrentPage ? Tokens.rounding.extraLargeIncreased : isCategoryStart ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-                bottomLeftRadius: stateLayer.pressed ? Tokens.rounding.medium : isCurrentPage ? Tokens.rounding.extraLargeIncreased : isCategoryEnd ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-                bottomRightRadius: stateLayer.pressed ? Tokens.rounding.medium : isCurrentPage ? Tokens.rounding.extraLargeIncreased : isCategoryEnd ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+                topLeftRadius: stateLayer.pressed ? CortetsuTokens.rounding.medium : isCurrentPage ? CortetsuTokens.rounding.extraLargeIncreased : isCategoryStart ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+                topRightRadius: stateLayer.pressed ? CortetsuTokens.rounding.medium : isCurrentPage ? CortetsuTokens.rounding.extraLargeIncreased : isCategoryStart ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+                bottomLeftRadius: stateLayer.pressed ? CortetsuTokens.rounding.medium : isCurrentPage ? CortetsuTokens.rounding.extraLargeIncreased : isCategoryEnd ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+                bottomRightRadius: stateLayer.pressed ? CortetsuTokens.rounding.medium : isCurrentPage ? CortetsuTokens.rounding.extraLargeIncreased : isCategoryEnd ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
 
                 RadiusBehavior on topLeftRadius {}
                 RadiusBehavior on topRightRadius {}
@@ -77,8 +77,8 @@ VerticalFadeFlickable {
                     id: layout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.large
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.large
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuSurface {
                         Layout.fillHeight: true
@@ -86,16 +86,16 @@ VerticalFadeFlickable {
                         Layout.bottomMargin: -1
                         implicitWidth: height
 
-                        radius: Tokens.rounding.full
-                        color: item.isCurrentPage ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
+                        radius: CortetsuTokens.rounding.full
+                        color: item.isCurrentPage ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3secondaryContainer
 
                         CortetsuIcon {
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: 1
 
                             text: item.modelData.icon
-                            color: item.isCurrentPage ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
-                            fontStyle: Tokens.font.icon.builders.medium.weight(Font.Medium).build()
+                            color: item.isCurrentPage ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSecondaryContainer
+                            fontStyle: CortetsuTokens.font.icon.builders.medium.weight(Font.Medium).build()
                             grade: 25
                             fill: item.modelData.noFill ? 0 : 1
                         }
@@ -108,15 +108,15 @@ VerticalFadeFlickable {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: item.modelData.label
-                            font: Tokens.font.body.medium
+                            font: CortetsuTokens.font.body.medium
                             elide: Text.ElideRight
                         }
 
                         CortetsuText {
                             Layout.fillWidth: true
                             text: item.modelData.description
-                            color: Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.label.small
+                            color: CortetsuColours.palette.m3onSurfaceVariant
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                         }
                     }

@@ -13,44 +13,44 @@ CortetsuSurface {
     id: root
 
     required property real rootHeight
-    readonly property int cBoxSize: Tokens.font.body.medium.pointSize * 2
+    readonly property int cBoxSize: CortetsuTokens.font.body.medium.pointSize * 2
 
     function clamp(value: real, low: real, high: real): real {
         return Math.max(low, Math.min(high, value));
     }
 
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.margins
-    radius: Tokens.rounding.medium
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.medium
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     ColumnLayout {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.extraLarge
-        anchors.topMargin: Tokens.padding.extraLarge
-        anchors.bottomMargin: Tokens.padding.extraLarge
+        anchors.margins: CortetsuTokens.padding.extraLarge
+        anchors.topMargin: CortetsuTokens.padding.extraLarge
+        anchors.bottomMargin: CortetsuTokens.padding.extraLarge
 
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: false
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuSurface {
-                implicitWidth: prompt.implicitWidth + Tokens.padding.medium * 2
-                implicitHeight: prompt.implicitHeight + Tokens.padding.small * 2
+                implicitWidth: prompt.implicitWidth + CortetsuTokens.padding.medium * 2
+                implicitHeight: prompt.implicitHeight + CortetsuTokens.padding.small * 2
 
-                color: Colours.palette.m3primary
-                radius: Tokens.rounding.medium
+                color: CortetsuColours.palette.m3primary
+                radius: CortetsuTokens.rounding.medium
 
                 MonoText {
                     id: prompt
 
                     anchors.centerIn: parent
                     text: ">"
-                    color: Colours.palette.m3onPrimary
+                    color: CortetsuColours.palette.m3onPrimary
                 }
             }
 
@@ -73,22 +73,22 @@ CortetsuSurface {
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: Tokens.spacing.extraLarge
+            spacing: CortetsuTokens.spacing.extraLarge
 
             WrappedLoader {
                 id: iconLoader
 
                 Layout.fillHeight: true
-                active: root.width > Tokens.sizes.lock.largeLogoWidth
+                active: root.width > CortetsuTokens.sizes.lock.largeLogoWidth
 
                 sourceComponent: SysInfo.isDefaultLogo ? cortetsuLogo : distroIcon
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: Tokens.padding.medium
-                Layout.bottomMargin: iconLoader.active || colourRowLoader.active ? Tokens.padding.medium : 0
-                spacing: Tokens.spacing.medium
+                Layout.topMargin: CortetsuTokens.padding.medium
+                Layout.bottomMargin: iconLoader.active || colourRowLoader.active ? CortetsuTokens.padding.medium : 0
+                spacing: CortetsuTokens.spacing.medium
 
                 Repeater {
                     model: {
@@ -96,13 +96,13 @@ CortetsuSurface {
                         const hasBatt = UPower.displayDevice.isLaptopBattery;
                         const rHeight = root.rootHeight;
 
-                        if (!hasBatt && rHeight > Tokens.sizes.lock.fetch4LinesHeight)
+                        if (!hasBatt && rHeight > CortetsuTokens.sizes.lock.fetch4LinesHeight)
                             items.push(`OS  : ${SysInfo.osPrettyName || SysInfo.osName}`);
 
-                        if (rHeight > (hasBatt ? Tokens.sizes.lock.fetch4LinesHeight : Tokens.sizes.lock.fetch3LinesHeight))
+                        if (rHeight > (hasBatt ? CortetsuTokens.sizes.lock.fetch4LinesHeight : CortetsuTokens.sizes.lock.fetch3LinesHeight))
                             items.push(`WM  : ${SysInfo.wm}`);
 
-                        if (!hasBatt || rHeight > Tokens.sizes.lock.fetch3LinesHeight)
+                        if (!hasBatt || rHeight > CortetsuTokens.sizes.lock.fetch3LinesHeight)
                             items.push(`USER: ${SysInfo.user}`);
 
                         items.push(`UP  : ${SysInfo.uptime}`);
@@ -127,14 +127,14 @@ CortetsuSurface {
         WrappedLoader {
             id: colourRowLoader
 
-            Layout.topMargin: iconLoader.active ? Tokens.spacing.small : 0
+            Layout.topMargin: iconLoader.active ? CortetsuTokens.spacing.small : 0
             Layout.alignment: Qt.AlignHCenter
-            active: root.rootHeight > Tokens.sizes.lock.showColourBoxRowHeight
+            active: root.rootHeight > CortetsuTokens.sizes.lock.showColourBoxRowHeight
 
             sourceComponent: RowLayout {
                 id: coloursRow
 
-                spacing: Tokens.spacing.largeIncreased
+                spacing: CortetsuTokens.spacing.largeIncreased
 
                 Repeater {
                     model: root.clamp(Math.floor((layout.width + coloursRow.spacing) / (root.cBoxSize + coloursRow.spacing)), 0, 8)
@@ -144,8 +144,8 @@ CortetsuSurface {
 
                         implicitWidth: implicitHeight
                         implicitHeight: root.cBoxSize
-                        color: Colours.palette[`term${index}`]
-                        radius: Tokens.rounding.medium
+                        color: CortetsuColours.palette[`term${index}`]
+                        radius: CortetsuTokens.rounding.medium
                     }
                 }
             }
@@ -166,7 +166,7 @@ CortetsuSurface {
         ColouredIcon {
             source: SysInfo.osLogo
             implicitSize: height
-            colour: Colours.palette.m3primary
+            colour: CortetsuColours.palette.m3primary
             layer.enabled: CortetsuConfig.lockRecolourLogo
         }
     }
@@ -177,6 +177,6 @@ CortetsuSurface {
     }
 
     component MonoText: CortetsuText {
-        font: root.width > Tokens.sizes.lock.largeFontWidth ? Tokens.font.mono.medium : Tokens.font.mono.small
+        font: root.width > CortetsuTokens.sizes.lock.largeFontWidth ? CortetsuTokens.font.mono.medium : CortetsuTokens.font.mono.small
     }
 }

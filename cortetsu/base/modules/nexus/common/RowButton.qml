@@ -21,7 +21,7 @@ ConnectedRect {
     signal clicked(event: MouseEvent)
 
     Layout.fillWidth: true
-    implicitHeight: row.implicitHeight + Tokens.padding.medium * 2
+    implicitHeight: row.implicitHeight + CortetsuTokens.padding.medium * 2
 
     CortetsuStateLayer {
         id: stateLayer
@@ -35,9 +35,9 @@ ConnectedRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.largeIncreased
+        anchors.margins: CortetsuTokens.padding.largeIncreased
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
         opacity: root.disabled ? 0.5 : 1
 
         Behavior on opacity {
@@ -47,8 +47,8 @@ ConnectedRect {
         CortetsuIcon {
             id: iconLabel
 
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.medium
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.medium
             fill: 1
         }
 
@@ -64,7 +64,7 @@ ConnectedRect {
                 anchors.left: parent.left
                 anchors.right: parent.right
 
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -75,8 +75,8 @@ ConnectedRect {
                 anchors.right: parent.right
 
                 visible: text
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.label.small
                 elide: Text.ElideRight
             }
         }
@@ -88,8 +88,8 @@ ConnectedRect {
 
             sourceComponent: CortetsuIcon {
                 text: root.trailingIcon
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.medium
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.medium
             }
         }
     }

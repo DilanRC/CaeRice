@@ -21,21 +21,21 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         ButtonRow {
-            Layout.bottomMargin: Tokens.spacing.medium
+            Layout.bottomMargin: CortetsuTokens.spacing.medium
             Layout.alignment: Qt.AlignHCenter
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             IconTextButton {
                 icon: "photo_library"
                 text: qsTr("Browse")
-                font: Tokens.font.body.large
+                font: CortetsuTokens.font.body.large
                 isRound: true
                 shapeMorph: true
-                horizontalPadding: Tokens.padding.extraLarge
-                verticalPadding: Tokens.padding.medium
+                horizontalPadding: CortetsuTokens.padding.extraLarge
+                verticalPadding: CortetsuTokens.padding.medium
                 onClicked: browseDialog.open()
 
                 FileDialog {
@@ -54,11 +54,11 @@ PageBase {
             IconTextButton {
                 icon: "shuffle"
                 text: qsTr("Random")
-                font: Tokens.font.body.large
+                font: CortetsuTokens.font.body.large
                 isRound: true
                 shapeMorph: true
-                horizontalPadding: Tokens.padding.extraLarge
-                verticalPadding: Tokens.padding.medium
+                horizontalPadding: CortetsuTokens.padding.extraLarge
+                verticalPadding: CortetsuTokens.padding.medium
                 type: IconTextButton.Tonal
                 onClicked: {
                     CortetsuWallpapers.setRandom();
@@ -69,7 +69,7 @@ PageBase {
 
         WallItem {
             imgHeight: Math.round(width * 0.3)
-            radius: Tokens.rounding.extraLarge
+            radius: CortetsuTokens.rounding.extraLarge
             source: Quickshell.shellPath("assets/wallpaper.webp")
             text: qsTr("Featured wallpaper")
             fillLabel: false
@@ -80,9 +80,9 @@ PageBase {
         }
 
         CortetsuText {
-            Layout.topMargin: Tokens.spacing.large
+            Layout.topMargin: CortetsuTokens.spacing.large
             text: qsTr("Local wallpapers")
-            font: Tokens.font.title.small
+            font: CortetsuTokens.font.title.small
         }
 
         GridLayout {
@@ -90,8 +90,8 @@ PageBase {
             visible: localWalls.count > 0
 
             columns: CortetsuConfig.nexusWallpapersPerRow
-            rowSpacing: Tokens.spacing.medium
-            columnSpacing: Tokens.spacing.large
+            rowSpacing: CortetsuTokens.spacing.medium
+            columnSpacing: CortetsuTokens.spacing.large
 
             Repeater {
                 id: localWalls
@@ -156,28 +156,28 @@ PageBase {
             visible: active
 
             sourceComponent: CortetsuSurface {
-                color: Colours.tPalette.m3surfaceContainer
-                radius: Tokens.rounding.extraLarge
-                implicitHeight: noWallsLayout.implicitHeight + Tokens.padding.extraExtraLarge * 2
+                color: CortetsuColours.tPalette.m3surfaceContainer
+                radius: CortetsuTokens.rounding.extraLarge
+                implicitHeight: noWallsLayout.implicitHeight + CortetsuTokens.padding.extraExtraLarge * 2
 
                 ColumnLayout {
                     id: noWallsLayout
 
                     anchors.centerIn: parent
-                    spacing: Tokens.spacing.extraSmall
+                    spacing: CortetsuTokens.spacing.extraSmall
 
                     CortetsuIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hide_image"
-                        color: Colours.palette.m3outline
-                        fontStyle: Tokens.font.icon.extraLarge
+                        color: CortetsuColours.palette.m3outline
+                        fontStyle: CortetsuTokens.font.icon.extraLarge
                     }
 
                     CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("No local wallpapers found")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.title.small
+                        color: CortetsuColours.palette.m3outline
+                        font: CortetsuTokens.font.title.small
                     }
                 }
             }

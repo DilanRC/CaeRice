@@ -44,7 +44,7 @@ ScrollBar {
             }
         }
     }
-    implicitWidth: Tokens.padding.extraSmall
+    implicitWidth: CortetsuTokens.padding.extraSmall
 
     contentItem: CortetsuSurface {
         anchors.left: parent.left
@@ -60,8 +60,8 @@ ScrollBar {
                 return 0.6;
             return 0;
         }
-        radius: Tokens.rounding.full
-        color: Colours.palette.m3secondary
+        radius: CortetsuTokens.rounding.full
+        color: CortetsuColours.palette.m3secondary
 
         MouseArea {
             id: mouse

@@ -19,7 +19,7 @@ done
 require "width: hasStatus ? pill.implicitWidth : 0" "$component"
 require "visible: hasStatus || width > 0" "$component"
 require "id: tooltipPopup" "$component"
-require "color: Colours.palette.m3inverseSurface" "$component"
+require "color: CortetsuColours.palette.m3inverseSurface" "$component"
 require "recordingActive: CortetsuRecorder.running" "$hub"
 require "dndActive: CortetsuNotifications.dnd" "$hub"
 require "idleInhibited: CortetsuIdleInhibitor.enabled" "$hub"

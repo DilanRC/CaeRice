@@ -19,7 +19,7 @@ ColumnLayout {
 
     readonly property bool isWorkspace: true // Flag for finding workspace children
     // Unanimated prop for others to use as reference
-    readonly property int size: implicitHeight + (hasWindows ? Tokens.padding.extraSmall : 0)
+    readonly property int size: implicitHeight + (hasWindows ? CortetsuTokens.padding.extraSmall : 0)
 
     readonly property int ws: groupOffset + index + 1
     readonly property bool isOccupied: occupied[ws] ?? false
@@ -50,7 +50,7 @@ ColumnLayout {
         id: indicator
 
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+        Layout.preferredHeight: CortetsuTokens.sizes.bar.innerWidth - CortetsuTokens.padding.small
         sourceComponent: CortetsuConfig.bar.workspaces.displayType === 1 ? textComponent : shapeComponent
 
         onItemChanged: root.updateShape()
@@ -60,13 +60,13 @@ ColumnLayout {
         id: shapeComponent
 
         MaterialShape {
-            implicitSize: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+            implicitSize: CortetsuTokens.sizes.bar.innerWidth - CortetsuTokens.padding.small
 
-            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? CortetsuColours.palette.m3onSurface : CortetsuColours.layer(CortetsuColours.palette.m3outlineVariant, 2)
             scale: root.focused ? 2 / 3 : root.isOccupied ? 1 / 3 : 1 / 4
 
-            animationEasing: Tokens.anim.expressiveDefaultSpatial
-            animationDuration: Tokens.anim.durations.expressiveDefaultSpatial * Tokens.anim.durations.scale
+            animationEasing: CortetsuTokens.anim.expressiveDefaultSpatial
+            animationDuration: CortetsuTokens.anim.durations.expressiveDefaultSpatial * CortetsuTokens.anim.durations.scale
 
             Behavior on color {
                 CAnim {}
@@ -110,9 +110,9 @@ ColumnLayout {
                     return wsName.toString().toLowerCase();
                 return wsName;
             }
-            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? CortetsuColours.palette.m3onSurface : CortetsuColours.layer(CortetsuColours.palette.m3outlineVariant, 2)
             verticalAlignment: Qt.AlignVCenter
-            font.family: Tokens.font.workspaces
+            font.family: CortetsuTokens.font.workspaces
         }
     }
 
@@ -123,7 +123,7 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
-        Layout.topMargin: -Tokens.spacing.extraSmall / 2
+        Layout.topMargin: -CortetsuTokens.spacing.extraSmall / 2
 
         visible: active
         active: root.hasWindows
@@ -136,7 +136,7 @@ ColumnLayout {
                     properties: "scale"
                     from: 0
                     to: 1
-                    easing: Tokens.anim.standardDecel
+                    easing: CortetsuTokens.anim.standardDecel
                 }
             }
 
@@ -144,7 +144,7 @@ ColumnLayout {
                 Anim {
                     properties: "scale"
                     to: 1
-                    easing: Tokens.anim.standardDecel
+                    easing: CortetsuTokens.anim.standardDecel
                 }
                 Anim {
                     properties: "x,y"
@@ -165,7 +165,7 @@ ColumnLayout {
 
                     grade: 0
                     text: Icons.getAppCategoryIcon(modelData.lastIpcObject.class, "terminal")
-                    color: Colours.palette.m3onSurfaceVariant
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                 }
             }
         }

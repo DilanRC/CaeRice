@@ -38,21 +38,21 @@ CortetsuSurface {
     readonly property int splitIndex: Math.ceil(quickToggles.length / 2)
     readonly property bool needExtraRow: quickToggles.length > 6
 
-    implicitHeight: layout.implicitHeight + Tokens.padding.extraLargeIncreased
+    implicitHeight: layout.implicitHeight + CortetsuTokens.padding.extraLargeIncreased
 
-    radius: Tokens.rounding.large
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.large
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     ColumnLayout {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             text: qsTr("Quick Toggles")
-            font: Tokens.font.body.medium
+            font: CortetsuTokens.font.body.medium
         }
 
         QuickToggleRow {
@@ -69,7 +69,7 @@ CortetsuSurface {
         property alias model: repeater.model
 
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         Repeater {
             id: repeater
@@ -113,7 +113,7 @@ CortetsuSurface {
                     roleValue: "settings"
                     delegate: Toggle {
                         icon: "settings"
-                        inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                        inactiveOnColour: CortetsuColours.palette.m3onSurfaceVariant
                         isToggle: false
                         onClicked: {
                             root.screenState.utilities = false;
@@ -144,7 +144,7 @@ CortetsuSurface {
                         checked: VPN.connected && VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
                         enabled: !VPN.connecting && !VPN.disconnecting
                         isToggle: VPN.status.state !== "needs-auth" && VPN.status.state !== "error"
-                        inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                        inactiveOnColour: CortetsuColours.palette.m3onSurfaceVariant
                         onClicked: VPN.toggle()
                     }
                 }
@@ -153,7 +153,7 @@ CortetsuSurface {
     }
 
     component Toggle: IconButton {
-        inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+        inactiveColour: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, 2)
         fillWidth: true
         isToggle: true
         isRound: true

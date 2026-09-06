@@ -25,15 +25,15 @@ Item {
         id: layout
 
         anchors.fill: parent
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         StyledClippingRect {
             id: imgWrapper
 
             Layout.fillWidth: true
             implicitHeight: width
-            radius: Tokens.rounding.largeIncreased
-            color: Colours.tPalette.m3surfaceContainer
+            radius: CortetsuTokens.rounding.largeIncreased
+            color: CortetsuColours.tPalette.m3surfaceContainer
 
             Loader {
                 anchors.centerIn: parent
@@ -42,11 +42,11 @@ Item {
                 active: opacity > 0
 
                 sourceComponent: CortetsuSurface {
-                    implicitWidth: loadingIndicator.implicitSize + Tokens.padding.large * 2
-                    implicitHeight: loadingIndicator.implicitSize + Tokens.padding.large * 2
+                    implicitWidth: loadingIndicator.implicitSize + CortetsuTokens.padding.large * 2
+                    implicitHeight: loadingIndicator.implicitSize + CortetsuTokens.padding.large * 2
 
-                    color: Colours.palette.m3primaryContainer
-                    radius: Tokens.rounding.full
+                    color: CortetsuColours.palette.m3primaryContainer
+                    radius: CortetsuTokens.rounding.full
 
                     LoadingIndicator {
                         id: loadingIndicator
@@ -88,10 +88,10 @@ Item {
         CortetsuText {
             id: label
 
-            Layout.bottomMargin: Tokens.padding.small
+            Layout.bottomMargin: CortetsuTokens.padding.small
             Layout.fillWidth: true
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.label.builders.small.weight(Font.Medium).build()
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.label.builders.small.weight(Font.Medium).build()
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
         }

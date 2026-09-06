@@ -58,7 +58,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.topMargin: CortetsuUtils.clamp(anchors.margins - CortetsuConfig.borderThickness, 0, anchors.margins)
-        anchors.margins: Tokens.padding.large
+        anchors.margins: CortetsuTokens.padding.large
 
         nonAnimWidth: root.nonAnimWidth - anchors.margins * 2
         screenState: root.screenState
@@ -72,9 +72,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.large
+        anchors.margins: CortetsuTokens.padding.large
 
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         color: "transparent"
 
         Flickable {

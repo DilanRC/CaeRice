@@ -34,7 +34,7 @@ ConnectedRect {
     }
 
     Layout.fillWidth: true
-    implicitHeight: rowLayout.implicitHeight + Tokens.padding.medium + Math.max(0, Tokens.padding.large - input.verticalPadding) * 2
+    implicitHeight: rowLayout.implicitHeight + CortetsuTokens.padding.medium + Math.max(0, CortetsuTokens.padding.large - input.verticalPadding) * 2
 
     RowLayout {
         id: rowLayout
@@ -42,9 +42,9 @@ ConnectedRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Tokens.padding.largeIncreased
-        anchors.rightMargin: Tokens.padding.largeIncreased
-        spacing: Tokens.spacing.medium
+        anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+        anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+        spacing: CortetsuTokens.spacing.medium
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -54,7 +54,7 @@ ConnectedRect {
                 id: label
 
                 Layout.fillWidth: true
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -62,8 +62,8 @@ ConnectedRect {
                 Layout.fillWidth: true
                 visible: root.subtext
                 text: input.isError && root.errorText ? root.errorText : root.subtext
-                color: input.isError && root.errorText ? Colours.palette.m3error : Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: input.isError && root.errorText ? CortetsuColours.palette.m3error : CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.label.small
                 elide: Text.ElideRight
                 animate: root.errorText
             }
@@ -72,10 +72,10 @@ ConnectedRect {
         StyledTextField {
             id: input
 
-            Layout.preferredWidth: root.smallField ? Tokens.sizes.nexus.smallTextFieldWidth : Tokens.sizes.nexus.textFieldWidth
+            Layout.preferredWidth: root.smallField ? CortetsuTokens.sizes.nexus.smallTextFieldWidth : CortetsuTokens.sizes.nexus.textFieldWidth
             Layout.maximumWidth: root.width / 2
             Layout.alignment: Qt.AlignVCenter
-            verticalPadding: Tokens.padding.small
+            verticalPadding: CortetsuTokens.padding.small
 
             text: root.value
 

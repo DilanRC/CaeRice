@@ -18,8 +18,8 @@ ConnectedRect {
     readonly property alias list: list
 
     Layout.fillWidth: true
-    implicitHeight: (showList && list.count > 0 ? list.contentHeight : placeholder.implicitHeight + Tokens.padding.extraLarge * 2) + extraHeight
-    color: Colours.tPalette.m3surfaceContainer
+    implicitHeight: (showList && list.count > 0 ? list.contentHeight : placeholder.implicitHeight + CortetsuTokens.padding.extraLarge * 2) + extraHeight
+    color: CortetsuColours.tPalette.m3surfaceContainer
     clip: true
 
     Behavior on implicitHeight {
@@ -34,21 +34,21 @@ ConnectedRect {
         opacity: root.showList && list.count > 0 ? 0 : 1
 
         sourceComponent: ColumnLayout {
-            spacing: Tokens.spacing.extraSmall
+            spacing: CortetsuTokens.spacing.extraSmall
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.placeholderIcon
-                color: Colours.palette.m3outline
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuColours.palette.m3outline
+                fontStyle: CortetsuTokens.font.icon.large
                 animate: true
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.placeholderText
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.large
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.body.large
                 animate: true
             }
         }

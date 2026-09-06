@@ -12,7 +12,7 @@ Item {
     id: root
 
     required property int centerWidth
-    readonly property color bgColour: Colours.tPalette.m3surfaceContainerHighest
+    readonly property color bgColour: CortetsuColours.tPalette.m3surfaceContainerHighest
 
     implicitWidth: Math.round(centerWidth * 0.7)
     implicitHeight: {
@@ -36,8 +36,8 @@ Item {
         anchors.centerIn: parent
 
         text: "person"
-        color: Colours.palette.m3onSurfaceVariant
-        fontStyle: Tokens.font.icon.size(root.centerWidth / 4).build()
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        fontStyle: CortetsuTokens.font.icon.size(root.centerWidth / 4).build()
         visible: pfp.status !== Image.Ready
     }
 

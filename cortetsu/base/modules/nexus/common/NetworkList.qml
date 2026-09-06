@@ -25,7 +25,7 @@ ItemList {
     showList: Nmcli.wifiEnabled
     placeholderIcon: Nmcli.wifiEnabled ? "wifi_find" : "signal_wifi_off"
     placeholderText: Nmcli.wifiEnabled ? qsTr("No networks found") : qsTr("Wi-Fi disabled")
-    extraHeight: Nmcli.scanning ? Tokens.rounding.extraSmall : 0 // Inline so it isn't affected by anim
+    extraHeight: Nmcli.scanning ? CortetsuTokens.rounding.extraSmall : 0 // Inline so it isn't affected by anim
     list.anchors.top: scanningIndicator.bottom
 
     model: ScriptModel {
@@ -53,9 +53,9 @@ ItemList {
         anchors.left: root.list.contentItem.left
         anchors.right: root.list.contentItem.right
         implicitHeight: networkLayout.implicitHeight + networkLayout.anchors.margins * 2
-        radius: Tokens.rounding.extraSmall
-        bottomLeftRadius: root?.last && index === root.list.count - 1 ? Tokens.rounding.extraLarge : radius
-        bottomRightRadius: root?.last && index === root.list.count - 1 ? Tokens.rounding.extraLarge : radius
+        radius: CortetsuTokens.rounding.extraSmall
+        bottomLeftRadius: root?.last && index === root.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
+        bottomRightRadius: root?.last && index === root.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
         anchors.fill: undefined
 
         onClicked: {
@@ -99,15 +99,15 @@ ItemList {
             id: networkLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large
-            anchors.leftMargin: Tokens.padding.extraLarge
-            anchors.rightMargin: Tokens.padding.extraLarge
-            spacing: Tokens.spacing.medium
+            anchors.margins: CortetsuTokens.padding.large
+            anchors.leftMargin: CortetsuTokens.padding.extraLarge
+            anchors.rightMargin: CortetsuTokens.padding.extraLarge
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuIcon {
                 text: Icons.getNetworkIcon(network.modelData.strength)
-                color: network.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.medium
+                color: network.modelData.active ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.medium
                 opacity: network.textOpacity
             }
 
@@ -119,15 +119,15 @@ ItemList {
                 CortetsuText {
                     Layout.fillWidth: true
                     text: network.modelData.ssid
-                    font: Tokens.font.body.small
+                    font: CortetsuTokens.font.body.small
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Security: %1%2").arg(network.modelData.security).arg(network.modelData.active ? qsTr(" • Connected") : Nmcli.hasSavedProfile(network.modelData.ssid) ? qsTr(" • Saved") : "")
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.label.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.label.small
                     elide: Text.ElideRight
                 }
             }
@@ -140,8 +140,8 @@ ItemList {
 
                     CortetsuIcon {
                         text: network.modelData.active ? "settings" : "lock"
-                        color: network.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: network.modelData.active ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                         opacity: network.textOpacity
                     }
                 }
@@ -150,7 +150,7 @@ ItemList {
                     id: loadingComp
 
                     LoadingIndicator {
-                        implicitSize: Math.round(Tokens.font.icon.medium.pointSize * 1.3)
+                        implicitSize: Math.round(CortetsuTokens.font.icon.medium.pointSize * 1.3)
                     }
                 }
             }
@@ -163,7 +163,7 @@ ItemList {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 1
-        implicitHeight: Nmcli.scanning ? Tokens.rounding.extraSmall : 0
+        implicitHeight: Nmcli.scanning ? CortetsuTokens.rounding.extraSmall : 0
         indeterminate: true
 
         Behavior on implicitHeight {

@@ -11,24 +11,24 @@ Item {
         id: layout
 
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.medium
-        spacing: Tokens.spacing.medium
+        anchors.leftMargin: CortetsuTokens.padding.medium
+        spacing: CortetsuTokens.spacing.medium
 
         RowLayout {
-            Layout.bottomMargin: -Tokens.spacing.medium
-            spacing: Tokens.spacing.medium
+            Layout.bottomMargin: -CortetsuTokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
             z: 1
 
             CortetsuIcon {
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.12)
                 text: "lyrics"
-                fontStyle: Tokens.font.icon.medium
+                fontStyle: CortetsuTokens.font.icon.medium
             }
 
             CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Lyrics")
-                font: Tokens.font.title.medium
+                font: CortetsuTokens.font.title.medium
             }
 
             LyricsInfo {}

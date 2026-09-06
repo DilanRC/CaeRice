@@ -11,7 +11,7 @@ ColumnLayout {
 
     required property NexusState nState
 
-    spacing: Tokens.spacing.large
+    spacing: CortetsuTokens.spacing.large
 
     SearchBar {
         id: searchField
@@ -19,14 +19,14 @@ ColumnLayout {
         Layout.fillWidth: true
 
         placeholderText: qsTr("Search settings")
-        font: Tokens.font.body.large
+        font: CortetsuTokens.font.body.large
 
-        bg.color: Colours.tPalette.m3surfaceContainerLowest
-        bg.border.color: Colours.palette.m3outlineVariant
-        searchIcon.fontStyle: Tokens.font.icon.medium
-        searchIcon.anchors.leftMargin: Tokens.padding.largeIncreased
-        clearIcon.font: Tokens.font.icon.medium
-        clearIcon.padding: Tokens.padding.extraSmall
+        bg.color: CortetsuColours.tPalette.m3surfaceContainerLowest
+        bg.border.color: CortetsuColours.palette.m3outlineVariant
+        searchIcon.fontStyle: CortetsuTokens.font.icon.medium
+        searchIcon.anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+        clearIcon.font: CortetsuTokens.font.icon.medium
+        clearIcon.padding: CortetsuTokens.padding.extraSmall
 
         Behavior on bg.border.color {
             CAnim {}

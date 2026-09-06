@@ -149,7 +149,8 @@ for required in \
     services/Hypr.qml \
     services/Notifs.qml \
     services/NotifData.qml \
-    services/Colours.qml \
+    services/CortetsuColours.qml \
+    services/CortetsuTokens.qml \
     services/Brightness.qml \
     services/Audio.qml \
     services/Players.qml \

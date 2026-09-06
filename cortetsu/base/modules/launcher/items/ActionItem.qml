@@ -8,34 +8,34 @@ Item {
     required property var modelData
     required property var list
 
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: CortetsuTokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     CortetsuStateLayer {
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         onClicked: root.modelData?.onClicked(root.list)
     }
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.medium
-        anchors.rightMargin: Tokens.padding.medium
-        anchors.margins: Tokens.padding.small
+        anchors.leftMargin: CortetsuTokens.padding.medium
+        anchors.rightMargin: CortetsuTokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.small
 
         CortetsuIcon {
             id: icon
 
             anchors.verticalCenter: parent.verticalCenter
             text: root.modelData?.icon ?? ""
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.builders.large.scale(1.3).build()
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.builders.large.scale(1.3).build()
         }
 
         Item {
             anchors.left: icon.right
-            anchors.leftMargin: Tokens.spacing.medium
+            anchors.leftMargin: CortetsuTokens.spacing.medium
             anchors.verticalCenter: icon.verticalCenter
 
             implicitWidth: parent.width - icon.width
@@ -45,18 +45,18 @@ Item {
                 id: name
 
                 text: root.modelData?.name ?? ""
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             CortetsuText {
                 id: desc
 
                 text: root.modelData?.desc ?? ""
-                font: Tokens.font.body.small
-                color: Colours.palette.m3outline
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3outline
 
                 elide: Text.ElideRight
-                width: root.width - icon.width - Tokens.rounding.extraLargeIncreased
+                width: root.width - icon.width - CortetsuTokens.rounding.extraLargeIncreased
 
                 anchors.top: name.bottom
             }

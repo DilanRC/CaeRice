@@ -18,17 +18,17 @@ ColumnLayout {
     property var passwordNetwork: null
     property bool showPasswordDialog: false
 
-    spacing: Tokens.spacing.small
-    width: Tokens.sizes.bar.networkWidth
+    spacing: CortetsuTokens.spacing.small
+    width: CortetsuTokens.sizes.bar.networkWidth
 
     // Wireless section
     CortetsuText {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.padding.medium : 0
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: visible ? CortetsuTokens.padding.medium : 0
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("Wireless")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {
@@ -42,11 +42,11 @@ ColumnLayout {
     CortetsuText {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.spacing.small : 0
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: visible ? CortetsuTokens.spacing.small : 0
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("%1 networks available").arg(Nmcli.networks.length) // qmllint disable missing-property
-        color: Colours.palette.m3onSurfaceVariant
-        font: Tokens.font.body.small
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        font: CortetsuTokens.font.body.small
     }
 
     Repeater {
@@ -69,8 +69,8 @@ ColumnLayout {
             visible: root.view === "wireless"
             Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.extraSmall
-            spacing: Tokens.spacing.small
+            Layout.rightMargin: CortetsuTokens.padding.extraSmall
+            spacing: CortetsuTokens.spacing.small
 
             opacity: 0
             scale: 0.7
@@ -92,31 +92,31 @@ ColumnLayout {
 
             CortetsuIcon {
                 text: Icons.getNetworkIcon(networkItem.modelData.strength)
-                color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: networkItem.modelData.active ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
             }
 
             CortetsuIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
-                fontStyle: Tokens.font.icon.small
+                fontStyle: CortetsuTokens.font.icon.small
             }
 
             CortetsuText {
-                Layout.leftMargin: Tokens.spacing.extraSmall
-                Layout.rightMargin: Tokens.spacing.extraSmall
+                Layout.leftMargin: CortetsuTokens.spacing.extraSmall
+                Layout.rightMargin: CortetsuTokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: networkItem.modelData.ssid
                 elide: Text.ElideRight
-                font: Tokens.font.body.builders.medium.weight(networkItem.modelData.active ? Font.Medium : Font.Normal).build()
-                color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                font: CortetsuTokens.font.body.builders.medium.weight(networkItem.modelData.active ? Font.Medium : Font.Normal).build()
+                color: networkItem.modelData.active ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurface
             }
 
             CortetsuSurface {
                 implicitWidth: implicitHeight
-                implicitHeight: wirelessConnectIcon.implicitHeight + Tokens.padding.extraSmall
+                implicitHeight: wirelessConnectIcon.implicitHeight + CortetsuTokens.padding.extraSmall
 
-                radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3primary, networkItem.modelData.active ? 1 : 0)
+                radius: CortetsuTokens.rounding.full
+                color: Qt.alpha(CortetsuColours.palette.m3primary, networkItem.modelData.active ? 1 : 0)
 
                 CircularIndicator {
                     anchors.fill: parent
@@ -124,7 +124,7 @@ ColumnLayout {
                 }
 
                 CortetsuStateLayer {
-                    color: networkItem.modelData.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: networkItem.modelData.active ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface
                     disabled: networkItem.loading || !Nmcli.wifiEnabled
 
                     onClicked: {
@@ -151,7 +151,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     animate: true
                     text: networkItem.modelData.active ? "link_off" : "link"
-                    color: networkItem.modelData.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: networkItem.modelData.active ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface
 
                     opacity: networkItem.loading ? 0 : 1
 
@@ -168,15 +168,15 @@ ColumnLayout {
     CortetsuSurface {
         visible: root.view === "wireless"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.spacing.small : 0
+        Layout.topMargin: visible ? CortetsuTokens.spacing.small : 0
         Layout.fillWidth: true
-        implicitHeight: rescanBtn.implicitHeight + Tokens.padding.small
+        implicitHeight: rescanBtn.implicitHeight + CortetsuTokens.padding.small
 
-        radius: Tokens.rounding.full
-        color: Colours.palette.m3primaryContainer
+        radius: CortetsuTokens.rounding.full
+        color: CortetsuColours.palette.m3primaryContainer
 
         CortetsuStateLayer {
-            color: Colours.palette.m3onPrimaryContainer
+            color: CortetsuColours.palette.m3onPrimaryContainer
             disabled: Nmcli.scanning || !Nmcli.wifiEnabled
             onClicked: Nmcli.rescanWifi()
         }
@@ -185,7 +185,7 @@ ColumnLayout {
             id: rescanBtn
 
             anchors.centerIn: parent
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
             opacity: Nmcli.scanning ? 0 : 1
 
             CortetsuIcon {
@@ -194,13 +194,13 @@ ColumnLayout {
                 Layout.topMargin: Math.round(fontInfo.pointSize * 0.0575)
                 animate: true
                 text: "wifi_find"
-                color: Colours.palette.m3onPrimaryContainer
+                color: CortetsuColours.palette.m3onPrimaryContainer
             }
 
             CortetsuText {
                 Layout.topMargin: -Math.round(scanIcon.fontInfo.pointSize * 0.0575)
                 text: qsTr("Rescan networks")
-                color: Colours.palette.m3onPrimaryContainer
+                color: CortetsuColours.palette.m3onPrimaryContainer
             }
 
             Behavior on opacity {
@@ -212,9 +212,9 @@ ColumnLayout {
 
         CircularIndicator {
             anchors.centerIn: parent
-            strokeWidth: Tokens.padding.extraSmall / 2
+            strokeWidth: CortetsuTokens.padding.extraSmall / 2
             bgColour: "transparent"
-            implicitSize: parent.implicitHeight - Tokens.padding.large
+            implicitSize: parent.implicitHeight - CortetsuTokens.padding.large
             running: Nmcli.scanning
         }
     }
@@ -223,20 +223,20 @@ ColumnLayout {
     CortetsuText {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.padding.medium : 0
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: visible ? CortetsuTokens.padding.medium : 0
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("Ethernet")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     CortetsuText {
         visible: root.view === "ethernet"
         Layout.preferredHeight: visible ? implicitHeight : 0
-        Layout.topMargin: visible ? Tokens.spacing.small : 0
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: visible ? CortetsuTokens.spacing.small : 0
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
-        color: Colours.palette.m3onSurfaceVariant
-        font: Tokens.font.body.small
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        font: CortetsuTokens.font.body.small
     }
 
     Repeater {
@@ -258,8 +258,8 @@ ColumnLayout {
             visible: root.view === "ethernet"
             Layout.preferredHeight: visible ? implicitHeight : 0
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.extraSmall
-            spacing: Tokens.spacing.small
+            Layout.rightMargin: CortetsuTokens.padding.extraSmall
+            spacing: CortetsuTokens.spacing.small
 
             opacity: 0
             scale: 0.7
@@ -281,25 +281,25 @@ ColumnLayout {
 
             CortetsuIcon {
                 text: "cable"
-                color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: ethernetItem.modelData.connected ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
             }
 
             CortetsuText {
-                Layout.leftMargin: Tokens.spacing.extraSmall
-                Layout.rightMargin: Tokens.spacing.extraSmall
+                Layout.leftMargin: CortetsuTokens.spacing.extraSmall
+                Layout.rightMargin: CortetsuTokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: ethernetItem.modelData.iface || qsTr("Unknown")
                 elide: Text.ElideRight
-                font: Tokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? Font.Medium : Font.Normal).build()
-                color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                font: CortetsuTokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? Font.Medium : Font.Normal).build()
+                color: ethernetItem.modelData.connected ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurface
             }
 
             CortetsuSurface {
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
+                implicitHeight: connectIcon.implicitHeight + CortetsuTokens.padding.extraSmall
 
-                radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3primary, ethernetItem.modelData.connected ? 1 : 0)
+                radius: CortetsuTokens.rounding.full
+                color: Qt.alpha(CortetsuColours.palette.m3primary, ethernetItem.modelData.connected ? 1 : 0)
 
                 CircularIndicator {
                     anchors.fill: parent
@@ -307,7 +307,7 @@ ColumnLayout {
                 }
 
                 CortetsuStateLayer {
-                    color: ethernetItem.modelData.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: ethernetItem.modelData.connected ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface
                     disabled: ethernetItem.loading
 
                     onClicked: {
@@ -325,7 +325,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     animate: true
                     text: ethernetItem.modelData.connected ? "link_off" : "link"
-                    color: ethernetItem.modelData.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: ethernetItem.modelData.connected ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface
 
                     opacity: ethernetItem.loading ? 0 : 1
 
@@ -380,8 +380,8 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.medium
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             Layout.fillWidth: true

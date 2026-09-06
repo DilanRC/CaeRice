@@ -13,8 +13,8 @@ MouseArea {
     required property SystemTrayItem modelData
 
     acceptedButtons: Qt.LeftButton | Qt.RightButton
-    implicitWidth: Tokens.font.body.small.pointSize * 2
-    implicitHeight: Tokens.font.body.small.pointSize * 2
+    implicitWidth: CortetsuTokens.font.body.small.pointSize * 2
+    implicitHeight: CortetsuTokens.font.body.small.pointSize * 2
 
     onClicked: event => {
         if (event.button === Qt.LeftButton)
@@ -28,7 +28,7 @@ MouseArea {
 
         anchors.fill: parent
         source: Icons.getTrayIcon(root.modelData.id, root.modelData.icon)
-        colour: Colours.palette.m3secondary
+        colour: CortetsuColours.palette.m3secondary
         layer.enabled: CortetsuConfig.bar.tray.recolour
     }
 }

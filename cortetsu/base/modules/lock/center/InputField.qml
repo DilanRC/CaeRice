@@ -65,8 +65,8 @@ Item {
         text: nonAnimPlaceholder.text
 
         animate: true
-        color: root.pam.passwd.active ? Colours.palette.m3secondary : Colours.palette.m3outline
-        font: Tokens.font.body.builders.medium.scale(root.centerScale).width(110).build()
+        color: root.pam.passwd.active ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3outline
+        font: CortetsuTokens.font.body.builders.medium.scale(root.centerScale).width(110).build()
 
         opacity: root.buffer ? 0 : 1
 
@@ -97,10 +97,10 @@ Item {
         anchors.horizontalCenterOffset: implicitWidth > root.width ? -(implicitWidth - root.width) / 2 : 0
 
         implicitWidth: fullWidth
-        implicitHeight: Tokens.font.body.medium.pointSize
+        implicitHeight: CortetsuTokens.font.body.medium.pointSize
 
         orientation: Qt.Horizontal
-        spacing: Tokens.spacing.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
         interactive: false
 
         model: ScriptModel {
@@ -135,7 +135,7 @@ Item {
             anchors.centerIn: parent
             implicitSize: charList.implicitHeight * 1.5
             shape: root.shapeQueue[char.index % root.shapeQueue.length] ?? MaterialShape.Circle
-            color: Colours.palette.m3onSurface
+            color: CortetsuColours.palette.m3onSurface
 
             Behavior on color {
                 CAnim {}
@@ -175,7 +175,7 @@ Item {
                     }
                 }
                 PauseAnimation {
-                    duration: 180 * Tokens.anim.durations.scale
+                    duration: 180 * CortetsuTokens.anim.durations.scale
                 }
                 PropertyAction {
                     target: charShape

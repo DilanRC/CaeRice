@@ -12,8 +12,8 @@ StyledClippingRect {
     required property var lock
 
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
-    radius: Tokens.rounding.extraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.extraLarge
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     FadeImage {
         anchors.fill: parent
@@ -31,7 +31,7 @@ StyledClippingRect {
 
         CortetsuSurface {
             anchors.fill: parent
-            color: Colours.palette.m3surface
+            color: CortetsuColours.palette.m3surface
             opacity: 0.7
         }
 
@@ -48,16 +48,16 @@ StyledClippingRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.extraLarge
-        spacing: Tokens.spacing.extraSmall
+        anchors.margins: CortetsuTokens.padding.extraLarge
+        spacing: CortetsuTokens.spacing.extraSmall
 
         CortetsuText {
             Layout.fillWidth: true
             animate: true
             text: (Players.active?.trackTitle ?? qsTr("Nothing playing")) || qsTr("Unknown track")
-            color: Colours.palette.m3primary
+            color: CortetsuColours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.title.medium
+            font: CortetsuTokens.font.title.medium
             elide: Text.ElideRight
         }
 
@@ -65,17 +65,17 @@ StyledClippingRect {
             Layout.fillWidth: true
             animate: true
             text: (Players.active?.trackArtist ?? qsTr("Try playing some music!")) || qsTr("Unknown artist")
-            color: Colours.palette.m3onSurfaceVariant
+            color: CortetsuColours.palette.m3onSurfaceVariant
             horizontalAlignment: Text.AlignHCenter
-            font: Tokens.font.body.small
+            font: CortetsuTokens.font.body.small
             elide: Text.ElideRight
         }
 
         ButtonRow {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.spacing.medium
+            Layout.topMargin: CortetsuTokens.spacing.medium
 
-            spacing: Tokens.spacing.extraSmall
+            spacing: CortetsuTokens.spacing.extraSmall
 
             IconButton {
                 type: IconButton.Tonal
@@ -93,7 +93,7 @@ StyledClippingRect {
                 checked: Players.active?.isPlaying ?? false
                 disabled: !Players.active?.canTogglePlaying
                 onClicked: Players.active?.togglePlaying()
-                implicitWidth: implicitHeight + Tokens.padding.largeIncreased * 2
+                implicitWidth: implicitHeight + CortetsuTokens.padding.largeIncreased * 2
             }
 
             IconButton {

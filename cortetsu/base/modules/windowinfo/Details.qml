@@ -10,39 +10,39 @@ ColumnLayout {
     required property HyprlandToplevel client
 
     anchors.fill: parent
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
 
     Label {
-        Layout.topMargin: Tokens.padding.extraLargeIncreased
+        Layout.topMargin: CortetsuTokens.padding.extraLargeIncreased
 
         text: root.client?.title ?? qsTr("No active client")
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-        font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+        font: CortetsuTokens.font.body.builders.large.weight(Font.Medium).build()
     }
 
     Label {
         text: root.client?.lastIpcObject.class ?? qsTr("No active client")
-        color: Colours.palette.m3tertiary
+        color: CortetsuColours.palette.m3tertiary
 
-        font: Tokens.font.body.large
+        font: CortetsuTokens.font.body.large
     }
 
     CortetsuSurface {
         Layout.fillWidth: true
         Layout.preferredHeight: 1
-        Layout.leftMargin: Tokens.padding.extraLargeIncreased
-        Layout.rightMargin: Tokens.padding.extraLargeIncreased
-        Layout.topMargin: Tokens.spacing.medium
-        Layout.bottomMargin: Tokens.spacing.largeIncreased
+        Layout.leftMargin: CortetsuTokens.padding.extraLargeIncreased
+        Layout.rightMargin: CortetsuTokens.padding.extraLargeIncreased
+        Layout.topMargin: CortetsuTokens.spacing.medium
+        Layout.bottomMargin: CortetsuTokens.spacing.largeIncreased
 
-        color: Colours.palette.m3secondary
+        color: CortetsuColours.palette.m3secondary
     }
 
     Detail {
         icon: "location_on"
         text: qsTr("Address: %1").arg(`0x${root.client?.address}` ?? "unknown")
-        color: Colours.palette.m3primary
+        color: CortetsuColours.palette.m3primary
     }
 
     Detail {
@@ -53,13 +53,13 @@ ColumnLayout {
     Detail {
         icon: "resize"
         text: qsTr("Size: %1 x %2").arg(root.client?.lastIpcObject.size[0] ?? -1).arg(root.client?.lastIpcObject.size[1] ?? -1)
-        color: Colours.palette.m3tertiary
+        color: CortetsuColours.palette.m3tertiary
     }
 
     Detail {
         icon: "workspaces"
         text: qsTr("Workspace: %1 (%2)").arg(root.client?.workspace.name ?? -1).arg(root.client?.workspace.id ?? -1)
-        color: Colours.palette.m3secondary
+        color: CortetsuColours.palette.m3secondary
     }
 
     Detail {
@@ -75,7 +75,7 @@ ColumnLayout {
     Detail {
         icon: "page_header"
         text: qsTr("Initial title: %1").arg(root.client?.lastIpcObject.initialTitle ?? "unknown")
-        color: Colours.palette.m3tertiary
+        color: CortetsuColours.palette.m3tertiary
     }
 
     Detail {
@@ -86,13 +86,13 @@ ColumnLayout {
     Detail {
         icon: "account_tree"
         text: qsTr("Process id: %1").arg(String(root.client?.lastIpcObject.pid ?? -1))
-        color: Colours.palette.m3primary
+        color: CortetsuColours.palette.m3primary
     }
 
     Detail {
         icon: "picture_in_picture_center"
         text: qsTr("Floating: %1").arg(root.client?.lastIpcObject.floating ? "yes" : "no")
-        color: Colours.palette.m3secondary
+        color: CortetsuColours.palette.m3secondary
     }
 
     Detail {
@@ -103,7 +103,7 @@ ColumnLayout {
     Detail {
         icon: "keep"
         text: qsTr("Pinned: %1").arg(root.client?.lastIpcObject.pinned ? "yes" : "no")
-        color: Colours.palette.m3secondary
+        color: CortetsuColours.palette.m3secondary
     }
 
     Detail {
@@ -114,7 +114,7 @@ ColumnLayout {
                 return qsTr("Fullscreen state: %1").arg(fs == 0 ? "off" : fs == 1 ? "maximised" : "on");
             return qsTr("Fullscreen state: unknown");
         }
-        color: Colours.palette.m3tertiary
+        color: CortetsuColours.palette.m3tertiary
     }
 
     Item {
@@ -128,11 +128,11 @@ ColumnLayout {
         required property string text
         property alias color: icon.color
 
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
+        Layout.leftMargin: CortetsuTokens.padding.large
+        Layout.rightMargin: CortetsuTokens.padding.large
         Layout.fillWidth: true
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuIcon {
             id: icon
@@ -147,13 +147,13 @@ ColumnLayout {
 
             text: detail.text
             elide: Text.ElideRight
-            font: Tokens.font.body.medium
+            font: CortetsuTokens.font.body.medium
         }
     }
 
     component Label: CortetsuText {
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
+        Layout.leftMargin: CortetsuTokens.padding.large
+        Layout.rightMargin: CortetsuTokens.padding.large
         Layout.fillWidth: true
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter

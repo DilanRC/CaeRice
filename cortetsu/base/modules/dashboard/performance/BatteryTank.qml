@@ -10,11 +10,11 @@ StyledClippingRect {
 
     property real animPerc: UPower.displayDevice.percentage
 
-    color: Colours.palette.m3secondaryContainer
-    radius: Tokens.rounding.large
+    color: CortetsuColours.palette.m3secondaryContainer
+    radius: CortetsuTokens.rounding.large
 
-    implicitWidth: CortetsuConfig.dashboard.performance.showCpu || (CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== Gpu.noneType) || CortetsuConfig.dashboard.performance.showStorage || CortetsuConfig.dashboard.performance.showMemory ? Tokens.sizes.dashboard.perfBattWidth : Tokens.sizes.dashboard.perfBattWidthSingle
-    implicitHeight: Tokens.sizes.dashboard.perfBattHeight
+    implicitWidth: CortetsuConfig.dashboard.performance.showCpu || (CortetsuConfig.dashboard.performance.showGpu && Gpu.type !== Gpu.noneType) || CortetsuConfig.dashboard.performance.showStorage || CortetsuConfig.dashboard.performance.showMemory ? CortetsuTokens.sizes.dashboard.perfBattWidth : CortetsuTokens.sizes.dashboard.perfBattWidthSingle
+    implicitHeight: CortetsuTokens.sizes.dashboard.perfBattHeight
 
     Behavior on animPerc {
         Anim {}
@@ -24,11 +24,11 @@ StyledClippingRect {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
-        accentColour: Colours.palette.m3primary
-        textColour: Colours.palette.m3onSurface
-        subTextColour: Colours.palette.m3onSurfaceVariant
+        accentColour: CortetsuColours.palette.m3primary
+        textColour: CortetsuColours.palette.m3onSurface
+        subTextColour: CortetsuColours.palette.m3onSurfaceVariant
     }
 
     CortetsuSurface {
@@ -37,8 +37,8 @@ StyledClippingRect {
         anchors.bottom: parent.bottom
         implicitHeight: parent.height * root.animPerc
 
-        color: Colours.palette.m3secondary
-        radius: Tokens.rounding.extraSmall
+        color: CortetsuColours.palette.m3secondary
+        radius: CortetsuTokens.rounding.extraSmall
         clip: true
 
         Contents {
@@ -48,9 +48,9 @@ StyledClippingRect {
             anchors.margins: layout.anchors.margins
             height: layout.height
 
-            accentColour: Colours.palette.m3primaryContainer
-            textColour: Colours.palette.m3onSecondary
-            subTextColour: Colours.palette.m3secondaryContainer
+            accentColour: CortetsuColours.palette.m3primaryContainer
+            textColour: CortetsuColours.palette.m3onSecondary
+            subTextColour: CortetsuColours.palette.m3secondaryContainer
         }
     }
 
@@ -65,17 +65,17 @@ StyledClippingRect {
         spacing: 0
 
         CortetsuIcon {
-            Layout.leftMargin: -Tokens.padding.extraSmall
+            Layout.leftMargin: -CortetsuTokens.padding.extraSmall
             text: "battery_full"
             color: contents.accentColour
-            fontStyle: Tokens.font.icon.large
+            fontStyle: CortetsuTokens.font.icon.large
         }
 
         CortetsuText {
             Layout.fillWidth: true
             text: qsTr("Battery")
             color: contents.textColour
-            font: Tokens.font.body.medium
+            font: CortetsuTokens.font.body.medium
         }
 
         Item {
@@ -103,21 +103,21 @@ StyledClippingRect {
                 return `${min}m`;
             }
             color: contents.subTextColour
-            font: Tokens.font.body.small
+            font: CortetsuTokens.font.body.small
             animate: true
         }
 
         RowLayout {
-            Layout.topMargin: -Tokens.padding.extraSmall
-            Layout.bottomMargin: -Tokens.padding.small
-            Layout.rightMargin: -Tokens.padding.extraSmall
+            Layout.topMargin: -CortetsuTokens.padding.extraSmall
+            Layout.bottomMargin: -CortetsuTokens.padding.small
+            Layout.rightMargin: -CortetsuTokens.padding.extraSmall
             Layout.alignment: Qt.AlignRight
-            spacing: Tokens.spacing.extraSmall
+            spacing: CortetsuTokens.spacing.extraSmall
 
             CortetsuIcon {
                 text: "bolt"
                 color: contents.accentColour
-                fontStyle: Tokens.font.icon.large
+                fontStyle: CortetsuTokens.font.icon.large
                 fill: 1
 
                 scale: contents.charging ? 1 : 0
@@ -139,7 +139,7 @@ StyledClippingRect {
             CortetsuText {
                 text: `${Math.round(UPower.displayDevice.percentage * 100)}%`
                 color: contents.accentColour
-                font: Tokens.font.headline.medium
+                font: CortetsuTokens.font.headline.medium
             }
         }
     }

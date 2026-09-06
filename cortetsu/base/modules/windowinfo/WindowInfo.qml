@@ -12,15 +12,15 @@ Item {
     required property HyprlandToplevel client
 
     implicitWidth: child.implicitWidth
-    implicitHeight: screen.height * Tokens.sizes.winfo.heightMult
+    implicitHeight: screen.height * CortetsuTokens.sizes.winfo.heightMult
 
     RowLayout {
         id: child
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
+        anchors.margins: CortetsuTokens.padding.large
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         Preview {
             screen: root.screen
@@ -28,17 +28,17 @@ Item {
         }
 
         ColumnLayout {
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
-            Layout.preferredWidth: Tokens.sizes.winfo.detailsWidth
+            Layout.preferredWidth: CortetsuTokens.sizes.winfo.detailsWidth
             Layout.fillHeight: true
 
             CortetsuSurface {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                color: Colours.tPalette.m3surfaceContainer
-                radius: Tokens.rounding.large
+                color: CortetsuColours.tPalette.m3surfaceContainer
+                radius: CortetsuTokens.rounding.large
                 clip: true
 
                 Details {
@@ -50,8 +50,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: buttons.implicitHeight
 
-                color: Colours.tPalette.m3surfaceContainer
-                radius: Tokens.rounding.large
+                color: CortetsuColours.tPalette.m3surfaceContainer
+                radius: CortetsuTokens.rounding.large
 
                 Buttons {
                     id: buttons

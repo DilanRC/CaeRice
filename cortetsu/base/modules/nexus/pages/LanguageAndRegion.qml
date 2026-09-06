@@ -34,7 +34,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // Language
         SectionHeader {
@@ -53,10 +53,10 @@ PageBase {
                 id: localeLayout
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.medium
-                anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.largeIncreased
-                spacing: Tokens.spacing.medium
+                anchors.margins: CortetsuTokens.padding.medium
+                anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+                spacing: CortetsuTokens.spacing.medium
 
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -65,23 +65,23 @@ PageBase {
                     CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("System language")
-                        font: Tokens.font.body.small
+                        font: CortetsuTokens.font.body.small
                         elide: Text.ElideRight
                     }
 
                     CortetsuText {
                         Layout.fillWidth: true
                         text: qsTr("Follows your system locale (%1)").arg(Qt.locale().name)
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.label.small
+                        color: CortetsuColours.palette.m3outline
+                        font: CortetsuTokens.font.label.small
                         elide: Text.ElideRight
                     }
                 }
 
                 CortetsuText {
                     text: Qt.locale().nativeLanguageName || Qt.locale().name
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
                 }
             }
         }
@@ -96,27 +96,27 @@ PageBase {
             Layout.fillWidth: true
             first: true
             last: true
-            implicitHeight: comingSoon.implicitHeight + Tokens.padding.extraLarge * 2
+            implicitHeight: comingSoon.implicitHeight + CortetsuTokens.padding.extraLarge * 2
 
             ColumnLayout {
                 id: comingSoon
 
                 anchors.centerIn: parent
-                width: parent.width - Tokens.padding.largeIncreased * 2
-                spacing: Tokens.padding.extraSmall
+                width: parent.width - CortetsuTokens.padding.largeIncreased * 2
+                spacing: CortetsuTokens.padding.extraSmall
 
                 CortetsuIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "map"
-                    color: Colours.palette.m3outlineVariant
-                    fontStyle: Tokens.font.icon.extraLarge
+                    color: CortetsuColours.palette.m3outlineVariant
+                    fontStyle: CortetsuTokens.font.icon.extraLarge
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Location picker coming soon")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.title.small
+                    color: CortetsuColours.palette.m3outlineVariant
+                    font: CortetsuTokens.font.title.small
                 }
 
                 CortetsuText {
@@ -124,8 +124,8 @@ PageBase {
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     text: qsTr("Choose your weather location on a map in a future update")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outlineVariant
+                    font: CortetsuTokens.font.body.small
                 }
             }
         }

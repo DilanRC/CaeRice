@@ -8,26 +8,26 @@ ButtonBase {
     property alias text: label.text
     readonly property alias label: label
 
-    horizontalPadding: Tokens.padding.medium
-    verticalPadding: Tokens.padding.small
+    horizontalPadding: CortetsuTokens.padding.medium
+    verticalPadding: CortetsuTokens.padding.small
 
-    activeColour: type === TextButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondary
+    activeColour: type === TextButton.Filled ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3secondary
     inactiveColour: {
         if (!isToggle && type === TextButton.Filled)
-            return Colours.palette.m3primary;
-        return type === TextButton.Filled ? Colours.tPalette.m3surfaceContainer : Colours.palette.m3secondaryContainer;
+            return CortetsuColours.palette.m3primary;
+        return type === TextButton.Filled ? CortetsuColours.tPalette.m3surfaceContainer : CortetsuColours.palette.m3secondaryContainer;
     }
     activeOnColour: {
         if (type === TextButton.Text)
-            return Colours.palette.m3primary;
-        return type === TextButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondary;
+            return CortetsuColours.palette.m3primary;
+        return type === TextButton.Filled ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSecondary;
     }
     inactiveOnColour: {
         if (!isToggle && type === TextButton.Filled)
-            return Colours.palette.m3onPrimary;
+            return CortetsuColours.palette.m3onPrimary;
         if (type === TextButton.Text)
-            return Colours.palette.m3primary;
-        return type === TextButton.Filled ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer;
+            return CortetsuColours.palette.m3primary;
+        return type === TextButton.Filled ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer;
     }
 
     implicitWidth: label.implicitWidth + horizontalPadding * 2

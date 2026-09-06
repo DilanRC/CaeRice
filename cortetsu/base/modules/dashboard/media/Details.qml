@@ -24,7 +24,7 @@ ColumnLayout {
         return `${mins}:${secs}`;
     }
 
-    spacing: Tokens.spacing.extraSmall
+    spacing: CortetsuTokens.spacing.extraSmall
 
     Timer {
         running: Players.active?.isPlaying ?? false
@@ -37,7 +37,7 @@ ColumnLayout {
     CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackTitle ?? ""
-        font: Tokens.font.title.large
+        font: CortetsuTokens.font.title.large
         elide: Text.ElideRight
         animate: true
     }
@@ -45,8 +45,8 @@ ColumnLayout {
     CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackArtist || qsTr("Unknown artist")
-        color: Colours.palette.m3onSurfaceVariant
-        font: Tokens.font.title.medium
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        font: CortetsuTokens.font.title.medium
         elide: Text.ElideRight
         animate: true
     }
@@ -54,22 +54,22 @@ ColumnLayout {
     CortetsuText {
         Layout.fillWidth: true
         text: Players.active?.trackAlbum || qsTr("Unknown album")
-        color: Colours.palette.m3secondary
-        font: Tokens.font.title.medium
+        color: CortetsuColours.palette.m3secondary
+        font: CortetsuTokens.font.title.medium
         elide: Text.ElideRight
         animate: true
     }
 
     RowLayout {
-        Layout.topMargin: Tokens.spacing.extraLargeIncreased
+        Layout.topMargin: CortetsuTokens.spacing.extraLargeIncreased
         Layout.fillWidth: true
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         TextMetrics {
             id: timeMetrics
 
             text: Players.active ? root.lengthStr(Math.max(Players.active.position, root.hasUnknownLength ? 0 : Players.active.length)).replace(/[1-9]/g, "0") : "00:00"
-            font: Tokens.font.label.medium
+            font: CortetsuTokens.font.label.medium
         }
 
         CortetsuText {
@@ -77,7 +77,7 @@ ColumnLayout {
 
             Layout.preferredWidth: timeMetrics.width
             text: root.lengthStr(Players.active?.position ?? -1)
-            color: Colours.palette.m3onSurfaceVariant
+            color: CortetsuColours.palette.m3onSurfaceVariant
             font: timeMetrics.font
             horizontalAlignment: Text.AlignHCenter
         }
@@ -110,16 +110,16 @@ ColumnLayout {
         CortetsuText {
             Layout.preferredWidth: timeMetrics.width
             text: root.hasUnknownLength ? "--:--" : root.lengthStr(Players.active?.length ?? -1)
-            color: Colours.palette.m3onSurfaceVariant
+            color: CortetsuColours.palette.m3onSurfaceVariant
             font: timeMetrics.font
             horizontalAlignment: Text.AlignHCenter
         }
     }
 
     ButtonRow {
-        Layout.topMargin: Tokens.spacing.largeIncreased
+        Layout.topMargin: CortetsuTokens.spacing.largeIncreased
         Layout.fillWidth: true
-        spacing: Tokens.spacing.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
 
         IconButton {
             type: IconButton.Tonal
@@ -127,7 +127,7 @@ ColumnLayout {
             isRound: true
             shapeMorph: true
             checked: Players.active?.shuffle ?? false
-            font: Tokens.font.icon.builders.medium.weight(Font.Medium).build()
+            font: CortetsuTokens.font.icon.builders.medium.weight(Font.Medium).build()
             disabled: !Players.active?.shuffleSupported
             onClicked: Players.active.shuffle = !Players.active?.shuffle
             implicitWidth: Math.round(implicitHeight * 0.9)
@@ -140,7 +140,7 @@ ColumnLayout {
             icon: "skip_previous"
             isRound: true
             shapeMorph: true
-            font: Tokens.font.icon.large
+            font: CortetsuTokens.font.icon.large
             disabled: !Players.active?.canGoPrevious
             onClicked: Players.active?.previous()
         }
@@ -153,7 +153,7 @@ ColumnLayout {
             shapeMorph: true
             fillWidth: true
             checked: Players.active?.isPlaying ?? false
-            font: Tokens.font.icon.large
+            font: CortetsuTokens.font.icon.large
             disabled: !Players.active?.canTogglePlaying
             onClicked: Players.active?.togglePlaying()
         }
@@ -165,7 +165,7 @@ ColumnLayout {
             icon: "skip_next"
             isRound: true
             shapeMorph: true
-            font: Tokens.font.icon.large
+            font: CortetsuTokens.font.icon.large
             disabled: !Players.active?.canGoNext
             onClicked: Players.active?.next()
         }
@@ -176,7 +176,7 @@ ColumnLayout {
             isRound: true
             shapeMorph: true
             checked: Players.active?.loopState === MprisLoopState.Track || Players.active?.loopState === MprisLoopState.Playlist
-            font: Tokens.font.icon.builders.medium.weight(Font.Medium).build()
+            font: CortetsuTokens.font.icon.builders.medium.weight(Font.Medium).build()
             disabled: !Players.active?.loopSupported
             onClicked: {
                 const state = Players.active.loopState;

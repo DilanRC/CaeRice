@@ -11,21 +11,21 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: Hypr.activeToplevel ? child.implicitWidth : -Tokens.padding.extraLargeIncreased
+    implicitWidth: Hypr.activeToplevel ? child.implicitWidth : -CortetsuTokens.padding.extraLargeIncreased
     implicitHeight: child.implicitHeight
 
     Column {
         id: child
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         RowLayout {
             id: detailsRow
 
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             IconImage {
                 id: icon
@@ -45,26 +45,26 @@ Item {
                 CortetsuText {
                     Layout.fillWidth: true
                     text: Hypr.activeToplevel?.title ?? ""
-                    font: Tokens.font.body.medium
+                    font: CortetsuTokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: Hypr.activeToplevel?.lastIpcObject.class ?? ""
-                    color: Colours.palette.m3onSurfaceVariant
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                     elide: Text.ElideRight
                 }
             }
 
             Item {
-                implicitWidth: expandIcon.implicitHeight + Tokens.padding.small
-                implicitHeight: expandIcon.implicitHeight + Tokens.padding.small
+                implicitWidth: expandIcon.implicitHeight + CortetsuTokens.padding.small
+                implicitHeight: expandIcon.implicitHeight + CortetsuTokens.padding.small
 
                 Layout.alignment: Qt.AlignVCenter
 
                 CortetsuStateLayer {
-                    radius: Tokens.rounding.large
+                    radius: CortetsuTokens.rounding.large
                     onClicked: root.popouts.detachRequested("winfo")
                 }
 
@@ -76,14 +76,14 @@ Item {
 
                     text: "chevron_right"
 
-                    fontStyle: Tokens.font.icon.large
+                    fontStyle: CortetsuTokens.font.icon.large
                 }
             }
         }
 
         ClippingWrapperRectangle {
             color: "transparent"
-            radius: Tokens.rounding.medium
+            radius: CortetsuTokens.rounding.medium
 
             ScreencopyView {
                 id: preview
@@ -91,8 +91,8 @@ Item {
                 captureSource: Hypr.activeToplevel?.wayland ?? null // qmllint disable unresolved-type
                 live: visible
 
-                constraintSize.width: Tokens.sizes.bar.windowPreviewSize
-                constraintSize.height: Tokens.sizes.bar.windowPreviewSize
+                constraintSize.width: CortetsuTokens.sizes.bar.windowPreviewSize
+                constraintSize.height: CortetsuTokens.sizes.bar.windowPreviewSize
             }
         }
     }

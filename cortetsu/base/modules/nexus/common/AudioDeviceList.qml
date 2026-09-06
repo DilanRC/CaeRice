@@ -36,9 +36,9 @@ ItemList {
         implicitHeight: deviceLayout.implicitHeight + deviceLayout.anchors.margins * 2
 
         CortetsuStateLayer {
-            radius: Tokens.rounding.extraSmall
-            bottomLeftRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
-            bottomRightRadius: device.index === root?.list.count - 1 ? Tokens.rounding.extraLarge : radius
+            radius: CortetsuTokens.rounding.extraSmall
+            bottomLeftRadius: device.index === root?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
+            bottomRightRadius: device.index === root?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
             onClicked: root.selected(device.modelData)
         }
 
@@ -46,24 +46,24 @@ ItemList {
             id: deviceLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.medium
-            anchors.leftMargin: Tokens.padding.largeIncreased
-            anchors.rightMargin: Tokens.padding.largeIncreased
-            spacing: Tokens.spacing.medium
+            anchors.margins: CortetsuTokens.padding.medium
+            anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+            anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuSurface {
                 implicitWidth: implicitHeight
-                implicitHeight: devIcon.implicitHeight + Tokens.padding.small * 2
-                radius: Tokens.rounding.full
-                color: device.active ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
+                implicitHeight: devIcon.implicitHeight + CortetsuTokens.padding.small * 2
+                radius: CortetsuTokens.rounding.full
+                color: device.active ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3secondaryContainer
 
                 CortetsuIcon {
                     id: devIcon
 
                     anchors.centerIn: parent
                     text: root.iconName
-                    color: device.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.medium
+                    color: device.active ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSecondaryContainer
+                    fontStyle: CortetsuTokens.font.icon.medium
                     fill: device.active ? 1 : 0
 
                     Behavior on fill {
@@ -75,14 +75,14 @@ ItemList {
             CortetsuText {
                 Layout.fillWidth: true
                 text: device.modelData?.description || device.modelData?.name || qsTr("Unknown")
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
             CortetsuIcon {
                 text: "check"
-                color: Colours.palette.m3primary
-                fontStyle: Tokens.font.icon.medium
+                color: CortetsuColours.palette.m3primary
+                fontStyle: CortetsuTokens.font.icon.medium
                 opacity: device.active ? 1 : 0
 
                 Behavior on opacity {

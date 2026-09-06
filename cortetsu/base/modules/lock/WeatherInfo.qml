@@ -7,16 +7,16 @@ CortetsuSurface {
     id: root
 
     required property int rootHeight
-    readonly property bool showForecast: rootHeight >= Tokens.sizes.lock.showForecastHeight
+    readonly property bool showForecast: rootHeight >= CortetsuTokens.sizes.lock.showForecastHeight
 
     implicitHeight: {
         const base = brief.implicitHeight + brief.anchors.topMargin;
         if (showForecast)
-            return base + Tokens.spacing.largeIncreased + forecast.implicitHeight + forecast.anchors.margins;
+            return base + CortetsuTokens.spacing.largeIncreased + forecast.implicitHeight + forecast.anchors.margins;
         return base + brief.anchors.topMargin;
     }
-    radius: Tokens.rounding.extraExtraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.extraExtraLarge
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     Timer {
         running: true
@@ -31,7 +31,7 @@ CortetsuSurface {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Tokens.padding.extraLarge
+        anchors.topMargin: CortetsuTokens.padding.extraLarge
 
         rootHeight: root.rootHeight
     }
@@ -42,7 +42,7 @@ CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.large
+        anchors.margins: CortetsuTokens.padding.large
 
         active: root.showForecast
         asynchronous: true

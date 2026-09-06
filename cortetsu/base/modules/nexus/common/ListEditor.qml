@@ -33,7 +33,7 @@ ListView {
     Layout.fillWidth: true
     implicitHeight: contentHeight
 
-    spacing: Tokens.spacing.extraSmall / 2
+    spacing: CortetsuTokens.spacing.extraSmall / 2
     interactive: false
 
     model: DelegateModel {
@@ -98,7 +98,7 @@ ListView {
         property int pressIndex
         property real lastMoveY
 
-        property real topRadius: root?.first && DelegateModel.itemsIndex === 0 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+        property real topRadius: root?.first && DelegateModel.itemsIndex === 0 ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
         property real radiusLerpProg
 
         function lerpRadius(a: real, b: real): real {
@@ -119,9 +119,9 @@ ListView {
                 item.radiusLerpProg: 1
                 placeholder.opacity: 0.1
                 elevation.opacity: 1
-                itemBg.color: Colours.palette.m3primaryContainer
-                dragIcon.color: Colours.palette.m3onPrimaryContainer
-                label.color: Colours.palette.m3onPrimaryContainer
+                itemBg.color: CortetsuColours.palette.m3primaryContainer
+                dragIcon.color: CortetsuColours.palette.m3onPrimaryContainer
+                label.color: CortetsuColours.palette.m3onPrimaryContainer
             }
         }
 
@@ -145,8 +145,8 @@ ListView {
             id: placeholder
 
             anchors.fill: parent
-            color: Colours.palette.m3primary
-            radius: Tokens.rounding.extraSmall
+            color: CortetsuColours.palette.m3primary
+            radius: CortetsuTokens.rounding.extraSmall
             topLeftRadius: item.topRadius
             topRightRadius: item.topRadius
             opacity: 0
@@ -169,7 +169,7 @@ ListView {
                     if (!root)
                         return 0;
 
-                    const maxOvershoot = Tokens.padding.extraExtraLarge;
+                    const maxOvershoot = CortetsuTokens.padding.extraExtraLarge;
                     const x = mouse.mouseX - item.pressPos.x;
                     return root.dampOvershoot(Math.abs(x), maxOvershoot) * Math.sign(x);
                 });
@@ -177,7 +177,7 @@ ListView {
                     if (!root)
                         return 0;
 
-                    const maxOvershoot = Tokens.padding.extraLarge;
+                    const maxOvershoot = CortetsuTokens.padding.extraLarge;
                     const yDiff = item.y - item.lastMoveY; // Extra offset if the y of the item changed between mouseY updates
                     const y = mouse.mouseY - item.pressPos.y - yDiff;
                     const absY = item.mapToItem(root.contentItem, 0, y).y;
@@ -245,10 +245,10 @@ ListView {
                 id: itemBg
 
                 anchors.fill: parent
-                color: Colours.tPalette.m3surfaceContainer
-                radius: item.lerpRadius(Tokens.rounding.extraSmall, Tokens.rounding.large)
-                topLeftRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
-                topRightRadius: item.lerpRadius(item.topRadius, Tokens.rounding.large)
+                color: CortetsuColours.tPalette.m3surfaceContainer
+                radius: item.lerpRadius(CortetsuTokens.rounding.extraSmall, CortetsuTokens.rounding.large)
+                topLeftRadius: item.lerpRadius(item.topRadius, CortetsuTokens.rounding.large)
+                topRightRadius: item.lerpRadius(item.topRadius, CortetsuTokens.rounding.large)
             }
 
             MouseArea {
@@ -264,7 +264,7 @@ ListView {
                     radius: itemBg.radius
                     topLeftRadius: itemBg.topLeftRadius
                     topRightRadius: itemBg.topRightRadius
-                    color: Colours.palette.m3onSurface
+                    color: CortetsuColours.palette.m3onSurface
                     opacity: parent.containsMouse && !item.held ? 0.08 : 0
 
                     Behavior on opacity {
@@ -279,18 +279,18 @@ ListView {
                 id: row
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.medium
-                anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.large
+                anchors.margins: CortetsuTokens.padding.medium
+                anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                anchors.rightMargin: CortetsuTokens.padding.large
 
-                spacing: Tokens.spacing.medium
+                spacing: CortetsuTokens.spacing.medium
 
                 CortetsuIcon {
                     id: dragIcon
 
                     text: "drag_indicator"
-                    color: Qt.alpha(Colours.palette.m3onSurfaceVariant, enabledSwitch.checked ? 1 : 0.5)
-                    fontStyle: Tokens.font.icon.medium
+                    color: Qt.alpha(CortetsuColours.palette.m3onSurfaceVariant, enabledSwitch.checked ? 1 : 0.5)
+                    fontStyle: CortetsuTokens.font.icon.medium
                 }
 
                 CortetsuText {
@@ -298,7 +298,7 @@ ListView {
 
                     Layout.fillWidth: true
                     text: root.labelFor(item.modelData)
-                    color: Qt.alpha(Colours.palette.m3onSurface, enabledSwitch.checked ? 1 : 0.5)
+                    color: Qt.alpha(CortetsuColours.palette.m3onSurface, enabledSwitch.checked ? 1 : 0.5)
                     elide: Text.ElideRight
                 }
 
@@ -306,7 +306,7 @@ ListView {
                     id: enabledSwitch
 
                     checked: root.toggledFor(item.modelData)
-                    font: Tokens.font.icon.medium
+                    font: CortetsuTokens.font.icon.medium
                     onToggled: root.itemToggled(item.DelegateModel.itemsIndex, checked)
                 }
 
@@ -314,8 +314,8 @@ ListView {
                     type: IconButton.Text
                     isRound: true
                     icon: "delete"
-                    inactiveOnColour: Colours.palette.m3error
-                    font: Tokens.font.icon.medium
+                    inactiveOnColour: CortetsuColours.palette.m3error
+                    font: CortetsuTokens.font.icon.medium
                     label.fill: 0
 
                     onClicked: root.itemRemoved(item.DelegateModel.itemsIndex)

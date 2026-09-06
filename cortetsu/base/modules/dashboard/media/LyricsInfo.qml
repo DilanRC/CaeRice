@@ -8,7 +8,7 @@ Item {
     id: root
 
     property bool open
-    readonly property real padding: Tokens.padding.large
+    readonly property real padding: CortetsuTokens.padding.large
 
     implicitWidth: btn.implicitWidth * 0.9
     implicitHeight: btn.implicitHeight * 0.9
@@ -16,8 +16,8 @@ Item {
     BlobGroup {
         id: blobGroup
 
-        color: Colours.palette.m3surfaceContainerHighest
-        smoothing: root.Tokens.rounding.medium
+        color: CortetsuColours.palette.m3surfaceContainerHighest
+        smoothing: root.CortetsuTokens.rounding.medium
         cornerFill: false
 
         Behavior on color {
@@ -29,9 +29,9 @@ Item {
         id: btnRect
 
         anchors.fill: parent
-        anchors.margins: !btn.pressed && btn.containsMouse ? -Tokens.padding.extraSmall : 0
+        anchors.margins: !btn.pressed && btn.containsMouse ? -CortetsuTokens.padding.extraSmall : 0
         group: blobGroup
-        radius: Tokens.rounding.medium
+        radius: CortetsuTokens.rounding.medium
 
         Behavior on anchors.margins {
             Anim {}
@@ -48,7 +48,7 @@ Item {
         implicitHeight: parent.height
 
         group: blobGroup
-        radius: Tokens.rounding.medium
+        radius: CortetsuTokens.rounding.medium
         deformScale: 0.00001
 
         states: State {
@@ -56,8 +56,8 @@ Item {
             when: root.open
 
             PropertyChanges {
-                rect.anchors.rightMargin: root.width - root.Tokens.spacing.small
-                rect.anchors.topMargin: -root.Tokens.padding.medium
+                rect.anchors.rightMargin: root.width - root.CortetsuTokens.spacing.small
+                rect.anchors.topMargin: -root.CortetsuTokens.padding.medium
                 rect.implicitWidth: Math.max(layout.implicitWidth, placeholder.implicitWidth) + root.padding * 2
                 rect.implicitHeight: Math.max(layout.implicitHeight, placeholder.implicitHeight) + root.padding * 2
                 content.opacity: 1
@@ -70,7 +70,7 @@ Item {
             }
             Anim {
                 properties: "topMargin,implicitHeight"
-                easing: root.Tokens.anim.expressiveFastSpatial
+                easing: root.CortetsuTokens.anim.expressiveFastSpatial
             }
             Anim {
                 property: "opacity"
@@ -142,26 +142,26 @@ Item {
                 id: layout
 
                 anchors.centerIn: parent
-                spacing: Tokens.spacing.extraSmall
+                spacing: CortetsuTokens.spacing.extraSmall
                 opacity: 0
 
                 CortetsuText {
                     text: qsTr("Backend: %1").arg(Lyrics.backendName(Lyrics.backend))
-                    color: Colours.palette.m3onSurfaceVariant
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                     animate: true
                 }
 
                 CortetsuText {
-                    Layout.maximumWidth: Tokens.sizes.dashboard.mediaTabWidth / 2
+                    Layout.maximumWidth: CortetsuTokens.sizes.dashboard.mediaTabWidth / 2
                     text: qsTr("Selected candidate: %1 | %2 | %3").arg(Lyrics.selectedCandidate.title).arg(Lyrics.selectedCandidate.artist).arg(Lyrics.selectedCandidate.album)
-                    color: Colours.palette.m3onSurfaceVariant
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     animate: true
                 }
 
                 CortetsuText {
                     text: qsTr("Offset: %1 ms").arg(Lyrics.offset)
-                    color: Colours.palette.m3onSurfaceVariant
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                     animate: true
                 }
             }
@@ -177,8 +177,8 @@ Item {
                     id: placeholderText
 
                     text: Lyrics.loading ? qsTr("Loading...") : qsTr("No lyrics found")
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.medium
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.medium
                     animate: true
                 }
             }
@@ -190,7 +190,7 @@ Item {
 
         anchors.centerIn: parent
         implicitWidth: implicitHeight
-        implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitHeight: icon.implicitHeight + CortetsuTokens.padding.extraSmall * 2
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: root.open = !root.open
@@ -200,7 +200,7 @@ Item {
 
             anchors.centerIn: parent
             text: "more_vert"
-            fontStyle: Tokens.font.icon.medium
+            fontStyle: CortetsuTokens.font.icon.medium
         }
     }
 }

@@ -15,30 +15,30 @@ CortetsuSurface {
 
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
 
-    radius: Tokens.rounding.large
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.large
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     ColumnLayout {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.medium
 
         RowLayout {
             id: btnLayout
 
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuSurface {
                 implicitWidth: implicitHeight
                 implicitHeight: {
-                    const h = icon.implicitHeight + Tokens.padding.small * 2;
+                    const h = icon.implicitHeight + CortetsuTokens.padding.small * 2;
                     return h - (h % 2);
                 }
 
-                radius: Tokens.rounding.full
-                color: Recorder.running ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
+                radius: CortetsuTokens.rounding.full
+                color: Recorder.running ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3secondaryContainer
 
                 CortetsuIcon {
                     id: icon
@@ -46,8 +46,8 @@ CortetsuSurface {
                     anchors.centerIn: parent
                     anchors.verticalCenterOffset: 1
                     text: "screen_record"
-                    color: Recorder.running ? Colours.palette.m3onSecondary : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.large
+                    color: Recorder.running ? CortetsuColours.palette.m3onSecondary : CortetsuColours.palette.m3onSecondaryContainer
+                    fontStyle: CortetsuTokens.font.icon.large
                 }
             }
 
@@ -58,15 +58,15 @@ CortetsuSurface {
                 CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Screen Recorder")
-                    font: Tokens.font.body.medium
+                    font: CortetsuTokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: Recorder.paused ? qsTr("Paused") : Recorder.running ? qsTr("Running...") : qsTr("Ready")
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
                     elide: Text.ElideRight
                     animate: true
                 }
@@ -176,14 +176,14 @@ CortetsuSurface {
         id: recordingControls
 
         RowLayout {
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuSurface {
-                radius: Tokens.rounding.full
-                color: Recorder.paused ? Colours.palette.m3tertiary : Colours.palette.m3error
+                radius: CortetsuTokens.rounding.full
+                color: Recorder.paused ? CortetsuColours.palette.m3tertiary : CortetsuColours.palette.m3error
 
-                implicitWidth: recText.implicitWidth + Tokens.padding.medium * 2
-                implicitHeight: recText.implicitHeight + Tokens.padding.large
+                implicitWidth: recText.implicitWidth + CortetsuTokens.padding.medium * 2
+                implicitHeight: recText.implicitHeight + CortetsuTokens.padding.large
 
                 CortetsuText {
                     id: recText
@@ -191,8 +191,8 @@ CortetsuSurface {
                     anchors.centerIn: parent
                     animate: true
                     text: Recorder.paused ? "PAUSED" : "REC"
-                    color: Recorder.paused ? Colours.palette.m3onTertiary : Colours.palette.m3onError
-                    font: Tokens.font.mono.small
+                    color: Recorder.paused ? CortetsuColours.palette.m3onTertiary : CortetsuColours.palette.m3onError
+                    font: CortetsuTokens.font.mono.small
                 }
 
                 Behavior on implicitWidth {
@@ -207,14 +207,14 @@ CortetsuSurface {
                     Anim {
                         from: 1
                         to: 0
-                        duration: Tokens.anim.durations.large
-                        easing: Tokens.anim.emphasizedAccel
+                        duration: CortetsuTokens.anim.durations.large
+                        easing: CortetsuTokens.anim.emphasizedAccel
                     }
                     Anim {
                         from: 0
                         to: 1
-                        duration: Tokens.anim.durations.extraLarge
-                        easing: Tokens.anim.emphasizedDecel
+                        duration: CortetsuTokens.anim.durations.extraLarge
+                        easing: CortetsuTokens.anim.emphasizedDecel
                     }
                 }
             }
@@ -236,12 +236,12 @@ CortetsuSurface {
 
                     return qsTr("Recording for %1").arg(time);
                 }
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
                 elide: Text.ElideMiddle
             }
 
             ButtonRow {
-                spacing: Tokens.spacing.extraSmall
+                spacing: CortetsuTokens.spacing.extraSmall
 
                 IconButton {
                     shapeMorph: true
@@ -251,7 +251,7 @@ CortetsuSurface {
                     isToggle: true
                     checked: Recorder.paused
                     type: IconButton.Tonal
-                    font: Tokens.font.icon.medium
+                    font: CortetsuTokens.font.icon.medium
                     onClicked: {
                         Recorder.togglePause();
                         internalChecked = Recorder.paused;
@@ -259,7 +259,7 @@ CortetsuSurface {
 
                     implicitWidth: {
                         // Ensure even size so icon is centered properly
-                        const h = label.implicitHeight + Tokens.padding.large * 2;
+                        const h = label.implicitHeight + CortetsuTokens.padding.large * 2;
                         if (h % 2 !== 0)
                             return h + 1;
                         return h;
@@ -270,14 +270,14 @@ CortetsuSurface {
                     shapeMorph: true
                     isRound: true
                     icon: "stop"
-                    inactiveColour: Colours.palette.m3error
-                    inactiveOnColour: Colours.palette.m3onError
-                    font: Tokens.font.icon.medium
+                    inactiveColour: CortetsuColours.palette.m3error
+                    inactiveOnColour: CortetsuColours.palette.m3onError
+                    font: CortetsuTokens.font.icon.medium
                     onClicked: Recorder.stop()
 
                     implicitWidth: {
                         // Ensure even size so icon is centered properly
-                        const h = label.implicitHeight + Tokens.padding.large * 2;
+                        const h = label.implicitHeight + CortetsuTokens.padding.large * 2;
                         if (h % 2 !== 0)
                             return h + 1;
                         return h;

@@ -8,11 +8,11 @@ RowLayout {
 
     required property var lock
 
-    spacing: Tokens.spacing.largeIncreased * 2
+    spacing: CortetsuTokens.spacing.largeIncreased * 2
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         WeatherInfo {
             Layout.fillWidth: true
@@ -37,7 +37,7 @@ RowLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         Resources {
             Layout.fillWidth: true
@@ -47,9 +47,9 @@ RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            bottomRightRadius: Tokens.rounding.extraLarge
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainer
+            bottomRightRadius: CortetsuTokens.rounding.extraLarge
+            radius: CortetsuTokens.rounding.medium
+            color: CortetsuColours.tPalette.m3surfaceContainer
 
             NotifDock {
                 lock: root.lock

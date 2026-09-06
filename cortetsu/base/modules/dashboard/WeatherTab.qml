@@ -16,26 +16,26 @@ Item {
         id: layout
 
         anchors.fill: parent
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         RowLayout {
-            Layout.leftMargin: Tokens.padding.large
-            Layout.rightMargin: Tokens.padding.large
+            Layout.leftMargin: CortetsuTokens.padding.large
+            Layout.rightMargin: CortetsuTokens.padding.large
             Layout.fillWidth: true
 
             Column {
-                spacing: Tokens.spacing.extraSmall
+                spacing: CortetsuTokens.spacing.extraSmall
 
                 CortetsuText {
                     text: Weather.city || qsTr("Loading...")
-                    font: Tokens.font.body.builders.large.size(28).weight(Font.DemiBold).build()
-                    color: Colours.palette.m3onSurface
+                    font: CortetsuTokens.font.body.builders.large.size(28).weight(Font.DemiBold).build()
+                    color: CortetsuColours.palette.m3onSurface
                 }
 
                 CortetsuText {
                     text: new Date().toLocaleDateString(Qt.locale(), "dddd, MMMM d")
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                 }
             }
 
@@ -44,60 +44,60 @@ Item {
             }
 
             Row {
-                spacing: Tokens.spacing.largeIncreased
+                spacing: CortetsuTokens.spacing.largeIncreased
 
                 WeatherStat {
                     icon: "wb_twilight"
                     label: "Sunrise"
                     value: Weather.sunrise
-                    colour: Colours.palette.m3tertiary
+                    colour: CortetsuColours.palette.m3tertiary
                 }
 
                 WeatherStat {
                     icon: "bedtime"
                     label: "Sunset"
                     value: Weather.sunset
-                    colour: Colours.palette.m3tertiary
+                    colour: CortetsuColours.palette.m3tertiary
                 }
             }
         }
 
         CortetsuSurface {
             Layout.fillWidth: true
-            implicitHeight: bigInfoRow.implicitHeight + Tokens.padding.small
+            implicitHeight: bigInfoRow.implicitHeight + CortetsuTokens.padding.small
 
-            radius: Tokens.rounding.extraLarge * 2
-            color: Colours.tPalette.m3surfaceContainer
+            radius: CortetsuTokens.rounding.extraLarge * 2
+            color: CortetsuColours.tPalette.m3surfaceContainer
 
             RowLayout {
                 id: bigInfoRow
 
                 anchors.centerIn: parent
-                spacing: Tokens.spacing.largeIncreased
+                spacing: CortetsuTokens.spacing.largeIncreased
 
                 CortetsuIcon {
                     Layout.alignment: Qt.AlignVCenter
                     text: Weather.icon
-                    fontStyle: Tokens.font.icon.builders.extraLarge.scale(3).build()
-                    color: Colours.palette.m3secondary
+                    fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(3).build()
+                    color: CortetsuColours.palette.m3secondary
                     animate: true
                 }
 
                 ColumnLayout {
                     Layout.alignment: Qt.AlignVCenter
-                    spacing: -Tokens.spacing.small
+                    spacing: -CortetsuTokens.spacing.small
 
                     CortetsuText {
                         text: Weather.temp
-                        font: Tokens.font.body.builders.large.size(28 * 2).weight(Font.Medium).build()
-                        color: Colours.palette.m3primary
+                        font: CortetsuTokens.font.body.builders.large.size(28 * 2).weight(Font.Medium).build()
+                        color: CortetsuColours.palette.m3primary
                     }
 
                     CortetsuText {
-                        Layout.leftMargin: Tokens.padding.extraSmall
+                        Layout.leftMargin: CortetsuTokens.padding.extraSmall
                         text: Weather.description
-                        font: Tokens.font.body.medium
-                        color: Colours.palette.m3onSurfaceVariant
+                        font: CortetsuTokens.font.body.medium
+                        color: CortetsuColours.palette.m3onSurfaceVariant
                     }
                 }
             }
@@ -105,40 +105,40 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             DetailCard {
                 icon: "water_drop"
                 label: "Humidity"
                 value: Weather.humidity + "%"
-                colour: Colours.palette.m3secondary
+                colour: CortetsuColours.palette.m3secondary
             }
             DetailCard {
                 icon: "thermostat"
                 label: "Feels Like"
                 value: Weather.feelsLike
-                colour: Colours.palette.m3primary
+                colour: CortetsuColours.palette.m3primary
             }
             DetailCard {
                 icon: "air"
                 label: "Wind"
                 value: Weather.windSpeed ? Weather.windSpeed + " km/h" : "--"
-                colour: Colours.palette.m3tertiary
+                colour: CortetsuColours.palette.m3tertiary
             }
         }
 
         CortetsuText {
-            Layout.topMargin: Tokens.spacing.medium
-            Layout.leftMargin: Tokens.padding.medium
+            Layout.topMargin: CortetsuTokens.spacing.medium
+            Layout.leftMargin: CortetsuTokens.padding.medium
             visible: forecastRepeater.count > 0
             text: qsTr("7-Day Forecast")
-            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
-            color: Colours.palette.m3onSurface
+            font: CortetsuTokens.font.body.builders.medium.weight(Font.DemiBold).build()
+            color: CortetsuColours.palette.m3onSurface
         }
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             Repeater {
                 id: forecastRepeater
@@ -152,38 +152,38 @@ Item {
                     required property var modelData
 
                     Layout.fillWidth: true
-                    implicitHeight: forecastItemColumn.implicitHeight + Tokens.padding.medium * 2
+                    implicitHeight: forecastItemColumn.implicitHeight + CortetsuTokens.padding.medium * 2
 
-                    radius: Tokens.rounding.large
-                    color: Colours.tPalette.m3surfaceContainer
+                    radius: CortetsuTokens.rounding.large
+                    color: CortetsuColours.tPalette.m3surfaceContainer
 
                     ColumnLayout {
                         id: forecastItemColumn
 
                         anchors.centerIn: parent
-                        spacing: Tokens.spacing.small
+                        spacing: CortetsuTokens.spacing.small
 
                         CortetsuText {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.index === 0 ? qsTr("Today") : new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "ddd")
-                            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
-                            color: Colours.palette.m3primary
+                            font: CortetsuTokens.font.body.builders.medium.weight(Font.DemiBold).build()
+                            color: CortetsuColours.palette.m3primary
                         }
 
                         CortetsuText {
-                            Layout.topMargin: -Tokens.spacing.extraSmall
+                            Layout.topMargin: -CortetsuTokens.spacing.extraSmall
                             Layout.alignment: Qt.AlignHCenter
                             text: new Date(forecastItem.modelData.date).toLocaleDateString(Qt.locale(), "MMM d")
-                            font: Tokens.font.body.small
+                            font: CortetsuTokens.font.body.small
                             opacity: 0.7
-                            color: Colours.palette.m3onSurfaceVariant
+                            color: CortetsuColours.palette.m3onSurfaceVariant
                         }
 
                         CortetsuIcon {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.modelData.icon
-                            fontStyle: Tokens.font.icon.extraLarge
-                            color: Colours.palette.m3secondary
+                            fontStyle: CortetsuTokens.font.icon.extraLarge
+                            color: CortetsuColours.palette.m3secondary
                         }
 
                         CortetsuText {
@@ -193,8 +193,8 @@ Item {
                                 const max = Weather.formatTemp(forecastItem.modelData.maxTempC).slice(0, -1);
                                 return `${min} / ${max}`;
                             }
-                            font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
-                            color: Colours.palette.m3tertiary
+                            font: CortetsuTokens.font.body.builders.small.weight(Font.DemiBold).build()
+                            color: CortetsuColours.palette.m3tertiary
                         }
                     }
                 }
@@ -212,17 +212,17 @@ Item {
 
         Layout.fillWidth: true
         Layout.preferredHeight: 60
-        radius: Tokens.rounding.medium
-        color: Colours.tPalette.m3surfaceContainer
+        radius: CortetsuTokens.rounding.medium
+        color: CortetsuColours.tPalette.m3surfaceContainer
 
         Row {
             anchors.centerIn: parent
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuIcon {
                 text: detailRoot.icon
                 color: detailRoot.colour
-                fontStyle: Tokens.font.icon.large
+                fontStyle: CortetsuTokens.font.icon.large
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -232,13 +232,13 @@ Item {
 
                 CortetsuText {
                     text: detailRoot.label
-                    font: Tokens.font.body.small
+                    font: CortetsuTokens.font.body.small
                     opacity: 0.7
                     horizontalAlignment: Text.AlignLeft
                 }
                 CortetsuText {
                     text: detailRoot.value
-                    font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
+                    font: CortetsuTokens.font.body.builders.small.weight(Font.DemiBold).build()
                     horizontalAlignment: Text.AlignLeft
                 }
             }
@@ -253,24 +253,24 @@ Item {
         property string value
         property color colour
 
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         CortetsuIcon {
             text: weatherStat.icon
-            fontStyle: Tokens.font.icon.extraLarge
+            fontStyle: CortetsuTokens.font.icon.extraLarge
             color: weatherStat.colour
         }
 
         Column {
             CortetsuText {
                 text: weatherStat.label
-                font: Tokens.font.body.small
-                color: Colours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3onSurfaceVariant
             }
             CortetsuText {
                 text: weatherStat.value
-                font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
-                color: Colours.palette.m3onSurface
+                font: CortetsuTokens.font.body.builders.small.weight(Font.DemiBold).build()
+                color: CortetsuColours.palette.m3onSurface
             }
         }
     }

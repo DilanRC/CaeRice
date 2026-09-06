@@ -25,7 +25,7 @@ Item {
     ColumnLayout {
         id: layout
 
-        spacing: Tokens.spacing.medium / 2
+        spacing: CortetsuTokens.spacing.medium / 2
 
         // Bluetooth icon
         CortetsuIcon {
@@ -64,14 +64,14 @@ Item {
                     Anim {
                         from: 1
                         to: 0
-                        duration: Tokens.anim.durations.large
-                        easing: Tokens.anim.standardAccel
+                        duration: CortetsuTokens.anim.durations.large
+                        easing: CortetsuTokens.anim.standardAccel
                     }
                     Anim {
                         from: 0
                         to: 1
-                        duration: Tokens.anim.durations.large
-                        easing: Tokens.anim.standardDecel
+                        duration: CortetsuTokens.anim.durations.large
+                        easing: CortetsuTokens.anim.standardDecel
                     }
                 }
             }

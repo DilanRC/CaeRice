@@ -30,13 +30,13 @@ DoubleSpinBox {
 
     editable: true
     decimals: stepSize < 1 ? Math.max(1, Math.ceil(-Math.log10(stepSize))) : 0
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
 
     implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
     implicitHeight: Math.max(up.indicator.implicitHeight, down.indicator.implicitHeight, contentItem.implicitHeight) + topPadding + bottomPadding
 
-    leftPadding: up.indicator.implicitWidth + Tokens.spacing.extraSmall / 2
-    rightPadding: down.indicator.implicitWidth + Tokens.spacing.extraSmall / 2
+    leftPadding: up.indicator.implicitWidth + CortetsuTokens.spacing.extraSmall / 2
+    rightPadding: down.indicator.implicitWidth + CortetsuTokens.spacing.extraSmall / 2
 
     contentItem: TextFieldBase {
         text: root.textFromValue(root.value, root.locale)
@@ -45,29 +45,29 @@ DoubleSpinBox {
         validator: root.validator
         inputMethodHints: Qt.ImhFormattedNumbersOnly
 
-        leftPadding: Tokens.padding.medium
-        rightPadding: Tokens.padding.medium
+        leftPadding: CortetsuTokens.padding.medium
+        rightPadding: CortetsuTokens.padding.medium
 
         implicitWidth: 65
         horizontalAlignment: TextField.AlignHCenter
 
         background: CortetsuSurface {
-            radius: Tokens.rounding.extraSmall
-            color: Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+            radius: CortetsuTokens.rounding.extraSmall
+            color: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, root.cLayer)
         }
     }
 
     down.indicator: IconButton {
         id: downButton
 
-        topRightRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
-        bottomRightRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
+        topRightRadius: pressed ? CortetsuTokens.rounding.small : CortetsuTokens.rounding.extraSmall
+        bottomRightRadius: pressed ? CortetsuTokens.rounding.small : CortetsuTokens.rounding.extraSmall
 
         icon: "remove"
-        disabledColour: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.4)
-        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+        disabledColour: Qt.alpha(CortetsuColours.palette.m3surfaceContainerHighest, 0.4)
+        color: disabled ? disabledColour : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, root.cLayer)
         type: IconButton.Text
-        padding: Tokens.padding.extraSmall
+        padding: CortetsuTokens.padding.extraSmall
         isRound: true
         label.anchors.horizontalCenterOffset: pressed ? 0 : 2
         disabled: !enabled
@@ -96,14 +96,14 @@ DoubleSpinBox {
 
         anchors.right: parent.right
 
-        topLeftRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
-        bottomLeftRadius: pressed ? Tokens.rounding.small : Tokens.rounding.extraSmall
+        topLeftRadius: pressed ? CortetsuTokens.rounding.small : CortetsuTokens.rounding.extraSmall
+        bottomLeftRadius: pressed ? CortetsuTokens.rounding.small : CortetsuTokens.rounding.extraSmall
 
         icon: "add"
-        disabledColour: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.4)
-        color: disabled ? disabledColour : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
+        disabledColour: Qt.alpha(CortetsuColours.palette.m3surfaceContainerHighest, 0.4)
+        color: disabled ? disabledColour : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, root.cLayer)
         type: IconButton.Text
-        padding: Tokens.padding.extraSmall
+        padding: CortetsuTokens.padding.extraSmall
         isRound: true
         label.anchors.horizontalCenterOffset: pressed ? 0 : -2
         disabled: !enabled

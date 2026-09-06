@@ -6,9 +6,9 @@ CortetsuSurface {
     property bool first
     property bool last
 
-    color: Colours.tPalette.m3surfaceContainer
-    topLeftRadius: first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-    topRightRadius: first ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-    bottomLeftRadius: last ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
-    bottomRightRadius: last ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall
+    color: CortetsuColours.tPalette.m3surfaceContainer
+    topLeftRadius: first ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+    topRightRadius: first ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+    bottomLeftRadius: last ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
+    bottomRightRadius: last ? CortetsuTokens.rounding.extraLarge : CortetsuTokens.rounding.extraSmall
 }

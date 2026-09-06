@@ -28,7 +28,7 @@ REQUIRED_FIRST_PARTY_PRIMITIVES = (
     "CortetsuText.qml",
     "CortetsuIcon.qml",
     "CortetsuDesign.js",
-    "../services/Tokens.qml",
+    "../services/CortetsuTokens.qml",
 )
 
 

@@ -24,38 +24,38 @@ ConnectedRect {
         id: rowLayout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.largeIncreased
-        anchors.topMargin: Tokens.padding.large
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.largeIncreased
+        anchors.topMargin: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuIcon {
             id: icon
 
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.medium
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.medium
         }
 
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.small
+                spacing: CortetsuTokens.spacing.small
 
                 CortetsuText {
                     id: label
 
                     Layout.fillWidth: true
-                    font: Tokens.font.body.small
+                    font: CortetsuTokens.font.body.small
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     id: valueLabel
 
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.small
                 }
             }
 
@@ -69,7 +69,7 @@ ConnectedRect {
                 }
 
                 Layout.fillWidth: true
-                implicitHeight: Tokens.padding.medium * 2
+                implicitHeight: CortetsuTokens.padding.medium * 2
 
                 StyledSlider {
                     anchors.left: parent.left
@@ -77,7 +77,7 @@ ConnectedRect {
                     anchors.verticalCenter: parent.verticalCenter
                     implicitHeight: parent.implicitHeight
 
-                    radius: Tokens.rounding.small
+                    radius: CortetsuTokens.rounding.small
                     value: root.value
                     enabled: root.enabled
                     onInteraction: v => root.moved(v)

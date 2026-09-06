@@ -18,8 +18,8 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.medium
 
         Resource {
             icon: "memory"
@@ -29,13 +29,13 @@ Item {
         Resource {
             icon: "memory_alt"
             value: Memory.percentage
-            fgColour: Colours.palette.m3tertiary
+            fgColour: CortetsuColours.palette.m3tertiary
         }
 
         Resource {
             icon: "hard_disk"
             value: Storage.percentage
-            fgColour: Colours.palette.m3secondary
+            fgColour: CortetsuColours.palette.m3secondary
         }
     }
     component Resource: CircularProgress {
@@ -45,7 +45,7 @@ Item {
 
         Layout.fillHeight: true
         implicitSize: height
-        strokeWidth: Tokens.sizes.dashboard.resourceProgressThickness
+        strokeWidth: CortetsuTokens.sizes.dashboard.resourceProgressThickness
 
         Behavior on clampedVal {
             Anim {}
@@ -54,7 +54,7 @@ Item {
         CortetsuIcon {
             anchors.centerIn: parent
             text: res.icon
-            font: Tokens.font.icon.large
+            font: CortetsuTokens.font.icon.large
             color: res.fgColour
         }
     }

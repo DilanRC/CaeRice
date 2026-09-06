@@ -10,24 +10,24 @@ CortetsuSurface {
 
     required property var dialog
 
-    implicitWidth: inner.implicitWidth + Tokens.padding.medium * 2
-    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: inner.implicitWidth + CortetsuTokens.padding.medium * 2
+    implicitHeight: inner.implicitHeight + CortetsuTokens.padding.medium * 2
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     RowLayout {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
-        spacing: Tokens.spacing.small
+        anchors.margins: CortetsuTokens.padding.medium
+        spacing: CortetsuTokens.spacing.small
 
         Item {
             implicitWidth: implicitHeight
-            implicitHeight: upIcon.implicitHeight + Tokens.padding.small
+            implicitHeight: upIcon.implicitHeight + CortetsuTokens.padding.small
 
             CortetsuStateLayer {
-                radius: Tokens.rounding.medium
+                radius: CortetsuTokens.rounding.medium
                 disabled: root.dialog.cwd.length === 1
                 onClicked: root.dialog.cwd.pop()
             }
@@ -37,7 +37,7 @@ CortetsuSurface {
 
                 anchors.centerIn: parent
                 text: "drive_folder_upload"
-                color: root.dialog.cwd.length === 1 ? Colours.palette.m3outline : Colours.palette.m3onSurface
+                color: root.dialog.cwd.length === 1 ? CortetsuColours.palette.m3outline : CortetsuColours.palette.m3onSurface
                 grade: 200
             }
         }
@@ -45,8 +45,8 @@ CortetsuSurface {
         CortetsuSurface {
             Layout.fillWidth: true
 
-            radius: Tokens.rounding.medium
-            color: Colours.tPalette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.medium
+            color: CortetsuColours.tPalette.m3surfaceContainerHigh
 
             implicitHeight: pathComponents.implicitHeight + pathComponents.anchors.margins * 2
 
@@ -54,10 +54,10 @@ CortetsuSurface {
                 id: pathComponents
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.extraSmall / 2
+                anchors.margins: CortetsuTokens.padding.extraSmall / 2
                 anchors.leftMargin: 0
 
-                spacing: Tokens.spacing.small
+                spacing: CortetsuTokens.spacing.small
 
                 Repeater {
                     model: root.dialog.cwd
@@ -72,18 +72,18 @@ CortetsuSurface {
 
                         Loader {
                             asynchronous: true
-                            Layout.rightMargin: Tokens.spacing.small
+                            Layout.rightMargin: CortetsuTokens.spacing.small
                             active: folder.index > 0
                             sourceComponent: CortetsuText {
                                 text: "/"
-                                color: Colours.palette.m3onSurfaceVariant
-                                font: Tokens.font.body.builders.small.weight(Font.Bold).build()
+                                color: CortetsuColours.palette.m3onSurfaceVariant
+                                font: CortetsuTokens.font.body.builders.small.weight(Font.Bold).build()
                             }
                         }
 
                         Item {
-                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Tokens.padding.extraSmall : 0) + folderName.implicitWidth + Tokens.padding.medium * 2
-                            implicitHeight: folderName.implicitHeight + Tokens.padding.small
+                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? CortetsuTokens.padding.extraSmall : 0) + folderName.implicitWidth + CortetsuTokens.padding.medium * 2
+                            implicitHeight: folderName.implicitHeight + CortetsuTokens.padding.small
 
                             Loader {
                                 asynchronous: true
@@ -94,7 +94,7 @@ CortetsuSurface {
                                         root.dialog.cwd = root.dialog.cwd.slice(0, folder.index + 1);
                                     }
 
-                                    radius: Tokens.rounding.medium
+                                    radius: CortetsuTokens.rounding.medium
                                 }
                             }
 
@@ -105,12 +105,12 @@ CortetsuSurface {
 
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: Tokens.padding.medium
+                                anchors.leftMargin: CortetsuTokens.padding.medium
 
                                 active: folder.index === 0 && folder.modelData === "Home"
                                 sourceComponent: CortetsuIcon {
                                     text: "home"
-                                    color: root.dialog.cwd.length === 1 ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
+                                    color: root.dialog.cwd.length === 1 ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSurfaceVariant
                                     fill: 1
                                 }
                             }
@@ -120,11 +120,11 @@ CortetsuSurface {
 
                                 anchors.left: homeIcon.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: homeIcon.active ? Tokens.padding.extraSmall : 0
+                                anchors.leftMargin: homeIcon.active ? CortetsuTokens.padding.extraSmall : 0
 
                                 text: folder.modelData
-                                color: folder.index < root.dialog.cwd.length - 1 ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurface
-                                font: Tokens.font.body.builders.small.weight(Font.Bold).build()
+                                color: folder.index < root.dialog.cwd.length - 1 ? CortetsuColours.palette.m3onSurfaceVariant : CortetsuColours.palette.m3onSurface
+                                font: CortetsuTokens.font.body.builders.small.weight(Font.Bold).build()
                             }
                         }
                     }

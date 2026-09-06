@@ -18,15 +18,15 @@ CortetsuSurface {
     }
 
     implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
-    radius: Tokens.rounding.extraLarge
-    color: Colours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.extraLarge
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     RowLayout {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.large
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.large
 
         Resource {
             id: cpu
@@ -34,17 +34,17 @@ CortetsuSurface {
             icon: "memory"
             value: Math.round(Cpu.percentage * 100) + "%"
             fillValue: Cpu.percentage
-            colour: Colours.palette.m3primary
-            shapeColour: Colours.palette.m3primaryContainer
-            fillColour: Qt.alpha(Colours.palette.m3secondary, 0.3)
+            colour: CortetsuColours.palette.m3primary
+            shapeColour: CortetsuColours.palette.m3primaryContainer
+            fillColour: Qt.alpha(CortetsuColours.palette.m3secondary, 0.3)
             shape: MaterialShape.Pentagon
 
             MaterialShape {
-                x: cpu.mShape.pointAtAngle(45).x - implicitSize / 2 + Tokens.padding.medium
+                x: cpu.mShape.pointAtAngle(45).x - implicitSize / 2 + CortetsuTokens.padding.medium
                 y: cpu.mShape.pointAtAngle(45).y - implicitSize / 2
 
                 shape: Cpu.temperature > 90 ? MaterialShape.SoftBurst : MaterialShape.Circle
-                color: Cpu.temperature > 90 ? Colours.palette.m3errorContainer : Colours.palette.m3secondaryContainer
+                color: Cpu.temperature > 90 ? CortetsuColours.palette.m3errorContainer : CortetsuColours.palette.m3secondaryContainer
                 implicitSize: {
                     const size = Math.round(tempLabel.implicitHeight * 2);
                     return size % 2 === 0 ? size : size + 1; // Ensure even size so center works properly
@@ -65,8 +65,8 @@ CortetsuSurface {
                         const useF = CortetsuConfig.useFahrenheitPerformance;
                         return `${Math.ceil(useF ? temp * 1.8 + 32 : temp)}°${useF ? "F" : "C"}`;
                     }
-                    color: Cpu.temperature > 90 ? Colours.palette.m3onErrorContainer : Colours.palette.m3secondary
-                    font: Tokens.font.title.builders.medium.scale(cpu.width / 112).width(50).build()
+                    color: Cpu.temperature > 90 ? CortetsuColours.palette.m3onErrorContainer : CortetsuColours.palette.m3secondary
+                    font: CortetsuTokens.font.title.builders.medium.scale(cpu.width / 112).width(50).build()
                 }
             }
         }
@@ -75,9 +75,9 @@ CortetsuSurface {
             icon: "memory_alt"
             value: Math.round(Memory.percentage * 100) + "%"
             fillValue: Memory.percentage
-            colour: Colours.palette.m3tertiary
-            shapeColour: Colours.palette.m3onTertiary
-            fillColour: Qt.alpha(Colours.palette.m3tertiary, 0.3)
+            colour: CortetsuColours.palette.m3tertiary
+            shapeColour: CortetsuColours.palette.m3onTertiary
+            fillColour: Qt.alpha(CortetsuColours.palette.m3tertiary, 0.3)
             shape: MaterialShape.Slanted
         }
 
@@ -85,9 +85,9 @@ CortetsuSurface {
             icon: "hard_disk"
             value: Math.round(Storage.percentage * 100) + "%"
             fillValue: Storage.percentage
-            colour: Colours.palette.m3secondary
-            shapeColour: Colours.palette.m3secondaryContainer
-            fillColour: Qt.alpha(Colours.palette.m3secondary, 0.4)
+            colour: CortetsuColours.palette.m3secondary
+            shapeColour: CortetsuColours.palette.m3secondaryContainer
+            fillColour: Qt.alpha(CortetsuColours.palette.m3secondary, 0.4)
             shape: MaterialShape.Gem
         }
     }
@@ -146,20 +146,20 @@ CortetsuSurface {
 
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: -Tokens.spacing.extraSmall
+            spacing: -CortetsuTokens.spacing.extraSmall
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: res.icon
-                color: Colours.palette.m3secondary
-                fontStyle: Tokens.font.icon.builders.medium.scale(root.fontScale).build()
+                color: CortetsuColours.palette.m3secondary
+                fontStyle: CortetsuTokens.font.icon.builders.medium.scale(root.fontScale).build()
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: res.value
                 color: res.colour
-                font: Tokens.font.headline.builders.large.scale(root.fontScale).width(50).build()
+                font: CortetsuTokens.font.headline.builders.large.scale(root.fontScale).width(50).build()
             }
         }
 

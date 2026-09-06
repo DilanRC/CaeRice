@@ -15,13 +15,13 @@ ColumnLayout {
     required property PopoutState popouts
 
     width: 300
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
 
     CortetsuText {
-        Layout.topMargin: Tokens.padding.medium
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.padding.medium
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("Bluetooth")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {
@@ -45,8 +45,8 @@ ColumnLayout {
     }
 
     CortetsuText {
-        Layout.topMargin: Tokens.spacing.small
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.spacing.small
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: {
             const devices = Bluetooth.devices.values; // qmllint disable unresolved-type
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
@@ -55,8 +55,8 @@ ColumnLayout {
                 available += qsTr(" (%1 connected)").arg(connected);
             return available;
         }
-        color: Colours.palette.m3onSurfaceVariant
-        font: Tokens.font.body.small
+        color: CortetsuColours.palette.m3onSurfaceVariant
+        font: CortetsuTokens.font.body.small
     }
 
     Repeater {
@@ -71,8 +71,8 @@ ColumnLayout {
             readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting // qmllint disable unresolved-type
 
             Layout.fillWidth: true
-            Layout.rightMargin: Tokens.padding.extraSmall
-            spacing: Tokens.spacing.small
+            Layout.rightMargin: CortetsuTokens.padding.extraSmall
+            spacing: CortetsuTokens.spacing.small
 
             opacity: 0
             scale: 0.7
@@ -97,8 +97,8 @@ ColumnLayout {
             }
 
             CortetsuText {
-                Layout.leftMargin: Tokens.spacing.extraSmall
-                Layout.rightMargin: Tokens.spacing.extraSmall
+                Layout.leftMargin: CortetsuTokens.spacing.extraSmall
+                Layout.rightMargin: CortetsuTokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: device.modelData.name
                 elide: Text.ElideRight
@@ -107,17 +107,17 @@ ColumnLayout {
             CortetsuIcon {
                 visible: device.modelData.state === BluetoothDeviceState.Connected  // qmllint disable unresolved-type
                 text: device.modelData.batteryAvailable ? Icons.getBatteryIcon(device.modelData.battery) : "battery_alert"
-                color: device.modelData.batteryAvailable && device.modelData.battery < 0.2 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                color: device.modelData.batteryAvailable && device.modelData.battery < 0.2 ? CortetsuColours.palette.m3error : CortetsuColours.palette.m3onSurfaceVariant
             }
 
             CortetsuSurface {
                 id: connectBtn
 
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
+                implicitHeight: connectIcon.implicitHeight + CortetsuTokens.padding.extraSmall
 
-                radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
+                radius: CortetsuTokens.rounding.full
+                color: Qt.alpha(CortetsuColours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
 
                 CircularIndicator {
                     anchors.fill: parent
@@ -125,7 +125,7 @@ ColumnLayout {
                 }
 
                 CortetsuStateLayer {
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface // qmllint disable unresolved-type
                     disabled: device.loading
                     onClicked: device.modelData.connected = !device.modelData.connected
                 }
@@ -136,7 +136,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     animate: true
                     text: device.modelData.connected ? "link_off" : "link"
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface // qmllint disable unresolved-type
 
                     opacity: device.loading ? 0 : 1
 
@@ -157,7 +157,7 @@ ColumnLayout {
                     implicitHeight: connectBtn.implicitHeight
 
                     CortetsuStateLayer {
-                        radius: Tokens.rounding.full
+                        radius: CortetsuTokens.rounding.full
                         onClicked: device.modelData.forget()
                     }
 
@@ -172,10 +172,10 @@ ColumnLayout {
 
     IconTextButton {
         Layout.fillWidth: true
-        Layout.topMargin: Tokens.spacing.medium
-        inactiveColour: Colours.palette.m3primaryContainer
-        inactiveOnColour: Colours.palette.m3onPrimaryContainer
-        verticalPadding: Tokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.spacing.medium
+        inactiveColour: CortetsuColours.palette.m3primaryContainer
+        inactiveOnColour: CortetsuColours.palette.m3onPrimaryContainer
+        verticalPadding: CortetsuTokens.padding.extraSmall
         text: qsTr("Open settings")
         icon: "settings"
 
@@ -188,8 +188,8 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.extraSmall
-        spacing: Tokens.spacing.medium
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             Layout.fillWidth: true

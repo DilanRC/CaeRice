@@ -14,7 +14,7 @@ Item {
 
     readonly property real centerX: width / 2
     readonly property real centerY: height / 2
-    readonly property real spacing: Tokens.spacing.medium
+    readonly property real spacing: CortetsuTokens.spacing.medium
     readonly property real maxMagnitude: (implicitWidth - cover.implicitWidth) / 2 - spacing
 
     Shape {
@@ -48,9 +48,9 @@ Item {
             readonly property real sin: Math.sin(angle)
 
             asynchronous: true
-            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-            strokeWidth: 360 / CortetsuConfig.visualiserBars - root.Tokens.spacing.small / 4
-            strokeColor: Colours.palette.m3primary
+            capStyle: root.CortetsuTokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: 360 / CortetsuConfig.visualiserBars - root.CortetsuTokens.spacing.small / 4
+            strokeColor: CortetsuColours.palette.m3primary
 
             startX: root.centerX + shapeEdgeDist * cos
             startY: root.centerY + shapeEdgeDist * sin
@@ -71,7 +71,7 @@ Item {
 
         anchors.centerIn: parent
         shape.shape: MaterialShape.Cookie9Sided
-        implicitWidth: Tokens.sizes.dashboard.mediaCoverArtSize
-        implicitHeight: Tokens.sizes.dashboard.mediaCoverArtSize
+        implicitWidth: CortetsuTokens.sizes.dashboard.mediaCoverArtSize
+        implicitHeight: CortetsuTokens.sizes.dashboard.mediaCoverArtSize
     }
 }

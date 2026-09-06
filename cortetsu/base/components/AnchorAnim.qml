@@ -20,32 +20,32 @@ AnchorAnimation {
 
     duration: {
         if (type < AnchorAnim.StandardSmall || type > AnchorAnim.SlowSpatial)
-            return Tokens.anim.durations.expressiveDefaultSpatial;
+            return CortetsuTokens.anim.durations.expressiveDefaultSpatial;
 
         if (type == AnchorAnim.FastSpatial)
-            return Tokens.anim.durations.expressiveFastSpatial;
+            return CortetsuTokens.anim.durations.expressiveFastSpatial;
         if (type == AnchorAnim.DefaultSpatial)
-            return Tokens.anim.durations.expressiveDefaultSpatial;
+            return CortetsuTokens.anim.durations.expressiveDefaultSpatial;
         if (type == AnchorAnim.SlowSpatial)
-            return Tokens.anim.durations.expressiveSlowSpatial;
+            return CortetsuTokens.anim.durations.expressiveSlowSpatial;
 
         const types = ["small", "normal", "large", "extraLarge"];
         const idx = type % 4; // 0-7 are the 4 standard types
-        return Tokens.anim.durations[types[idx]];
+        return CortetsuTokens.anim.durations[types[idx]];
     }
     easing: {
         if (type == AnchorAnim.FastSpatial)
-            return Tokens.anim.expressiveFastSpatial;
+            return CortetsuTokens.anim.expressiveFastSpatial;
         if (type == AnchorAnim.DefaultSpatial)
-            return Tokens.anim.expressiveDefaultSpatial;
+            return CortetsuTokens.anim.expressiveDefaultSpatial;
         if (type == AnchorAnim.SlowSpatial)
-            return Tokens.anim.expressiveSlowSpatial;
+            return CortetsuTokens.anim.expressiveSlowSpatial;
 
         if (type >= AnchorAnim.StandardSmall && type <= AnchorAnim.StandardExtraLarge)
-            return Tokens.anim.standard;
+            return CortetsuTokens.anim.standard;
         if (type >= AnchorAnim.EmphasizedSmall && type <= AnchorAnim.EmphasizedExtraLarge)
-            return Tokens.anim.emphasized;
+            return CortetsuTokens.anim.emphasized;
 
-        return Tokens.anim.expressiveDefaultSpatial;
+        return CortetsuTokens.anim.expressiveDefaultSpatial;
     }
 }

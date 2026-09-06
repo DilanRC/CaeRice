@@ -19,15 +19,15 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         CortetsuText {
             Layout.fillWidth: true
-            Layout.leftMargin: Tokens.padding.small
-            Layout.bottomMargin: Tokens.spacing.medium
+            Layout.leftMargin: CortetsuTokens.padding.small
+            Layout.bottomMargin: CortetsuTokens.spacing.medium
             text: qsTr("Adjust the volume of individual apps currently playing audio.")
-            color: Colours.palette.m3outline
-            font: Tokens.font.body.small
+            color: CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.body.small
             wrapMode: Text.WordWrap
         }
 
@@ -39,8 +39,8 @@ PageBase {
             showList: true
             placeholderIcon: "music_off"
             placeholderText: qsTr("No apps playing audio")
-            color: list.count === 0 ? Colours.tPalette.m3surfaceContainer : "transparent"
-            list.spacing: Tokens.spacing.extraSmall / 2
+            color: list.count === 0 ? CortetsuColours.tPalette.m3surfaceContainer : "transparent"
+            list.spacing: CortetsuTokens.spacing.extraSmall / 2
 
             model: ScriptModel {
                 values: [...Audio.streams]

@@ -21,13 +21,13 @@ Item {
             Qalculator.evalAsync(math);
     }
 
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: CortetsuTokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     CortetsuStateLayer {
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         onClicked: root.onClicked()
     }
 
@@ -35,13 +35,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuIcon {
             text: "function"
-            fontStyle: Tokens.font.icon.extraLarge
+            fontStyle: CortetsuTokens.font.icon.extraLarge
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -50,10 +50,10 @@ Item {
 
             color: {
                 if (text.includes("error: ") || text.includes("warning: "))
-                    return Colours.palette.m3error;
+                    return CortetsuColours.palette.m3error;
                 if (!root.math)
-                    return Colours.palette.m3onSurfaceVariant;
-                return Colours.palette.m3onSurface;
+                    return CortetsuColours.palette.m3onSurfaceVariant;
+                return CortetsuColours.palette.m3onSurface;
             }
 
             text: root.math.length > 0 ? (Qalculator.result || qsTr("Calculating...")) : qsTr("Type an expression to calculate")
@@ -64,12 +64,12 @@ Item {
         }
 
         CortetsuSurface {
-            color: Colours.palette.m3tertiary
-            radius: Tokens.rounding.large
+            color: CortetsuColours.palette.m3tertiary
+            radius: CortetsuTokens.rounding.large
             clip: true
 
-            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.small
+            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + CortetsuTokens.padding.medium * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + CortetsuTokens.padding.small
 
             Layout.alignment: Qt.AlignVCenter
 
@@ -81,7 +81,7 @@ Item {
                     root.list.screenState.launcher = false;
                 }
 
-                color: Colours.palette.m3onTertiary
+                color: CortetsuColours.palette.m3onTertiary
             }
 
             CortetsuText {
@@ -89,11 +89,11 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: icon.left
-                anchors.rightMargin: Tokens.spacing.small
+                anchors.rightMargin: CortetsuTokens.spacing.small
 
                 text: qsTr("Open in calculator")
-                color: Colours.palette.m3onTertiary
-                font: Tokens.font.label.medium
+                color: CortetsuColours.palette.m3onTertiary
+                font: CortetsuTokens.font.label.medium
 
                 opacity: stateLayer.containsMouse ? 1 : 0
 
@@ -109,11 +109,11 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Tokens.padding.medium
+                anchors.rightMargin: CortetsuTokens.padding.medium
 
                 text: "open_in_new"
-                color: Colours.palette.m3onTertiary
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuColours.palette.m3onTertiary
+                fontStyle: CortetsuTokens.font.icon.large
             }
 
             Behavior on implicitWidth {

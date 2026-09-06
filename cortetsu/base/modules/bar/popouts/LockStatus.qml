@@ -3,7 +3,7 @@ import qs.components
 import qs.services
 
 ColumnLayout {
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
 
     CortetsuText {
         text: qsTr("Capslock: %1").arg(Hypr.capsLock ? "Enabled" : "Disabled")

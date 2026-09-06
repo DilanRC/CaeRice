@@ -14,8 +14,8 @@ Slider {
     orientation: Qt.Vertical
 
     background: CortetsuSurface {
-        color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
-        radius: Tokens.rounding.full
+        color: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainer, 2)
+        radius: CortetsuTokens.rounding.full
 
         CortetsuSurface {
             anchors.left: parent.left
@@ -24,7 +24,7 @@ Slider {
             y: root.handle.y
             implicitHeight: parent.height - y
 
-            color: Colours.palette.m3secondary
+            color: CortetsuColours.palette.m3secondary
             radius: parent.radius
         }
     }
@@ -49,8 +49,8 @@ Slider {
 
             anchors.fill: parent
 
-            color: Colours.palette.m3inverseSurface
-            radius: Tokens.rounding.full
+            color: CortetsuColours.palette.m3inverseSurface
+            radius: CortetsuTokens.rounding.full
 
             MouseArea {
                 id: handleInteraction
@@ -69,8 +69,8 @@ Slider {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: 1
                 text: moving ? Math.round(root.value * 100) : root.icon
-                color: Colours.palette.m3inverseOnSurface
-                font: moving ? Tokens.font.body.small : Tokens.font.icon.medium
+                color: CortetsuColours.palette.m3inverseOnSurface
+                font: moving ? CortetsuTokens.font.body.small : CortetsuTokens.font.icon.medium
 
                 Behavior on moving {
                     SequentialAnimation {
@@ -78,16 +78,16 @@ Slider {
                             target: icon
                             property: "scale"
                             to: 0.3
-                            duration: Tokens.anim.durations.small / 2
-                            easing: Tokens.anim.standardAccel
+                            duration: CortetsuTokens.anim.durations.small / 2
+                            easing: CortetsuTokens.anim.standardAccel
                         }
                         PropertyAction {}
                         Anim {
                             target: icon
                             property: "scale"
                             to: 1
-                            duration: Tokens.anim.durations.normal / 2
-                            easing: Tokens.anim.standardDecel
+                            duration: CortetsuTokens.anim.durations.normal / 2
+                            easing: CortetsuTokens.anim.standardDecel
                         }
                     }
                 }

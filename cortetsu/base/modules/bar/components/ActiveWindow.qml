@@ -11,7 +11,7 @@ Item {
 
     required property var bar
     required property Brightness.Monitor monitor
-    property color colour: Colours.palette.m3primary
+    property color colour: CortetsuColours.palette.m3primary
 
     readonly property string windowTitle: {
         const title = Hypr.activeToplevel?.title;
@@ -86,7 +86,7 @@ Item {
         id: metrics
 
         text: root.windowTitle
-        font: root.Tokens.font.body.builders.small.letterSpacing(1.4).build()
+        font: root.CortetsuTokens.font.body.builders.small.letterSpacing(1.4).build()
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -107,7 +107,7 @@ Item {
 
         anchors.horizontalCenter: icon.horizontalCenter
         anchors.top: icon.bottom
-        anchors.topMargin: Tokens.spacing.small
+        anchors.topMargin: CortetsuTokens.spacing.small
 
         font: metrics.font
         color: root.colour

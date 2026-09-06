@@ -56,7 +56,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.large
+        spacing: CortetsuTokens.spacing.large
 
         Connections {
             function onSubPageClosed(): void {
@@ -73,10 +73,10 @@ PageBase {
 
         CortetsuText {
             Layout.fillWidth: true
-            Layout.leftMargin: Tokens.padding.extraSmall
+            Layout.leftMargin: CortetsuTokens.padding.extraSmall
             text: qsTr("Enter the details below to manually connect to a network.")
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.body.small
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.body.small
             wrapMode: Text.WordWrap
         }
 
@@ -84,7 +84,7 @@ PageBase {
             id: ssidField
 
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.extraSmall
+            Layout.topMargin: CortetsuTokens.spacing.extraSmall
             placeholderText: qsTr("Network name (SSID)")
             supportingText: qsTr("e.g. MyHiddenNetwork")
             leadingIcon: "wifi"
@@ -106,7 +106,7 @@ PageBase {
         SelectRow {
             id: securitySelect
 
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.extraSmall / 2 - parent.spacing
             last: !root.secured
             label: qsTr("Security")
             fallbackText: qsTr("WPA/WPA2/WPA3 Personal")
@@ -181,13 +181,13 @@ PageBase {
 
         RowLayout {
             Layout.alignment: Qt.AlignRight
-            Layout.topMargin: Tokens.spacing.extraSmall - parent.spacing
-            spacing: Tokens.spacing.small
+            Layout.topMargin: CortetsuTokens.spacing.extraSmall - parent.spacing
+            spacing: CortetsuTokens.spacing.small
 
             TextButton {
                 Layout.fillHeight: true
                 isRound: true
-                horizontalPadding: Tokens.padding.extraLarge
+                horizontalPadding: CortetsuTokens.padding.extraLarge
                 type: TextButton.Tonal
                 text: qsTr("Cancel")
                 onClicked: root.nState.closeSubPage()
@@ -200,12 +200,12 @@ PageBase {
 
                 shapeMorph: true
                 isRound: true
-                inactiveColour: Colours.palette.m3primary
-                inactiveOnColour: Colours.palette.m3onPrimary
+                inactiveColour: CortetsuColours.palette.m3primary
+                inactiveOnColour: CortetsuColours.palette.m3onPrimary
                 stateLayer.disabled: root.connecting || ssidField.text.trim().length === 0
 
-                implicitWidth: connectMetrics.width + Tokens.padding.extraLarge * 2
-                implicitHeight: connectMetrics.height + Tokens.padding.medium * 2
+                implicitWidth: connectMetrics.width + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: connectMetrics.height + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     if (!root.connecting && ssidField.text.trim().length > 0)
@@ -232,7 +232,7 @@ PageBase {
                     id: connectLoadingComp
 
                     LoadingIndicator {
-                        implicitSize: Math.round(Tokens.font.body.medium.pointSize * 1.4)
+                        implicitSize: Math.round(CortetsuTokens.font.body.medium.pointSize * 1.4)
                         color: connectBtn.onColour
                     }
                 }

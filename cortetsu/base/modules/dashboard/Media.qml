@@ -10,8 +10,8 @@ Item {
 
     required property ScreenState screenState
 
-    implicitWidth: Tokens.sizes.dashboard.mediaTabWidth
-    implicitHeight: Tokens.sizes.dashboard.mediaTabHeight
+    implicitWidth: CortetsuTokens.sizes.dashboard.mediaTabWidth
+    implicitHeight: CortetsuTokens.sizes.dashboard.mediaTabHeight
 
     BackgroundShapes {
         anchors.fill: parent
@@ -19,12 +19,12 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.extraLarge
+        anchors.margins: CortetsuTokens.padding.large
+        spacing: CortetsuTokens.spacing.extraLarge
 
         CoverVisualiser {
             Layout.fillHeight: true
-            implicitWidth: Tokens.sizes.dashboard.mediaSectionWidth
+            implicitWidth: CortetsuTokens.sizes.dashboard.mediaSectionWidth
         }
 
         Item {
@@ -81,20 +81,20 @@ Item {
                 id: noMedia
 
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -Tokens.padding.extraLarge * 2
+                anchors.horizontalCenterOffset: -CortetsuTokens.padding.extraLarge * 2
                 asynchronous: true
                 active: opacity > 0
                 opacity: 0
 
                 sourceComponent: ColumnLayout {
-                    spacing: Tokens.spacing.small
+                    spacing: CortetsuTokens.spacing.small
 
                     MaterialShape {
                         Layout.topMargin: (pathBounds().height - implicitSize) / 2
-                        Layout.bottomMargin: (pathBounds().height - implicitSize) / 2 + Tokens.spacing.small
+                        Layout.bottomMargin: (pathBounds().height - implicitSize) / 2 + CortetsuTokens.spacing.small
                         Layout.alignment: Qt.AlignHCenter
-                        color: Colours.palette.m3primaryContainer
-                        implicitSize: icon.implicitHeight + Tokens.padding.extraLarge * 2
+                        color: CortetsuColours.palette.m3primaryContainer
+                        implicitSize: icon.implicitHeight + CortetsuTokens.padding.extraLarge * 2
                         shape: MaterialShape.ClamShell
 
                         Behavior on color {
@@ -106,21 +106,21 @@ Item {
 
                             anchors.centerIn: parent
                             text: "queue_music"
-                            fontStyle: Tokens.font.icon.builders.large.scale(2).build()
-                            color: Colours.palette.m3onPrimaryContainer
+                            fontStyle: CortetsuTokens.font.icon.builders.large.scale(2).build()
+                            color: CortetsuColours.palette.m3onPrimaryContainer
                         }
                     }
 
                     CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Nothing playing")
-                        font: Tokens.font.headline.medium
+                        font: CortetsuTokens.font.headline.medium
                     }
 
                     CortetsuText {
                         text: qsTr("Play something for it to show up here!")
-                        color: Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.body.large
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        font: CortetsuTokens.font.body.large
                     }
                 }
             }
@@ -133,7 +133,7 @@ Item {
                 active: opacity > 0
 
                 sourceComponent: RowLayout {
-                    spacing: Tokens.spacing.extraLarge
+                    spacing: CortetsuTokens.spacing.extraLarge
 
                     Details {
                         Layout.fillWidth: true
@@ -141,7 +141,7 @@ Item {
 
                     LyricsAndSelector {
                         Layout.fillHeight: true
-                        implicitWidth: Tokens.sizes.dashboard.mediaSectionWidth
+                        implicitWidth: CortetsuTokens.sizes.dashboard.mediaSectionWidth
                     }
                 }
             }

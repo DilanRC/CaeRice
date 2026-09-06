@@ -8,17 +8,17 @@ CortetsuSurface {
     required property var dialog
     required property FolderContents folder
 
-    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
+    implicitHeight: inner.implicitHeight + CortetsuTokens.padding.medium * 2
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     RowLayout {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         CortetsuText {
             text: qsTr("Filter:")
@@ -27,25 +27,25 @@ CortetsuSurface {
         CortetsuSurface {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.rightMargin: Tokens.spacing.medium
+            Layout.rightMargin: CortetsuTokens.spacing.medium
 
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.medium
+            color: CortetsuColours.tPalette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.medium
 
             CortetsuText {
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.medium
+                anchors.margins: CortetsuTokens.padding.medium
 
                 text: `${root.dialog.filterLabel} (${root.dialog.filters.map(f => `*.${f}`).join(", ")})`
             }
         }
 
         CortetsuSurface {
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.medium
+            color: CortetsuColours.tPalette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.medium
 
-            implicitWidth: cancelText.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: cancelText.implicitHeight + Tokens.padding.medium * 2
+            implicitWidth: cancelText.implicitWidth + CortetsuTokens.padding.medium * 2
+            implicitHeight: cancelText.implicitHeight + CortetsuTokens.padding.medium * 2
 
             CortetsuStateLayer {
                 disabled: !root.dialog.selectionValid
@@ -56,19 +56,19 @@ CortetsuSurface {
                 id: selectText
 
                 anchors.centerIn: parent
-                anchors.margins: Tokens.padding.medium
+                anchors.margins: CortetsuTokens.padding.medium
 
                 text: qsTr("Select")
-                color: root.dialog.selectionValid ? Colours.palette.m3onSurface : Colours.palette.m3outline
+                color: root.dialog.selectionValid ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3outline
             }
         }
 
         CortetsuSurface {
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.medium
+            color: CortetsuColours.tPalette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.medium
 
-            implicitWidth: cancelText.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: cancelText.implicitHeight + Tokens.padding.medium * 2
+            implicitWidth: cancelText.implicitWidth + CortetsuTokens.padding.medium * 2
+            implicitHeight: cancelText.implicitHeight + CortetsuTokens.padding.medium * 2
 
             CortetsuStateLayer {
                 onClicked: {
@@ -80,7 +80,7 @@ CortetsuSurface {
                 id: cancelText
 
                 anchors.centerIn: parent
-                anchors.margins: Tokens.padding.medium
+                anchors.margins: CortetsuTokens.padding.medium
 
                 text: qsTr("Cancel")
             }

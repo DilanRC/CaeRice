@@ -25,7 +25,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.topMargin: Tokens.sizes.dashboard.tabIndicatorSpacing
+        anchors.topMargin: CortetsuTokens.sizes.dashboard.tabIndicatorSpacing
 
         currentIndex: root.screenState.dashboardTab
         onCurrentIndexChanged: root.screenState.dashboardTab = currentIndex
@@ -84,8 +84,8 @@ Item {
             anchors.right: parent.right
             implicitHeight: parent.implicitHeight * 2
 
-            color: Colours.palette.m3primary
-            radius: Tokens.rounding.full
+            color: CortetsuColours.palette.m3primary
+            radius: CortetsuTokens.rounding.full
         }
 
         Behavior on x {
@@ -105,7 +105,7 @@ Item {
         anchors.right: parent.right
 
         implicitHeight: 1
-        color: Colours.palette.m3outlineVariant
+        color: CortetsuColours.palette.m3outlineVariant
     }
 
     component Tab: TabButton {
@@ -145,10 +145,10 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: parent.height + Tokens.sizes.dashboard.tabIndicatorSpacing * 2
+                implicitHeight: parent.height + CortetsuTokens.sizes.dashboard.tabIndicatorSpacing * 2
 
-                radius: Tokens.rounding.medium
-                color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurface
+                radius: CortetsuTokens.rounding.medium
+                color: tab.current ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurface
                 onClicked: root.screenState.dashboardTab = tab.TabBar.index
             }
 
@@ -159,9 +159,9 @@ Item {
                 anchors.bottom: label.top
 
                 text: tab.iconName
-                color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: tab.current ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
                 fill: tab.current ? 1 : 0
-                fontStyle: Tokens.font.icon.medium
+                fontStyle: CortetsuTokens.font.icon.medium
 
                 Behavior on fill {
                     Anim {
@@ -177,7 +177,7 @@ Item {
                 anchors.bottom: parent.bottom
 
                 text: tab.text
-                color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                color: tab.current ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
             }
         }
     }

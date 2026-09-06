@@ -21,12 +21,12 @@ LazyListView {
     anchors.right: parent.right
     implicitHeight: contentHeight
 
-    spacing: Math.round(Tokens.spacing.extraSmall)
+    spacing: Math.round(CortetsuTokens.spacing.extraSmall)
     asynchronous: true
 
     readyDelay: 1
     cacheBuffer: 400
-    removeDuration: Tokens.anim.durations.normal
+    removeDuration: CortetsuTokens.anim.durations.normal
 
     useCustomViewport: true
     viewport: {

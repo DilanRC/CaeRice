@@ -15,7 +15,7 @@ ColumnLayout {
     required property NexusState nState
     required property int cappedWidth
 
-    spacing: Tokens.spacing.extraSmall / 2
+    spacing: CortetsuTokens.spacing.extraSmall / 2
 
     // Keep ethernet state fresh while the page is visible.
     Timer {
@@ -36,21 +36,21 @@ ColumnLayout {
     ConnectedRect {
         Layout.fillWidth: true
         first: true
-        implicitHeight: ethHeaderLayout.implicitHeight + Tokens.padding.medium * 2
+        implicitHeight: ethHeaderLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
         RowLayout {
             id: ethHeaderLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.medium
-            anchors.leftMargin: Tokens.padding.largeIncreased
-            anchors.rightMargin: Tokens.padding.largeIncreased
-            spacing: Tokens.spacing.medium
+            anchors.margins: CortetsuTokens.padding.medium
+            anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+            anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuText {
                 Layout.fillWidth: true
                 text: qsTr("Ethernet")
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             ColumnLayout {
@@ -60,16 +60,16 @@ ColumnLayout {
                 CortetsuText {
                     Layout.alignment: Qt.AlignRight
                     text: Nmcli.activeEthernet ? qsTr("Connected") : qsTr("Not connected")
-                    color: Nmcli.activeEthernet ? Colours.palette.m3primary : Colours.palette.m3outline
-                    font: Tokens.font.label.small
+                    color: Nmcli.activeEthernet ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.label.small
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignRight
                     visible: Nmcli.activeEthernet && Nmcli.ethernetDataUsage.length > 0
                     text: qsTr("Data usage: %1").arg(Nmcli.ethernetDataUsage)
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.label.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.label.small
                 }
             }
         }
@@ -95,7 +95,7 @@ ColumnLayout {
 
             Layout.fillWidth: true
             last: index === ethRepeater.count - 1
-            implicitHeight: ethLayout.implicitHeight + Tokens.padding.medium * 2
+            implicitHeight: ethLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
             // Tap opens the detail page for this interface.
             CortetsuStateLayer {
@@ -109,16 +109,16 @@ ColumnLayout {
                 id: ethLayout
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.medium
-                anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.medium
-                spacing: Tokens.spacing.medium
+                anchors.margins: CortetsuTokens.padding.medium
+                anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                anchors.rightMargin: CortetsuTokens.padding.medium
+                spacing: CortetsuTokens.spacing.medium
 
                 CortetsuSurface {
                     implicitWidth: implicitHeight
-                    implicitHeight: ethIcon.implicitHeight + Tokens.padding.small * 2
-                    radius: Tokens.rounding.full
-                    color: ethRow.isConnected ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHighest
+                    implicitHeight: ethIcon.implicitHeight + CortetsuTokens.padding.small * 2
+                    radius: CortetsuTokens.rounding.full
+                    color: ethRow.isConnected ? CortetsuColours.palette.m3primaryContainer : CortetsuColours.palette.m3surfaceContainerHighest
 
                     CortetsuIcon {
                         id: ethIcon
@@ -126,8 +126,8 @@ ColumnLayout {
                         anchors.centerIn: parent
                         text: ethRow.isConnected ? "lan" : "settings_ethernet"
                         fill: text === "lan" ? 1 : 0
-                        color: ethRow.isConnected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: ethRow.isConnected ? CortetsuColours.palette.m3onPrimaryContainer : CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                         animate: true
                     }
                 }
@@ -140,7 +140,7 @@ ColumnLayout {
                     CortetsuText {
                         Layout.fillWidth: true
                         text: ethRow.modelData.connection || ethRow.modelData.iface || qsTr("Wired connection")
-                        font: Tokens.font.body.medium
+                        font: CortetsuTokens.font.body.medium
                         elide: Text.ElideRight
                         animate: true
                     }
@@ -148,19 +148,19 @@ ColumnLayout {
                     CortetsuText {
                         Layout.fillWidth: true
                         text: ethRow.isConnected ? ethRow.modelData.iface : qsTr("Not connected • %1").arg(ethRow.modelData.iface)
-                        color: ethRow.isConnected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                        font: Tokens.font.label.small
+                        color: ethRow.isConnected ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
+                        font: CortetsuTokens.font.label.small
                         elide: Text.ElideRight
                         animate: true
                     }
                 }
 
                 Item {
-                    Layout.rightMargin: Tokens.spacing.small
-                    opacity: ethRow.isConnected && root?.cappedWidth > Tokens.sizes.nexus.networkShowEthDetailWidth ? 1 : 0
+                    Layout.rightMargin: CortetsuTokens.spacing.small
+                    opacity: ethRow.isConnected && root?.cappedWidth > CortetsuTokens.sizes.nexus.networkShowEthDetailWidth ? 1 : 0
                     visible: opacity > 0
 
-                    implicitWidth: ethRow.isConnected && root?.cappedWidth > Tokens.sizes.nexus.networkShowEthDetailWidth ? ethDetailRow.implicitWidth : 0
+                    implicitWidth: ethRow.isConnected && root?.cappedWidth > CortetsuTokens.sizes.nexus.networkShowEthDetailWidth ? ethDetailRow.implicitWidth : 0
                     implicitHeight: ethDetailRow.implicitHeight
 
                     onVisibleChanged: {
@@ -186,7 +186,7 @@ ColumnLayout {
                         id: ethDetailRow
 
                         anchors.right: parent.right
-                        spacing: Tokens.spacing.large
+                        spacing: CortetsuTokens.spacing.large
 
                         EthDetail {
                             id: ethIpAddr
@@ -219,8 +219,8 @@ ColumnLayout {
 
                 CortetsuIcon {
                     text: "chevron_right"
-                    color: Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    fontStyle: CortetsuTokens.font.icon.small
                 }
             }
         }
@@ -238,8 +238,8 @@ ColumnLayout {
         CortetsuText {
             Layout.alignment: Qt.AlignRight
             text: ethDetail.label
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.label.small
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.label.small
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignRight
         }
@@ -247,8 +247,8 @@ ColumnLayout {
         CortetsuText {
             Layout.alignment: Qt.AlignRight
             text: ethDetail.value
-            color: Colours.palette.m3outline
-            font: Tokens.font.label.small
+            color: CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.label.small
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignRight
         }

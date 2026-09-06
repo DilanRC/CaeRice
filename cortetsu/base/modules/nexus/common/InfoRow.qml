@@ -13,7 +13,7 @@ ConnectedRect {
     property string subtext
     property alias value: value.text
     property string icon
-    property color iconColour: Colours.palette.m3onSurfaceVariant
+    property color iconColour: CortetsuColours.palette.m3onSurfaceVariant
     property Component leadingComponent: icon ? iconComp : null
 
     Layout.fillWidth: true
@@ -25,7 +25,7 @@ ConnectedRect {
         CortetsuIcon {
             text: root.icon
             color: root.iconColour
-            fontStyle: Tokens.font.icon.small
+            fontStyle: CortetsuTokens.font.icon.small
         }
     }
 
@@ -33,10 +33,10 @@ ConnectedRect {
         id: rowLayout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
-        anchors.leftMargin: Tokens.padding.largeIncreased
-        anchors.rightMargin: Tokens.padding.largeIncreased
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.medium
+        anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+        anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+        spacing: CortetsuTokens.spacing.medium
 
         Loader {
             visible: root.leadingComponent
@@ -52,7 +52,7 @@ ConnectedRect {
                 id: label
 
                 Layout.fillWidth: true
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -60,8 +60,8 @@ ConnectedRect {
                 Layout.fillWidth: true
                 visible: root.subtext
                 text: root.subtext
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.label.small
                 elide: Text.ElideRight
             }
         }
@@ -71,8 +71,8 @@ ConnectedRect {
 
             Layout.maximumWidth: root.width / 2
             horizontalAlignment: Text.AlignRight
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.body.small
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.body.small
             elide: Text.ElideRight
         }
     }

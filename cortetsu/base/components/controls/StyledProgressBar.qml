@@ -14,8 +14,8 @@ ProgressBar {
         Stopped
     }
 
-    property color fgColour: Colours.palette.m3primary
-    property color bgColour: Colours.palette.m3secondaryContainer
+    property color fgColour: CortetsuColours.palette.m3primary
+    property color bgColour: CortetsuColours.palette.m3secondaryContainer
 
     property bool wavy
     property bool wavePaused
@@ -68,7 +68,7 @@ ProgressBar {
     LinearIndicatorManager {
         id: manager
 
-        gap: root.Tokens.spacing.extraSmall
+        gap: root.CortetsuTokens.spacing.extraSmall
 
         Anim on progress {
             running: root.indeterminateAnimState !== StyledProgressBar.Stopped
@@ -98,7 +98,7 @@ ProgressBar {
                 id: remaining
 
                 anchors.right: parent.right
-                implicitWidth: parent.width - wave.implicitWidth - Tokens.spacing.extraSmall
+                implicitWidth: parent.width - wave.implicitWidth - CortetsuTokens.spacing.extraSmall
             }
 
             Line {
@@ -113,7 +113,7 @@ ProgressBar {
                 implicitWidth: implicitSize
                 implicitHeight: implicitSize
 
-                radius: Tokens.rounding.full
+                radius: CortetsuTokens.rounding.full
                 color: root.fgColour
 
                 Behavior on implicitSize {
@@ -207,7 +207,7 @@ ProgressBar {
         anchors.verticalCenter: parent.verticalCenter
         implicitHeight: parent.height
 
-        radius: Tokens.rounding.full
+        radius: CortetsuTokens.rounding.full
         color: root.bgColour
     }
 

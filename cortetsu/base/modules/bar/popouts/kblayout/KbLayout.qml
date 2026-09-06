@@ -13,8 +13,8 @@ ColumnLayout {
         kb.refresh();
     }
 
-    spacing: Tokens.spacing.small
-    width: Tokens.sizes.bar.kbLayoutWidth
+    spacing: CortetsuTokens.spacing.small
+    width: CortetsuTokens.sizes.bar.kbLayoutWidth
 
     Component.onCompleted: kb.start()
 
@@ -23,10 +23,10 @@ ColumnLayout {
     }
 
     CortetsuText {
-        Layout.topMargin: Tokens.padding.medium
-        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.padding.medium
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
         text: qsTr("Keyboard Layouts")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     ListView {
@@ -35,14 +35,14 @@ ColumnLayout {
         model: kb.visibleModel
 
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.extraSmall
-        Layout.topMargin: Tokens.spacing.small
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.spacing.small
 
         clip: true
         interactive: true
         implicitHeight: Math.min(contentHeight, 320)
         visible: kb.visibleModel.count > 0
-        spacing: Tokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         add: Transition {
             NumberAnimation {
@@ -87,7 +87,7 @@ ColumnLayout {
             readonly property bool isDisabled: layoutIndex > 3
 
             width: list.width
-            height: Math.max(36, rowText.implicitHeight + Tokens.padding.small)
+            height: Math.max(36, rowText.implicitHeight + CortetsuTokens.padding.small)
             ToolTip.visible: isDisabled && layer.containsMouse
             ToolTip.text: "XKB limitation: maximum 4 layouts allowed"
 
@@ -103,7 +103,7 @@ ColumnLayout {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 implicitHeight: parent.height - 4
-                radius: Tokens.rounding.full
+                radius: CortetsuTokens.rounding.full
                 enabled: !kbDelegate.isDisabled
             }
 
@@ -113,8 +113,8 @@ ColumnLayout {
                 anchors.verticalCenter: layer.verticalCenter
                 anchors.left: layer.left
                 anchors.right: layer.right
-                anchors.leftMargin: Tokens.padding.extraSmall
-                anchors.rightMargin: Tokens.padding.extraSmall
+                anchors.leftMargin: CortetsuTokens.padding.extraSmall
+                anchors.rightMargin: CortetsuTokens.padding.extraSmall
                 text: kbDelegate.label
                 elide: Text.ElideRight
                 opacity: kbDelegate.isDisabled ? 0.4 : 1.0
@@ -125,11 +125,11 @@ ColumnLayout {
     Rectangle {
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.extraSmall
-        Layout.topMargin: Tokens.spacing.small
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.spacing.small
 
         implicitHeight: 1
-        color: Colours.palette.m3onSurfaceVariant
+        color: CortetsuColours.palette.m3onSurfaceVariant
         opacity: 0.35
     }
 
@@ -138,24 +138,24 @@ ColumnLayout {
 
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Tokens.padding.extraSmall
-        Layout.topMargin: Tokens.spacing.small
-        spacing: Tokens.spacing.small
+        Layout.rightMargin: CortetsuTokens.padding.extraSmall
+        Layout.topMargin: CortetsuTokens.spacing.small
+        spacing: CortetsuTokens.spacing.small
 
         opacity: 1
         scale: 1
 
         CortetsuIcon {
             text: "keyboard"
-            color: Colours.palette.m3primary
+            color: CortetsuColours.palette.m3primary
         }
 
         CortetsuText {
             Layout.fillWidth: true
             text: kb.activeLabel
             elide: Text.ElideRight
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
-            color: Colours.palette.m3primary
+            font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
+            color: CortetsuColours.palette.m3primary
         }
 
         Connections {

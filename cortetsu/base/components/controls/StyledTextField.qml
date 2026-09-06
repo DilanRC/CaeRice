@@ -15,12 +15,12 @@ TextFieldBase {
 
     property int type: StyledTextField.Outlined
 
-    property int smallFontSize: Tokens.font.label.small.pointSize
+    property int smallFontSize: CortetsuTokens.font.label.small.pointSize
     readonly property real smallFontScale: smallFontSize / font.pointSize
 
-    property int verticalPadding: Tokens.padding.large
-    property int horizontalPadding: Tokens.padding.large
-    property int radius: Tokens.rounding.small
+    property int verticalPadding: CortetsuTokens.padding.large
+    property int horizontalPadding: CortetsuTokens.padding.large
+    property int radius: CortetsuTokens.rounding.small
     readonly property int clampedRadius: Math.min(horizontalPadding, Math.min(width, height) / 2, radius)
 
     property string leadingIcon
@@ -35,9 +35,9 @@ TextFieldBase {
     property var validate // Regex or function
     readonly property bool valid: !validate || (!text && emptyIsValid) || (validate instanceof RegExp ? validate.test(text) : !!validate(text))
     readonly property string effectiveSupportingText: isError && errorText ? errorText : supportingText
-    readonly property int supportingTextOffset: effectiveSupportingText ? supportingTextLoader.height + Tokens.spacing.extraSmall : 0
+    readonly property int supportingTextOffset: effectiveSupportingText ? supportingTextLoader.height + CortetsuTokens.spacing.extraSmall : 0
 
-    readonly property int filledOffset: type === StyledTextField.Filled ? Tokens.spacing.small : 0
+    readonly property int filledOffset: type === StyledTextField.Filled ? CortetsuTokens.spacing.small : 0
 
     leftPadding: horizontalPadding + leadingOffset
     rightPadding: horizontalPadding + trailingOffset
@@ -94,11 +94,11 @@ TextFieldBase {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: root.leftPadding
-            anchors.topMargin: Tokens.padding.extraSmall
+            anchors.topMargin: CortetsuTokens.padding.extraSmall
             renderType: Text.QtRendering
 
             text: root.placeholderText
-            color: root.isError ? Colours.palette.m3error : (root.activeFocus ? Colours.palette.m3primary : root.text ? Colours.palette.m3outline : root.placeholderTextColor)
+            color: root.isError ? CortetsuColours.palette.m3error : (root.activeFocus ? CortetsuColours.palette.m3primary : root.text ? CortetsuColours.palette.m3outline : root.placeholderTextColor)
 
             states: [
                 State {
@@ -107,7 +107,7 @@ TextFieldBase {
 
                     PropertyChanges {
                         placeholder.scale: root.smallFontScale
-                        placeholder.anchors.leftMargin: -(1 - root.smallFontScale) * placeholder.width / 2 + root.horizontalPadding + -root.Tokens.spacing.extraSmall
+                        placeholder.anchors.leftMargin: -(1 - root.smallFontScale) * placeholder.width / 2 + root.horizontalPadding + -root.CortetsuTokens.spacing.extraSmall
                     }
                     AnchorChanges {
                         target: placeholder
@@ -136,8 +136,8 @@ TextFieldBase {
                     type: Anim.DefaultEffects
                 }
                 AnchorAnim {
-                    duration: Tokens.anim.durations.expressiveDefaultEffects
-                    easing: Tokens.anim.expressiveDefaultEffects
+                    duration: CortetsuTokens.anim.durations.expressiveDefaultEffects
+                    easing: CortetsuTokens.anim.expressiveDefaultEffects
                 }
             }
         }
@@ -147,13 +147,13 @@ TextFieldBase {
 
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.padding.medium
+            anchors.leftMargin: CortetsuTokens.padding.medium
             active: root.leadingIcon
 
             sourceComponent: CortetsuIcon {
                 text: root.leadingIcon
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.builders.medium.scale(0.9).build()
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.builders.medium.scale(0.9).build()
             }
         }
 
@@ -162,13 +162,13 @@ TextFieldBase {
 
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.rightMargin: Tokens.padding.medium
+            anchors.rightMargin: CortetsuTokens.padding.medium
             active: root.trailingIcon
 
             sourceComponent: CortetsuIcon {
                 text: root.trailingIcon
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.builders.medium.scale(0.9).build()
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.builders.medium.scale(0.9).build()
             }
         }
     }
@@ -183,8 +183,8 @@ TextFieldBase {
 
         sourceComponent: CortetsuText {
             text: root.effectiveSupportingText
-            color: root.isError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.label.small
+            color: root.isError ? CortetsuColours.palette.m3error : CortetsuColours.palette.m3onSurfaceVariant
+            font: CortetsuTokens.font.label.small
         }
     }
 
@@ -204,12 +204,12 @@ TextFieldBase {
             ShapePath {
                 id: path
 
-                readonly property real outlineGap: placeholder.width * root.smallFontScale + root.Tokens.spacing.extraSmall * 2
+                readonly property real outlineGap: placeholder.width * root.smallFontScale + root.CortetsuTokens.spacing.extraSmall * 2
                 property real outlineGapScale: root.activeFocus || root.text ? 1 : 0
                 readonly property real inset: strokeWidth / 2
 
                 strokeWidth: root.activeFocus ? 2 : 1
-                strokeColor: root.isError ? Colours.palette.m3error : (root.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline)
+                strokeColor: root.isError ? CortetsuColours.palette.m3error : (root.activeFocus ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3outline)
                 fillColor: "transparent"
                 capStyle: ShapePath.RoundCap
 
@@ -281,14 +281,14 @@ TextFieldBase {
         CortetsuSurface {
             topLeftRadius: root.clampedRadius
             topRightRadius: root.clampedRadius
-            color: root.activeFocus ? Colours.tPalette.m3surfaceContainerHighest : Colours.tPalette.m3surfaceContainerHigh
+            color: root.activeFocus ? CortetsuColours.tPalette.m3surfaceContainerHighest : CortetsuColours.tPalette.m3surfaceContainerHigh
 
             CortetsuSurface {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 implicitHeight: root.activeFocus ? 2 : 1
-                color: root.isError ? Colours.palette.m3error : (root.activeFocus ? Colours.palette.m3primary : Colours.palette.m3outline)
+                color: root.isError ? CortetsuColours.palette.m3error : (root.activeFocus ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3outline)
 
                 Behavior on implicitHeight {
                     Anim {}

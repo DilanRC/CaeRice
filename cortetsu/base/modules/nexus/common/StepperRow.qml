@@ -26,10 +26,10 @@ ConnectedRect {
         id: rowLayout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
-        anchors.leftMargin: Tokens.padding.largeIncreased
-        anchors.rightMargin: Tokens.padding.largeIncreased
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.medium
+        anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+        anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+        spacing: CortetsuTokens.spacing.medium
 
         ColumnLayout {
             Layout.fillWidth: true
@@ -39,7 +39,7 @@ ConnectedRect {
                 id: label
 
                 Layout.fillWidth: true
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -47,8 +47,8 @@ ConnectedRect {
                 Layout.fillWidth: true
                 visible: root.subtext
                 text: root.subtext
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.label.small
                 elide: Text.ElideRight
             }
         }

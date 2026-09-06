@@ -34,17 +34,17 @@ Loader {
 
         Item {
             anchors.fill: parent
-            anchors.margins: -Tokens.padding.large
-            anchors.rightMargin: -Tokens.padding.large - CortetsuConfig.borderThickness
-            anchors.bottomMargin: -Tokens.padding.large - CortetsuConfig.borderThickness
+            anchors.margins: -CortetsuTokens.padding.large
+            anchors.rightMargin: -CortetsuTokens.padding.large - CortetsuConfig.borderThickness
+            anchors.bottomMargin: -CortetsuTokens.padding.large - CortetsuConfig.borderThickness
             opacity: 0.5
 
             CortetsuSurface {
                 anchors.fill: parent
                 anchors.rightMargin: -parent.width * (1 - root.deformMatrix.m11) / 2 // Additional bit to account for deform
                 anchors.bottomMargin: -parent.height * 0.1 // Additional bit to account for overshoot
-                topLeftRadius: Tokens.rounding.extraLarge
-                color: Colours.palette.m3scrim
+                topLeftRadius: CortetsuTokens.rounding.extraLarge
+                color: CortetsuColours.palette.m3scrim
             }
 
             Shape {
@@ -65,11 +65,11 @@ Loader {
 
                         GradientStop {
                             position: 0
-                            color: Qt.alpha(Colours.palette.m3scrim, 0)
+                            color: Qt.alpha(CortetsuColours.palette.m3scrim, 0)
                         }
                         GradientStop {
                             position: 1
-                            color: Colours.palette.m3scrim
+                            color: CortetsuColours.palette.m3scrim
                         }
                     }
 
@@ -105,11 +105,11 @@ Loader {
 
                         GradientStop {
                             position: 0
-                            color: Qt.alpha(Colours.palette.m3scrim, 0)
+                            color: Qt.alpha(CortetsuColours.palette.m3scrim, 0)
                         }
                         GradientStop {
                             position: 1
-                            color: Colours.palette.m3scrim
+                            color: CortetsuColours.palette.m3scrim
                         }
                     }
 
@@ -138,15 +138,15 @@ Loader {
 
         CortetsuSurface {
             anchors.centerIn: parent
-            radius: Tokens.rounding.extraLarge
-            color: Colours.palette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.extraLarge
+            color: CortetsuColours.palette.m3surfaceContainerHigh
 
             scale: 0
             Component.onCompleted: scale = Qt.binding(() => root.props.recordingConfirmDelete ? 1 : 0)
 
-            width: Math.min(parent.width - Tokens.padding.extraLargeIncreased, implicitWidth)
-            implicitWidth: deleteConfirmationLayout.implicitWidth + Tokens.padding.extraExtraLarge
-            implicitHeight: deleteConfirmationLayout.implicitHeight + Tokens.padding.extraExtraLarge
+            width: Math.min(parent.width - CortetsuTokens.padding.extraLargeIncreased, implicitWidth)
+            implicitWidth: deleteConfirmationLayout.implicitWidth + CortetsuTokens.padding.extraExtraLarge
+            implicitHeight: deleteConfirmationLayout.implicitHeight + CortetsuTokens.padding.extraExtraLarge
 
             MouseArea {
                 anchors.fill: parent
@@ -163,26 +163,26 @@ Loader {
                 id: deleteConfirmationLayout
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.large * 1.5
-                spacing: Tokens.spacing.medium
+                anchors.margins: CortetsuTokens.padding.large * 1.5
+                spacing: CortetsuTokens.spacing.medium
 
                 CortetsuText {
                     text: qsTr("Delete recording?")
-                    font: Tokens.font.body.large
+                    font: CortetsuTokens.font.body.large
                 }
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: qsTr("Recording '%1' will be permanently deleted.").arg(deleteConfirmation.path)
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
 
                 RowLayout {
-                    Layout.topMargin: Tokens.spacing.medium
+                    Layout.topMargin: CortetsuTokens.spacing.medium
                     Layout.alignment: Qt.AlignRight
-                    spacing: Tokens.spacing.medium
+                    spacing: CortetsuTokens.spacing.medium
 
                     TextButton {
                         text: qsTr("Cancel")

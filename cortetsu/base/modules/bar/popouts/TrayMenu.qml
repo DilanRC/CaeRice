@@ -44,8 +44,8 @@ StackView {
         property bool isSubMenu
         property bool shown
 
-        padding: Tokens.padding.small
-        spacing: Tokens.spacing.small
+        padding: CortetsuTokens.padding.small
+        spacing: CortetsuTokens.spacing.small
 
         opacity: shown ? 1 : 0
         scale: shown ? 1 : 0.8
@@ -79,11 +79,11 @@ StackView {
 
                 required property QsMenuEntry modelData
 
-                implicitWidth: Tokens.sizes.bar.trayMenuWidth
+                implicitWidth: CortetsuTokens.sizes.bar.trayMenuWidth
                 implicitHeight: modelData.isSeparator ? 1 : children.implicitHeight
 
-                radius: Tokens.rounding.full
-                color: modelData.isSeparator ? Colours.palette.m3outlineVariant : "transparent"
+                radius: CortetsuTokens.rounding.full
+                color: modelData.isSeparator ? CortetsuColours.palette.m3outlineVariant : "transparent"
 
                 Loader {
                     id: children
@@ -98,9 +98,9 @@ StackView {
                         implicitHeight: label.implicitHeight
 
                         CortetsuStateLayer {
-                            anchors.margins: -Tokens.padding.extraSmall / 2
-                            anchors.leftMargin: -Tokens.padding.small
-                            anchors.rightMargin: -Tokens.padding.small
+                            anchors.margins: -CortetsuTokens.padding.extraSmall / 2
+                            anchors.leftMargin: -CortetsuTokens.padding.small
+                            anchors.rightMargin: -CortetsuTokens.padding.small
 
                             radius: item.radius
                             disabled: !item.modelData.enabled
@@ -139,10 +139,10 @@ StackView {
                             id: label
 
                             anchors.left: icon.right
-                            anchors.leftMargin: icon.active ? Tokens.spacing.medium : 0
+                            anchors.leftMargin: icon.active ? CortetsuTokens.spacing.medium : 0
 
                             text: labelMetrics.elidedText
-                            color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
+                            color: item.modelData.enabled ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3outline
                         }
 
                         TextMetrics {
@@ -152,7 +152,7 @@ StackView {
                             font: label.font
 
                             elide: Text.ElideRight
-                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.medium : 0)
+                            elideWidth: root.CortetsuTokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.CortetsuTokens.spacing.medium : 0)
                         }
 
                         Loader {
@@ -166,7 +166,7 @@ StackView {
 
                             sourceComponent: CortetsuIcon {
                                 text: "chevron_right"
-                                color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
+                                color: item.modelData.enabled ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3outline
                             }
                         }
                     }
@@ -180,7 +180,7 @@ StackView {
 
             sourceComponent: Item {
                 implicitWidth: back.implicitWidth
-                implicitHeight: back.implicitHeight + Tokens.spacing.extraSmall
+                implicitHeight: back.implicitHeight + CortetsuTokens.spacing.extraSmall
 
                 Item {
                     anchors.bottom: parent.bottom
@@ -189,16 +189,16 @@ StackView {
 
                     CortetsuSurface {
                         anchors.fill: parent
-                        anchors.margins: -Tokens.padding.extraSmall / 2
-                        anchors.leftMargin: -Tokens.padding.small
-                        anchors.rightMargin: -Tokens.padding.large
+                        anchors.margins: -CortetsuTokens.padding.extraSmall / 2
+                        anchors.leftMargin: -CortetsuTokens.padding.small
+                        anchors.rightMargin: -CortetsuTokens.padding.large
 
-                        radius: Tokens.rounding.full
-                        color: Colours.palette.m3secondaryContainer
+                        radius: CortetsuTokens.rounding.full
+                        color: CortetsuColours.palette.m3secondaryContainer
 
                         CortetsuStateLayer {
                             radius: parent.radius
-                            color: Colours.palette.m3onSecondaryContainer
+                            color: CortetsuColours.palette.m3onSecondaryContainer
                             onClicked: root.pop()
                         }
                     }
@@ -211,13 +211,13 @@ StackView {
                         CortetsuIcon {
                             anchors.verticalCenter: parent.verticalCenter
                             text: "chevron_left"
-                            color: Colours.palette.m3onSecondaryContainer
+                            color: CortetsuColours.palette.m3onSecondaryContainer
                         }
 
                         CortetsuText {
                             anchors.verticalCenter: parent.verticalCenter
                             text: qsTr("Back")
-                            color: Colours.palette.m3onSecondaryContainer
+                            color: CortetsuColours.palette.m3onSecondaryContainer
                         }
                     }
                 }

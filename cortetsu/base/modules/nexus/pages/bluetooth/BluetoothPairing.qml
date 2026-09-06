@@ -31,7 +31,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         Connections {
             function onEnabledChanged(): void {
@@ -44,7 +44,7 @@ PageBase {
 
         ConnectedRect {
             Layout.fillWidth: true
-            implicitHeight: headerText.implicitHeight + Tokens.padding.medium * 2
+            implicitHeight: headerText.implicitHeight + CortetsuTokens.padding.medium * 2
             first: true
 
             CortetsuText {
@@ -52,12 +52,12 @@ PageBase {
 
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Tokens.padding.large
+                anchors.leftMargin: CortetsuTokens.padding.large
                 anchors.verticalCenterOffset: Math.round(fontInfo.pointSize * 0.2)
 
                 text: qsTr("Available devices")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.small
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.small
             }
         }
 
@@ -104,9 +104,9 @@ PageBase {
                 }
 
                 CortetsuStateLayer {
-                    radius: Tokens.rounding.extraSmall
-                    bottomLeftRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
-                    bottomRightRadius: newDevice.index === deviceList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
+                    radius: CortetsuTokens.rounding.extraSmall
+                    bottomLeftRadius: newDevice.index === deviceList?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
+                    bottomRightRadius: newDevice.index === deviceList?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
                     disabled: newDevice.modelData?.pairing ?? false
 
                     onClicked: {
@@ -119,15 +119,15 @@ PageBase {
                     id: newLayout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.largeIncreased
-                    anchors.rightMargin: Tokens.padding.largeIncreased
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.medium
+                    anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                    anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuIcon {
                         text: Icons.getBluetoothIcon(newDevice.modelData?.icon ?? "")
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                         opacity: newDevice.textOpacity
                     }
 
@@ -139,15 +139,15 @@ PageBase {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: newDevice.modelData?.name || qsTr("Unknown device")
-                            font: Tokens.font.body.small
+                            font: CortetsuTokens.font.body.small
                             elide: Text.ElideRight
                         }
 
                         CortetsuText {
                             Layout.fillWidth: true
                             text: newDevice.modelData?.pairing ? qsTr("Pairing...") : (newDevice.modelData?.address ?? "")
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuColours.palette.m3outline
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                             animate: true
                         }
@@ -159,7 +159,7 @@ PageBase {
                         opacity: newDevice.modelData?.pairing ? 1 : 0
 
                         sourceComponent: LoadingIndicator {
-                            implicitSize: Math.round(Tokens.font.icon.medium.pointSize * 1.3)
+                            implicitSize: Math.round(CortetsuTokens.font.icon.medium.pointSize * 1.3)
                         }
 
                         Behavior on opacity {
@@ -178,7 +178,7 @@ PageBase {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.margins: 1
-                implicitHeight: Tokens.rounding.extraSmall
+                implicitHeight: CortetsuTokens.rounding.extraSmall
                 indeterminate: true
 
                 Behavior on implicitHeight {

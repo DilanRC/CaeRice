@@ -12,9 +12,9 @@ CortetsuSurface {
     required property var dialog
 
     implicitWidth: Sizes.sidebarWidth
-    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
+    implicitHeight: inner.implicitHeight + CortetsuTokens.padding.medium * 2
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: CortetsuColours.tPalette.m3surfaceContainer
 
     ColumnLayout {
         id: inner
@@ -22,16 +22,16 @@ CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.medium
-        spacing: Tokens.spacing.extraSmall
+        anchors.margins: CortetsuTokens.padding.medium
+        spacing: CortetsuTokens.spacing.extraSmall
 
         CortetsuText {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.padding.extraSmall / 2
-            Layout.bottomMargin: Tokens.spacing.medium
+            Layout.topMargin: CortetsuTokens.padding.extraSmall / 2
+            Layout.bottomMargin: CortetsuTokens.spacing.medium
             text: qsTr("Files")
-            color: Colours.palette.m3onSurface
-            font: Tokens.font.body.builders.large.weight(Font.Bold).build()
+            color: CortetsuColours.palette.m3onSurface
+            font: CortetsuTokens.font.body.builders.large.weight(Font.Bold).build()
         }
 
         Repeater {
@@ -44,13 +44,13 @@ CortetsuSurface {
                 readonly property bool selected: modelData === root.dialog.cwd[root.dialog.cwd.length - 1]
 
                 Layout.fillWidth: true
-                implicitHeight: placeInner.implicitHeight + Tokens.padding.medium * 2
+                implicitHeight: placeInner.implicitHeight + CortetsuTokens.padding.medium * 2
 
-                radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
+                radius: CortetsuTokens.rounding.full
+                color: Qt.alpha(CortetsuColours.palette.m3secondaryContainer, selected ? 1 : 0)
 
                 CortetsuStateLayer {
-                    color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+                    color: place.selected ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurface
                     onClicked: {
                         if (place.modelData === "Home")
                             root.dialog.cwd = ["Home"];
@@ -63,11 +63,11 @@ CortetsuSurface {
                     id: placeInner
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.large
-                    anchors.rightMargin: Tokens.padding.large
+                    anchors.margins: CortetsuTokens.padding.medium
+                    anchors.leftMargin: CortetsuTokens.padding.large
+                    anchors.rightMargin: CortetsuTokens.padding.large
 
-                    spacing: Tokens.spacing.medium
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuIcon {
                         text: {
@@ -88,8 +88,8 @@ CortetsuSurface {
                                 return "video_library";
                             return "folder";
                         }
-                        color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        fontStyle: Tokens.font.icon.medium
+                        color: place.selected ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurface
+                        fontStyle: CortetsuTokens.font.icon.medium
                         fill: place.selected ? 1 : 0
 
                         Behavior on fill {
@@ -102,8 +102,8 @@ CortetsuSurface {
                     CortetsuText {
                         Layout.fillWidth: true
                         text: place.modelData
-                        color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font: Tokens.font.body.small
+                        color: place.selected ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurface
+                        font: CortetsuTokens.font.body.small
                         elide: Text.ElideRight
                     }
                 }

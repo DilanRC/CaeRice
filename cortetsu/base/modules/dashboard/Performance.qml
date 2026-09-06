@@ -9,8 +9,8 @@ import qs.services
 Item {
     id: root
 
-    implicitWidth: placeholder.active ? Tokens.sizes.dashboard.perfPlaceholderWidth : content.implicitWidth
-    implicitHeight: placeholder.active ? placeholder.implicitHeight + Tokens.padding.extraLarge * 2 : content.implicitHeight
+    implicitWidth: placeholder.active ? CortetsuTokens.sizes.dashboard.perfPlaceholderWidth : content.implicitWidth
+    implicitHeight: placeholder.active ? placeholder.implicitHeight + CortetsuTokens.padding.extraLarge * 2 : content.implicitHeight
 
     Loader {
         id: placeholder
@@ -20,28 +20,28 @@ Item {
         asynchronous: true
 
         sourceComponent: ColumnLayout {
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
-                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
-                color: Colours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(2).build()
+                color: CortetsuColours.palette.m3onSurfaceVariant
             }
 
             CortetsuText {
-                Layout.topMargin: -Tokens.spacing.small
+                Layout.topMargin: -CortetsuTokens.spacing.small
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("No widgets enabled")
-                font: Tokens.font.title.large
-                color: Colours.palette.m3onSurface
+                font: CortetsuTokens.font.title.large
+                color: CortetsuColours.palette.m3onSurface
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enable widgets in the dashboard settings")
-                font: Tokens.font.body.small
-                color: Colours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3onSurfaceVariant
             }
         }
     }
@@ -51,17 +51,17 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
         visible: !placeholder.active
 
         ColumnLayout {
             id: mainColumn
 
             Layout.fillWidth: true
-            spacing: Tokens.spacing.medium
+            spacing: CortetsuTokens.spacing.medium
 
             RowLayout {
-                spacing: Tokens.spacing.medium
+                spacing: CortetsuTokens.spacing.medium
                 visible: cpuCard.active || gpuCard.active
 
                 WrappedLoader {
@@ -75,7 +75,7 @@ Item {
                         subLabel: Cpu.name
                         usage: Cpu.percentage
                         temperature: Cpu.temperature
-                        accent: Colours.palette.m3primary
+                        accent: CortetsuColours.palette.m3primary
 
                     }
                 }
@@ -91,14 +91,14 @@ Item {
                         subLabel: Gpu.name
                         usage: Gpu.percentage
                         temperature: Gpu.temperature
-                        accent: Colours.palette.m3secondary
+                        accent: CortetsuColours.palette.m3secondary
 
                     }
                 }
             }
 
             RowLayout {
-                spacing: Tokens.spacing.medium
+                spacing: CortetsuTokens.spacing.medium
                 visible: storageCard.active || networkCard.active || memoryCard.active
 
                 WrappedLoader {

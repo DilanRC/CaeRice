@@ -44,15 +44,15 @@ CortetsuSurface {
 
     clip: true
     y: offset + mask.y
-    implicitWidth: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+    implicitWidth: CortetsuTokens.sizes.bar.innerWidth - CortetsuTokens.padding.small
     implicitHeight: size
-    radius: Tokens.rounding.full
-    color: Colours.palette.m3primary
+    radius: CortetsuTokens.rounding.full
+    color: CortetsuColours.palette.m3primary
 
     Colouriser {
         source: root.mask
-        sourceColor: Colours.palette.m3onSurface
-        colorizationColor: Colours.palette.m3onPrimary
+        sourceColor: CortetsuColours.palette.m3onSurface
+        colorizationColor: CortetsuColours.palette.m3onPrimary
 
         x: 0
         y: -parent.offset
@@ -72,7 +72,7 @@ CortetsuSurface {
         enabled: CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {
-            duration: Tokens.anim.durations.normal * 2
+            duration: CortetsuTokens.anim.durations.normal * 2
         }
     }
 

@@ -31,9 +31,9 @@ CortetsuSurface {
     }
 
     readonly property int nonAnimHeight: {
-        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0);
+        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(CortetsuTokens.spacing.extraSmall) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight;
-        return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.medium * 2);
+        return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + CortetsuTokens.padding.medium * 2);
     }
     readonly property bool expanded: props.expandedNotifs.includes(modelData)
 
@@ -56,8 +56,8 @@ CortetsuSurface {
     implicitHeight: nonAnimHeight
 
     clip: true
-    radius: Tokens.rounding.large
-    color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+    radius: CortetsuTokens.rounding.large
+    color: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainer, 2)
 
     Behavior on implicitHeight {
         Anim {}
@@ -69,9 +69,9 @@ CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -101,7 +101,7 @@ CortetsuSurface {
                 ColouredIcon {
                     implicitSize: Math.round(TokenConfig.sizes.notifs.image * 0.6)
                     source: Quickshell.iconPath(root.appIcon)
-                    colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                    colour: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : root.urgency === NotificationUrgency.Low ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
                     layer.enabled: root.appIcon.endsWith("symbolic")
                 }
             }
@@ -111,15 +111,15 @@ CortetsuSurface {
 
                 CortetsuIcon {
                     text: Icons.getNotifIcon(root.activeNotifs[0]?.summary, root.urgency)
-                    color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.medium
+                    color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : root.urgency === NotificationUrgency.Low ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
+                    fontStyle: CortetsuTokens.font.icon.medium
                 }
             }
 
             StyledClippingRect {
                 anchors.fill: parent
-                color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHigh, 3) : Colours.palette.m3secondaryContainer
-                radius: Tokens.rounding.full
+                color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3error : root.urgency === NotificationUrgency.Low ? CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 3) : CortetsuColours.palette.m3secondaryContainer
+                radius: CortetsuTokens.rounding.full
 
                 Loader {
                     asynchronous: true
@@ -136,17 +136,17 @@ CortetsuSurface {
                 active: root.appIcon && root.image
 
                 sourceComponent: CortetsuSurface {
-                    implicitWidth: Tokens.sizes.notifs.badge
-                    implicitHeight: Tokens.sizes.notifs.badge
+                    implicitWidth: CortetsuTokens.sizes.notifs.badge
+                    implicitHeight: CortetsuTokens.sizes.notifs.badge
 
-                    color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3secondaryContainer
-                    radius: Tokens.rounding.full
+                    color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3error : root.urgency === NotificationUrgency.Low ? CortetsuColours.palette.m3surfaceContainerHigh : CortetsuColours.palette.m3secondaryContainer
+                    radius: CortetsuTokens.rounding.full
 
                     ColouredIcon {
                         anchors.centerIn: parent
-                        implicitSize: Math.round(Tokens.sizes.notifs.badge * 0.6)
+                        implicitSize: Math.round(CortetsuTokens.sizes.notifs.badge * 0.6)
                         source: Quickshell.iconPath(root.appIcon)
-                        colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                        colour: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : root.urgency === NotificationUrgency.Low ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
                         layer.enabled: root.appIcon.endsWith("symbolic")
                     }
                 }
@@ -157,7 +157,7 @@ CortetsuSurface {
             id: column
 
             Layout.fillWidth: true
-            spacing: root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0
+            spacing: root.expanded ? Math.round(CortetsuTokens.spacing.extraSmall) : 0
 
             Behavior on spacing {
                 Anim {}
@@ -168,32 +168,32 @@ CortetsuSurface {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                spacing: Tokens.spacing.small
+                spacing: CortetsuTokens.spacing.small
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: root.modelData
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     animate: true
                     text: root.activeNotifs[0]?.timeStr ?? ""
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.small
                 }
 
                 CortetsuSurface {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
-                    implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
+                    implicitWidth: expandBtn.implicitWidth + CortetsuTokens.padding.large
+                    implicitHeight: groupCount.implicitHeight + CortetsuTokens.padding.extraSmall
 
-                    color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
-                    radius: Tokens.rounding.full
+                    color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3error : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 3)
+                    radius: CortetsuTokens.rounding.full
 
                     CortetsuStateLayer {
-                        color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                        color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurface
                         onClicked: root.toggleExpand(!root.expanded)
                     }
 
@@ -201,24 +201,24 @@ CortetsuSurface {
                         id: expandBtn
 
                         anchors.centerIn: parent
-                        spacing: Tokens.spacing.extraSmall
+                        spacing: CortetsuTokens.spacing.extraSmall
 
                         CortetsuText {
                             id: groupCount
 
-                            Layout.leftMargin: Tokens.padding.extraSmall / 2
+                            Layout.leftMargin: CortetsuTokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifCount
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
-                            font: Tokens.font.body.small
+                            color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurfaceVariant
+                            font: CortetsuTokens.font.body.small
                         }
 
                         CortetsuIcon {
-                            Layout.rightMargin: -Tokens.padding.extraSmall / 2
+                            Layout.rightMargin: -CortetsuTokens.padding.extraSmall / 2
                             text: "expand_more"
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
+                            color: root.urgency === NotificationUrgency.Critical ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurfaceVariant
                             rotation: root.expanded ? 180 : 0
-                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall) : 0
+                            Layout.topMargin: root.expanded ? -Math.floor(CortetsuTokens.padding.extraSmall) : 0
 
                             Behavior on rotation {
                                 Anim {}

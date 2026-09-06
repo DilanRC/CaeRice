@@ -27,11 +27,11 @@ StyledClippingRect {
 
     property real blur: onSpecial ? 1 : 0
 
-    implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: layout.implicitHeight + Tokens.padding.small
+    implicitWidth: CortetsuTokens.sizes.bar.innerWidth
+    implicitHeight: layout.implicitHeight + CortetsuTokens.padding.small
 
-    color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.full
+    color: CortetsuColours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.full
 
     Item {
         anchors.fill: parent
@@ -51,7 +51,7 @@ StyledClippingRect {
             active: CortetsuConfig.bar.workspaces.occupiedBg
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.extraSmall
+            anchors.margins: CortetsuTokens.padding.extraSmall
 
             sourceComponent: OccupiedBg {
                 workspaces: workspaces
@@ -64,7 +64,7 @@ StyledClippingRect {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Math.floor(Tokens.spacing.extraSmall)
+            spacing: Math.floor(CortetsuTokens.spacing.extraSmall)
 
             Repeater {
                 id: workspaces
@@ -122,7 +122,7 @@ StyledClippingRect {
         asynchronous: true
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.extraSmall
+        anchors.margins: CortetsuTokens.padding.extraSmall
 
         active: opacity > 0
 

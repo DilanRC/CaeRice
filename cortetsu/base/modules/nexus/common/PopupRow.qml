@@ -30,16 +30,16 @@ ConnectedRect {
         id: navLayout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.medium
-        anchors.leftMargin: Tokens.padding.largeIncreased
-        anchors.rightMargin: Tokens.padding.largeIncreased
-        spacing: Tokens.spacing.medium
+        anchors.margins: CortetsuTokens.padding.medium
+        anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+        anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuIcon {
             id: icon
 
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.medium
+            color: CortetsuColours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.medium
         }
 
         ColumnLayout {
@@ -50,7 +50,7 @@ ConnectedRect {
                 id: label
 
                 Layout.fillWidth: true
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
                 elide: Text.ElideRight
             }
 
@@ -59,8 +59,8 @@ ConnectedRect {
 
                 Layout.fillWidth: true
                 visible: text
-                color: Colours.palette.m3outline
-                font: Tokens.font.label.small
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.label.small
                 elide: Text.ElideRight
                 animate: true
             }
@@ -109,11 +109,11 @@ ConnectedRect {
                         tWatcher.transform;
                         return triggerArea.mapToItem(area.parent, 0, 0).y;
                     }
-                    padding: Tokens.padding.small
+                    padding: CortetsuTokens.padding.small
                     content: root.content
                     pressOverride: stateLayer.pressed
                     hoverOverride: stateLayer.containsMouse
-                    color: open || hovered || stateLayer.containsMouse ? Colours.palette.m3secondaryContainer : Colours.palette.m3surfaceContainerHighest
+                    color: open || hovered || stateLayer.containsMouse ? CortetsuColours.palette.m3secondaryContainer : CortetsuColours.palette.m3surfaceContainerHighest
                 }
             }
         }

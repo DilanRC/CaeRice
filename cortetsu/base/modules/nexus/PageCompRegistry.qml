@@ -193,27 +193,27 @@ QtObject {
 
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: Tokens.padding.extraSmall
+            spacing: CortetsuTokens.padding.extraSmall
 
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "handyman"
-                color: Colours.palette.m3outlineVariant
-                fontStyle: Tokens.font.icon.extraLarge
+                color: CortetsuColours.palette.m3outlineVariant
+                fontStyle: CortetsuTokens.font.icon.extraLarge
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Page under construction")
-                color: Colours.palette.m3outlineVariant
-                font: Tokens.font.title.large
+                color: CortetsuColours.palette.m3outlineVariant
+                font: CortetsuTokens.font.title.large
             }
 
             CortetsuText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("This page will be available in a future update.")
-                color: Colours.palette.m3outlineVariant
-                font: Tokens.font.body.large
+                color: CortetsuColours.palette.m3outlineVariant
+                font: CortetsuTokens.font.body.large
             }
         }
     }

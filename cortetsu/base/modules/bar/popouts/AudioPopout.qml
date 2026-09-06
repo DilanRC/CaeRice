@@ -13,8 +13,8 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.medium * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: layout.implicitWidth + CortetsuTokens.padding.medium * 2
+    implicitHeight: layout.implicitHeight + CortetsuTokens.padding.medium * 2
 
     ButtonGroup {
         id: sinks
@@ -29,11 +29,11 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             text: qsTr("Output device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+            font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
         Repeater {
@@ -52,9 +52,9 @@ Item {
         }
 
         CortetsuText {
-            Layout.topMargin: Tokens.spacing.medium
+            Layout.topMargin: CortetsuTokens.spacing.medium
             text: qsTr("Input device")
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+            font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
         Repeater {
@@ -71,14 +71,14 @@ Item {
         }
 
         CortetsuText {
-            Layout.topMargin: Tokens.spacing.medium
+            Layout.topMargin: CortetsuTokens.spacing.medium
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+            font: CortetsuTokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
         CustomMouseArea {
             Layout.fillWidth: true
-            implicitHeight: Tokens.padding.medium * 3
+            implicitHeight: CortetsuTokens.padding.medium * 3
 
             onWheel: event => {
                 if (event.angleDelta.y > 0)
@@ -99,10 +99,10 @@ Item {
 
         IconTextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.medium
-            inactiveColour: Colours.palette.m3primaryContainer
-            inactiveOnColour: Colours.palette.m3onPrimaryContainer
-            verticalPadding: Tokens.padding.extraSmall
+            Layout.topMargin: CortetsuTokens.spacing.medium
+            inactiveColour: CortetsuColours.palette.m3primaryContainer
+            inactiveOnColour: CortetsuColours.palette.m3onPrimaryContainer
+            verticalPadding: CortetsuTokens.padding.extraSmall
             text: qsTr("Open settings")
             icon: "settings"
 

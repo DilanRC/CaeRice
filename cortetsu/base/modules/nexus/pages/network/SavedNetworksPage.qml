@@ -20,7 +20,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         ItemList {
             id: savedList
@@ -46,11 +46,11 @@ PageBase {
                 anchors.left: savedList.list.contentItem.left
                 anchors.right: savedList.list.contentItem.right
                 implicitHeight: savedLayout.implicitHeight + savedLayout.anchors.margins * 2
-                radius: Tokens.rounding.extraSmall
-                topLeftRadius: index === 0 ? Tokens.rounding.extraLarge : radius
-                topRightRadius: index === 0 ? Tokens.rounding.extraLarge : radius
-                bottomLeftRadius: index === savedList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
-                bottomRightRadius: index === savedList?.list.count - 1 ? Tokens.rounding.extraLarge : radius
+                radius: CortetsuTokens.rounding.extraSmall
+                topLeftRadius: index === 0 ? CortetsuTokens.rounding.extraLarge : radius
+                topRightRadius: index === 0 ? CortetsuTokens.rounding.extraLarge : radius
+                bottomLeftRadius: index === savedList?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
+                bottomRightRadius: index === savedList?.list.count - 1 ? CortetsuTokens.rounding.extraLarge : radius
                 anchors.fill: undefined
 
                 onClicked: {
@@ -63,15 +63,15 @@ PageBase {
                     id: savedLayout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.large
-                    anchors.leftMargin: Tokens.padding.extraLarge
-                    anchors.rightMargin: Tokens.padding.extraLarge
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.large
+                    anchors.leftMargin: CortetsuTokens.padding.extraLarge
+                    anchors.rightMargin: CortetsuTokens.padding.extraLarge
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuIcon {
                         text: saved.ap ? Icons.getNetworkIcon(saved.ap.strength, !["", "none"].includes(Nmcli.savedSecurityFor(saved.modelData))) : "signal_wifi_off"
-                        color: saved.isActive ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: saved.isActive ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     ColumnLayout {
@@ -81,7 +81,7 @@ PageBase {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: saved.modelData
-                            font: Tokens.font.body.small
+                            font: CortetsuTokens.font.body.small
                             elide: Text.ElideRight
                         }
 
@@ -97,16 +97,16 @@ PageBase {
                                     return qsTr("Connected • %1").arg(security);
                                 return security;
                             }
-                            color: saved.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: saved.isActive ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3outline
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                         }
                     }
 
                     CortetsuIcon {
                         text: "chevron_right"
-                        color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.medium
+                        color: CortetsuColours.palette.m3onSurfaceVariant
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
                 }
             }

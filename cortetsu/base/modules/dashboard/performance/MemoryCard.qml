@@ -7,41 +7,41 @@ import qs.services
 CortetsuSurface {
     id: root
 
-    readonly property color accent: Colours.palette.m3tertiary
+    readonly property color accent: CortetsuColours.palette.m3tertiary
 
-    color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.medium
+    color: CortetsuColours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.medium
 
-    implicitWidth: layout.implicitWidth + Tokens.padding.extraLargeIncreased * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitWidth: layout.implicitWidth + CortetsuTokens.padding.extraLargeIncreased * 2
+    implicitHeight: layout.implicitHeight + CortetsuTokens.padding.large * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
 
         RowLayout {
-            Layout.leftMargin: -Tokens.padding.extraSmall
-            spacing: Tokens.spacing.small
+            Layout.leftMargin: -CortetsuTokens.padding.extraSmall
+            spacing: CortetsuTokens.spacing.small
 
             CortetsuIcon {
                 text: "memory_alt"
                 fill: 1
                 color: root.accent
-                fontStyle: Tokens.font.icon.builders.medium.weight(Font.DemiBold).build() // DemiBold to fix fill issues
+                fontStyle: CortetsuTokens.font.icon.builders.medium.weight(Font.DemiBold).build() // DemiBold to fix fill issues
             }
 
             CortetsuText {
                 text: qsTr("Memory")
-                font: Tokens.font.title.medium
+                font: CortetsuTokens.font.title.medium
             }
         }
 
         CircularProgress {
-            Layout.topMargin: Tokens.spacing.large
+            Layout.topMargin: CortetsuTokens.spacing.large
             Layout.alignment: Qt.AlignHCenter
-            implicitSize: usageColumn.implicitHeight + thickness + Tokens.padding.largeIncreased * 2
+            implicitSize: usageColumn.implicitHeight + thickness + CortetsuTokens.padding.largeIncreased * 2
             startAngle: -225
             sweepAngle: 270
 
@@ -56,21 +56,21 @@ CortetsuSurface {
                 id: usageColumn
 
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: Tokens.padding.extraSmall
+                anchors.verticalCenterOffset: CortetsuTokens.padding.extraSmall
                 spacing: 0
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: Math.round(Memory.percentage * 100) + "%"
-                    font: Tokens.font.title.builders.large.width(90).build()
+                    font: CortetsuTokens.font.title.builders.large.width(90).build()
                     color: root.accent
                 }
 
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Used")
-                    font: Tokens.font.body.small
-                    color: Colours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
                 }
             }
         }
@@ -81,7 +81,7 @@ CortetsuSurface {
                 const fmt = UsageFmt.formatKib(Memory.used, Memory.total);
                 return `${+fmt.value.toFixed(1)} / ${+fmt.total.toFixed(1)} ${fmt.unit}`;
             }
-            font: Tokens.font.body.medium
+            font: CortetsuTokens.font.body.medium
         }
     }
 }

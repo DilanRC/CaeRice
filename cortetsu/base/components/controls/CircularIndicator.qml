@@ -17,10 +17,10 @@ BusyIndicator {
         Completing
     }
 
-    property real implicitSize: Tokens.font.body.medium.pointSize * 3
-    property real strokeWidth: Tokens.padding.extraSmall
-    property color fgColour: Colours.palette.m3primary
-    property color bgColour: Colours.palette.m3secondaryContainer
+    property real implicitSize: CortetsuTokens.font.body.medium.pointSize * 3
+    property real strokeWidth: CortetsuTokens.padding.extraSmall
+    property color fgColour: CortetsuColours.palette.m3primary
+    property color bgColour: CortetsuColours.palette.m3secondaryContainer
 
     property alias type: manager.indeterminateAnimationType
     readonly property alias progress: manager.progress
@@ -63,7 +63,7 @@ BusyIndicator {
         Anim {
             type: Anim.DefaultEffects
             properties: "opacity,internalStrokeWidth"
-            duration: manager.completeEndDuration * Tokens.anim.durations.scale
+            duration: manager.completeEndDuration * CortetsuTokens.anim.durations.scale
         }
     }
 
@@ -90,7 +90,7 @@ BusyIndicator {
         property: "progress"
         from: 0
         to: 1
-        duration: manager.duration * Tokens.anim.durations.scale
+        duration: manager.duration * CortetsuTokens.anim.durations.scale
     }
 
     NumberAnimation {
@@ -99,7 +99,7 @@ BusyIndicator {
         property: "completeEndProgress"
         from: 0
         to: 1
-        duration: manager.completeEndDuration * Tokens.anim.durations.scale
+        duration: manager.completeEndDuration * CortetsuTokens.anim.durations.scale
         onFinished: {
             if (root.animState === CircularIndicator.Completing)
                 root.animState = CircularIndicator.Stopped;

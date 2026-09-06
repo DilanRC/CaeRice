@@ -8,7 +8,7 @@ Item {
     anchors.centerIn: parent
 
     implicitWidth: icon.implicitWidth + info.implicitWidth + info.anchors.leftMargin
-    implicitHeight: Math.max(icon.implicitHeight, info.implicitHeight) + Tokens.padding.largeIncreased * 2
+    implicitHeight: Math.max(icon.implicitHeight, info.implicitHeight) + CortetsuTokens.padding.largeIncreased * 2
 
     Component.onCompleted: Weather.reload()
 
@@ -20,8 +20,8 @@ Item {
 
         animate: true
         text: Weather.icon
-        color: Colours.palette.m3secondary
-        fontStyle: Tokens.font.icon.builders.extraLarge.scale(1.6).build()
+        color: CortetsuColours.palette.m3secondary
+        fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(1.6).build()
     }
 
     Column {
@@ -29,17 +29,17 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: icon.right
-        anchors.leftMargin: Tokens.spacing.largeIncreased
+        anchors.leftMargin: CortetsuTokens.spacing.largeIncreased
 
-        spacing: Tokens.spacing.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
 
         CortetsuText {
             anchors.horizontalCenter: parent.horizontalCenter
 
             animate: true
             text: Weather.temp
-            color: Colours.palette.m3primary
-            font: Tokens.font.headline.builders.medium.width(110).weight(Font.DemiBold).build()
+            color: CortetsuColours.palette.m3primary
+            font: CortetsuTokens.font.headline.builders.medium.width(110).weight(Font.DemiBold).build()
         }
 
         CortetsuText {
@@ -47,10 +47,10 @@ Item {
 
             animate: true
             text: Weather.description
-            font: Tokens.font.body.small
+            font: CortetsuTokens.font.body.small
 
             elide: Text.ElideRight
-            width: Math.min(implicitWidth, root.parent.width - icon.implicitWidth - info.anchors.leftMargin - Tokens.padding.extraLargeIncreased)
+            width: Math.min(implicitWidth, root.parent.width - icon.implicitWidth - info.anchors.leftMargin - CortetsuTokens.padding.extraLargeIncreased)
         }
     }
 }

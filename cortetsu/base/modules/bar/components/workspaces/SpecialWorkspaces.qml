@@ -31,7 +31,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
 
             gradient: Gradient {
                 orientation: Gradient.Vertical
@@ -60,7 +60,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             implicitHeight: parent.height / 2
             opacity: view.contentY > 0 ? 0 : 1
 
@@ -76,9 +76,9 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             implicitHeight: parent.height / 2
-            opacity: view.contentY < view.contentHeight - parent.height + Tokens.padding.extraSmall ? 0 : 1
+            opacity: view.contentY < view.contentHeight - parent.height + CortetsuTokens.padding.extraSmall ? 0 : 1
 
             Behavior on opacity {
                 Anim {
@@ -92,7 +92,7 @@ Item {
         id: view
 
         anchors.fill: parent
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
         interactive: false
 
         currentIndex: model.values.findIndex(w => w.name === root.activeSpecial)
@@ -123,7 +123,7 @@ Item {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
         }
 
@@ -144,7 +144,7 @@ Item {
             Anim {
                 properties: "scale"
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -155,7 +155,7 @@ Item {
             Anim {
                 properties: "scale"
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -178,13 +178,13 @@ Item {
                 y: (view.currentItem?.y ?? 0) - view.contentY
                 implicitHeight: (view.currentItem as SpecialWsDelegate)?.size ?? 0
 
-                color: Colours.palette.m3tertiary
-                radius: Tokens.rounding.full
+                color: CortetsuColours.palette.m3tertiary
+                radius: CortetsuTokens.rounding.full
 
                 Colouriser {
                     source: view
-                    sourceColor: Colours.palette.m3onSurface
-                    colorizationColor: Colours.palette.m3onTertiary
+                    sourceColor: CortetsuColours.palette.m3onSurface
+                    colorizationColor: CortetsuColours.palette.m3onTertiary
 
                     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -217,7 +217,7 @@ Item {
         drag.target: view.contentItem
         drag.axis: Drag.YAxis
         drag.maximumY: 0
-        drag.minimumY: Math.min(0, view.height - view.contentHeight - Tokens.padding.extraSmall)
+        drag.minimumY: Math.min(0, view.height - view.contentHeight - CortetsuTokens.padding.extraSmall)
 
         onPressed: event => startY = event.y
 
@@ -237,7 +237,7 @@ Item {
         id: ws
 
         required property HyprlandWorkspace modelData
-        readonly property int size: label.Layout.preferredHeight + (hasWindows ? windows.implicitHeight + Tokens.padding.extraSmall : 0)
+        readonly property int size: label.Layout.preferredHeight + (hasWindows ? windows.implicitHeight + CortetsuTokens.padding.extraSmall : 0)
         property int wsId
         property string icon
         property bool hasWindows
@@ -288,7 +288,7 @@ Item {
             asynchronous: true
 
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.preferredHeight: Tokens.sizes.bar.innerWidth - Tokens.padding.small
+            Layout.preferredHeight: CortetsuTokens.sizes.bar.innerWidth - CortetsuTokens.padding.small
 
             sourceComponent: ws.icon.length === 1 ? letterComp : iconComp
 
@@ -332,7 +332,7 @@ Item {
                         properties: "scale"
                         from: 0
                         to: 1
-                        easing: Tokens.anim.standardDecel
+                        easing: CortetsuTokens.anim.standardDecel
                     }
                 }
 
@@ -340,7 +340,7 @@ Item {
                     Anim {
                         properties: "scale"
                         to: 1
-                        easing: Tokens.anim.standardDecel
+                        easing: CortetsuTokens.anim.standardDecel
                     }
                     Anim {
                         properties: "x,y"
@@ -361,7 +361,7 @@ Item {
 
                         grade: 0
                         text: Icons.getAppCategoryIcon(modelData.lastIpcObject.class, "terminal")
-                        color: Colours.palette.m3onSurfaceVariant
+                        color: CortetsuColours.palette.m3onSurfaceVariant
                     }
                 }
             }

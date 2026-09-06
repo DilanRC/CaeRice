@@ -13,13 +13,13 @@ PageBase {
 
     title: qsTr("All networks")
     isSubPage: true
-    flickable.bottomMargin: Tokens.padding.extraExtraLarge * 2 // Extra scrolling space at the bottom
+    flickable.bottomMargin: CortetsuTokens.padding.extraExtraLarge * 2 // Extra scrolling space at the bottom
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         Timer {
             running: root.visible && Nmcli.wifiEnabled
@@ -31,7 +31,7 @@ PageBase {
 
         ConnectedRect {
             Layout.fillWidth: true
-            implicitHeight: headerLayout.implicitHeight + Tokens.padding.medium * 2
+            implicitHeight: headerLayout.implicitHeight + CortetsuTokens.padding.medium * 2
             first: true
 
             RowLayout {
@@ -40,15 +40,15 @@ PageBase {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Tokens.padding.largeIncreased
-                anchors.rightMargin: Tokens.padding.large
+                anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                anchors.rightMargin: CortetsuTokens.padding.large
                 anchors.verticalCenterOffset: 1
 
-                spacing: Tokens.spacing.extraSmall / 2
+                spacing: CortetsuTokens.spacing.extraSmall / 2
 
                 CortetsuText {
                     text: qsTr("Filters")
-                    font: Tokens.font.title.small
+                    font: CortetsuTokens.font.title.small
                 }
 
                 Item {
@@ -157,12 +157,12 @@ PageBase {
 
         onClicked: filterState = (filterState + 1) % 3
 
-        defaultRadius: filterState > 0 ? implicitHeight / 2 : Tokens.rounding.small
-        pressedRadius: Tokens.rounding.extraSmall
-        spacing: Tokens.spacing.extraSmall
+        defaultRadius: filterState > 0 ? implicitHeight / 2 : CortetsuTokens.rounding.small
+        pressedRadius: CortetsuTokens.rounding.extraSmall
+        spacing: CortetsuTokens.spacing.extraSmall
 
         icon: ["check_indeterminate_small", "check", "close"][filterState]
-        inactiveColour: [Colours.palette.m3secondaryContainer, Colours.palette.m3secondary, Colours.palette.m3tertiary][filterState]
-        inactiveOnColour: [Colours.palette.m3onSecondaryContainer, Colours.palette.m3onSecondary, Colours.palette.m3onTertiary][filterState]
+        inactiveColour: [CortetsuColours.palette.m3secondaryContainer, CortetsuColours.palette.m3secondary, CortetsuColours.palette.m3tertiary][filterState]
+        inactiveOnColour: [CortetsuColours.palette.m3onSecondaryContainer, CortetsuColours.palette.m3onSecondary, CortetsuColours.palette.m3onTertiary][filterState]
     }
 }

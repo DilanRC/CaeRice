@@ -12,12 +12,12 @@ Slider {
     property bool animateWave
     property real waveFrequency: 6
     property int waveDuration: 1000
-    property int radius: Tokens.rounding.medium
+    property int radius: CortetsuTokens.rounding.medium
     property bool interactionOnMove: true
     readonly property bool dragging: mouse.pressed
 
-    property color fgColour: enabled ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3onSurface, 0.38)
-    property color bgColour: enabled ? Colours.palette.m3secondaryContainer : Qt.alpha(Colours.palette.m3onSurface, 0.1)
+    property color fgColour: enabled ? CortetsuColours.palette.m3primary : Qt.alpha(CortetsuColours.palette.m3onSurface, 0.38)
+    property color bgColour: enabled ? CortetsuColours.palette.m3secondaryContainer : Qt.alpha(CortetsuColours.palette.m3onSurface, 0.1)
 
     property real pos: visualPosition
     property real filledWidth
@@ -42,14 +42,14 @@ Slider {
             anchors.left: handle.right
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.spacing.extraSmall
+            anchors.leftMargin: CortetsuTokens.spacing.extraSmall
 
             implicitHeight: parent.height * (parent.height <= 12 ? opacity : Math.min(opacity * 2, 1))
             opacity: Math.min(width, 12) / 12
 
             radius: root.radius
-            topLeftRadius: Tokens.rounding.extraSmall / 2
-            bottomLeftRadius: Tokens.rounding.extraSmall / 2
+            topLeftRadius: CortetsuTokens.rounding.extraSmall / 2
+            bottomLeftRadius: CortetsuTokens.rounding.extraSmall / 2
             color: root.bgColour
         }
 
@@ -62,7 +62,7 @@ Slider {
             implicitHeight: 4 * remaining.opacity
             opacity: remaining.opacity
 
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             color: root.fgColour
         }
 
@@ -71,7 +71,7 @@ Slider {
 
             anchors.left: filled.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: Tokens.spacing.extraSmall
+            anchors.leftMargin: CortetsuTokens.spacing.extraSmall
 
             implicitWidth: 4
             implicitHeight: {
@@ -80,7 +80,7 @@ Slider {
                 return parent.height * (mouse.pressed ? lerp(3.5, 1.5) : lerp(3, 1.2));
             }
 
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             color: root.fgColour
 
             Behavior on implicitHeight {
@@ -108,8 +108,8 @@ Slider {
                 implicitHeight: root.height
 
                 radius: root.radius
-                topRightRadius: Tokens.rounding.extraSmall / 2
-                bottomRightRadius: Tokens.rounding.extraSmall / 2
+                topRightRadius: CortetsuTokens.rounding.extraSmall / 2
+                bottomRightRadius: CortetsuTokens.rounding.extraSmall / 2
                 color: root.fgColour
             }
         }

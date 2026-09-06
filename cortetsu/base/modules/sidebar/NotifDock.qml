@@ -19,7 +19,7 @@ Item {
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
     anchors.fill: parent
-    anchors.margins: Tokens.padding.medium
+    anchors.margins: CortetsuTokens.padding.medium
 
     Component.onCompleted: Notifs.list.forEach(n => n.popup = false)
 
@@ -29,7 +29,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.extraSmall
+        anchors.margins: CortetsuTokens.padding.extraSmall
 
         implicitHeight: Math.max(count.implicitHeight, titleText.implicitHeight)
 
@@ -42,8 +42,8 @@ Item {
             opacity: root.notifCount > 0 ? 1 : 0
 
             text: root.notifCount
-            color: Colours.palette.m3outline
-            font: Tokens.font.label.large
+            color: CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.label.large
 
             Behavior on anchors.leftMargin {
                 Anim {}
@@ -62,11 +62,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: count.right
             anchors.right: parent.right
-            anchors.leftMargin: Tokens.spacing.extraSmall
+            anchors.leftMargin: CortetsuTokens.spacing.extraSmall
 
             text: root.notifCount > 0 ? qsTr("notification%1").arg(root.notifCount === 1 ? "" : "s") : qsTr("Notifications")
-            color: Colours.palette.m3outline
-            font: Tokens.font.label.large
+            color: CortetsuColours.palette.m3outline
+            font: CortetsuTokens.font.label.large
             elide: Text.ElideRight
         }
     }
@@ -78,9 +78,9 @@ Item {
         anchors.right: parent.right
         anchors.top: title.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: Tokens.spacing.medium
+        anchors.topMargin: CortetsuTokens.spacing.medium
 
-        radius: Tokens.rounding.medium
+        radius: CortetsuTokens.rounding.medium
         color: "transparent"
 
         Loader {
@@ -90,7 +90,7 @@ Item {
             opacity: root.notifCount > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.extraLarge
+                spacing: CortetsuTokens.spacing.extraLarge
 
                 Image {
                     asynchronous: true
@@ -100,7 +100,7 @@ Item {
 
                     layer.enabled: true
                     layer.effect: Colouriser {
-                        colorizationColor: Colours.palette.m3outlineVariant
+                        colorizationColor: CortetsuColours.palette.m3outlineVariant
                         brightness: 1
                     }
                 }
@@ -108,8 +108,8 @@ Item {
                 CortetsuText {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("All up to date!")
-                    color: Colours.palette.m3outlineVariant
-                    font: Tokens.font.headline.builders.small.width(90).build()
+                    color: CortetsuColours.palette.m3outlineVariant
+                    font: CortetsuTokens.font.headline.builders.small.width(90).build()
                 }
             }
 
@@ -173,7 +173,7 @@ Item {
         asynchronous: true
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
         scale: root.notifCount > 0 ? 1 : 0.5
         opacity: root.notifCount > 0 ? 1 : 0
@@ -183,7 +183,7 @@ Item {
             id: clearBtn
 
             icon: "clear_all"
-            font: Tokens.font.icon.large
+            font: CortetsuTokens.font.icon.large
             onClicked: clearTimer.start()
 
             Elevation {

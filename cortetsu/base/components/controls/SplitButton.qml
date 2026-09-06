@@ -11,8 +11,8 @@ Row {
         Tonal
     }
 
-    property real horizontalPadding: Tokens.padding.medium
-    property real verticalPadding: Tokens.padding.small
+    property real horizontalPadding: CortetsuTokens.padding.medium
+    property real verticalPadding: CortetsuTokens.padding.small
     property int type: SplitButton.Filled
     property bool disabled
     property bool menuOnTop
@@ -30,17 +30,17 @@ Row {
     readonly property alias textRow: textRow
     readonly property alias expandBtn: expandBtn
 
-    property color colour: type == SplitButton.Filled ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
-    property color textColour: type == SplitButton.Filled ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
-    property color disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.1)
-    property color disabledTextColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
+    property color colour: type == SplitButton.Filled ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3secondaryContainer
+    property color textColour: type == SplitButton.Filled ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSecondaryContainer
+    property color disabledColour: Qt.alpha(CortetsuColours.palette.m3onSurface, 0.1)
+    property color disabledTextColour: Qt.alpha(CortetsuColours.palette.m3onSurface, 0.38)
 
-    spacing: Math.floor(Tokens.spacing.extraSmall / 2)
+    spacing: Math.floor(CortetsuTokens.spacing.extraSmall / 2)
 
     CortetsuSurface {
-        radius: implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
-        topRightRadius: Tokens.rounding.medium / 2
-        bottomRightRadius: Tokens.rounding.medium / 2
+        radius: implicitHeight / 2 * Math.min(1, CortetsuTokens.rounding.scale)
+        topRightRadius: CortetsuTokens.rounding.medium / 2
+        bottomRightRadius: CortetsuTokens.rounding.medium / 2
         color: root.disabled ? root.disabledColour : root.colour
 
         implicitWidth: Math.max(root.minLeftWidth, textRow.implicitWidth + root.horizontalPadding * 2)
@@ -61,7 +61,7 @@ Row {
 
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: Math.floor(root.verticalPadding / 4)
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             CortetsuIcon {
                 id: iconLabel
@@ -95,9 +95,9 @@ Row {
     CortetsuSurface {
         id: expandBtn
 
-        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Tokens.rounding.scale) : Tokens.rounding.medium / 2
+        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, CortetsuTokens.rounding.scale) : CortetsuTokens.rounding.medium / 2
 
-        radius: implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+        radius: implicitHeight / 2 * Math.min(1, CortetsuTokens.rounding.scale)
         topLeftRadius: rad
         bottomLeftRadius: rad
         color: root.disabled ? root.disabledColour : root.colour
@@ -145,6 +145,6 @@ Row {
         attachTo: expandBtn
         attachSideY: root.menuOnTop ? Menu.Top : Menu.Bottom
         thisSideY: root.menuOnTop ? Menu.Bottom : Menu.Top
-        marginY: Tokens.spacing.small * (root.menuOnTop ? -1 : 1)
+        marginY: CortetsuTokens.spacing.small * (root.menuOnTop ? -1 : 1)
     }
 }

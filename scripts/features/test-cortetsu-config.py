@@ -33,7 +33,7 @@ notifs = (repo / "cortetsu/services/Notifs.qml").read_text(encoding="utf-8")
 notif_data = (repo / "cortetsu/services/NotifData.qml").read_text(encoding="utf-8")
 notification_view = (repo / "cortetsu/modules/notifications/Notification.qml").read_text(encoding="utf-8")
 utilities_wrapper = (repo / "cortetsu/modules/utilities/Wrapper.qml").read_text(encoding="utf-8")
-colours = (repo / "cortetsu/services/Colours.qml").read_text(encoding="utf-8")
+colours = (repo / "cortetsu/services/CortetsuColours.qml").read_text(encoding="utf-8")
 shell = (repo / "cortetsu/shell.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config

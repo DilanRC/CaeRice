@@ -97,14 +97,14 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // ---- Action buttons --------------------------------------------------
         ButtonRow {
-            Layout.bottomMargin: Tokens.spacing.large - parent.spacing
+            Layout.bottomMargin: CortetsuTokens.spacing.large - parent.spacing
             Layout.alignment: Qt.AlignHCenter
             Layout.minimumWidth: Math.round(root.cappedWidth * (root.isActive ? 0.7 : 0.5))
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             ButtonBase {
                 id: forgetBtn
@@ -112,11 +112,11 @@ PageBase {
                 fillWidth: true
                 shapeMorph: root.isActive
                 isRound: true
-                inactiveColour: Colours.palette.m3errorContainer
-                inactiveOnColour: Colours.palette.m3onErrorContainer
+                inactiveColour: CortetsuColours.palette.m3errorContainer
+                inactiveOnColour: CortetsuColours.palette.m3onErrorContainer
 
-                implicitWidth: forgetLayout.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: forgetLayout.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: forgetLayout.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: forgetLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     Nmcli.forgetNetwork(root.ssid);
@@ -133,7 +133,7 @@ PageBase {
                         Layout.alignment: Qt.AlignHCenter
                         text: "delete"
                         color: forgetBtn.onColour
-                        fontStyle: Tokens.font.icon.medium
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     CortetsuText {
@@ -151,11 +151,11 @@ PageBase {
                 fillWidth: true
                 shapeMorph: true
                 isRound: true
-                inactiveColour: Colours.palette.m3primaryContainer
-                inactiveOnColour: Colours.palette.m3onPrimaryContainer
+                inactiveColour: CortetsuColours.palette.m3primaryContainer
+                inactiveOnColour: CortetsuColours.palette.m3onPrimaryContainer
 
-                implicitWidth: disconnectLayout.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: disconnectLayout.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: disconnectLayout.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: disconnectLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     Nmcli.disconnectFromNetwork();
@@ -172,7 +172,7 @@ PageBase {
                         Layout.alignment: Qt.AlignHCenter
                         text: "link_off"
                         color: disconnectBtn.onColour
-                        fontStyle: Tokens.font.icon.medium
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     CortetsuText {
@@ -308,7 +308,7 @@ PageBase {
         // Address + gateway: manual only. DNS: manual and DNS-only.
         Item {
             Layout.fillWidth: true
-            Layout.topMargin: root.showDnsSettings ? Tokens.spacing.large : -parent.spacing
+            Layout.topMargin: root.showDnsSettings ? CortetsuTokens.spacing.large : -parent.spacing
             implicitHeight: root.showDnsSettings ? dnsColumn.implicitHeight : 0
             opacity: root.showDnsSettings ? 1 : 0
 
@@ -335,7 +335,7 @@ PageBase {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                spacing: root.ipMethod === "manual" ? Tokens.spacing.large : 0
+                spacing: root.ipMethod === "manual" ? CortetsuTokens.spacing.large : 0
 
                 Behavior on spacing {
                     Anim {
@@ -365,7 +365,7 @@ PageBase {
 
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        spacing: Tokens.spacing.large
+                        spacing: CortetsuTokens.spacing.large
 
                         StyledTextField {
                             id: addressField
@@ -432,12 +432,12 @@ PageBase {
 
                 shapeMorph: true
                 isRound: true
-                inactiveColour: Colours.palette.m3primary
-                inactiveOnColour: Colours.palette.m3onPrimary
+                inactiveColour: CortetsuColours.palette.m3primary
+                inactiveOnColour: CortetsuColours.palette.m3onPrimary
                 stateLayer.disabled: !root.ipLoaded || root.savingIp
 
-                implicitWidth: applyMetrics.width + Tokens.padding.extraLarge * 2
-                implicitHeight: applyMetrics.height + Tokens.padding.medium * 2
+                implicitWidth: applyMetrics.width + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: applyMetrics.height + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     if (root.ipLoaded && !root.savingIp)
@@ -464,7 +464,7 @@ PageBase {
                     id: applyLoadingComp
 
                     LoadingIndicator {
-                        implicitSize: Math.round(Tokens.font.body.medium.pointSize * 1.4)
+                        implicitSize: Math.round(CortetsuTokens.font.body.medium.pointSize * 1.4)
                         color: applyBtn.onColour
                     }
                 }

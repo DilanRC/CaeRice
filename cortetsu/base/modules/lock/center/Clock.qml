@@ -14,7 +14,7 @@ Item {
         return metrics.tightBoundingRect.y - metrics.boundingRect.y;
     }
 
-    implicitWidth: hours.implicitWidth + minutes.implicitWidth + Tokens.spacing.small
+    implicitWidth: hours.implicitWidth + minutes.implicitWidth + CortetsuTokens.spacing.small
     implicitHeight: hourMetrics.tightBoundingRect.height
 
     CortetsuText {
@@ -22,8 +22,8 @@ Item {
 
         y: -root.calcTopOff(hourMetrics)
         text: Time.hourStr
-        color: Colours.palette.m3primary
-        font: Tokens.font.headline.builders.large.scale(7 * root.centerScale).width(30).build()
+        color: CortetsuColours.palette.m3primary
+        font: CortetsuTokens.font.headline.builders.large.scale(7 * root.centerScale).width(30).build()
 
         TextMetrics {
             id: hourMetrics
@@ -40,8 +40,8 @@ Item {
         y: -root.calcTopOff(minuteMetrics)
 
         text: Time.minuteStr
-        color: Colours.palette.m3secondary
-        font: Tokens.font.headline.builders.large.scale((CortetsuConfig.useTwelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
+        color: CortetsuColours.palette.m3secondary
+        font: CortetsuTokens.font.headline.builders.large.scale((CortetsuConfig.useTwelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
 
         TextMetrics {
             id: minuteMetrics
@@ -60,11 +60,11 @@ Item {
         asynchronous: true
 
         sourceComponent: CortetsuSurface {
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.large
+            color: CortetsuColours.tPalette.m3surfaceContainerHigh
+            radius: CortetsuTokens.rounding.large
 
             implicitWidth: minuteMetrics.tightBoundingRect.width
-            implicitHeight: amPmMetrics.tightBoundingRect.height + Tokens.padding.large * 2
+            implicitHeight: amPmMetrics.tightBoundingRect.height + CortetsuTokens.padding.large * 2
 
             CortetsuText {
                 id: amPm
@@ -78,8 +78,8 @@ Item {
                 }
 
                 text: Time.amPmStr
-                color: Colours.palette.m3onSurface
-                font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
+                color: CortetsuColours.palette.m3onSurface
+                font: CortetsuTokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
 
                 TextMetrics {
                     id: amPmMetrics

@@ -7,7 +7,7 @@ Item {
 
     required property ScreenState screenState
 
-    implicitWidth: icon.implicitHeight + Tokens.padding.small
+    implicitWidth: icon.implicitHeight + CortetsuTokens.padding.small
     implicitHeight: icon.implicitHeight
 
     CortetsuStateLayer {
@@ -15,8 +15,8 @@ Item {
         anchors.fill: undefined
         anchors.centerIn: parent
         implicitWidth: implicitHeight
-        implicitHeight: icon.implicitHeight + Tokens.padding.small
-        radius: Tokens.rounding.full
+        implicitHeight: icon.implicitHeight + CortetsuTokens.padding.small
+        radius: CortetsuTokens.rounding.full
         onClicked: root.screenState.session = !root.screenState.session
     }
 
@@ -26,7 +26,7 @@ Item {
         anchors.centerIn: parent
 
         text: "power_settings_new"
-        color: Colours.palette.m3error
-        fontStyle: Tokens.font.icon.builders.small.weight(Font.Bold).build()
+        color: CortetsuColours.palette.m3error
+        fontStyle: CortetsuTokens.font.icon.builders.small.weight(Font.Bold).build()
     }
 }

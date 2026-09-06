@@ -80,7 +80,7 @@ MouseArea {
             return item.mapToItem(root.parent, 0, off).y + root.marginY;
         }
 
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         level: 2
 
         implicitWidth: Math.max(200, column.implicitWidth + column.anchors.margins * 2)
@@ -104,13 +104,13 @@ MouseArea {
         CortetsuSurface {
             anchors.fill: parent
             radius: parent.radius
-            color: Colours.palette.m3surfaceContainerLow
+            color: CortetsuColours.palette.m3surfaceContainerLow
 
             ColumnLayout {
                 id: column
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.extraSmall
+                anchors.margins: CortetsuTokens.padding.extraSmall
                 spacing: 0
 
                 Repeater {
@@ -126,16 +126,16 @@ MouseArea {
                         readonly property bool active: modelData === root?.active
 
                         Layout.fillWidth: true
-                        implicitWidth: menuOptionRow.implicitWidth + Tokens.padding.medium * 2
-                        implicitHeight: menuOptionRow.implicitHeight + Tokens.padding.medium * 2
+                        implicitWidth: menuOptionRow.implicitWidth + CortetsuTokens.padding.medium * 2
+                        implicitHeight: menuOptionRow.implicitHeight + CortetsuTokens.padding.medium * 2
 
-                        radius: active ? Tokens.rounding.medium : Tokens.rounding.extraSmall
-                        topLeftRadius: index === 0 ? Tokens.rounding.medium : radius
-                        topRightRadius: index === 0 ? Tokens.rounding.medium : radius
-                        bottomLeftRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
-                        bottomRightRadius: index === repeater?.count - 1 ? Tokens.rounding.medium : radius
+                        radius: active ? CortetsuTokens.rounding.medium : CortetsuTokens.rounding.extraSmall
+                        topLeftRadius: index === 0 ? CortetsuTokens.rounding.medium : radius
+                        topRightRadius: index === 0 ? CortetsuTokens.rounding.medium : radius
+                        bottomLeftRadius: index === repeater?.count - 1 ? CortetsuTokens.rounding.medium : radius
+                        bottomRightRadius: index === repeater?.count - 1 ? CortetsuTokens.rounding.medium : radius
 
-                        color: Qt.alpha(Colours.palette.m3tertiaryContainer, active ? 1 : 0)
+                        color: Qt.alpha(CortetsuColours.palette.m3tertiaryContainer, active ? 1 : 0)
 
                         Behavior on radius {
                             Anim {}
@@ -147,7 +147,7 @@ MouseArea {
                             bottomLeftRadius: parent.bottomLeftRadius
                             bottomRightRadius: parent.bottomRightRadius
 
-                            color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                            color: item.active ? CortetsuColours.palette.m3onTertiaryContainer : CortetsuColours.palette.m3onSurface
                             disabled: !root.expanded
                             onClicked: {
                                 root.itemSelected(item.modelData);
@@ -161,20 +161,20 @@ MouseArea {
                             id: menuOptionRow
 
                             anchors.fill: parent
-                            anchors.margins: Tokens.padding.medium
-                            spacing: Tokens.spacing.small
+                            anchors.margins: CortetsuTokens.padding.medium
+                            spacing: CortetsuTokens.spacing.small
 
                             CortetsuIcon {
                                 Layout.alignment: Qt.AlignVCenter
                                 text: item.modelData?.icon ?? ""
-                                color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
+                                color: item.active ? CortetsuColours.palette.m3onTertiaryContainer : CortetsuColours.palette.m3onSurfaceVariant
                             }
 
                             CortetsuText {
                                 Layout.alignment: Qt.AlignVCenter
                                 Layout.fillWidth: true
                                 text: item.modelData?.text ?? ""
-                                color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurface
+                                color: item.active ? CortetsuColours.palette.m3onTertiaryContainer : CortetsuColours.palette.m3onSurface
                             }
 
                             Loader {
@@ -185,7 +185,7 @@ MouseArea {
 
                                 sourceComponent: CortetsuIcon {
                                     text: item.modelData.trailingIcon
-                                    color: item.active ? Colours.palette.m3onTertiaryContainer : Colours.palette.m3onSurfaceVariant
+                                    color: item.active ? CortetsuColours.palette.m3onTertiaryContainer : CortetsuColours.palette.m3onSurfaceVariant
                                 }
                             }
                         }

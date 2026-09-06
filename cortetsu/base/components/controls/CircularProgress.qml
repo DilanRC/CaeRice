@@ -11,11 +11,11 @@ Item {
     property real value
     property int startAngle: -90
     property int sweepAngle: 360
-    property int strokeWidth: Tokens.padding.small
+    property int strokeWidth: CortetsuTokens.padding.small
     property int padding: 0
-    property int spacing: Tokens.spacing.small
-    property color fgColour: Colours.palette.m3primary
-    property color bgColour: Colours.palette.m3secondaryContainer
+    property int spacing: CortetsuTokens.spacing.small
+    property color fgColour: CortetsuColours.palette.m3primary
+    property color bgColour: CortetsuColours.palette.m3secondaryContainer
     property alias hasEndIndicator: dot.active
 
     property bool wavy: false
@@ -110,7 +110,7 @@ Item {
         y: root.size / 2 + root.arcRadius * Math.sin(root.dotAngleRad) - height / 2
 
         sourceComponent: CortetsuSurface {
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             color: root.fgColour
             opacity: Math.min(1, remainingArc.sweepAngle)
             implicitWidth: Math.min(1, remainingArc.sweepAngle) * Math.min(4, root.strokeWidth)

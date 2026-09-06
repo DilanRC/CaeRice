@@ -46,11 +46,11 @@ CortetsuSurface {
 
     anchors.left: parent?.left
     anchors.right: parent?.right
-    implicitHeight: content.implicitHeight + Tokens.padding.medium * 2
+    implicitHeight: content.implicitHeight + CortetsuTokens.padding.medium * 2
 
     clip: true
-    radius: Tokens.rounding.large
-    color: root.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+    radius: CortetsuTokens.rounding.large
+    color: root.urgency === "critical" ? CortetsuColours.palette.m3secondaryContainer : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 2)
 
     RowLayout {
         id: content
@@ -58,9 +58,9 @@ CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.medium
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -90,7 +90,7 @@ CortetsuSurface {
                 ColouredIcon {
                     implicitSize: Math.round(TokenConfig.sizes.notifs.image * 0.6)
                     source: Quickshell.iconPath(root.appIcon)
-                    colour: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                    colour: root.urgency === "critical" ? CortetsuColours.palette.m3onError : root.urgency === "low" ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
                     layer.enabled: root.appIcon.endsWith("symbolic")
                 }
             }
@@ -100,15 +100,15 @@ CortetsuSurface {
 
                 CortetsuIcon {
                     text: Icons.getNotifIcon(root.notifs[0]?.summary, root.urgency)
-                    color: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.large
+                    color: root.urgency === "critical" ? CortetsuColours.palette.m3onError : root.urgency === "low" ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
+                    fontStyle: CortetsuTokens.font.icon.large
                 }
             }
 
             ClippingRectangle {
                 anchors.fill: parent
-                color: root.urgency === "critical" ? Colours.palette.m3error : root.urgency === "low" ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 3) : Colours.palette.m3secondaryContainer
-                radius: Tokens.rounding.full
+                color: root.urgency === "critical" ? CortetsuColours.palette.m3error : root.urgency === "low" ? CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, 3) : CortetsuColours.palette.m3secondaryContainer
+                radius: CortetsuTokens.rounding.full
 
                 Loader {
                     asynchronous: true
@@ -124,17 +124,17 @@ CortetsuSurface {
                 active: root.appIcon && root.image
 
                 sourceComponent: CortetsuSurface {
-                    implicitWidth: Tokens.sizes.notifs.badge
-                    implicitHeight: Tokens.sizes.notifs.badge
+                    implicitWidth: CortetsuTokens.sizes.notifs.badge
+                    implicitHeight: CortetsuTokens.sizes.notifs.badge
 
-                    color: root.urgency === "critical" ? Colours.palette.m3error : root.urgency === "low" ? Colours.palette.m3surfaceContainerHighest : Colours.palette.m3secondaryContainer
-                    radius: Tokens.rounding.full
+                    color: root.urgency === "critical" ? CortetsuColours.palette.m3error : root.urgency === "low" ? CortetsuColours.palette.m3surfaceContainerHighest : CortetsuColours.palette.m3secondaryContainer
+                    radius: CortetsuTokens.rounding.full
 
                     ColouredIcon {
                         anchors.centerIn: parent
-                        implicitSize: Math.round(Tokens.sizes.notifs.badge * 0.6)
+                        implicitSize: Math.round(CortetsuTokens.sizes.notifs.badge * 0.6)
                         source: Quickshell.iconPath(root.appIcon)
-                        colour: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
+                        colour: root.urgency === "critical" ? CortetsuColours.palette.m3onError : root.urgency === "low" ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onSecondaryContainer
                         layer.enabled: root.appIcon.endsWith("symbolic")
                     }
                 }
@@ -142,43 +142,43 @@ CortetsuSurface {
         }
 
         ColumnLayout {
-            Layout.topMargin: -Tokens.padding.extraSmall
-            Layout.bottomMargin: -Tokens.padding.extraSmall / 2 - (root.expanded ? 0 : spacing)
+            Layout.topMargin: -CortetsuTokens.padding.extraSmall
+            Layout.bottomMargin: -CortetsuTokens.padding.extraSmall / 2 - (root.expanded ? 0 : spacing)
             Layout.fillWidth: true
-            spacing: Math.round(Tokens.spacing.extraSmall)
+            spacing: Math.round(CortetsuTokens.spacing.extraSmall)
 
             RowLayout {
                 Layout.bottomMargin: -parent.spacing
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.medium
+                spacing: CortetsuTokens.spacing.medium
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: root.modelData
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3onSurfaceVariant
+                    font: CortetsuTokens.font.body.small
                     elide: Text.ElideRight
                 }
 
                 CortetsuText {
                     animate: true
                     text: root.notifs[0]?.timeStr ?? ""
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.small
                 }
 
                 CortetsuSurface {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
-                    implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
+                    implicitWidth: expandBtn.implicitWidth + CortetsuTokens.padding.large
+                    implicitHeight: groupCount.implicitHeight + CortetsuTokens.padding.extraSmall
 
-                    color: root.urgency === "critical" ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-                    radius: Tokens.rounding.full
+                    color: root.urgency === "critical" ? CortetsuColours.palette.m3error : CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHighest, 2)
+                    radius: CortetsuTokens.rounding.full
 
                     opacity: root.notifs.length > CortetsuConfig.notificationGroupPreviewNum ? 1 : 0
                     Layout.preferredWidth: root.notifs.length > CortetsuConfig.notificationGroupPreviewNum ? implicitWidth : 0
 
                     CortetsuStateLayer {
-                        color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                        color: root.urgency === "critical" ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurface
                         onClicked: root.expanded = !root.expanded
                     }
 
@@ -186,23 +186,23 @@ CortetsuSurface {
                         id: expandBtn
 
                         anchors.centerIn: parent
-                        spacing: Tokens.spacing.extraSmall
+                        spacing: CortetsuTokens.spacing.extraSmall
 
                         CortetsuText {
                             id: groupCount
 
-                            Layout.leftMargin: Tokens.padding.extraSmall / 2
+                            Layout.leftMargin: CortetsuTokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifs.length
-                            color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
-                            font: Tokens.font.body.small
+                            color: root.urgency === "critical" ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurface
+                            font: CortetsuTokens.font.body.small
                         }
 
                         CortetsuIcon {
-                            Layout.rightMargin: -Tokens.padding.extraSmall / 2
+                            Layout.rightMargin: -CortetsuTokens.padding.extraSmall / 2
                             animate: true
                             text: root.expanded ? "expand_less" : "expand_more"
-                            color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                            color: root.urgency === "critical" ? CortetsuColours.palette.m3onError : CortetsuColours.palette.m3onSurface
                         }
                     }
 
@@ -315,7 +315,7 @@ CortetsuSurface {
         text: {
             const summary = modelData.summary.replace(/\n/g, " ");
             const body = modelData.body.replace(/\n/g, " ");
-            const colour = root.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline;
+            const colour = root.urgency === "critical" ? CortetsuColours.palette.m3secondary : CortetsuColours.palette.m3outline;
 
             if (metrics.text === metrics.elidedText)
                 return `${summary} <span style='color:${colour}'>${body}</span>`;
@@ -326,7 +326,7 @@ CortetsuSurface {
 
             return `${summary} <span style='color:${colour}'>${body.slice(0, t - summary.length)}...</span>`;
         }
-        color: root.urgency === "critical" ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+        color: root.urgency === "critical" ? CortetsuColours.palette.m3onSecondaryContainer : CortetsuColours.palette.m3onSurface
 
         Component.onCompleted: modelData.lock(this)
         Component.onDestruction: modelData.unlock(this)

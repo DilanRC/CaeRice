@@ -8,14 +8,14 @@ import qs.services
 CortetsuSurface {
     id: root
 
-    readonly property color accent: Colours.palette.m3secondary
+    readonly property color accent: CortetsuColours.palette.m3secondary
     readonly property real percentage: Storage.primaryDisk?.perc ?? 0
 
-    color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.extraExtraLarge
+    color: CortetsuColours.tPalette.m3surfaceContainer
+    radius: CortetsuTokens.rounding.extraExtraLarge
 
     implicitWidth: layout.implicitWidth + layout.anchors.margins * 2
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + CortetsuTokens.padding.large * 2
 
     ColumnLayout {
         id: layout
@@ -23,19 +23,19 @@ CortetsuSurface {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.extraLarge
+        anchors.margins: CortetsuTokens.padding.extraLarge
         spacing: 0
 
         RowLayout {
             id: row
 
             Layout.alignment: Qt.AlignHCenter
-            spacing: Tokens.spacing.large
+            spacing: CortetsuTokens.spacing.large
 
             CircularProgress {
                 fgColour: root.accent
                 value: root.percentage
-                implicitSize: usageColumn.implicitHeight + thickness + Tokens.padding.large * 2
+                implicitSize: usageColumn.implicitHeight + thickness + CortetsuTokens.padding.large * 2
                 startAngle: -225
                 sweepAngle: 270
 
@@ -53,32 +53,32 @@ CortetsuSurface {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hard_drive"
                         color: root.accent
-                        fontStyle: Tokens.font.icon.medium
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: Math.round(root.percentage * 100) + "%"
-                        font: Tokens.font.title.builders.large.width(90).build()
+                        font: CortetsuTokens.font.title.builders.large.width(90).build()
                         color: root.accent
                     }
 
                     CortetsuText {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("Used")
-                        font: Tokens.font.body.small
-                        color: Colours.palette.m3onSurfaceVariant
+                        font: CortetsuTokens.font.body.small
+                        color: CortetsuColours.palette.m3onSurfaceVariant
                     }
                 }
             }
 
             ColumnLayout {
-                Layout.minimumWidth: Tokens.sizes.dashboard.perfStorageTextWidth
-                spacing: Tokens.spacing.extraSmall
+                Layout.minimumWidth: CortetsuTokens.sizes.dashboard.perfStorageTextWidth
+                spacing: CortetsuTokens.spacing.extraSmall
 
                 CortetsuText {
                     text: qsTr("Storage")
-                    font: Tokens.font.title.medium
+                    font: CortetsuTokens.font.title.medium
                 }
 
                 CortetsuText {
@@ -89,7 +89,7 @@ CortetsuSurface {
                         const fmt = UsageFmt.formatKib(Storage.primaryDisk.used, Storage.primaryDisk.total);
                         return `${+fmt.value.toFixed(1)} / ${+fmt.total.toFixed(1)} ${fmt.unit}`;
                     }
-                    font: Tokens.font.body.large
+                    font: CortetsuTokens.font.body.large
                     color: root.accent
                 }
             }

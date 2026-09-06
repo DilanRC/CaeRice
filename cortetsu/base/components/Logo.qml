@@ -8,8 +8,8 @@ Item {
     readonly property real designWidth: 128
     readonly property real designHeight: 90.38
 
-    property color topColour: Colours.palette.m3primary
-    property color bottomColour: Colours.palette.m3onSurface
+    property color topColour: CortetsuColours.palette.m3primary
+    property color bottomColour: CortetsuColours.palette.m3onSurface
 
     implicitWidth: designWidth
     implicitHeight: designHeight

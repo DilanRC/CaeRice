@@ -37,14 +37,14 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // Big buttons
         ButtonRow {
-            Layout.bottomMargin: Tokens.spacing.large - parent.spacing
+            Layout.bottomMargin: CortetsuTokens.spacing.large - parent.spacing
             Layout.alignment: Qt.AlignHCenter
             Layout.minimumWidth: Math.round(root.cappedWidth * 0.7)
-            spacing: Tokens.spacing.small
+            spacing: CortetsuTokens.spacing.small
 
             ButtonBase {
                 id: forgetBtn
@@ -53,11 +53,11 @@ PageBase {
                 shapeMorph: true
                 isRound: true
 
-                inactiveColour: Colours.palette.m3errorContainer
-                inactiveOnColour: Colours.palette.m3onErrorContainer
+                inactiveColour: CortetsuColours.palette.m3errorContainer
+                inactiveOnColour: CortetsuColours.palette.m3onErrorContainer
 
-                implicitWidth: forgetBtnLayout.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: forgetBtnLayout.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: forgetBtnLayout.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: forgetBtnLayout.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: {
                     root.device?.forget();
@@ -74,7 +74,7 @@ PageBase {
                         Layout.alignment: Qt.AlignHCenter
                         text: "delete"
                         color: forgetBtn.onColour
-                        fontStyle: Tokens.font.icon.medium
+                        fontStyle: CortetsuTokens.font.icon.medium
                     }
 
                     CortetsuText {
@@ -92,12 +92,12 @@ PageBase {
                 shapeMorph: true
                 isRound: true
 
-                inactiveColour: Colours.palette.m3primaryContainer
-                inactiveOnColour: Colours.palette.m3onPrimaryContainer
+                inactiveColour: CortetsuColours.palette.m3primaryContainer
+                inactiveOnColour: CortetsuColours.palette.m3onPrimaryContainer
                 stateLayer.disabled: root.loading
 
-                implicitWidth: connectBtnContent.implicitWidth + Tokens.padding.extraLarge * 2
-                implicitHeight: connectBtnContent.implicitHeight + Tokens.padding.medium * 2
+                implicitWidth: connectBtnContent.implicitWidth + CortetsuTokens.padding.extraLarge * 2
+                implicitHeight: connectBtnContent.implicitHeight + CortetsuTokens.padding.medium * 2
 
                 onClicked: root.device.connected = !root.connected
 
@@ -114,7 +114,7 @@ PageBase {
                     id: loadingComp
 
                     LoadingIndicator {
-                        implicitSize: connectBtn.height - Tokens.padding.large * 2
+                        implicitSize: connectBtn.height - CortetsuTokens.padding.large * 2
                     }
                 }
 
@@ -128,7 +128,7 @@ PageBase {
                             Layout.alignment: Qt.AlignHCenter
                             text: root.connected ? "close" : "add"
                             color: connectBtn.inactiveOnColour
-                            fontStyle: Tokens.font.icon.medium
+                            fontStyle: CortetsuTokens.font.icon.medium
                             animate: true
                         }
 
@@ -145,7 +145,7 @@ PageBase {
 
         // Connection group
         ToggleRow {
-            verticalPadding: Tokens.padding.large
+            verticalPadding: CortetsuTokens.padding.large
             first: true
             text: qsTr("Trusted")
             subtext: qsTr("Allow this device to connect automatically")
@@ -157,7 +157,7 @@ PageBase {
         }
 
         ToggleRow {
-            verticalPadding: Tokens.padding.large
+            verticalPadding: CortetsuTokens.padding.large
             text: qsTr("Blocked")
             subtext: qsTr("Prevent this device from connecting")
             checked: root.device?.blocked ?? false
@@ -168,7 +168,7 @@ PageBase {
         }
 
         ToggleRow {
-            verticalPadding: Tokens.padding.large
+            verticalPadding: CortetsuTokens.padding.large
             last: true
             text: qsTr("Wake allowed")
             subtext: qsTr("Allow this device to wake the system")
@@ -181,9 +181,9 @@ PageBase {
 
         // Information
         ConnectedRect {
-            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.large - parent.spacing
             Layout.fillWidth: true
-            implicitHeight: batteryLayout.implicitHeight + Tokens.padding.large * 2
+            implicitHeight: batteryLayout.implicitHeight + CortetsuTokens.padding.large * 2
             first: true
 
             ColumnLayout {
@@ -192,12 +192,12 @@ PageBase {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Tokens.padding.large
-                spacing: Tokens.spacing.small
+                anchors.margins: CortetsuTokens.padding.large
+                spacing: CortetsuTokens.spacing.small
 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: Tokens.spacing.medium
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuText {
                         Layout.fillWidth: true
@@ -206,8 +206,8 @@ PageBase {
 
                     CortetsuText {
                         text: root.device?.batteryAvailable ? Math.round(root.device.battery * 100) + "%" : qsTr("Unavailable")
-                        color: Colours.palette.m3outline
-                        font: Tokens.font.body.small
+                        color: CortetsuColours.palette.m3outline
+                        font: CortetsuTokens.font.body.small
                     }
                 }
 
@@ -218,7 +218,7 @@ PageBase {
                     asynchronous: true
 
                     sourceComponent: StyledProgressBar {
-                        implicitHeight: Tokens.padding.medium
+                        implicitHeight: CortetsuTokens.padding.medium
                         value: root.device.battery
                     }
                 }
@@ -227,7 +227,7 @@ PageBase {
 
         ConnectedRect {
             Layout.fillWidth: true
-            implicitHeight: addrLayout.implicitHeight + Tokens.padding.large * 2
+            implicitHeight: addrLayout.implicitHeight + CortetsuTokens.padding.large * 2
             last: true
 
             RowLayout {
@@ -236,8 +236,8 @@ PageBase {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Tokens.padding.large
-                spacing: Tokens.spacing.medium
+                anchors.margins: CortetsuTokens.padding.large
+                spacing: CortetsuTokens.spacing.medium
 
                 CortetsuText {
                     Layout.fillWidth: true
@@ -246,8 +246,8 @@ PageBase {
 
                 CortetsuText {
                     text: root.device?.address ?? ""
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.small
                 }
             }
         }

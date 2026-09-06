@@ -65,18 +65,18 @@ Item {
             anchors.horizontalCenter: root.horizontalCenter
 
             y: (start?.y ?? 0) - 1
-            implicitWidth: Tokens.sizes.bar.innerWidth - Tokens.padding.small + 2
+            implicitWidth: CortetsuTokens.sizes.bar.innerWidth - CortetsuTokens.padding.small + 2
             implicitHeight: start && end ? end.y + end.size - start.y + 2 : 0
 
-            color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            radius: Tokens.rounding.full
+            color: CortetsuColours.layer(CortetsuColours.palette.m3surfaceContainerHigh, 2)
+            radius: CortetsuTokens.rounding.full
 
             scale: 0
             Component.onCompleted: scale = 1
 
             Behavior on scale {
                 Anim {
-                    easing: Tokens.anim.standardDecel
+                    easing: CortetsuTokens.anim.standardDecel
                 }
             }
 

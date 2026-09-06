@@ -14,12 +14,12 @@ ColumnLayout {
     required property string title
     required property NexusState nState
     property bool isSubPage
-    readonly property int cappedWidth: Math.min(Tokens.sizes.nexus.maxContentWidth, width)
+    readonly property int cappedWidth: Math.min(CortetsuTokens.sizes.nexus.maxContentWidth, width)
     readonly property alias flickable: flickable
 
     default property Item contentChild
 
-    spacing: Tokens.spacing.extraLargeIncreased
+    spacing: CortetsuTokens.spacing.extraLargeIncreased
 
     MouseArea { // Prevent clicks from reaching flickable
         z: 1
@@ -31,7 +31,7 @@ ColumnLayout {
         RowLayout {
             id: header
 
-            spacing: Tokens.spacing.largeIncreased
+            spacing: CortetsuTokens.spacing.largeIncreased
 
             Loader {
                 visible: active
@@ -39,11 +39,11 @@ ColumnLayout {
                 asynchronous: true
                 sourceComponent: IconButton {
                     icon: "arrow_back"
-                    font: Tokens.font.icon.medium
+                    font: CortetsuTokens.font.icon.medium
                     type: IconButton.Tonal
                     isRound: true
-                    inactiveColour: Colours.tPalette.m3surfaceContainerHigh
-                    inactiveOnColour: Colours.palette.m3onSurfaceVariant
+                    inactiveColour: CortetsuColours.tPalette.m3surfaceContainerHigh
+                    inactiveOnColour: CortetsuColours.palette.m3onSurfaceVariant
                     onClicked: root.nState.closeSubPage()
                 }
             }
@@ -51,7 +51,7 @@ ColumnLayout {
             CortetsuText {
                 Layout.fillWidth: true
                 text: root.title
-                font: Tokens.font.title.large
+                font: CortetsuTokens.font.title.large
                 elide: Text.ElideRight
             }
         }
@@ -64,8 +64,8 @@ ColumnLayout {
         Layout.fillHeight: true
 
         Layout.topMargin: -topMargin
-        topMargin: Tokens.padding.large
-        bottomMargin: Tokens.padding.extraLarge
+        topMargin: CortetsuTokens.padding.large
+        bottomMargin: CortetsuTokens.padding.extraLarge
 
         contentHeight: root.contentChild?.implicitHeight ?? 0
         contentItem.children: [root.contentChild]

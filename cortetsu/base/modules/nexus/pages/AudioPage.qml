@@ -15,7 +15,7 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // Output
         SliderRow {
@@ -45,7 +45,7 @@ PageBase {
 
         // Input
         SliderRow {
-            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.large - parent.spacing
             first: true
             icon: Icons.getMicVolumeIcon(Audio.sourceVolume, Audio.sourceMuted)
             label: qsTr("Input")
@@ -72,7 +72,7 @@ PageBase {
 
         // Per-app volumes
         NavRow {
-            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.large - parent.spacing
             first: true
             last: true
 

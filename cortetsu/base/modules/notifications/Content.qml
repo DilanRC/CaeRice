@@ -17,20 +17,20 @@ Item {
     required property Item osdPanel
     required property Item sessionPanel
     required property Item utilitiesPanel
-    readonly property int padding: Tokens.padding.large
+    readonly property int padding: CortetsuTokens.padding.large
     readonly property int clampedPadding: CortetsuUtils.clamp(padding - CortetsuConfig.borderThickness, 0, padding)
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-    implicitWidth: Tokens.sizes.notifs.width
+    implicitWidth: CortetsuTokens.sizes.notifs.width
     implicitHeight: {
         const count = list.count;
         if (count === 0)
             return 0;
 
-        let height = (count - 1) * Tokens.spacing.medium;
+        let height = (count - 1) * CortetsuTokens.spacing.medium;
         for (let i = 0; i < count; i++)
             height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
 
@@ -47,7 +47,7 @@ Item {
         }
 
         if (screenState.utilities) {
-            const h = ((QsWindow.window as QsWindow)?.screen.height ?? 0) - (utilitiesPanel as Utilities.Wrapper).nonAnimHeight - CortetsuConfig.borderThickness * 2 - padding * 2 - Tokens.spacing.extraLarge;
+            const h = ((QsWindow.window as QsWindow)?.screen.height ?? 0) - (utilitiesPanel as Utilities.Wrapper).nonAnimHeight - CortetsuConfig.borderThickness * 2 - padding * 2 - CortetsuTokens.spacing.extraLarge;
             if (height > h)
                 height = h;
         }
@@ -62,7 +62,7 @@ Item {
         anchors.rightMargin: root.clampedPadding
 
         color: "transparent"
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
 
         StyledListView {
             id: list
@@ -102,9 +102,9 @@ Item {
 
                     let height = 0;
                     for (let i = 0; i < count; i++) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.medium;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + CortetsuTokens.spacing.medium;
 
-                        if (height - Tokens.spacing.medium >= scrollY)
+                        if (height - CortetsuTokens.spacing.medium >= scrollY)
                             return i;
                     }
 
@@ -123,9 +123,9 @@ Item {
 
                     let height = 0;
                     for (let i = count - 1; i >= 0; i--) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.medium;
+                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + CortetsuTokens.spacing.medium;
 
-                        if (height - Tokens.spacing.medium >= scrollY)
+                        if (height - CortetsuTokens.spacing.medium >= scrollY)
                             return count - i - 1;
                     }
 
@@ -153,7 +153,7 @@ Item {
         }
 
         implicitWidth: notif.implicitWidth
-        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Tokens.spacing.medium)
+        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : CortetsuTokens.spacing.medium)
 
         ListView.onRemove: removeAnim.start()
 
@@ -184,8 +184,8 @@ Item {
                 target: notif
                 property: "x"
                 to: (notif.x >= 0 ? root.implicitWidth : -root.implicitWidth) * 2
-                duration: Tokens.anim.durations.normal
-                easing: Tokens.anim.emphasized
+                duration: CortetsuTokens.anim.durations.normal
+                easing: CortetsuTokens.anim.emphasized
             }
             PropertyAction {
                 target: wrapper
@@ -196,7 +196,7 @@ Item {
 
         ClippingRectangle {
             anchors.top: parent.top
-            anchors.topMargin: wrapper.idx === 0 ? 0 : Tokens.spacing.medium
+            anchors.topMargin: wrapper.idx === 0 ? 0 : CortetsuTokens.spacing.medium
 
             color: "transparent"
             radius: notif.radius
@@ -213,7 +213,7 @@ Item {
     }
 
     component Anim: NumberAnimation {
-        duration: Tokens.anim.durations.expressiveDefaultSpatial
-        easing: Tokens.anim.expressiveDefaultSpatial
+        duration: CortetsuTokens.anim.durations.expressiveDefaultSpatial
+        easing: CortetsuTokens.anim.expressiveDefaultSpatial
     }
 }

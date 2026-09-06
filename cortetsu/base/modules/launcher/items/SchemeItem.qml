@@ -9,21 +9,21 @@ Item {
     required property Schemes.Scheme modelData
     required property var list
 
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: CortetsuTokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     CortetsuStateLayer {
-        radius: Tokens.rounding.large
+        radius: CortetsuTokens.rounding.large
         onClicked: root.modelData?.onClicked(root.list)
     }
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Tokens.padding.medium
-        anchors.rightMargin: Tokens.padding.medium
-        anchors.margins: Tokens.padding.small
+        anchors.leftMargin: CortetsuTokens.padding.medium
+        anchors.rightMargin: CortetsuTokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.small
 
         CortetsuSurface {
             id: preview
@@ -34,7 +34,7 @@ Item {
             border.color: Qt.alpha(`#${root.modelData?.colours?.outline}`, 0.5)
 
             color: `#${root.modelData?.colours?.surface}`
-            radius: Tokens.rounding.full
+            radius: CortetsuTokens.rounding.full
             implicitWidth: parent.height * 0.8
             implicitHeight: parent.height * 0.8
 
@@ -53,28 +53,28 @@ Item {
 
                     implicitWidth: preview.implicitWidth
                     color: `#${root.modelData?.colours?.primary}`
-                    radius: Tokens.rounding.full
+                    radius: CortetsuTokens.rounding.full
                 }
             }
         }
 
         Column {
             anchors.left: preview.right
-            anchors.leftMargin: Tokens.spacing.medium
+            anchors.leftMargin: CortetsuTokens.spacing.medium
             anchors.verticalCenter: parent.verticalCenter
 
-            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.medium : 0)
+            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + CortetsuTokens.spacing.medium : 0)
             spacing: 0
 
             CortetsuText {
                 text: root.modelData?.flavour ?? ""
-                font: Tokens.font.body.medium
+                font: CortetsuTokens.font.body.medium
             }
 
             CortetsuText {
                 text: root.modelData?.name ?? ""
-                font: Tokens.font.body.small
-                color: Colours.palette.m3outline
+                font: CortetsuTokens.font.body.small
+                color: CortetsuColours.palette.m3outline
 
                 elide: Text.ElideRight
                 anchors.left: parent.left
@@ -93,8 +93,8 @@ Item {
 
             sourceComponent: CortetsuIcon {
                 text: "check"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                fontStyle: CortetsuTokens.font.icon.large
             }
         }
     }

@@ -19,7 +19,7 @@ Item {
 
     CortetsuSurface {
         anchors.fill: parent
-        color: Colours.tPalette.m3surfaceContainer
+        color: CortetsuColours.tPalette.m3surfaceContainer
 
         layer.enabled: true
         layer.effect: Mask {
@@ -37,8 +37,8 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            anchors.margins: Tokens.padding.extraSmall
-            radius: Tokens.rounding.medium
+            anchors.margins: CortetsuTokens.padding.extraSmall
+            radius: CortetsuTokens.rounding.medium
         }
     }
 
@@ -53,14 +53,14 @@ Item {
             CortetsuIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "scan_delete"
-                color: Colours.palette.m3outline
-                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).weight(Font.Medium).build()
+                color: CortetsuColours.palette.m3outline
+                fontStyle: CortetsuTokens.font.icon.builders.extraLarge.scale(2).weight(Font.Medium).build()
             }
 
             CortetsuText {
                 text: qsTr("This folder is empty")
-                color: Colours.palette.m3outline
-                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+                color: CortetsuColours.palette.m3outline
+                font: CortetsuTokens.font.body.builders.large.weight(Font.Medium).build()
             }
         }
 
@@ -75,10 +75,10 @@ Item {
         id: view
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.extraSmall + Tokens.padding.medium
+        anchors.margins: CortetsuTokens.padding.extraSmall + CortetsuTokens.padding.medium
 
-        cellWidth: Sizes.itemWidth + Tokens.spacing.small
-        cellHeight: Sizes.itemWidth + Tokens.spacing.large + Tokens.padding.medium * 2 + 1
+        cellWidth: Sizes.itemWidth + CortetsuTokens.spacing.small
+        cellHeight: Sizes.itemWidth + CortetsuTokens.spacing.large + CortetsuTokens.padding.medium * 2 + 1
 
         clip: true
         focus: true
@@ -135,7 +135,7 @@ Item {
                 type: Anim.DefaultEffects
                 properties: "opacity,scale"
                 to: 1
-                easing: Tokens.anim.standardDecel
+                easing: CortetsuTokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -146,7 +146,7 @@ Item {
     CurrentItem {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Tokens.padding.extraSmall
+        anchors.margins: CortetsuTokens.padding.extraSmall
 
         currentItem: view.currentItem
     }
@@ -157,13 +157,13 @@ Item {
         required property int index
                 required property var modelData
 
-        readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Tokens.padding.medium * 2
+        readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + CortetsuTokens.padding.medium * 2
 
         implicitWidth: Sizes.itemWidth
         implicitHeight: nonAnimHeight
 
-        radius: Tokens.rounding.large
-        color: Qt.alpha(Colours.tPalette.m3surfaceContainerHighest, GridView.isCurrentItem ? Colours.tPalette.m3surfaceContainerHighest.a : 0)
+        radius: CortetsuTokens.rounding.large
+        color: Qt.alpha(CortetsuColours.tPalette.m3surfaceContainerHighest, GridView.isCurrentItem ? CortetsuColours.tPalette.m3surfaceContainerHighest.a : 0)
         z: GridView.isCurrentItem || implicitHeight !== nonAnimHeight ? 1 : 0
         clip: true
 
@@ -182,9 +182,9 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: Tokens.padding.medium
+            anchors.topMargin: CortetsuTokens.padding.medium
 
-            implicitSize: Sizes.itemWidth - Tokens.padding.medium * 2
+            implicitSize: Sizes.itemWidth - CortetsuTokens.padding.medium * 2
 
             Component.onCompleted: {
                 const file = item.modelData;
@@ -205,8 +205,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: icon.bottom
-            anchors.topMargin: Tokens.spacing.small
-            anchors.margins: Tokens.padding.medium
+            anchors.topMargin: CortetsuTokens.spacing.small
+            anchors.margins: CortetsuTokens.padding.medium
 
             horizontalAlignment: Text.AlignHCenter
             elide: item.GridView.isCurrentItem ? Text.ElideNone : Text.ElideRight

@@ -139,9 +139,9 @@ Item {
 
         scale: root.stateMsgShouldBeVisible && !root.msg ? 1 : 0.7
         opacity: root.stateMsgShouldBeVisible && !root.msg ? 1 : 0
-        color: Colours.palette.m3onSurfaceVariant
+        color: CortetsuColours.palette.m3onSurfaceVariant
 
-        font: Tokens.font.body.small
+        font: CortetsuTokens.font.body.small
         horizontalAlignment: Qt.AlignHCenter
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         lineHeight: 1.2
@@ -165,9 +165,9 @@ Item {
 
         scale: 0.7
         opacity: 0
-        color: Colours.palette.m3error
+        color: CortetsuColours.palette.m3error
 
-        font: Tokens.font.body.small
+        font: CortetsuTokens.font.body.small
         horizontalAlignment: Qt.AlignHCenter
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -227,7 +227,7 @@ Item {
     component FlashAnim: NumberAnimation {
         target: message
         property: "opacity"
-        duration: Tokens.anim.durations.small
+        duration: CortetsuTokens.anim.durations.small
         easing.type: Easing.Linear
     }
 }

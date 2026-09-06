@@ -17,7 +17,7 @@ ColumnLayout {
     required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
-    readonly property int vPadding: Tokens.padding.large
+    readonly property int vPadding: CortetsuTokens.padding.large
 
     function closeTray(): void {
         if (!CortetsuConfig.bar.tray.compact)
@@ -101,7 +101,7 @@ ColumnLayout {
         }
     }
 
-    spacing: Tokens.spacing.medium
+    spacing: CortetsuTokens.spacing.medium
 
     Repeater {
         id: repeater

@@ -22,13 +22,13 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         ToggleRow {
             first: true
             text: qsTr("Bluetooth")
-            font: Tokens.font.body.medium
-            horizontalPadding: Tokens.padding.largeIncreased
+            font: CortetsuTokens.font.body.medium
+            horizontalPadding: CortetsuTokens.padding.largeIncreased
             checked: root.btEnabled
             onToggled: {
                 if (root.adapter)
@@ -58,7 +58,7 @@ PageBase {
                 anchors.left: savedList.list.contentItem.left
                 anchors.right: savedList.list.contentItem.right
                 implicitHeight: deviceLayout.implicitHeight + deviceLayout.anchors.margins * 2
-                radius: Tokens.rounding.extraSmall
+                radius: CortetsuTokens.rounding.extraSmall
                 color: "transparent"
 
                 Behavior on textOpacity {
@@ -80,24 +80,24 @@ PageBase {
                     id: deviceLayout
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    anchors.leftMargin: Tokens.padding.largeIncreased
-                    anchors.rightMargin: Tokens.padding.largeIncreased
-                    spacing: Tokens.spacing.medium
+                    anchors.margins: CortetsuTokens.padding.medium
+                    anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+                    anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+                    spacing: CortetsuTokens.spacing.medium
 
                     CortetsuSurface {
                         implicitWidth: implicitHeight
-                        implicitHeight: deviceIcon.implicitHeight + Tokens.padding.small * 2
-                        radius: Tokens.rounding.full
-                        color: device.connected ? Colours.palette.m3primary : Colours.palette.m3secondaryContainer
+                        implicitHeight: deviceIcon.implicitHeight + CortetsuTokens.padding.small * 2
+                        radius: CortetsuTokens.rounding.full
+                        color: device.connected ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3secondaryContainer
 
                         CortetsuIcon {
                             id: deviceIcon
 
                             anchors.centerIn: parent
                             text: Icons.getBluetoothIcon(device.modelData?.icon ?? "")
-                            color: device.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSecondaryContainer
-                            fontStyle: Tokens.font.icon.medium
+                            color: device.connected ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSecondaryContainer
+                            fontStyle: CortetsuTokens.font.icon.medium
                             fill: device.connected ? 1 : 0
                             opacity: device.textOpacity
 
@@ -115,15 +115,15 @@ PageBase {
                         CortetsuText {
                             Layout.fillWidth: true
                             text: device.modelData?.name ?? qsTr("Unknown")
-                            font: Tokens.font.body.small
+                            font: CortetsuTokens.font.body.small
                             elide: Text.ElideRight
                         }
 
                         CortetsuText {
                             Layout.fillWidth: true
                             text: device.connected ? qsTr("Connected%1").arg(device.modelData?.batteryAvailable ? " • " + Math.round(device.modelData.battery * 100) + "%" : "") : qsTr("Saved")
-                            color: Colours.palette.m3outline
-                            font: Tokens.font.label.small
+                            color: CortetsuColours.palette.m3outline
+                            font: CortetsuTokens.font.label.small
                             elide: Text.ElideRight
                             animate: true
                         }
@@ -143,8 +143,8 @@ PageBase {
                                 IconButton {
                                     icon: "settings"
                                     type: IconButton.Text
-                                    padding: Tokens.padding.small
-                                    inactiveOnColour: device.connected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+                                    padding: CortetsuTokens.padding.small
+                                    inactiveOnColour: device.connected ? CortetsuColours.palette.m3primary : CortetsuColours.palette.m3onSurfaceVariant
                                     label.fill: 0
 
                                     onClicked: {
@@ -158,7 +158,7 @@ PageBase {
                                 id: loadingComp
 
                                 LoadingIndicator {
-                                    implicitSize: Math.round(Tokens.font.icon.medium.pointSize * 1.3)
+                                    implicitSize: Math.round(CortetsuTokens.font.icon.medium.pointSize * 1.3)
                                 }
                             }
                         }
@@ -176,7 +176,7 @@ PageBase {
         }
 
         ToggleRow {
-            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            Layout.topMargin: CortetsuTokens.spacing.large - parent.spacing
 
             first: true
             text: qsTr("Discoverable")

@@ -8,8 +8,8 @@ Item {
 
     required property var currentItem
 
-    implicitWidth: content.implicitWidth + Tokens.padding.medium + content.anchors.rightMargin
-    implicitHeight: currentItem ? content.implicitHeight + Tokens.padding.medium + content.anchors.bottomMargin : 0
+    implicitWidth: content.implicitWidth + CortetsuTokens.padding.medium + content.anchors.rightMargin
+    implicitHeight: currentItem ? content.implicitHeight + CortetsuTokens.padding.medium + content.anchors.bottomMargin : 0
 
     Shape {
         preferredRendererType: Shape.CurveRenderer
@@ -17,12 +17,12 @@ Item {
         ShapePath {
             id: path
 
-            readonly property real rounding: root.Tokens.rounding.medium
+            readonly property real rounding: root.CortetsuTokens.rounding.medium
             readonly property bool flatten: root.implicitHeight < rounding * 2
             readonly property real roundingY: flatten ? root.implicitHeight / 2 : rounding
 
             strokeWidth: -1
-            fillColor: Colours.tPalette.m3surfaceContainer
+            fillColor: CortetsuColours.tPalette.m3surfaceContainer
 
             startX: root.implicitWidth
             startY: root.implicitHeight
@@ -75,8 +75,8 @@ Item {
 
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.rightMargin: Tokens.padding.medium - Tokens.padding.extraSmall
-            anchors.bottomMargin: Tokens.padding.medium - Tokens.padding.extraSmall
+            anchors.rightMargin: CortetsuTokens.padding.medium - CortetsuTokens.padding.extraSmall
+            anchors.bottomMargin: CortetsuTokens.padding.medium - CortetsuTokens.padding.extraSmall
 
             Connections {
                 function onCurrentItemChanged(): void {

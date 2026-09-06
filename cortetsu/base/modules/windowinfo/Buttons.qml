@@ -12,14 +12,14 @@ ColumnLayout {
     property bool moveToWsExpanded
 
     anchors.fill: parent
-    spacing: Tokens.spacing.small
+    spacing: CortetsuTokens.spacing.small
 
     RowLayout {
-        Layout.topMargin: Tokens.padding.large
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
+        Layout.topMargin: CortetsuTokens.padding.large
+        Layout.leftMargin: CortetsuTokens.padding.large
+        Layout.rightMargin: CortetsuTokens.padding.large
 
-        spacing: Tokens.spacing.medium
+        spacing: CortetsuTokens.spacing.medium
 
         CortetsuText {
             Layout.fillWidth: true
@@ -28,14 +28,14 @@ ColumnLayout {
         }
 
         CortetsuSurface {
-            color: Colours.palette.m3primary
-            radius: Tokens.rounding.medium
+            color: CortetsuColours.palette.m3primary
+            radius: CortetsuTokens.rounding.medium
 
-            implicitWidth: moveToWsIcon.implicitWidth + Tokens.padding.small
-            implicitHeight: moveToWsIcon.implicitHeight + Tokens.padding.extraSmall
+            implicitWidth: moveToWsIcon.implicitWidth + CortetsuTokens.padding.small
+            implicitHeight: moveToWsIcon.implicitHeight + CortetsuTokens.padding.extraSmall
 
             CortetsuStateLayer {
-                color: Colours.palette.m3onPrimary
+                color: CortetsuColours.palette.m3onPrimary
                 onClicked: root.moveToWsExpanded = !root.moveToWsExpanded
             }
 
@@ -46,8 +46,8 @@ ColumnLayout {
 
                 animate: true
                 text: root.moveToWsExpanded ? "expand_more" : "keyboard_arrow_right"
-                color: Colours.palette.m3onPrimary
-                fontStyle: Tokens.font.icon.large
+                color: CortetsuColours.palette.m3onPrimary
+                fontStyle: CortetsuTokens.font.icon.large
             }
         }
     }
@@ -56,15 +56,15 @@ ColumnLayout {
         id: wsGrid
 
         Layout.fillWidth: true
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
-        Layout.bottomMargin: root.moveToWsExpanded ? Tokens.spacing.medium : 0
+        Layout.leftMargin: CortetsuTokens.padding.large
+        Layout.rightMargin: CortetsuTokens.padding.large
+        Layout.bottomMargin: root.moveToWsExpanded ? CortetsuTokens.spacing.medium : 0
         Layout.preferredHeight: root.moveToWsExpanded ? implicitHeight : 0
         opacity: root.moveToWsExpanded ? 1 : 0
         clip: true
 
-        rowSpacing: Tokens.spacing.small
-        columnSpacing: Tokens.spacing.small
+        rowSpacing: CortetsuTokens.spacing.small
+        columnSpacing: CortetsuTokens.spacing.small
         columns: 5
 
         Behavior on Layout.bottomMargin {
@@ -97,8 +97,8 @@ ColumnLayout {
                     Hypr.dispatch(Hypr.usingLua ? `hl.dsp.window.move({ window = "address:0x${root.client?.address}", workspace = "${wsId}", follow = true })` : `movetoworkspace ${wsId},address:0x${root.client?.address}`);
                 }
 
-                color: isCurrent ? Colours.tPalette.m3surfaceContainerHighest : Colours.palette.m3tertiaryContainer
-                onColor: isCurrent ? Colours.palette.m3onSurface : Colours.palette.m3onTertiaryContainer
+                color: isCurrent ? CortetsuColours.tPalette.m3surfaceContainerHighest : CortetsuColours.palette.m3tertiaryContainer
+                onColor: isCurrent ? CortetsuColours.palette.m3onSurface : CortetsuColours.palette.m3onTertiaryContainer
                 text: wsId
                 disabled: isCurrent
             }
@@ -107,15 +107,15 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
-        Layout.bottomMargin: Tokens.padding.large
+        Layout.leftMargin: CortetsuTokens.padding.large
+        Layout.rightMargin: CortetsuTokens.padding.large
+        Layout.bottomMargin: CortetsuTokens.padding.large
 
-        spacing: root.client?.lastIpcObject.floating ? Tokens.spacing.medium : Tokens.spacing.small
+        spacing: root.client?.lastIpcObject.floating ? CortetsuTokens.spacing.medium : CortetsuTokens.spacing.small
 
         Button {
-            color: Colours.palette.m3secondaryContainer
-            onColor: Colours.palette.m3onSecondaryContainer
+            color: CortetsuColours.palette.m3secondaryContainer
+            onColor: CortetsuColours.palette.m3onSecondaryContainer
             text: root.client?.lastIpcObject.floating ? qsTr("Tile") : qsTr("Float")
             onClicked: Hypr.dispatch(Hypr.usingLua ? `hl.dsp.window.float({ window = "address:0x${root.client?.address}" })` : `togglefloating address:0x${root.client?.address}`)
         }
@@ -128,32 +128,32 @@ ColumnLayout {
             Layout.rightMargin: active ? 0 : -parent.spacing
 
             sourceComponent: Button {
-                color: Colours.palette.m3secondaryContainer
-                onColor: Colours.palette.m3onSecondaryContainer
+                color: CortetsuColours.palette.m3secondaryContainer
+                onColor: CortetsuColours.palette.m3onSecondaryContainer
                 text: root.client?.lastIpcObject.pinned ? qsTr("Unpin") : qsTr("Pin")
                 onClicked: Hypr.dispatch(Hypr.usingLua ? `hl.dsp.window.pin({ window = "address:0x${root.client?.address}" })` : `pin address:0x${root.client?.address}`)
             }
         }
 
         Button {
-            color: Colours.palette.m3errorContainer
-            onColor: Colours.palette.m3onErrorContainer
+            color: CortetsuColours.palette.m3errorContainer
+            onColor: CortetsuColours.palette.m3onErrorContainer
             text: qsTr("Kill")
             onClicked: Hypr.dispatch(Hypr.usingLua ? `hl.dsp.window.kill({ window = "address:0x${root.client?.address}" })` : `killwindow address:0x${root.client?.address}`)
         }
     }
 
     component Button: CortetsuSurface {
-        property color onColor: Colours.palette.m3onSurface
+        property color onColor: CortetsuColours.palette.m3onSurface
         property alias disabled: stateLayer.disabled
         property alias text: label.text
 
         signal clicked
 
-        radius: Tokens.rounding.medium
+        radius: CortetsuTokens.rounding.medium
 
         Layout.fillWidth: true
-        implicitHeight: label.implicitHeight + Tokens.padding.small
+        implicitHeight: label.implicitHeight + CortetsuTokens.padding.small
 
         CortetsuStateLayer {
             id: stateLayer
@@ -169,7 +169,7 @@ ColumnLayout {
 
             animate: true
             color: parent.onColor
-            font: Tokens.font.body.medium
+            font: CortetsuTokens.font.body.medium
         }
     }
 }

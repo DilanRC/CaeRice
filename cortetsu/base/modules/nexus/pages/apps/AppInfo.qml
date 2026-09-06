@@ -35,29 +35,29 @@ PageBase {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
-        spacing: Tokens.spacing.extraSmall / 2
+        spacing: CortetsuTokens.spacing.extraSmall / 2
 
         // Header
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Tokens.padding.small
-            Layout.bottomMargin: Tokens.spacing.large
-            spacing: Tokens.spacing.large
+            Layout.leftMargin: CortetsuTokens.padding.small
+            Layout.bottomMargin: CortetsuTokens.spacing.large
+            spacing: CortetsuTokens.spacing.large
 
             IconImage {
                 asynchronous: true
-                implicitSize: Math.round(Tokens.font.icon.large.pointSize * 3)
+                implicitSize: Math.round(CortetsuTokens.font.icon.large.pointSize * 3)
                 source: Quickshell.iconPath(root.app?.icon, "image-missing")
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Tokens.spacing.extraSmall / 2
+                spacing: CortetsuTokens.spacing.extraSmall / 2
 
                 CortetsuText {
                     Layout.fillWidth: true
                     text: root.app?.name ?? ""
-                    font: Tokens.font.title.medium
+                    font: CortetsuTokens.font.title.medium
                     wrapMode: Text.WordWrap
                 }
 
@@ -65,8 +65,8 @@ PageBase {
                     Layout.fillWidth: true
                     visible: text
                     text: (root.app?.comment || root.app?.genericName) ?? ""
-                    color: Colours.palette.m3outline
-                    font: Tokens.font.body.small
+                    color: CortetsuColours.palette.m3outline
+                    font: CortetsuTokens.font.body.small
                     wrapMode: Text.WordWrap
                 }
             }
@@ -140,16 +140,16 @@ PageBase {
             id: rowLayout
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.medium
-            anchors.leftMargin: Tokens.padding.largeIncreased
-            anchors.rightMargin: Tokens.padding.largeIncreased
-            spacing: Tokens.spacing.medium
+            anchors.margins: CortetsuTokens.padding.medium
+            anchors.leftMargin: CortetsuTokens.padding.largeIncreased
+            anchors.rightMargin: CortetsuTokens.padding.largeIncreased
+            spacing: CortetsuTokens.spacing.medium
 
             CortetsuText {
                 id: label
 
                 Layout.alignment: Qt.AlignTop
-                font: Tokens.font.body.small
+                font: CortetsuTokens.font.body.small
             }
 
             Item {
@@ -161,8 +161,8 @@ PageBase {
 
                 Layout.fillWidth: true
                 Layout.maximumWidth: implicitWidth + 1 // Whyyyyyyyyy
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.small
+                color: CortetsuColours.palette.m3onSurfaceVariant
+                font: CortetsuTokens.font.body.small
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             }
         }

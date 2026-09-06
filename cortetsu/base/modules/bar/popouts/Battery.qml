@@ -8,8 +8,8 @@ import qs.services
 Column {
     id: root
 
-    spacing: Tokens.spacing.medium
-    width: Tokens.sizes.bar.batteryWidth
+    spacing: CortetsuTokens.spacing.medium
+    width: CortetsuTokens.sizes.bar.batteryWidth
 
     CortetsuText {
         text: UPower.displayDevice.isLaptopBattery ? qsTr("Remaining: %1%").arg(Math.round(UPower.displayDevice.percentage * 100)) : qsTr("No battery detected")
@@ -44,11 +44,11 @@ Column {
         height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
         sourceComponent: CortetsuSurface {
-            implicitWidth: child.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: child.implicitHeight + Tokens.padding.large
+            implicitWidth: child.implicitWidth + CortetsuTokens.padding.medium * 2
+            implicitHeight: child.implicitHeight + CortetsuTokens.padding.large
 
-            color: Colours.palette.m3error
-            radius: Tokens.rounding.large
+            color: CortetsuColours.palette.m3error
+            radius: CortetsuTokens.rounding.large
 
             Column {
                 id: child
@@ -57,21 +57,21 @@ Column {
 
                 Row {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: Tokens.spacing.small
+                    spacing: CortetsuTokens.spacing.small
 
                     CortetsuIcon {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.verticalCenterOffset: -font.pointSize / 10
 
                         text: "warning"
-                        color: Colours.palette.m3onError
+                        color: CortetsuColours.palette.m3onError
                     }
 
                     CortetsuText {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Performance Degraded")
-                        color: Colours.palette.m3onError
-                        font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
+                        color: CortetsuColours.palette.m3onError
+                        font: CortetsuTokens.font.mono.builders.medium.weight(Font.Medium).build()
                     }
 
                     CortetsuIcon {
@@ -79,7 +79,7 @@ Column {
                         anchors.verticalCenterOffset: -font.pointSize / 10
 
                         text: "warning"
-                        color: Colours.palette.m3onError
+                        color: CortetsuColours.palette.m3onError
                     }
                 }
 
@@ -87,7 +87,7 @@ Column {
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text: qsTr("Reason: %1").arg(PerformanceDegradationReason.toString(PowerProfiles.degradationReason))
-                    color: Colours.palette.m3onError
+                    color: CortetsuColours.palette.m3onError
                 }
             }
         }
@@ -107,17 +107,17 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.largeIncreased * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + CortetsuTokens.padding.medium * 2 + CortetsuTokens.spacing.largeIncreased * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + CortetsuTokens.padding.small
 
-        color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.full
+        color: CortetsuColours.tPalette.m3surfaceContainer
+        radius: CortetsuTokens.rounding.full
 
         CortetsuSurface {
             id: indicator
 
-            color: Colours.palette.m3primary
-            radius: Tokens.rounding.full
+            color: CortetsuColours.palette.m3primary
+            radius: CortetsuTokens.rounding.full
             state: profiles.current
 
             states: [
@@ -154,7 +154,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Tokens.padding.extraSmall
+            anchors.leftMargin: CortetsuTokens.padding.extraSmall
 
             profile: PowerProfile.PowerSaver
             icon: "energy_savings_leaf"
@@ -174,7 +174,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: Tokens.padding.extraSmall
+            anchors.rightMargin: CortetsuTokens.padding.extraSmall
 
             profile: PowerProfile.Performance
             icon: "rocket_launch"
@@ -195,12 +195,12 @@ Column {
         required property string icon
         required property int profile
 
-        implicitWidth: icon.implicitHeight + Tokens.padding.small
-        implicitHeight: icon.implicitHeight + Tokens.padding.small
+        implicitWidth: icon.implicitHeight + CortetsuTokens.padding.small
+        implicitHeight: icon.implicitHeight + CortetsuTokens.padding.small
 
         CortetsuStateLayer {
-            radius: Tokens.rounding.full
-            color: profiles.current === parent.icon ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+            radius: CortetsuTokens.rounding.full
+            color: profiles.current === parent.icon ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurface
             onClicked: PowerProfiles.profile = parent.profile
         }
 
@@ -210,8 +210,8 @@ Column {
             anchors.centerIn: parent
 
             text: parent.icon
-            fontStyle: Tokens.font.icon.large
-            color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
+            fontStyle: CortetsuTokens.font.icon.large
+            color: profiles.current === text ? CortetsuColours.palette.m3onPrimary : CortetsuColours.palette.m3onSurfaceVariant
             fill: profiles.current === text ? 1 : 0
 
             Behavior on fill {
