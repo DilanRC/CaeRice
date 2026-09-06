@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.modules
 import qs.services
 import qs.modules.nexus.common
 
@@ -25,7 +25,7 @@ PageBase {
             running: root.visible && Nmcli.wifiEnabled
             repeat: true
             triggeredOnStart: true
-            interval: GlobalConfig.nexus.networkRescanInterval
+            interval: CortetsuConfig.nexusNetworkRescanInterval
             onTriggered: Nmcli.rescanWifi()
         }
 

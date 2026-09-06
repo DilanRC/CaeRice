@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 
 LazyListView {
@@ -41,7 +41,7 @@ LazyListView {
 
             let count = 0;
             let i = 0;
-            const previewNum = root.Config.notifs.groupPreviewNum;
+            const previewNum = CortetsuConfig.notificationGroupPreviewNum;
             while (i < root.notifs.length && count < previewNum) {
                 if (!(root.notifs[i]?.closed ?? true))
                     count++;
@@ -90,12 +90,12 @@ LazyListView {
             onPositionChanged: event => {
                 if (pressed && !root.expanded) {
                     const diffY = event.y - startY;
-                    if (Math.abs(diffY) > Config.notifs.expandThreshold)
+                    if (Math.abs(diffY) > CortetsuConfig.notificationExpandThreshold)
                         root.requestToggleExpand(diffY > 0);
                 }
             }
             onReleased: event => {
-                if (Math.abs(x) < width * Config.notifs.clearThreshold)
+                if (Math.abs(x) < width * CortetsuConfig.notificationClearThreshold)
                     x = 0;
                 else
                     modelData?.close();

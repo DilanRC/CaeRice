@@ -81,7 +81,7 @@ CortetsuSurface {
                     from: 0
                     to: 1
                     easing.type: Easing.Linear
-                    duration: GlobalConfig.dashboard.resourceUpdateInterval
+                    duration: CortetsuConfig.dashboardResourceUpdateInterval
                 }
 
                 Behavior on smoothMax {

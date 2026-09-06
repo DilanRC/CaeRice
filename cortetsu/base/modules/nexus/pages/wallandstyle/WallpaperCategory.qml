@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import qs.modules
-import Caelestia.Config
 import Caelestia.Models
 import qs.services
 import qs.modules.nexus.common
@@ -22,14 +21,14 @@ PageBase {
         anchors.top: parent.top
         width: root.cappedWidth
 
-        columns: Config.nexus.wallpapersPerRow
+        columns: CortetsuConfig.nexusWallpapersPerRow
         rowSpacing: Tokens.spacing.medium
         columnSpacing: Tokens.spacing.large
 
         Repeater {
             model: {
                 const walls = CortetsuWallpapers.list.filter(w => CortetsuWallpapers.getCategoryFor(w) === root.nState.selectedWallpaperCategory).sort((a, b) => a.name.localeCompare(b.name));
-                while (walls.length < Config.nexus.wallpapersPerRow)
+                while (walls.length < CortetsuConfig.nexusWallpapersPerRow)
                     walls.push(null);
                 return walls;
             }

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.components.controls
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -56,43 +57,43 @@ PageBase {
             label: qsTr("Show in fullscreen")
             subtext: qsTr("Whether notifications appear over fullscreen apps")
             menuItems: root.notifFullscreenItems
-            active: root.notifFullscreenItems[GlobalConfig.notifs.fullscreen]
-            onSelected: item => GlobalConfig.notifs.fullscreen = root.notifFullscreenItems.indexOf(item)
+            active: root.notifFullscreenItems[CortetsuConfig.notificationFullscreenMode]
+            onSelected: item => CortetsuConfig.notificationFullscreenMode = root.notifFullscreenItems.indexOf(item)
         }
 
         ToggleRow {
             text: qsTr("Expire automatically")
             subtext: qsTr("Dismiss notifications after their timeout")
-            checked: GlobalConfig.notifs.expire
-            onToggled: GlobalConfig.notifs.expire = checked
+            checked: CortetsuConfig.notificationExpire
+            onToggled: CortetsuConfig.notificationExpire = checked
         }
 
         ToggleRow {
             text: qsTr("Open expanded")
             subtext: qsTr("Show notifications expanded by default")
-            checked: GlobalConfig.notifs.openExpanded
-            onToggled: GlobalConfig.notifs.openExpanded = checked
+            checked: CortetsuConfig.notificationOpenExpanded
+            onToggled: CortetsuConfig.notificationOpenExpanded = checked
         }
 
         StepperRow {
             label: qsTr("Default timeout")
             subtext: qsTr("Time before a notification dismisses (ms)")
-            value: GlobalConfig.notifs.defaultExpireTimeout
+            value: CortetsuConfig.notificationDefaultExpireTimeout
             from: 1000
             to: 60000
             stepSize: 500
-            onMoved: v => GlobalConfig.notifs.defaultExpireTimeout = Math.round(v)
+            onMoved: v => CortetsuConfig.notificationDefaultExpireTimeout = Math.round(v)
         }
 
         StepperRow {
             last: true
             label: qsTr("Group preview count")
             subtext: qsTr("Notifications shown per group before collapsing")
-            value: GlobalConfig.notifs.groupPreviewNum
+            value: GlobalCortetsuConfig.notificationGroupPreviewNum
             from: 1
             to: 10
             stepSize: 1
-            onMoved: v => GlobalConfig.notifs.groupPreviewNum = Math.round(v)
+            onMoved: v => GlobalCortetsuConfig.notificationGroupPreviewNum = Math.round(v)
         }
 
         // Toasts

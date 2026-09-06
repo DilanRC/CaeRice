@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import Quickshell
 import qs.modules
 import Caelestia.Components
-import Caelestia.Config
 import Caelestia.Models
 import qs.components
 import qs.components.controls
@@ -92,7 +91,7 @@ PageBase {
             Layout.fillWidth: true
             visible: localWalls.count > 0
 
-            columns: Config.nexus.wallpapersPerRow
+            columns: CortetsuConfig.nexusWallpapersPerRow
             rowSpacing: Tokens.spacing.medium
             columnSpacing: Tokens.spacing.large
 
@@ -115,7 +114,7 @@ PageBase {
                     }
                     list.push(...Object.values(categories));
                     list.sort((a, b) => ((a.parentDir === baseDir) - (b.parentDir === baseDir)) || a.name.localeCompare(b.name));
-                    while (list.length < Config.nexus.wallpapersPerRow)
+                    while (list.length < CortetsuConfig.nexusWallpapersPerRow)
                         list.push(null);
                     return list;
                 }

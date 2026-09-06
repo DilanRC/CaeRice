@@ -51,14 +51,36 @@ QtObject {
     property bool toastAudioInputChanged: true
     property bool toastNowPlaying: false
     property bool notificationExpire: true
+    onNotificationExpireChanged: if (loaded) save()
     property bool suppressNotificationsInFullscreen: false
     property int notificationDefaultExpireTimeout: 5000
+    onNotificationDefaultExpireTimeoutChanged: if (loaded) save()
     property int notificationFullscreenExpireTimeout: 2000
     property bool notificationActionOnClick: false
+    property int notificationFullscreenMode: 0
+    onNotificationFullscreenModeChanged: if (loaded) save()
+    property real notificationClearThreshold: 0.3
+    onNotificationClearThresholdChanged: if (loaded) save()
+    property int notificationExpandThreshold: 20
+    onNotificationExpandThresholdChanged: if (loaded) save()
+    property int notificationGroupPreviewNum: 3
+    onNotificationGroupPreviewNumChanged: if (loaded) save()
+    property bool notificationOpenExpanded: false
+    onNotificationOpenExpandedChanged: if (loaded) save()
     property bool toastDndChanged: true
     property bool toastGameModeChanged: true
     property bool vimKeybinds: true
     property int workspacesShown: 5
+    property int dashboardMediaUpdateInterval: 500
+    onDashboardMediaUpdateIntervalChanged: if (loaded) save()
+    property int dashboardResourceUpdateInterval: 1000
+    onDashboardResourceUpdateIntervalChanged: if (loaded) save()
+    property int nexusWallpapersPerRow: 4
+    onNexusWallpapersPerRowChanged: if (loaded) save()
+    property int nexusMaxNetworksShown: 5
+    onNexusMaxNetworksShownChanged: if (loaded) save()
+    property int nexusNetworkRescanInterval: 15000
+    onNexusNetworkRescanIntervalChanged: if (loaded) save()
     property bool idleInhibitWhenAudio: true
     property bool idleInhibitWhenCharging: false
     property bool idleLockBeforeSleep: true
@@ -227,6 +249,30 @@ QtObject {
                 useFuzzySchemes = data.useFuzzySchemes;
             if (typeof data.useFuzzyVariants === "boolean")
                 useFuzzyVariants = data.useFuzzyVariants;
+            if (typeof data.notificationExpire === "boolean")
+                notificationExpire = data.notificationExpire;
+            if (Number.isInteger(data.notificationDefaultExpireTimeout))
+                notificationDefaultExpireTimeout = Math.max(0, data.notificationDefaultExpireTimeout);
+            if (Number.isInteger(data.notificationFullscreenMode))
+                notificationFullscreenMode = Math.max(0, Math.min(1, data.notificationFullscreenMode));
+            if (typeof data.notificationClearThreshold === "number")
+                notificationClearThreshold = Math.max(0, Math.min(1, data.notificationClearThreshold));
+            if (Number.isInteger(data.notificationExpandThreshold))
+                notificationExpandThreshold = Math.max(0, data.notificationExpandThreshold);
+            if (Number.isInteger(data.notificationGroupPreviewNum))
+                notificationGroupPreviewNum = Math.max(1, Math.min(20, data.notificationGroupPreviewNum));
+            if (typeof data.notificationOpenExpanded === "boolean")
+                notificationOpenExpanded = data.notificationOpenExpanded;
+            if (Number.isInteger(data.dashboardMediaUpdateInterval))
+                dashboardMediaUpdateInterval = Math.max(50, data.dashboardMediaUpdateInterval);
+            if (Number.isInteger(data.dashboardResourceUpdateInterval))
+                dashboardResourceUpdateInterval = Math.max(50, data.dashboardResourceUpdateInterval);
+            if (Number.isInteger(data.nexusWallpapersPerRow))
+                nexusWallpapersPerRow = Math.max(1, Math.min(12, data.nexusWallpapersPerRow));
+            if (Number.isInteger(data.nexusMaxNetworksShown))
+                nexusMaxNetworksShown = Math.max(1, Math.min(50, data.nexusMaxNetworksShown));
+            if (Number.isInteger(data.nexusNetworkRescanInterval))
+                nexusNetworkRescanInterval = Math.max(1000, data.nexusNetworkRescanInterval);
             if (data.dashboard && typeof data.dashboard === "object") {
                 for (const key of ["enabled", "showOnHover", "showDashboard", "showMedia", "showPerformance", "showWeather"])
                     if (typeof data.dashboard[key] === "boolean") dashboard[key] = data.dashboard[key];
@@ -348,7 +394,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, useFuzzyActions, useFuzzySchemes, useFuzzyVariants, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, dashboard: { enabled: dashboard.enabled, showOnHover: dashboard.showOnHover, showDashboard: dashboard.showDashboard, showMedia: dashboard.showMedia, showPerformance: dashboard.showPerformance, showWeather: dashboard.showWeather, dragThreshold: dashboard.dragThreshold, performance: { showCpu: dashboard.performance.showCpu, showGpu: dashboard.performance.showGpu, showMemory: dashboard.performance.showMemory, showStorage: dashboard.performance.showStorage, showNetwork: dashboard.performance.showNetwork, showBattery: dashboard.performance.showBattery } }, launcher: { enabled: launcher.enabled, showOnHover: launcher.showOnHover, maxShown: launcher.maxShown, maxWallpapers: launcher.maxWallpapers, dragThreshold: launcher.dragThreshold }, sidebar: { enabled: sidebar.enabled, showOnHover: sidebar.showOnHover, dragThreshold: sidebar.dragThreshold, minHoverThreshold: sidebar.minHoverThreshold }, utilities: { enabled: utilities.enabled, cards: { keepAwake: utilities.cards.keepAwake, recorder: utilities.cards.recorder, quickToggles: utilities.cards.quickToggles } }, bar: { persistent: bar.persistent, showOnHover: bar.showOnHover, dragThreshold: bar.dragThreshold, scrollActions: { workspaces: bar.scrollActions.workspaces, volume: bar.scrollActions.volume, brightness: bar.scrollActions.brightness }, tray: { background: bar.tray.background, compact: bar.tray.compact, recolour: bar.tray.recolour }, activeWindow: { compact: bar.activeWindow.compact, inverted: bar.activeWindow.inverted, showOnHover: bar.activeWindow.showOnHover }, popouts: { activeWindow: bar.popouts.activeWindow, statusIcons: bar.popouts.statusIcons, tray: bar.popouts.tray }, clock: { background: bar.clock.background, showDate: bar.clock.showDate, showIcon: bar.clock.showIcon }, workspaces: { activeIndicator: bar.workspaces.activeIndicator, activeTrail: bar.workspaces.activeTrail, occupiedBg: bar.workspaces.occupiedBg, showWindows: bar.workspaces.showWindows, showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces, maxWindowIcons: bar.workspaces.maxWindowIcons, perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces } }, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, useFuzzyActions, useFuzzySchemes, useFuzzyVariants, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, notificationFullscreenMode, notificationClearThreshold, notificationExpandThreshold, notificationGroupPreviewNum, notificationOpenExpanded, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, dashboardMediaUpdateInterval, dashboardResourceUpdateInterval, nexusWallpapersPerRow, nexusMaxNetworksShown, nexusNetworkRescanInterval, dashboard: { enabled: dashboard.enabled, showOnHover: dashboard.showOnHover, showDashboard: dashboard.showDashboard, showMedia: dashboard.showMedia, showPerformance: dashboard.showPerformance, showWeather: dashboard.showWeather, dragThreshold: dashboard.dragThreshold, performance: { showCpu: dashboard.performance.showCpu, showGpu: dashboard.performance.showGpu, showMemory: dashboard.performance.showMemory, showStorage: dashboard.performance.showStorage, showNetwork: dashboard.performance.showNetwork, showBattery: dashboard.performance.showBattery } }, launcher: { enabled: launcher.enabled, showOnHover: launcher.showOnHover, maxShown: launcher.maxShown, maxWallpapers: launcher.maxWallpapers, dragThreshold: launcher.dragThreshold }, sidebar: { enabled: sidebar.enabled, showOnHover: sidebar.showOnHover, dragThreshold: sidebar.dragThreshold, minHoverThreshold: sidebar.minHoverThreshold }, utilities: { enabled: utilities.enabled, cards: { keepAwake: utilities.cards.keepAwake, recorder: utilities.cards.recorder, quickToggles: utilities.cards.quickToggles } }, bar: { persistent: bar.persistent, showOnHover: bar.showOnHover, dragThreshold: bar.dragThreshold, scrollActions: { workspaces: bar.scrollActions.workspaces, volume: bar.scrollActions.volume, brightness: bar.scrollActions.brightness }, tray: { background: bar.tray.background, compact: bar.tray.compact, recolour: bar.tray.recolour }, activeWindow: { compact: bar.activeWindow.compact, inverted: bar.activeWindow.inverted, showOnHover: bar.activeWindow.showOnHover }, popouts: { activeWindow: bar.popouts.activeWindow, statusIcons: bar.popouts.statusIcons, tray: bar.popouts.tray }, clock: { background: bar.clock.background, showDate: bar.clock.showDate, showIcon: bar.clock.showIcon }, workspaces: { activeIndicator: bar.workspaces.activeIndicator, activeTrail: bar.workspaces.activeTrail, occupiedBg: bar.workspaces.occupiedBg, showWindows: bar.workspaces.showWindows, showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces, maxWindowIcons: bar.workspaces.maxWindowIcons, perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces } }, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

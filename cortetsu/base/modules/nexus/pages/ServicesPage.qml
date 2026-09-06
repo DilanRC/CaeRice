@@ -4,6 +4,7 @@ import Quickshell
 import Caelestia.Config
 import Caelestia.Services
 import qs.components.controls
+import qs.modules
 import qs.services
 import qs.modules.nexus.common
 
@@ -89,32 +90,32 @@ PageBase {
             first: true
             label: qsTr("Media refresh")
             subtext: qsTr("How often the media position updates (ms)")
-            value: GlobalConfig.dashboard.mediaUpdateInterval
+            value: CortetsuConfig.dashboardMediaUpdateInterval
             from: 100
             to: 2000
             stepSize: 50
-            onMoved: v => GlobalConfig.dashboard.mediaUpdateInterval = v
+            onMoved: v => CortetsuConfig.dashboardMediaUpdateInterval = v
         }
 
         StepperRow {
             label: qsTr("System stats refresh")
             subtext: qsTr("CPU, memory and GPU update interval (seconds)")
-            value: GlobalConfig.dashboard.resourceUpdateInterval / 1000
+            value: CortetsuConfig.dashboardResourceUpdateInterval / 1000
             from: 0.5
             to: 10
             stepSize: 0.5
-            onMoved: v => GlobalConfig.dashboard.resourceUpdateInterval = Math.round(v * 1000)
+            onMoved: v => CortetsuConfig.dashboardResourceUpdateInterval = Math.round(v * 1000)
         }
 
         StepperRow {
             last: true
             label: qsTr("Wi-Fi rescan")
             subtext: qsTr("How often available networks are rescanned (seconds)")
-            value: GlobalConfig.nexus.networkRescanInterval / 1000
+            value: CortetsuConfig.nexusNetworkRescanInterval / 1000
             from: 5
             to: 120
             stepSize: 5
-            onMoved: v => GlobalConfig.nexus.networkRescanInterval = Math.round(v * 1000)
+            onMoved: v => CortetsuConfig.nexusNetworkRescanInterval = Math.round(v * 1000)
         }
 
         // Media & lyrics

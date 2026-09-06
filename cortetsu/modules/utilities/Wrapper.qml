@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import "../../services"
+import qs.modules
 
 Item {
     id: root

@@ -3,9 +3,9 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.components.controls
+import qs.modules
 import qs.services
 import qs.modules.nexus.common
 
@@ -24,7 +24,7 @@ PageBase {
             running: root.visible && Nmcli.wifiEnabled
             repeat: true
             triggeredOnStart: true
-            interval: GlobalConfig.nexus.networkRescanInterval
+            interval: CortetsuConfig.nexusNetworkRescanInterval
             onTriggered: Nmcli.rescanWifi()
         }
 
@@ -67,9 +67,9 @@ PageBase {
         }
 
         NetworkList {
-            Layout.bottomMargin: Nmcli.wifiEnabled && Nmcli.networks.length > GlobalConfig.nexus.maxNetworksShown ? 0 : -parent.spacing
+            Layout.bottomMargin: Nmcli.wifiEnabled && Nmcli.networks.length > CortetsuConfig.nexusMaxNetworksShown ? 0 : -parent.spacing
             nState: root.nState
-            limit: GlobalConfig.nexus.maxNetworksShown
+            limit: CortetsuConfig.nexusMaxNetworksShown
 
             Behavior on Layout.bottomMargin {
                 Anim {
@@ -80,7 +80,7 @@ PageBase {
 
         // All networks button, only when > max networks
         RowButton {
-            Layout.preferredHeight: Nmcli.wifiEnabled && Nmcli.networks.length > GlobalConfig.nexus.maxNetworksShown ? implicitHeight : 0
+            Layout.preferredHeight: Nmcli.wifiEnabled && Nmcli.networks.length > CortetsuConfig.nexusMaxNetworksShown ? implicitHeight : 0
             clip: true
 
             icon: "expand_content"
@@ -160,7 +160,7 @@ PageBase {
                 implicitHeight: providerLayout.implicitHeight + providerLayout.anchors.margins * 2
 
                 CortetsuStateLayer {
-                    disabled: provider.isSelected
+                    enabled: !provider.isSelected
                     radius: Tokens.rounding.extraSmall
                     onClicked: {
                         if (!provider.isSelected)

@@ -5,9 +5,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
-import Caelestia.Config
 import qs.components
 import qs.components.effects
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -174,8 +174,8 @@ CortetsuSurface {
                     color: root.urgency === "critical" ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
                     radius: Tokens.rounding.full
 
-                    opacity: root.notifs.length > Config.notifs.groupPreviewNum ? 1 : 0
-                    Layout.preferredWidth: root.notifs.length > Config.notifs.groupPreviewNum ? implicitWidth : 0
+                    opacity: root.notifs.length > CortetsuConfig.notificationGroupPreviewNum ? 1 : 0
+                    Layout.preferredWidth: root.notifs.length > CortetsuConfig.notificationGroupPreviewNum ? implicitWidth : 0
 
                     CortetsuStateLayer {
                         color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
@@ -220,7 +220,7 @@ CortetsuSurface {
 
             Repeater {
                 model: ScriptModel {
-                    values: root.notifs.slice(0, root.Config.notifs.groupPreviewNum) as Array
+                    values: root.notifs.slice(0, CortetsuConfig.notificationGroupPreviewNum) as Array
                 }
 
                 NotifLine {
@@ -285,7 +285,7 @@ CortetsuSurface {
                 sourceComponent: ColumnLayout {
                     Repeater {
                         model: ScriptModel {
-                            values: root.notifs.slice(root.Config.notifs.groupPreviewNum) as Array
+                            values: root.notifs.slice(CortetsuConfig.notificationGroupPreviewNum) as Array
                         }
 
                         NotifLine {}
