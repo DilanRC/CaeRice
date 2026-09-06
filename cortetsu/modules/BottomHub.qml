@@ -234,6 +234,10 @@ Scope {
             const popouts = CortetsuShellState.componentsFor(screen)?.popouts;
             if (!popouts)
                 return false;
+            if (mode === "winfo") {
+                hubRoot.toggleDetachedControlFor(screen, mode);
+                return true;
+            }
             hubRoot.showAttachedControlFor(screen, mode);
             return true;
         }
