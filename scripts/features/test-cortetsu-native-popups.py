@@ -76,6 +76,9 @@ for name in ("CortetsuBatteryPopup.qml", "CortetsuActiveWindowPopup.qml", "Corte
     assert "CortetsuDesign" in owned
     assert "import qs.services" not in owned
     assert "import qs.components" not in owned
+lock_status = (popouts / "CortetsuLockStatusPopup.qml").read_text(encoding="utf-8")
+assert 'import "../../../services"' in lock_status
+assert "Hypr.capsLock" in lock_status and "Hypr.numLock" in lock_status
 for legacy in ("sourceComponent: Battery", "sourceComponent: ActiveWindow", "sourceComponent: KbLayout", "sourceComponent: LockStatus", "sourceComponent: TrayMenu"):
     assert legacy not in content, legacy
 assert "sourceComponent: Network {" not in content

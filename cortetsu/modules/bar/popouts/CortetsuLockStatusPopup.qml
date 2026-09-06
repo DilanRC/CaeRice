@@ -2,6 +2,7 @@ import QtQuick.Layouts
 import ".."
 import "../.."
 import "../../../components"
+import "../../../services"
 import "../../CortetsuDesign.js" as CortetsuDesign
 
 ColumnLayout {
