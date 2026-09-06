@@ -253,6 +253,7 @@ test_cmd() {
         "scripts/features/test-bottom-hub-v4.py"
         "scripts/features/test-retained-overlay-wiring.py"
         "scripts/features/test-contentwindow-overview-base.py"
+        "scripts/features/test-contentwindow-focusgrab-parity.py"
         "scripts/features/test-wallpaper-manager.py"
         "scripts/features/test-keybinds.py"
         "scripts/features/eval-keybind-editor.py"

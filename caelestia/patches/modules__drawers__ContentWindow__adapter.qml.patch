@@ -26,4 +26,4 @@
 +            if (s.cortetsuState?.retainedOverlayOpen)
 @@ -157,1 +157,1 @@
 -            root.screenState.overview = false;
-+            root.screenState.cortetsuState?.setRetained("overview", false);
++            root.screenState.cortetsuState?.closeRetainedOverlays();
