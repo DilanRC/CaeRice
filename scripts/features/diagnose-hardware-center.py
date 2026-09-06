@@ -42,10 +42,6 @@ def print_json_command(label: str, path: Path, *extra: str) -> None:
         print(cp.stdout.strip())
 
 
-print("===== REPOSITORY VALIDATION =====")
-validator = run(sys.executable, str(REPO / "scripts/features/validate-hardware-center.py"), timeout=30)
-print((validator.stdout or validator.stderr).strip())
-
 print("\n===== LIVE VS REPO =====")
 repo_modules = REPO / "cortetsu/modules"
 checks = [(repo_modules / "HardwareController.qml", LIVE / "modules/HardwareController.qml")]

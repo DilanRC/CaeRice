@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Canonical SAD shell wiring.
 
-The retained SAD runtime consists of Hardware Center (prerequisite, wired by
-install-hardware-center.sh) and Display Manager. Gaming Center and Cortetsu
-Updater were retired from the product and must not be reintroduced by rebuilds.
+The retained runtime consists of Hardware Center and Display Manager. Gaming
+Center and Cortetsu Updater were retired from the product and must not be
+reintroduced by rebuilds.
 
 Every run first removes legacy Gaming/Updater integration from an older live
 tree, then idempotently ensures Display Manager is wired on top of Hardware.
