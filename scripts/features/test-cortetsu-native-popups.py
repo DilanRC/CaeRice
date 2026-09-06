@@ -15,9 +15,14 @@ for name, service in (
     assert "CortetsuDesign" in text and service in text
     assert "No devices nearby" in text or "No networks available" in text or "No device" in text
 
+password = (popouts / "CortetsuWifiPasswordPopup.qml").read_text(encoding="utf-8")
+for token in ("TextField", "Keys.onEscapePressed", "NetworkConnection.connectWithPassword", "8000", "errorText"):
+    assert token in password, token
+
 assert "sourceComponent: CortetsuNetworkPopup" in content
 assert "sourceComponent: CortetsuAudioPopup" in content
 assert "sourceComponent: CortetsuBluetoothPopup" in content
+assert "sourceComponent: CortetsuWifiPasswordPopup" in content
 assert "sourceComponent: Network {" not in content
 assert "sourceComponent: AudioPopout {" not in content
 assert "sourceComponent: Bluetooth {" not in content

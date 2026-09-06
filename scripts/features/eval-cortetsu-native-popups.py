@@ -10,4 +10,7 @@ for name in required:
         assert token in text, f"{name} lacks {token}"
     assert "CortetsuDesign.radiusLarge" in text
 assert (ROOT / "cortetsu/base/modules/bar/popouts/Content.qml").is_file()
+password = (popouts / "CortetsuWifiPasswordPopup.qml").read_text(encoding="utf-8")
+assert password.count("CortetsuButton") >= 2
+assert "NetworkConnection.connectWithPassword" in password
 print("PASS: native popup eval covers network, audio and Bluetooth hierarchy and states")

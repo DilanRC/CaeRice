@@ -19,6 +19,7 @@ CortetsuSurface {
     outlined: true
 
     readonly property var device: CortetsuNetwork.wifiDevice
+    property var passwordNetwork: null
     readonly property var networks: (device?.networks?.values ?? []).slice().sort((a, b) => {
         if (a.connected !== b.connected) return b.connected - a.connected;
         return (b.signalStrength ?? 0) - (a.signalStrength ?? 0);
@@ -74,7 +75,8 @@ CortetsuSurface {
                     } else if (modelData.known || modelData.security === WifiSecurityType.None) {
                         modelData.connect();
                     } else {
-                        CortetsuToaster.toast(qsTr("Wi‑Fi"), qsTr("Password required for %1").arg(modelData.name), "network");
+                        root.passwordNetwork = modelData;
+                        root.popouts.currentName = "wirelesspassword";
                     }
                 }
             }
