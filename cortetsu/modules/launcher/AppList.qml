@@ -12,6 +12,7 @@ import "../CortetsuTypography.js" as CortetsuTypography
 import "../CortetsuSurface.qml"
 import "../CortetsuText.qml"
 import "../CortetsuIcon.qml"
+import "../CortetsuStateLayer.qml"
 import qs.modules.launcher.services
 
 GridView {
@@ -234,7 +235,7 @@ GridView {
                     : "transparent"
             }
 
-            StateLayer {
+            CortetsuStateLayer {
                 id: appState
 
                 anchors.fill: parent
@@ -282,7 +283,7 @@ GridView {
 
             /*
              * Un único MouseArea controla ambos botones. En algunas versiones
-             * de Qt/Quickshell el StateLayer absorbía el botón derecho antes de
+             * de Qt/Quickshell el CortetsuStateLayer absorbía el botón derecho antes de
              * que llegara al MouseArea right-only, por eso pin/unpin no ocurría
              * desde el launcher aunque sí funcionara en el Dock.
              */
@@ -335,7 +336,7 @@ GridView {
                     : "transparent"
             }
 
-            StateLayer {
+            CortetsuStateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
                 radius: CortetsuDesign.radiusLarge
@@ -417,7 +418,7 @@ GridView {
                     Qalculator.evalAsync(math);
             }
 
-            StateLayer {
+            CortetsuStateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
                 radius: CortetsuDesign.radiusLarge
@@ -484,7 +485,7 @@ GridView {
                 radius: CortetsuDesign.radiusLarge
                 color: CortetsuDesign.colorPrimaryContainer
 
-                StateLayer {
+                CortetsuStateLayer {
                     radius: parent.radius
 
                     onClicked: {
@@ -554,7 +555,7 @@ GridView {
                 border.color: CortetsuDesign.colorPrimary
             }
 
-            StateLayer {
+            CortetsuStateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
                 radius: CortetsuDesign.radiusLarge
@@ -655,7 +656,7 @@ GridView {
                     : "transparent"
             }
 
-            StateLayer {
+            CortetsuStateLayer {
                 anchors.fill: parent
                 anchors.margins: 4
                 radius: CortetsuDesign.radiusLarge
