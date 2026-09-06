@@ -66,12 +66,12 @@ Singleton {
         required property ShellScreen modelData
         property real brightness: 0
         readonly property Process readProcess: Process {
-            command: ["brightnessctl", "-d", `*${monitor.modelData.name}*`, "g"]
+            command: ["brightnessctl", "-d", "*" + monitor.modelData.name + "*", "g"]
             stdout: StdioCollector { onStreamFinished: monitor.brightness = Math.max(0, Math.min(1, Number(text.trim()) / 100)) }
         }
         function setBrightness(value: real): void {
             brightness = Math.max(0, Math.min(1, value));
-            Quickshell.execDetached(["brightnessctl", "-d", `*${modelData.name}*`, "s", `${Math.round(brightness * 100)}%"]);
+            Quickshell.execDetached(["brightnessctl", "-d", "*" + modelData.name + "*", "s", Math.round(brightness * 100) + "%"]);
         }
         Component.onCompleted: readProcess.running = true
     }
