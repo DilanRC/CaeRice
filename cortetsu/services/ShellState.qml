@@ -37,7 +37,7 @@ Singleton {
         required property var screen
         required property string slot
         required property var component
-        readonly property var target: root.componentsFor(screen)
+        readonly property var target: ShellState.componentsFor(screen)
 
         onTargetChanged: {
             if (target)
