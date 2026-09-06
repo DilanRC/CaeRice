@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import qs.utils
@@ -297,6 +298,7 @@ Item {
             Rectangle {
                 implicitWidth: 36
                 implicitHeight: 36
+                activeFocusOnTab: true
 
                 radius: 999
 
@@ -310,7 +312,9 @@ Item {
 
                 border.width: 1
                 border.color:
-                    CortetsuDesign.colorOutlineVariant
+                    activeFocus
+                        ? CortetsuDesign.colorPrimary
+                        : CortetsuDesign.colorOutlineVariant
 
                 CortetsuIcon {
                     anchors.centerIn: parent
@@ -332,16 +336,32 @@ Item {
                     cursorShape:
                         Qt.PointingHandCursor
 
+                    onPressed: parent.forceActiveFocus()
+
                     onClicked:
                         root.toggleFloatingRequested(
                             root.client
                         )
                 }
+
+                ToolTip.visible: floatMouse.containsMouse || parent.activeFocus
+                ToolTip.text: root.client?.lastIpcObject?.floating
+                    ? qsTr("Tile window")
+                    : qsTr("Float window")
+                ToolTip.delay: CortetsuDesign.motionDeliberateMs
+
+                Keys.onEnterPressed:
+                    root.toggleFloatingRequested(root.client)
+                Keys.onReturnPressed:
+                    root.toggleFloatingRequested(root.client)
+                Keys.onSpacePressed:
+                    root.toggleFloatingRequested(root.client)
             }
 
             Rectangle {
                 implicitWidth: 36
                 implicitHeight: 36
+                activeFocusOnTab: true
 
                 radius: 999
 
@@ -357,7 +377,9 @@ Item {
                 border.color:
                     closeMouse.containsMouse
                         ? CortetsuDesign.colorVermillion
-                        : CortetsuDesign.colorOutlineVariant
+                        : activeFocus
+                            ? CortetsuDesign.colorPrimary
+                            : CortetsuDesign.colorOutlineVariant
 
                 CortetsuIcon {
                     anchors.centerIn: parent
@@ -381,11 +403,24 @@ Item {
                     cursorShape:
                         Qt.PointingHandCursor
 
+                    onPressed: parent.forceActiveFocus()
+
                     onClicked:
                         root.closeRequested(
                             root.client
                         )
                 }
+
+                ToolTip.visible: closeMouse.containsMouse || parent.activeFocus
+                ToolTip.text: qsTr("Close window")
+                ToolTip.delay: CortetsuDesign.motionDeliberateMs
+
+                Keys.onEnterPressed:
+                    root.closeRequested(root.client)
+                Keys.onReturnPressed:
+                    root.closeRequested(root.client)
+                Keys.onSpacePressed:
+                    root.closeRequested(root.client)
             }
         }
     }

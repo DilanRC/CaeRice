@@ -14,6 +14,9 @@ card = (overview / "WindowCard.qml").read_text()
 assert "CortetsuDesign.colorSurface" in card
 assert "CortetsuText" in card and "CortetsuIcon" in card
 assert 'text: qsTr("Selected")' in card and "visible: root.selected" in card
+assert "activeFocusOnTab: true" in card
+assert 'ToolTip.text: qsTr("Close window")' in card
+assert "onPressed: parent.forceActiveFocus()" in card
 content_window = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text()
 assert "color: CortetsuDesign.colorScrim" in content_window
 assert "id: viewportBackground" in overview_content
