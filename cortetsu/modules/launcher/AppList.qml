@@ -698,7 +698,7 @@ GridView {
 
                 text: variant.modelData?.description ?? ""
                 color: CortetsuDesign.colorOutline
-                font: Qt.font({pixelSize: CortetsuTypography.labelSmallPx})
+                font.pixelSize: CortetsuTypography.labelSmallPx
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
