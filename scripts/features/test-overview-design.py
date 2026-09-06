@@ -17,5 +17,6 @@ content_window = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text
 assert "color: CortetsuDesign.colorScrim" in content_window
 assert "id: viewportBackground" in overview_content
 assert "acceptedButtons: Qt.LeftButton" in overview_content
+assert "Keys.onSpacePressed" in overview_content
 
 print("PASS: Overview wrapper and window cards use Cortetsu visual primitives")

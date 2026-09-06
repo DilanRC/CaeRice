@@ -444,6 +444,9 @@ FocusScope {
     Keys.onEnterPressed:
         activateClient(currentClient)
 
+    Keys.onSpacePressed:
+        activateClient(currentClient)
+
     Keys.onDeletePressed:
         closeClient(currentClient)
 
@@ -616,7 +619,7 @@ FocusScope {
 
                         text:
                             qsTr(
-                                "Arrows navigate · Enter focus · Del close · F float"
+                                "Arrows navigate · Enter/Space focus · Del close · F float"
                             )
 
                         color:
