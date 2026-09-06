@@ -24,11 +24,17 @@ secondary = "#526D82"
 secondary_container = "#293B4A"
 outline_variant = "#505862"
 scrim = "#000000"
+surface_glass = "#1B2028"
+surface_glass_strong = "#202731"
+on_surface_muted = "#AAB1BA"
+success = "#7A9B83"
+warning = "#C49A62"
 
 [shape]
 radius_small = 8
 radius_medium = 14
 radius_large = 22
+radius_pill = 999
 
 [spacing]
 unit = 4
@@ -37,11 +43,19 @@ standard = 12
 comfortable = 20
 spacious = 28
 
+[density]
+control_height = 36
+row_height = 52
+outline_width = 1
+overlay_opacity = 0.94
+scrim_opacity = 0.22
+
 [motion]
 instant_ms = 70
 fast_ms = 100
 standard_ms = 160
 deliberate_ms = 220
+panel_ms = 260
 hover_scale = 1.04
 
 [principles]

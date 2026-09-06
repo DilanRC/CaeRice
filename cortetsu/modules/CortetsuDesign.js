@@ -24,10 +24,16 @@ var colorTertiary = colorVermillion
 var colorOutline = colorMuted
 var colorOutlineVariant = "#505862"
 var colorScrim = "#000000"
+var colorSurfaceGlass = "#1B2028"
+var colorSurfaceGlassStrong = "#202731"
+var colorOnSurfaceMuted = "#AAB1BA"
+var colorSuccess = "#7A9B83"
+var colorWarning = "#C49A62"
 
 var radiusSmall = 8
 var radiusMedium = 14
 var radiusLarge = 22
+var radiusPill = 999
 
 var spacingUnit = 4
 var spacingCompact = 8
@@ -35,8 +41,15 @@ var spacingStandard = 12
 var spacingComfortable = 20
 var spacingSpacious = 28
 
+var overlayOpacity = 0.94
+var scrimOpacity = 0.22
+var outlineWidth = 1
+var controlHeight = 36
+var rowHeight = 52
+
 var hoverScale = 1.04
 var motionInstantMs = 70
 var motionFastMs = 100
 var motionStandardMs = 160
 var motionDeliberateMs = 220
+var motionPanelMs = 260
