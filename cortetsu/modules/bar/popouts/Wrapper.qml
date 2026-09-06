@@ -14,7 +14,6 @@ Item {
     required property real offsetScale
 
     readonly property alias content: content
-    readonly property alias winfo: winfo
     readonly property alias nexus: nexus
     readonly property real nonAnimWidth: children.find(c => c.shouldBeActive)?.implicitWidth ?? content.implicitWidth
     readonly property real nonAnimHeight: children.find(c => c.shouldBeActive)?.implicitHeight ?? content.implicitHeight
@@ -147,17 +146,6 @@ Item {
         shouldBeActive: root.hasCurrent && !root.detachedMode
         anchors.fill: parent
         sourceComponent: Content { popouts: popoutState }
-    }
-
-    Comp {
-        id: winfo
-        shouldBeActive: root.detachedMode === "winfo"
-        anchors.centerIn: parent
-        sourceComponent: CortetsuWindowInfoPopup {
-            screen: root.screen
-            client: CortetsuHypr.activeToplevel
-            popouts: root
-        }
     }
 
     Comp {

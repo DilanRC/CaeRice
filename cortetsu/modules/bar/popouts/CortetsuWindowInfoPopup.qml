@@ -18,6 +18,12 @@ CortetsuSurface {
     required property var client
     required property var popouts
 
+    focus: visible
+    Keys.onEscapePressed: event => {
+        event.accepted = true;
+        root.popouts.close();
+    }
+
     implicitWidth: 720
     implicitHeight: 360
     radiusValue: CortetsuDesign.radiusLarge

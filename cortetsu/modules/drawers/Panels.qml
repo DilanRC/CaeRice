@@ -123,6 +123,15 @@ Item {
         anchors.top: parent.top
     }
     BarPopouts.ClipWrapper { id: popoutsWrapper; screen: root.screen; borderThickness: root.borderThickness }
+    BarPopouts.CortetsuWindowInfoPopup {
+        id: windowInfo
+        screen: root.screen
+        client: CortetsuHypr.activeToplevel
+        popouts: popoutsWrapper.content
+        visible: popoutsWrapper.content.detachedMode === "winfo"
+        anchors.centerIn: parent
+        z: 100
+    }
     Utilities.Wrapper {
         id: utilities
         screenState: root.screenState

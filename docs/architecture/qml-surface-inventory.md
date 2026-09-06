@@ -25,7 +25,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Keyboard Layout | `modules/bar/popouts/CortetsuKeyboardPopup.qml`, `base/modules/bar/popouts/kblayout/KbLayout.qml` | layout model, selection rows | VERIFIED | active Spanish (LA) layout, empty additional-layout state, selection/focus contract and Escape close verified | P2 |
 | Lock Status | `modules/bar/popouts/CortetsuLockStatusPopup.qml`, `base/modules/bar/popouts/LockStatus.qml` | lock state, action rows | VERIFIED | live Caps/Num indicator state, first-party service ownership and Escape close verified | P2 |
 | Active Window | `modules/bar/popouts/CortetsuActiveWindowPopup.qml`, `base/modules/bar/popouts/ActiveWindow.qml` | Hyprland active toplevel | COMPONENTIZED | missing/long-title states | P2 |
-| Window Info | `modules/bar/popouts/CortetsuWindowInfoPopup.qml`, `base/modules/windowinfo/WindowInfo.qml` | preview, details and buttons | COMPONENTIZED | information hierarchy and focus | P2 |
+| Window Info | `modules/bar/popouts/CortetsuWindowInfoPopup.qml`, `base/modules/windowinfo/WindowInfo.qml` | preview, details and buttons | VERIFIED | active-window details, workspace controls, keyboard focus, mouse Done, Escape, and two-monitor detached host verified | P2 |
 | Tray | `modules/CortetsuTraySegment.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | tray items and nested menu | FUNCTIONAL | row rhythm, nested affordance, keyboard | P1 |
 | Tray submenus | `base/modules/bar/popouts/TrayMenu.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | menu rows, separators, submenu state | FUNCTIONAL | nested focus and close feedback | P1 |
 | OSD | `modules/osd/Wrapper.qml`, `Content.qml` | OSD host and indicators | VERIFIED | two-monitor volume trigger, shared indicator surface, bounded levels, restored volume, and clean journal verified; brightness wheel remains a separate device-dependent check | P2 |
@@ -99,3 +99,13 @@ Bluetooth rendered a ready adapter and paired devices. Escape closed the
 active popup after the sequence. Static native-popup gates passed and the
 shell stayed active with zero restarts and no new warning/error/critical
 journal entries.
+
+## Window Info verification evidence
+
+The detached Window Info surface was opened through `bottomHub control winfo`
+after focusing a live Kitty window on the right monitor. The full-screen
+drawer host rendered the first-party card with the active title, class,
+address, workspace, monitor and size, plus Float, Pin, Close and workspace
+controls. Tab moved focus through the controls; Escape closed the surface, and
+the `Done` button also closed it by mouse. The shell stayed active with zero
+restarts and no new warning/error/critical journal entries.

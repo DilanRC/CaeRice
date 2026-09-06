@@ -44,7 +44,8 @@ assert 'onClicked: root.detachedControlRequested("bluetooth")' not in status_seg
 assert "sourceComponent: CortetsuDetachedPopup" in wrapper
 assert "sourceComponent: Rectangle" not in wrapper
 assert "Nexus" not in wrapper
-assert "CortetsuWindowInfoPopup" in wrapper
+panels = (ROOT / "cortetsu/modules/drawers/Panels.qml").read_text(encoding="utf-8")
+assert "CortetsuWindowInfoPopup" in panels
 popup_surface = (ROOT / "cortetsu/components/CortetsuPopupSurface.qml").read_text(encoding="utf-8")
 assert "colorSurfaceGlassStrong" in popup_surface
 assert "radiusLarge" in popup_surface
@@ -71,6 +72,8 @@ for path in (
     assert "asynchronous: true" not in path.read_text(encoding="utf-8"), path
 
 assert "closeTimer" in wrapper
+assert "BarPopouts.CortetsuWindowInfoPopup" in panels
+assert 'visible: popoutsWrapper.content.detachedMode === "winfo"' in panels
 assert "focusable: panels.popouts.hasCurrent || screenState.cortetsuState?.requiresWindowKeyboardFocus" in content_window
 assert "!popouts.bottomAttached &&" in interactions
 assert "visible: panel.width > 0 && panel.height > 0 && (panel.offsetScale ?? 0) < 1" in content_window
