@@ -89,6 +89,7 @@ done < "$REPO/caelestia/patches/MANIFEST.tsv"
 
 printf '==> Módulos propios y composición\n'
 cp -a "$REPO/cortetsu/modules/." "$STAGING/modules/"
+cp -a "$REPO/cortetsu/shell.qml" "$STAGING/shell.qml"
 mkdir -p "$STAGING/components"
 cp -a "$REPO/cortetsu/components/." "$STAGING/components/"
 mkdir -p "$STAGING/utils"

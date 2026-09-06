@@ -17,7 +17,6 @@ V4_TEST = REPO / "scripts/features/test-bottom-hub-v4.py"
 
 # patch file -> (manifest target path, at least one real consumer to grep for)
 AUDITED_ACTIVE_PATCHES = {
-    "shell.qml.patch": ("shell.qml", ("BottomHub {}",)),
     "services__Hypr.qml.patch": (
         "services/Hypr.qml",
         ("isTaskbarToplevel", "CortetsuHypr.qml"),

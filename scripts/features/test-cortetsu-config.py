@@ -28,6 +28,7 @@ sysinfo = (repo / "cortetsu/utils/SysInfo.qml").read_text(encoding="utf-8")
 notifs = (repo / "cortetsu/services/Notifs.qml").read_text(encoding="utf-8")
 notif_data = (repo / "cortetsu/services/NotifData.qml").read_text(encoding="utf-8")
 colours = (repo / "cortetsu/services/Colours.qml").read_text(encoding="utf-8")
+shell = (repo / "cortetsu/shell.qml").read_text(encoding="utf-8")
 
 assert "pragma Singleton" in config
 assert "XDG_CONFIG_HOME" in config and "/cortetsu/preferences.json" in config
@@ -82,6 +83,8 @@ assert "function close" in notif_data and "property list<var> actions" in notif_
 for legacy in ("Caelestia", "GlobalConfig", "qs.services", "qs.components", "Colours.qml"):
     assert legacy not in colours, legacy
 assert "CortetsuDesign.colorPrimary" in colours and "component CortetsuPalette" in colours
+assert 'import "services"' in shell and "import qs.services" not in shell
+assert "BottomHub {}" in shell and "settings.watchFiles: false" in shell
 assert "import Caelestia" not in visualiser
 for marker in ("CortetsuConfig.favouriteApps", "CortetsuConfig.hiddenTrayIcons", "CortetsuConfig.workspacesShown", "CortetsuConfig.setFavouriteApps"):
     assert marker in hub, marker
