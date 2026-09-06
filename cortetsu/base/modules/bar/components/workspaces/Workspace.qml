@@ -6,6 +6,7 @@ import Quickshell
 import M3Shapes
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -23,7 +24,7 @@ ColumnLayout {
 
     readonly property int ws: groupOffset + index + 1
     readonly property bool isOccupied: occupied[ws] ?? false
-    readonly property bool hasWindows: isOccupied && Config.bar.workspaces.showWindows
+    readonly property bool hasWindows: isOccupied && CortetsuConfig.bar.workspaces.showWindows
     readonly property bool focused: activeWsId === ws
     readonly property list<int> focusedShapeList: [MaterialShape.Slanted, MaterialShape.Oval, MaterialShape.Pill, MaterialShape.Triangle, MaterialShape.Arrow, MaterialShape.Diamond, MaterialShape.Pentagon, MaterialShape.Gem, MaterialShape.VerySunny, MaterialShape.Sunny, MaterialShape.Cookie4Sided, MaterialShape.Cookie6Sided, MaterialShape.Cookie7Sided, MaterialShape.Cookie9Sided, MaterialShape.Cookie12Sided, MaterialShape.Clover4Leaf, MaterialShape.SoftBurst, MaterialShape.Ghostish]
 
@@ -62,7 +63,7 @@ ColumnLayout {
         MaterialShape {
             implicitSize: Tokens.sizes.bar.innerWidth - Tokens.padding.small
 
-            color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
             scale: root.focused ? 2 / 3 : root.isOccupied ? 1 / 3 : 1 / 4
 
             animationEasing: Tokens.anim.expressiveDefaultSpatial
@@ -110,7 +111,7 @@ ColumnLayout {
                     return wsName.toString().toLowerCase();
                 return wsName;
             }
-            color: Config.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
+            color: CortetsuConfig.bar.workspaces.occupiedBg || root.isOccupied || root.focused ? Colours.palette.m3onSurface : Colours.layer(Colours.palette.m3outlineVariant, 2)
             verticalAlignment: Qt.AlignVCenter
             font.family: Tokens.font.workspaces
         }
@@ -155,7 +156,7 @@ ColumnLayout {
                 model: ScriptModel {
                     values: {
                         const windows = Hypr.toplevelsForWs(root.ws);
-                        const maxIcons = root.Config.bar.workspaces.maxWindowIcons;
+                        const maxIcons = CortetsuConfig.bar.workspaces.maxWindowIcons;
                         return maxIcons > 0 ? windows.slice(0, maxIcons) : windows;
                     }
                 }

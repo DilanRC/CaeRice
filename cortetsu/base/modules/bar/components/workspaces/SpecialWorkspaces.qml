@@ -7,6 +7,7 @@ import Quickshell.Hyprland
 import Caelestia.Config
 import qs.components
 import qs.components.effects
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -15,7 +16,7 @@ Item {
 
     required property ShellScreen screen
     readonly property HyprlandMonitor monitor: Hypr.monitorFor(screen)
-    readonly property string activeSpecial: (GlobalConfig.bar.workspaces.perMonitorWorkspaces ? monitor : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name ?? ""
+    readonly property string activeSpecial: (CortetsuConfig.bar.workspaces.perMonitorWorkspaces ? monitor : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name ?? ""
 
     layer.enabled: true
     layer.effect: Mask {
@@ -99,7 +100,7 @@ Item {
         onCurrentIndexChanged: currentIndex = Qt.binding(() => model.values.findIndex(w => w.name === root.activeSpecial))
 
         model: ScriptModel {
-            values: Hypr.workspaces.values.filter(w => w.name.startsWith("special:") && (!GlobalConfig.bar.workspaces.perMonitorWorkspaces || w.monitor === root.monitor))
+            values: Hypr.workspaces.values.filter(w => w.name.startsWith("special:") && (!CortetsuConfig.bar.workspaces.perMonitorWorkspaces || w.monitor === root.monitor))
         }
 
         preferredHighlightBegin: 0
@@ -165,7 +166,7 @@ Item {
 
     Loader {
         asynchronous: true
-        active: Config.bar.workspaces.activeIndicator
+        active: CortetsuConfig.bar.workspaces.activeIndicator
         anchors.fill: parent
 
         sourceComponent: Item {
@@ -250,7 +251,7 @@ Item {
         Component.onCompleted: {
             wsId = modelData.id;
             icon = Icons.getSpecialWsIcon(modelData.name);
-            hasWindows = Config.bar.workspaces.showWindowsOnSpecialWorkspaces && modelData.lastIpcObject.windows > 0;
+            hasWindows = CortetsuConfig.bar.workspaces.showWindowsOnSpecialWorkspaces && modelData.lastIpcObject.windows > 0;
         }
 
         // Hacky thing cause modelData gets destroyed before the remove anim finishes
@@ -267,7 +268,7 @@ Item {
 
             function onLastIpcObjectChanged(): void {
                 if (ws.modelData)
-                    ws.hasWindows = root.Config.bar.workspaces.showWindowsOnSpecialWorkspaces && ws.modelData.lastIpcObject.windows > 0;
+                    ws.hasWindows = CortetsuConfig.bar.workspaces.showWindowsOnSpecialWorkspaces && ws.modelData.lastIpcObject.windows > 0;
             }
 
             target: ws.modelData
@@ -276,10 +277,10 @@ Item {
         Connections {
             function onShowWindowsOnSpecialWorkspacesChanged(): void {
                 if (ws.modelData)
-                    ws.hasWindows = root.Config.bar.workspaces.showWindowsOnSpecialWorkspaces && ws.modelData.lastIpcObject.windows > 0;
+                    ws.hasWindows = CortetsuConfig.bar.workspaces.showWindowsOnSpecialWorkspaces && ws.modelData.lastIpcObject.windows > 0;
             }
 
-            target: root.Config.bar.workspaces
+            target: CortetsuConfig.bar.workspaces
         }
 
         Loader {
@@ -351,7 +352,7 @@ Item {
                     model: ScriptModel {
                         values: {
                             const windows = Hypr.toplevelsForWs(ws.wsId);
-                            const maxIcons = root.Config.bar.workspaces.maxWindowIcons;
+                            const maxIcons = CortetsuConfig.bar.workspaces.maxWindowIcons;
                             return maxIcons > 0 ? windows.slice(0, maxIcons) : windows;
                         }
                     }

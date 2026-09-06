@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 
 StyledClippingRect {
@@ -14,8 +15,8 @@ StyledClippingRect {
     required property ShellScreen screen
     required property bool fullscreen
 
-    readonly property bool onSpecial: (GlobalConfig.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name !== ""
-    readonly property int activeWsId: GlobalConfig.bar.workspaces.perMonitorWorkspaces ? (Hypr.monitorFor(screen).activeWorkspace?.id ?? 1) : Hypr.activeWsId
+    readonly property bool onSpecial: (CortetsuConfig.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name !== ""
+    readonly property int activeWsId: CortetsuConfig.bar.workspaces.perMonitorWorkspaces ? (Hypr.monitorFor(screen).activeWorkspace?.id ?? 1) : Hypr.activeWsId
 
     readonly property var occupied: {
         const occ = {};
@@ -23,7 +24,7 @@ StyledClippingRect {
             occ[ws.id] = ws.lastIpcObject.windows > 0;
         return occ;
     }
-    readonly property int groupOffset: Math.floor((activeWsId - 1) / Config.bar.workspaces.shown) * Config.bar.workspaces.shown
+    readonly property int groupOffset: Math.floor((activeWsId - 1) / CortetsuConfig.workspacesShown) * CortetsuConfig.workspacesShown
 
     property real blur: onSpecial ? 1 : 0
 
@@ -48,7 +49,7 @@ StyledClippingRect {
 
         Loader {
             asynchronous: true
-            active: Config.bar.workspaces.occupiedBg
+            active: CortetsuConfig.bar.workspaces.occupiedBg
 
             anchors.fill: parent
             anchors.margins: Tokens.padding.extraSmall
@@ -69,7 +70,7 @@ StyledClippingRect {
             Repeater {
                 id: workspaces
 
-                model: Config.bar.workspaces.shown
+                model: CortetsuConfig.workspacesShown
 
                 Workspace {
                     activeWsId: root.activeWsId
@@ -82,7 +83,7 @@ StyledClippingRect {
         Loader {
             asynchronous: true
             anchors.horizontalCenter: parent.horizontalCenter
-            active: Config.bar.workspaces.activeIndicator
+            active: CortetsuConfig.bar.workspaces.activeIndicator
 
             sourceComponent: ActiveIndicator {
                 activeWsId: root.activeWsId

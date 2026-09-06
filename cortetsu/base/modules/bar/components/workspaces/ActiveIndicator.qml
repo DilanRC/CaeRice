@@ -4,6 +4,7 @@ import QtQuick
 import Caelestia.Config
 import qs.components
 import qs.components.effects
+import qs.modules
 import qs.services
 
 CortetsuSurface {
@@ -17,8 +18,8 @@ CortetsuSurface {
     readonly property int currentWsIdx: {
         let i = activeWsId - 1;
         while (i < 0)
-            i += Config.bar.workspaces.shown;
-        return i % Config.bar.workspaces.shown;
+            i += CortetsuConfig.workspacesShown;
+        return i % CortetsuConfig.workspacesShown;
     }
 
     property real leading: workspaces.count > 0 ? workspaces.itemAt(currentWsIdx)?.y ?? 0 : 0
@@ -27,7 +28,7 @@ CortetsuSurface {
     property real offset: Math.min(leading, trailing)
     property real size: {
         const s = Math.abs(leading - trailing) + currentSize;
-        if (Config.bar.workspaces.activeTrail && lastWs > currentWsIdx) {
+        if (CortetsuConfig.bar.workspaces.activeTrail && lastWs > currentWsIdx) {
             const ws = workspaces.itemAt(lastWs) as Workspace;
             return ws ? Math.min(ws.y + ws.size - offset, s) : 0;
         }
@@ -63,13 +64,13 @@ CortetsuSurface {
     }
 
     Behavior on leading {
-        enabled: root.Config.bar.workspaces.activeTrail
+        enabled: CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {}
     }
 
     Behavior on trailing {
-        enabled: root.Config.bar.workspaces.activeTrail
+        enabled: CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {
             duration: Tokens.anim.durations.normal * 2
@@ -77,19 +78,19 @@ CortetsuSurface {
     }
 
     Behavior on currentSize {
-        enabled: root.Config.bar.workspaces.activeTrail
+        enabled: CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {}
     }
 
     Behavior on offset {
-        enabled: !root.Config.bar.workspaces.activeTrail
+        enabled: !CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {}
     }
 
     Behavior on size {
-        enabled: !root.Config.bar.workspaces.activeTrail
+        enabled: !CortetsuConfig.bar.workspaces.activeTrail
 
         EAnim {}
     }

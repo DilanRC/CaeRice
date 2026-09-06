@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 
 Item {
@@ -20,7 +21,7 @@ Item {
             return;
         let count = 0;
         const start = groupOffset;
-        const end = start + Config.bar.workspaces.shown;
+        const end = start + CortetsuConfig.workspacesShown;
         for (const [ws, occ] of Object.entries(occupied)) {
             if (ws > start && ws <= end && occ) {
                 const isFirstInGroup = Number(ws) === start + 1;
@@ -58,8 +59,8 @@ Item {
             function getWsIdx(ws: int): int {
                 let i = ws - 1;
                 while (i < 0)
-                    i += Config.bar.workspaces.shown;
-                return i % Config.bar.workspaces.shown;
+                    i += CortetsuConfig.workspacesShown;
+                return i % CortetsuConfig.workspacesShown;
             }
 
             anchors.horizontalCenter: root.horizontalCenter
