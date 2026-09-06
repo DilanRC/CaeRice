@@ -17,7 +17,7 @@ Singleton {
     }
 
     function forScreen(screen): var {
-        return CortetsuShellState.forScreen(screen);
+        return CortetsuShellState.forScreen(screen) ?? CortetsuShellState.forActive();
     }
 
     function forActive(): var {
