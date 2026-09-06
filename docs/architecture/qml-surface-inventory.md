@@ -22,8 +22,8 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Audio / Volume | `modules/bar/popouts/CortetsuAudioPopup.qml`, `base/modules/bar/popouts/AudioPopout.qml` | audio service, sliders and device rows | VERIFIED | selected output, volume slider, device hierarchy, IPC open and Escape close verified | P1 |
 | Bluetooth | `modules/bar/popouts/CortetsuBluetoothPopup.qml`, `base/modules/bar/popouts/Bluetooth.qml` | Bluetooth service, device rows | VERIFIED | adapter-ready state, paired devices, action surface, IPC open and Escape close verified | P1 |
 | Battery | `modules/bar/popouts/CortetsuBatteryPopup.qml`, `base/modules/bar/popouts/Battery.qml` | UPower state, battery details | VERIFIED | real 100% power state, charge timing, selected profile, profile focus/activation contract and Escape close verified | P1 |
-| Keyboard Layout | `modules/bar/popouts/CortetsuKeyboardPopup.qml`, `base/modules/bar/popouts/kblayout/KbLayout.qml` | layout model, selection rows | COMPONENTIZED | selected/focus states and long labels | P2 |
-| Lock Status | `modules/bar/popouts/CortetsuLockStatusPopup.qml`, `base/modules/bar/popouts/LockStatus.qml` | lock state, action rows | COMPONENTIZED | disabled/error feedback | P2 |
+| Keyboard Layout | `modules/bar/popouts/CortetsuKeyboardPopup.qml`, `base/modules/bar/popouts/kblayout/KbLayout.qml` | layout model, selection rows | VERIFIED | active Spanish (LA) layout, empty additional-layout state, selection/focus contract and Escape close verified | P2 |
+| Lock Status | `modules/bar/popouts/CortetsuLockStatusPopup.qml`, `base/modules/bar/popouts/LockStatus.qml` | lock state, action rows | VERIFIED | live Caps/Num indicator state, first-party service ownership and Escape close verified | P2 |
 | Active Window | `modules/bar/popouts/CortetsuActiveWindowPopup.qml`, `base/modules/bar/popouts/ActiveWindow.qml` | Hyprland active toplevel | COMPONENTIZED | missing/long-title states | P2 |
 | Window Info | `modules/bar/popouts/CortetsuWindowInfoPopup.qml`, `base/modules/windowinfo/WindowInfo.qml` | preview, details and buttons | COMPONENTIZED | information hierarchy and focus | P2 |
 | Tray | `modules/CortetsuTraySegment.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | tray items and nested menu | FUNCTIONAL | row rhythm, nested affordance, keyboard | P1 |
@@ -62,6 +62,14 @@ opened the notification center, and Escape closed the overlay. Static utility
 gates passed, including first-party ownership and keyboard-capable controls.
 The shell remained active with zero restarts and no new warning/error/critical
 journal entries.
+
+## Keyboard Layout and Lock Status verification evidence
+
+The promoted runtime opened both popups through `bottomHub control` on the
+right monitor. Keyboard Layout showed the active `Spanish (LA)` layout and the
+empty additional-layout state. Lock Status showed the live Caps Lock and Num
+Lock indicators. Escape closed the active popup sequence; the shell stayed
+active with zero restarts and no new warning/error/critical journal entries.
 
 ## Battery verification evidence
 
