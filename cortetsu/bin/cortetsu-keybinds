@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read and safely edit the Caelestia Lua keybind configuration."""
+"""Read and safely edit the Cortetsu Hyprland Lua keybind configuration."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ HOME = Path.home()
 DEFAULTS = HOME / ".config/hypr/variables.lua"
 OVERRIDES = HOME / ".config/hypr/hypr-vars.lua"
 USER = HOME / ".config/hypr/hypr-user.lua"
-SNAPSHOTS = HOME / ".local/share/cortetsu/upstream/snapshots/keybinds"
+SNAPSHOTS = HOME / ".local/share/cortetsu/snapshots/keybinds"
 
 ENTRY_RE = re.compile(r"(?m)^(\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(\{[^\n]*\}|\"(?:\\.|[^\"])*\")(,?)")
 STRING_RE = re.compile(r'\"((?:\\.|[^\"])*)\"')
@@ -191,7 +191,7 @@ def user_bindings() -> list[dict]:
         target = ""
         if global_match:
             target = global_match.group(1)
-            detail = target.replace("cortetsu:", "Caelestia · ")
+            detail = target.replace("cortetsu:", "Cortetsu · ")
         elif command_match:
             command = command_match.group(1) or lua_unescape(command_match.group(2) or "")
             detail = command
@@ -228,7 +228,7 @@ def list_bindings() -> list[dict]:
                 "id": f"var:{name}:{index}",
                 "label": title(name),
                 "chord": chord,
-                "group": "Application" if command else "Caelestia",
+                "group": "Application" if command else "Cortetsu",
                 "description": command or title(name),
                 "command": command,
                 "appQuery": APP_QUERIES.get(name, Path(command.split()[0]).name if command else ""),

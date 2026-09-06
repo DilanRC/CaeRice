@@ -15,6 +15,7 @@ spec = importlib.util.spec_from_loader(loader.name, loader)
 assert spec is not None
 module = importlib.util.module_from_spec(spec)
 loader.exec_module(module)
+assert "Caelestia" not in HELPER.read_text(encoding="utf-8")
 
 
 def main() -> None:
