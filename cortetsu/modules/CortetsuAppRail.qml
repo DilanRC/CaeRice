@@ -54,6 +54,8 @@ Item {
                     implicitHeight: 52
                     width: implicitWidth
                     height: implicitHeight
+                    focus: true
+                    activeFocusOnTab: true
                     scale: appMouse.containsMouse ? CortetsuDesign.hoverScale : 1
 
                     Behavior on scale {
@@ -74,6 +76,7 @@ Item {
                         hovered: appMouse.containsMouse
                         pressed: appMouse.pressed
                         active: appItem.modelData.active
+                        focused: appItem.activeFocus
                         outlined: appItem.modelData.active
                     }
 
@@ -159,6 +162,12 @@ Item {
                             wheel.accepted = true;
                         }
                     }
+
+                    Keys.onEnterPressed: root.activateRequested(appItem.modelData.key)
+                    Keys.onReturnPressed: root.activateRequested(appItem.modelData.key)
+                    Keys.onSpacePressed: root.activateRequested(appItem.modelData.key)
+                    Keys.onLeftPressed: root.cycleRequested(appItem.modelData.key, -1)
+                    Keys.onRightPressed: root.cycleRequested(appItem.modelData.key, 1)
                 }
             }
         }

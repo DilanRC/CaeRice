@@ -17,6 +17,8 @@ module_surface = (ROOT / "cortetsu/modules/CortetsuSurface.qml").read_text()
 button = (ROOT / "cortetsu/components/CortetsuButton.qml").read_text()
 row = (ROOT / "cortetsu/components/CortetsuListRow.qml").read_text()
 hub_button = (ROOT / "cortetsu/modules/HubButton.qml").read_text()
+app_rail = (ROOT / "cortetsu/modules/CortetsuAppRail.qml").read_text()
+tray = (ROOT / "cortetsu/modules/CortetsuTraySegment.qml").read_text()
 inventory = (ROOT / "docs/architecture/qml-surface-inventory.md").read_text()
 
 for needle, label in (
@@ -26,7 +28,7 @@ for needle, label in (
     ("Keys.onEnterPressed", "Enter activation"),
     ("Keys.onSpacePressed", "Space activation"),
 ):
-    require(surface + module_surface + button + row + hub_button, needle, label)
+    require(surface + module_surface + button + row + hub_button + app_rail + tray, needle, label)
 
 for family in ("BottomHub", "Launcher", "Notifications", "Overview", "OSD", "Toasts"):
     require(inventory, f"| {family} |", f"inventory family {family}")

@@ -41,6 +41,8 @@ Item {
                 implicitHeight: 40
                 width: implicitWidth
                 height: implicitHeight
+                focus: true
+                activeFocusOnTab: true
 
                 CortetsuSurface {
                     anchors.fill: parent
@@ -50,6 +52,7 @@ Item {
                     hoverColor: Qt.lighter(CortetsuDesign.colorTetsu, 1.18)
                     hovered: trayMouse.containsMouse
                     pressed: trayMouse.pressed
+                    focused: trayItem.activeFocus
                     outlined: false
                 }
 
@@ -84,6 +87,11 @@ Item {
                             root.secondaryRequested(trayItem.modelData.id);
                     }
                 }
+
+                Keys.onEnterPressed: root.activateRequested(trayItem.modelData.id)
+                Keys.onReturnPressed: root.activateRequested(trayItem.modelData.id)
+                Keys.onSpacePressed: root.activateRequested(trayItem.modelData.id)
+                Keys.onMenuPressed: root.secondaryRequested(trayItem.modelData.id)
             }
         }
     }
