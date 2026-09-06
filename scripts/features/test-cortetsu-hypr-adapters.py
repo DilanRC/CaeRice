@@ -16,7 +16,8 @@ assert "CortetsuHypr.monitorFor(screen)" in screens
 assert "import qs.services" not in hypr + screens
 assert "import Quickshell.Hyprland" in hypr
 assert "Hyprland.dispatch(request)" in hypr
-assert "Hyprland.monitorFor(screen)" in hypr
+assert "Hyprland.monitorFor(screen)" not in hypr
+assert "Hyprland.monitors.values.find(monitor => monitor.name === name)" in hypr
 assert "Quickshell.screens" in screens
 assert "CortetsuHypr" in service
 assert "import Caelestia" not in service

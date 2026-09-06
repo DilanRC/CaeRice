@@ -22,7 +22,8 @@ Singleton {
     }
 
     function monitorFor(screen): var {
-        return Hyprland.monitorFor(screen)
+        const name = screen?.name ?? "";
+        return Hyprland.monitors.values.find(monitor => monitor.name === name) ?? null;
     }
 
     function isTaskbarToplevel(client): bool {
