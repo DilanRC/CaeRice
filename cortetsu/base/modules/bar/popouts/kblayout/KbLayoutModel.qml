@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell.Io
 import Caelestia
 import Caelestia.Config
+import qs.modules
 
 // TODO: handle this better later
 
@@ -106,7 +107,7 @@ Item {
         arr = arr.filter(i => i.layoutIndex !== activeIndex);
         arr.forEach(i => visibleModel.append(i));
 
-        if (!GlobalConfig.utilities.toasts.kbLimit)
+        if (!CortetsuConfig.toastKbLimit)
             return;
 
         if (layoutsModel.count > 4) {

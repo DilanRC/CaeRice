@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import Caelestia
 import Caelestia.Config
+import qs.modules
 
 Singleton {
     id: root
@@ -268,14 +269,14 @@ Singleton {
         connectPending = false;
         connected = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
-        if (GlobalConfig.utilities.toasts.vpnChanged)
+        if (CortetsuConfig.toastVpnChanged)
             Toaster.toast(qsTr("VPN connection failed"), reason, "vpn_key_alert");
     }
 
     function reportDisconnectFailure(reason: string): void {
         disconnectPending = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
-        if (GlobalConfig.utilities.toasts.vpnChanged)
+        if (CortetsuConfig.toastVpnChanged)
             Toaster.toast(qsTr("VPN disconnection failed"), reason, "vpn_key_alert");
     }
 
@@ -519,7 +520,7 @@ Singleton {
     }
 
     function emitStatusToast(statusObj: var): void {
-        if (!GlobalConfig.utilities.toasts.vpnChanged)
+        if (!CortetsuConfig.toastVpnChanged)
             return;
 
         const displayName = active.displayName || "VPN";

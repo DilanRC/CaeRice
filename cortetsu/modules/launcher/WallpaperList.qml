@@ -21,9 +21,9 @@ PathView {
         if (!screen)
             return 0;
 
-        const barMargins = Math.max(CortetsuOverlayConfig.borderThickness, panels.bar.implicitWidth);
+        const barMargins = Math.max(CortetsuOverlayConfig.border.thickness, panels.bar.implicitWidth);
         let outerMargins = 0;
-        if (panels.popouts.hasCurrent && panels.popouts.currentCenter + panels.popouts.nonAnimHeight / 2 > screen.height - content.implicitHeight - CortetsuOverlayConfig.borderThickness * 2)
+        if (panels.popouts.hasCurrent && panels.popouts.currentCenter + panels.popouts.nonAnimHeight / 2 > screen.height - content.implicitHeight - CortetsuOverlayConfig.border.thickness * 2)
             outerMargins = panels.popouts.nonAnimWidth;
         if ((screenState.utilities || screenState.sidebar) && panels.utilities.implicitWidth > outerMargins)
             outerMargins = panels.utilities.implicitWidth;

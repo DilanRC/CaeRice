@@ -20,7 +20,7 @@ PageBase {
         }
     ]
 
-    // Toast fullscreen visibility, mapped to GlobalConfig.utilities.toasts.fullscreen
+    // Toast fullscreen visibility, mapped to CortetsuConfig.toastFullscreen
     readonly property list<MenuItem> toastFullscreenItems: [
         MenuItem {
             text: qsTr("Off")
@@ -106,19 +106,19 @@ PageBase {
             label: qsTr("Show in fullscreen")
             subtext: qsTr("Whether toasts appear over fullscreen apps")
             menuItems: root.toastFullscreenItems
-            active: root.toastFullscreenItems[Math.max(0, root.toastFullscreenValues.indexOf(GlobalConfig.utilities.toasts.fullscreen))]
-            onSelected: item => GlobalConfig.utilities.toasts.fullscreen = root.toastFullscreenValues[root.toastFullscreenItems.indexOf(item)]
+            active: root.toastFullscreenItems[Math.max(0, root.toastFullscreenValues.indexOf(CortetsuConfig.toastFullscreen))]
+            onSelected: item => CortetsuConfig.toastFullscreen = root.toastFullscreenValues[root.toastFullscreenItems.indexOf(item)]
         }
 
         StepperRow {
             last: true
             label: qsTr("Visible toasts")
             subtext: qsTr("Maximum number of toasts shown at once")
-            value: GlobalConfig.utilities.maxToasts
+            value: CortetsuConfig.maxToasts
             from: 1
             to: 10
             stepSize: 1
-            onMoved: v => GlobalConfig.utilities.maxToasts = Math.round(v)
+            onMoved: v => CortetsuConfig.maxToasts = Math.round(v)
         }
 
         // Toast events
@@ -129,63 +129,63 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Charging changes")
-            checked: GlobalConfig.utilities.toasts.chargingChanged
-            onToggled: GlobalConfig.utilities.toasts.chargingChanged = checked
+            checked: CortetsuConfig.toastChargingChanged
+            onToggled: CortetsuConfig.toastChargingChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Game mode changes")
-            checked: GlobalConfig.utilities.toasts.gameModeChanged
-            onToggled: GlobalConfig.utilities.toasts.gameModeChanged = checked
+            checked: CortetsuConfig.toastGameModeChanged
+            onToggled: CortetsuConfig.toastGameModeChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Do not disturb changes")
-            checked: GlobalConfig.utilities.toasts.dndChanged
-            onToggled: GlobalConfig.utilities.toasts.dndChanged = checked
+            checked: CortetsuConfig.toastDndChanged
+            onToggled: CortetsuConfig.toastDndChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Audio output changes")
-            checked: GlobalConfig.utilities.toasts.audioOutputChanged
-            onToggled: GlobalConfig.utilities.toasts.audioOutputChanged = checked
+            checked: CortetsuConfig.toastAudioOutputChanged
+            onToggled: CortetsuConfig.toastAudioOutputChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Audio input changes")
-            checked: GlobalConfig.utilities.toasts.audioInputChanged
-            onToggled: GlobalConfig.utilities.toasts.audioInputChanged = checked
+            checked: CortetsuConfig.toastAudioInputChanged
+            onToggled: CortetsuConfig.toastAudioInputChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Caps lock changes")
-            checked: GlobalConfig.utilities.toasts.capsLockChanged
-            onToggled: GlobalConfig.utilities.toasts.capsLockChanged = checked
+            checked: CortetsuConfig.toastCapsLockChanged
+            onToggled: CortetsuConfig.toastCapsLockChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Num lock changes")
-            checked: GlobalConfig.utilities.toasts.numLockChanged
-            onToggled: GlobalConfig.utilities.toasts.numLockChanged = checked
+            checked: CortetsuConfig.toastNumLockChanged
+            onToggled: CortetsuConfig.toastNumLockChanged = checked
         }
 
         ToggleRow {
             text: qsTr("Keyboard layout changes")
-            checked: GlobalConfig.utilities.toasts.kbLayoutChanged
-            onToggled: GlobalConfig.utilities.toasts.kbLayoutChanged = checked
+            checked: CortetsuConfig.toastKbLayoutChanged
+            onToggled: CortetsuConfig.toastKbLayoutChanged = checked
         }
 
         ToggleRow {
             text: qsTr("VPN changes")
-            checked: GlobalConfig.utilities.toasts.vpnChanged
-            onToggled: GlobalConfig.utilities.toasts.vpnChanged = checked
+            checked: CortetsuConfig.toastVpnChanged
+            onToggled: CortetsuConfig.toastVpnChanged = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Now playing")
-            checked: GlobalConfig.utilities.toasts.nowPlaying
-            onToggled: GlobalConfig.utilities.toasts.nowPlaying = checked
+            checked: CortetsuConfig.toastNowPlaying
+            onToggled: CortetsuConfig.toastNowPlaying = checked
         }
     }
 }
