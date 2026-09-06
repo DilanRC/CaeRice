@@ -2,6 +2,8 @@ from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
 service = (repo / "cortetsu/modules/CortetsuWallpapers.qml").read_text()
+wallpaper_list = (repo / "cortetsu/modules/launcher/WallpaperList.qml").read_text()
+wallpaper_item = (repo / "cortetsu/modules/launcher/WallpaperItem.qml").read_text()
 renderer = (repo / "cortetsu/modules/background/Wallpaper.qml").read_text()
 background = (repo / "cortetsu/modules/background/Background.qml").read_text()
 
@@ -11,6 +13,14 @@ for contract in ("cortetsu/wallpaper/path.txt", 'target: "cortetsu-wallpaper"', 
     assert contract in service, contract
 
 print("PASS: Wallpaper service is first-party, XDG-owned and cancellation-aware")
+
+for text in (wallpaper_list, wallpaper_item):
+    for legacy in ("Caelestia", "qs.services", "qs.components", "Caelestia.Models", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon"):
+        assert legacy not in text, legacy
+assert "CortetsuWallpapers.query(query)" in wallpaper_list
+assert "CortetsuWallpapers.preview(currentItem.modelData.path)" in wallpaper_list
+assert "CortetsuWallpapers.setWallpaper(root.modelData.path)" in wallpaper_item
+print("PASS: launcher wallpaper list and delegate are first-party")
 
 for legacy in ("Caelestia", "qs.services", "qs.components", "Colours.", "Tokens.", "StyledRect", "StyledText", "MaterialIcon"):
     assert legacy not in renderer, legacy

@@ -11,6 +11,7 @@ screen_component = (repo / "cortetsu/components/ScreenState.qml").read_text(enco
 screens_service = (repo / "cortetsu/services/Screens.qml").read_text(encoding="utf-8")
 background = (repo / "cortetsu/modules/background/Background.qml").read_text(encoding="utf-8")
 content_window_patch = (repo / "cortetsu/modules/drawers/ContentWindow.qml").read_text(encoding="utf-8")
+interactions = (repo / "cortetsu/modules/drawers/Interactions.qml").read_text(encoding="utf-8")
 scrim_patch = content_window_patch
 shortcuts = (repo / "cortetsu/modules/Shortcuts.qml").read_text(encoding="utf-8")
 calendar = (repo / "cortetsu/modules/CalendarController.qml").read_text(encoding="utf-8")
@@ -56,6 +57,8 @@ assert "component Components: QtObject" in shell_service
 assert "states.instances.find(state => state.modelData === screen)" in shell_service
 assert "import Caelestia" not in shell_service
 assert "import qs.services" not in shell_service
+assert "CortetsuOverlayCortetsuOverlayConfig" not in interactions
+assert "CortetsuOverlayConfig.border" in interactions
 assert "CortetsuShellState.registerState(modelData, root)" in screen_component
 assert "CortetsuScreenState" in screen_component
 assert "import Caelestia" not in screen_component

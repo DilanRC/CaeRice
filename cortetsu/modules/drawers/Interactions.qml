@@ -25,12 +25,12 @@ CustomMouseArea {
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
-        return y >= panelY - CortetsuOverlayCortetsuOverlayConfig.border.rounding && y <= panelY + panel.height + CortetsuOverlayCortetsuOverlayConfig.border.rounding;
+        return y >= panelY - CortetsuOverlayConfig.border.rounding && y <= panelY + panel.height + CortetsuOverlayConfig.border.rounding;
     }
 
     function withinPanelWidth(panel: Item, x: real, y: real): bool {
         const panelX = bar.implicitWidth + panel.x;
-        return x >= panelX - CortetsuOverlayCortetsuOverlayConfig.border.rounding && x <= panelX + panel.width + CortetsuOverlayCortetsuOverlayConfig.border.rounding;
+        return x >= panelX - CortetsuOverlayConfig.border.rounding && x <= panelX + panel.width + CortetsuOverlayConfig.border.rounding;
     }
 
     function inLeftPanel(panel: Item, x: real, y: real): bool {
@@ -38,17 +38,17 @@ CustomMouseArea {
     }
 
     function inRightPanel(panel: Item, x: real, y: real): bool {
-        return x > Math.min(width - CortetsuOverlayCortetsuOverlayConfig.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
+        return x > Math.min(width - CortetsuOverlayConfig.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y < Math.max(CortetsuOverlayCortetsuOverlayConfig.border.minThickness, CortetsuOverlayCortetsuOverlayConfig.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
+        return y < Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
     }
 
     function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y > height - Math.max(CortetsuOverlayCortetsuOverlayConfig.border.minThickness, CortetsuOverlayCortetsuOverlayConfig.border.thickness + panelHeight) - (isCorner ? CortetsuOverlayCortetsuOverlayConfig.border.rounding : 0) && withinPanelWidth(panel, x, y);
+        return y > height - Math.max(CortetsuOverlayConfig.border.minThickness, CortetsuOverlayConfig.border.thickness + panelHeight) - (isCorner ? CortetsuOverlayConfig.border.rounding : 0) && withinPanelWidth(panel, x, y);
     }
 
     function insidePanel(panel: Item, x: real, y: real): bool {
