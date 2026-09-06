@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell.Services.SystemTray
 import Caelestia.Config
 import qs.components.effects
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -29,6 +30,6 @@ MouseArea {
         anchors.fill: parent
         source: Icons.getTrayIcon(root.modelData.id, root.modelData.icon)
         colour: Colours.palette.m3secondary
-        layer.enabled: Config.bar.tray.recolour
+        layer.enabled: CortetsuConfig.bar.tray.recolour
     }
 }

@@ -134,6 +134,52 @@ QtObject {
     }
 
     readonly property QtObject bar: QtObject {
+        property bool persistent: false
+        onPersistentChanged: if (root.loaded) root.save()
+        property bool showOnHover: false
+        onShowOnHoverChanged: if (root.loaded) root.save()
+        property int dragThreshold: 24
+        onDragThresholdChanged: if (root.loaded) root.save()
+        readonly property QtObject scrollActions: QtObject {
+            property bool workspaces: true
+            onWorkspacesChanged: if (root.loaded) root.save()
+            property bool volume: true
+            onVolumeChanged: if (root.loaded) root.save()
+            property bool brightness: true
+            onBrightnessChanged: if (root.loaded) root.save()
+        }
+        readonly property QtObject tray: QtObject {
+            property bool background: true
+            onBackgroundChanged: if (root.loaded) root.save()
+            property bool compact: false
+            onCompactChanged: if (root.loaded) root.save()
+            property bool recolour: false
+            onRecolourChanged: if (root.loaded) root.save()
+        }
+        readonly property QtObject activeWindow: QtObject {
+            property bool compact: true
+            onCompactChanged: if (root.loaded) root.save()
+            property bool inverted: false
+            onInvertedChanged: if (root.loaded) root.save()
+            property bool showOnHover: false
+            onShowOnHoverChanged: if (root.loaded) root.save()
+        }
+        readonly property QtObject popouts: QtObject {
+            property bool activeWindow: true
+            onActiveWindowChanged: if (root.loaded) root.save()
+            property bool statusIcons: true
+            onStatusIconsChanged: if (root.loaded) root.save()
+            property bool tray: true
+            onTrayChanged: if (root.loaded) root.save()
+        }
+        readonly property QtObject clock: QtObject {
+            property bool background: true
+            onBackgroundChanged: if (root.loaded) root.save()
+            property bool showDate: false
+            onShowDateChanged: if (root.loaded) root.save()
+            property bool showIcon: false
+            onShowIconChanged: if (root.loaded) root.save()
+        }
         readonly property QtObject workspaces: QtObject {
             property bool activeIndicator: true
             onActiveIndicatorChanged: if (root.loaded) root.save()
@@ -208,6 +254,16 @@ QtObject {
                     if (typeof data.bar.workspaces[key] === "boolean") bar.workspaces[key] = data.bar.workspaces[key];
                 if (Number.isInteger(data.bar.workspaces.maxWindowIcons))
                     bar.workspaces.maxWindowIcons = Math.max(0, Math.min(20, data.bar.workspaces.maxWindowIcons));
+            }
+            if (data.bar && typeof data.bar === "object") {
+                for (const key of ["persistent", "showOnHover"])
+                    if (typeof data.bar[key] === "boolean") bar[key] = data.bar[key];
+                if (Number.isInteger(data.bar.dragThreshold))
+                    bar.dragThreshold = Math.max(0, data.bar.dragThreshold);
+                for (const group of ["scrollActions", "tray", "activeWindow", "popouts", "clock"])
+                    if (data.bar[group] && typeof data.bar[group] === "object")
+                        for (const key of Object.keys(data.bar[group]))
+                            if (key in bar[group] && typeof data.bar[group][key] === "boolean") bar[group][key] = data.bar[group][key];
             }
             if (typeof data.smartScheme === "boolean")
                 smartScheme = data.smartScheme;
@@ -292,7 +348,7 @@ QtObject {
     function save(): void {
         if (!loaded)
             return;
-        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, useFuzzyActions, useFuzzySchemes, useFuzzyVariants, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, dashboard: { enabled: dashboard.enabled, showOnHover: dashboard.showOnHover, showDashboard: dashboard.showDashboard, showMedia: dashboard.showMedia, showPerformance: dashboard.showPerformance, showWeather: dashboard.showWeather, dragThreshold: dashboard.dragThreshold, performance: { showCpu: dashboard.performance.showCpu, showGpu: dashboard.performance.showGpu, showMemory: dashboard.performance.showMemory, showStorage: dashboard.performance.showStorage, showNetwork: dashboard.performance.showNetwork, showBattery: dashboard.performance.showBattery } }, launcher: { enabled: launcher.enabled, showOnHover: launcher.showOnHover, maxShown: launcher.maxShown, maxWallpapers: launcher.maxWallpapers, dragThreshold: launcher.dragThreshold }, sidebar: { enabled: sidebar.enabled, showOnHover: sidebar.showOnHover, dragThreshold: sidebar.dragThreshold, minHoverThreshold: sidebar.minHoverThreshold }, utilities: { enabled: utilities.enabled, cards: { keepAwake: utilities.cards.keepAwake, recorder: utilities.cards.recorder, quickToggles: utilities.cards.quickToggles } }, bar: { workspaces: { activeIndicator: bar.workspaces.activeIndicator, activeTrail: bar.workspaces.activeTrail, occupiedBg: bar.workspaces.occupiedBg, showWindows: bar.workspaces.showWindows, showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces, maxWindowIcons: bar.workspaces.maxWindowIcons, perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces } }, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
+        storage.setText(JSON.stringify({ schema: 1, favouriteApps, hiddenApps, hiddenTrayIcons, terminalCommand, actions, actionPrefix, specialPrefix, enableDangerousActions, useFuzzyApps, useFuzzyWallpapers, useFuzzyActions, useFuzzySchemes, useFuzzyVariants, smartScheme, wallpaperDirectory, wallpaperEnabled, desktopClockEnabled, desktopClockPosition, borderThickness, borderSmoothing, useTwelveHourClock, useFahrenheit, useFahrenheitPerformance, weatherLocation, audioIncrement, brightnessIncrement, maxVolume, visualiserBars, visualiserEnabled, visualiserAutoHide, visualiserBlur, visualiserSpacing, visualiserRounding, defaultPlayer, playerAliases, toastAudioOutputChanged, toastAudioInputChanged, toastNowPlaying, notificationExpire, suppressNotificationsInFullscreen, notificationDefaultExpireTimeout, notificationFullscreenExpireTimeout, notificationActionOnClick, toastDndChanged, toastGameModeChanged, vimKeybinds, workspacesShown, dashboard: { enabled: dashboard.enabled, showOnHover: dashboard.showOnHover, showDashboard: dashboard.showDashboard, showMedia: dashboard.showMedia, showPerformance: dashboard.showPerformance, showWeather: dashboard.showWeather, dragThreshold: dashboard.dragThreshold, performance: { showCpu: dashboard.performance.showCpu, showGpu: dashboard.performance.showGpu, showMemory: dashboard.performance.showMemory, showStorage: dashboard.performance.showStorage, showNetwork: dashboard.performance.showNetwork, showBattery: dashboard.performance.showBattery } }, launcher: { enabled: launcher.enabled, showOnHover: launcher.showOnHover, maxShown: launcher.maxShown, maxWallpapers: launcher.maxWallpapers, dragThreshold: launcher.dragThreshold }, sidebar: { enabled: sidebar.enabled, showOnHover: sidebar.showOnHover, dragThreshold: sidebar.dragThreshold, minHoverThreshold: sidebar.minHoverThreshold }, utilities: { enabled: utilities.enabled, cards: { keepAwake: utilities.cards.keepAwake, recorder: utilities.cards.recorder, quickToggles: utilities.cards.quickToggles } }, bar: { persistent: bar.persistent, showOnHover: bar.showOnHover, dragThreshold: bar.dragThreshold, scrollActions: { workspaces: bar.scrollActions.workspaces, volume: bar.scrollActions.volume, brightness: bar.scrollActions.brightness }, tray: { background: bar.tray.background, compact: bar.tray.compact, recolour: bar.tray.recolour }, activeWindow: { compact: bar.activeWindow.compact, inverted: bar.activeWindow.inverted, showOnHover: bar.activeWindow.showOnHover }, popouts: { activeWindow: bar.popouts.activeWindow, statusIcons: bar.popouts.statusIcons, tray: bar.popouts.tray }, clock: { background: bar.clock.background, showDate: bar.clock.showDate, showIcon: bar.clock.showIcon }, workspaces: { activeIndicator: bar.workspaces.activeIndicator, activeTrail: bar.workspaces.activeTrail, occupiedBg: bar.workspaces.occupiedBg, showWindows: bar.workspaces.showWindows, showWindowsOnSpecialWorkspaces: bar.workspaces.showWindowsOnSpecialWorkspaces, maxWindowIcons: bar.workspaces.maxWindowIcons, perMonitorWorkspaces: bar.workspaces.perMonitorWorkspaces } }, idleInhibitWhenAudio, idleInhibitWhenCharging, idleLockBeforeSleep, idleTimeouts }, null, 2) + "\n");
     }
 
     function setFavouriteApps(values: list<string>): void {

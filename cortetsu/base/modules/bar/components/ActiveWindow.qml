@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 import qs.utils
 
@@ -17,7 +18,7 @@ Item {
         const title = Hypr.activeToplevel?.title;
         if (!title)
             return qsTr("Desktop");
-        if (Config.bar.activeWindow.compact) {
+        if (CortetsuConfig.bar.activeWindow.compact) {
             // " - " (standard hyphen), " — " (em dash), " – " (en dash)
             const parts = title.split(/\s+[\-\u2013\u2014]\s+/);
             if (parts.length > 1)
@@ -41,7 +42,7 @@ Item {
     Loader {
         asynchronous: true
         anchors.fill: parent
-        active: !Config.bar.activeWindow.showOnHover
+        active: !CortetsuConfig.bar.activeWindow.showOnHover
 
         sourceComponent: MouseArea {
             cursorShape: Qt.PointingHandCursor
@@ -116,10 +117,10 @@ Item {
 
         transform: [
             Translate {
-                x: root.Config.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
+                x: CortetsuConfig.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
             },
             Rotation {
-                angle: root.Config.bar.activeWindow.inverted ? 270 : 90
+                angle: CortetsuConfig.bar.activeWindow.inverted ? 270 : 90
                 origin.x: text.implicitHeight / 2
                 origin.y: text.implicitHeight / 2
             }

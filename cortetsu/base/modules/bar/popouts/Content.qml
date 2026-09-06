@@ -6,6 +6,7 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 
 Item {
@@ -121,7 +122,7 @@ Item {
 
         Repeater {
             model: ScriptModel {
-                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
+                values: SystemTray.items.values.filter(i => !CortetsuConfig.hiddenTrayIcons.includes(i.id))
             }
 
             Popout {

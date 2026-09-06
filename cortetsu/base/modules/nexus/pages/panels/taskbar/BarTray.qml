@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick.Layouts
 import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -19,28 +20,28 @@ PageBase {
         ToggleRow {
             first: true
             text: qsTr("Background")
-            checked: Config.bar.tray.background
-            onToggled: GlobalConfig.bar.tray.background = checked
+            checked: CortetsuConfig.bar.tray.background
+            onToggled: CortetsuConfig.bar.tray.background = checked
         }
 
         ToggleRow {
             text: qsTr("Recolour icons")
-            checked: Config.bar.tray.recolour
-            onToggled: GlobalConfig.bar.tray.recolour = checked
+            checked: CortetsuConfig.bar.tray.recolour
+            onToggled: CortetsuConfig.bar.tray.recolour = checked
         }
 
         ToggleRow {
             text: qsTr("Compact")
-            checked: Config.bar.tray.compact
-            onToggled: GlobalConfig.bar.tray.compact = checked
+            checked: CortetsuConfig.bar.tray.compact
+            onToggled: CortetsuConfig.bar.tray.compact = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Popout on hover")
             subtext: qsTr("Show the tray menu popout when hovering")
-            checked: Config.bar.popouts.tray
-            onToggled: GlobalConfig.bar.popouts.tray = checked
+            checked: CortetsuConfig.bar.popouts.tray
+            onToggled: CortetsuConfig.bar.popouts.tray = checked
         }
     }
 }

@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Caelestia.Config
 import qs.components
+import qs.modules
 import qs.services
 
 CortetsuSurface {
@@ -14,18 +15,18 @@ CortetsuSurface {
     readonly property alias items: items
     readonly property alias expandIcon: expandIcon
 
-    readonly property int padding: Config.bar.tray.background ? Tokens.padding.medium : Tokens.padding.extraSmall
-    readonly property int spacing: Config.bar.tray.background ? Tokens.spacing.medium : Tokens.spacing.extraSmall
+    readonly property int padding: CortetsuConfig.bar.tray.background ? Tokens.padding.medium : Tokens.padding.extraSmall
+    readonly property int spacing: CortetsuConfig.bar.tray.background ? Tokens.spacing.medium : Tokens.spacing.extraSmall
 
     property bool expanded
 
     readonly property real nonAnimHeight: {
-        if (!Config.bar.tray.compact)
+        if (!CortetsuConfig.bar.tray.compact)
             return layout.implicitHeight + padding * 2;
-        const pad = (Config.bar.tray.background ? Tokens.padding.extraSmall : 0) + padding;
+        const pad = (CortetsuConfig.bar.tray.background ? Tokens.padding.extraSmall : 0) + padding;
         if (expanded)
             return expandIcon.implicitHeight + layout.implicitHeight + spacing + pad;
-        return Math.max(Config.bar.tray.background ? width : 0, expandIcon.implicitHeight + pad);
+        return Math.max(CortetsuConfig.bar.tray.background ? width : 0, expandIcon.implicitHeight + pad);
     }
 
     clip: true
@@ -34,7 +35,7 @@ CortetsuSurface {
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: nonAnimHeight
 
-    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (Config.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
+    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (CortetsuConfig.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Tokens.rounding.full
 
     Column {
@@ -45,7 +46,7 @@ CortetsuSurface {
         anchors.topMargin: root.padding
         spacing: Tokens.spacing.small
 
-        opacity: root.expanded || !Config.bar.tray.compact ? 1 : 0
+        opacity: root.expanded || !CortetsuConfig.bar.tray.compact ? 1 : 0
 
         add: Transition {
             Anim {
@@ -71,7 +72,7 @@ CortetsuSurface {
             id: items
 
             model: ScriptModel {
-                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
+                values: SystemTray.items.values.filter(i => !CortetsuConfig.hiddenTrayIcons.includes(i.id))
             }
 
             TrayItem {}
@@ -92,7 +93,7 @@ CortetsuSurface {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
 
-        active: Config.bar.tray.compact && items.count > 0
+        active: CortetsuConfig.bar.tray.compact && items.count > 0
 
         sourceComponent: Item {
             implicitWidth: expandIconInner.implicitWidth
@@ -103,7 +104,7 @@ CortetsuSurface {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: Config.bar.tray.background ? Tokens.padding.extraSmall : -Tokens.padding.small
+                anchors.bottomMargin: CortetsuConfig.bar.tray.background ? Tokens.padding.extraSmall : -Tokens.padding.small
                 text: "expand_less"
                 color: Colours.palette.m3onSurfaceVariant
                 fontStyle: Tokens.font.icon.medium

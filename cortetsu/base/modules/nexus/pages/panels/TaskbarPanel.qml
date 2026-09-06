@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick.Layouts
 import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -26,26 +27,26 @@ PageBase {
             first: true
             text: qsTr("Persistent")
             subtext: qsTr("Keep the bar visible at all times")
-            checked: Config.bar.persistent
-            onToggled: GlobalConfig.bar.persistent = checked
+            checked: CortetsuConfig.bar.persistent
+            onToggled: CortetsuConfig.bar.persistent = checked
         }
 
         ToggleRow {
             text: qsTr("Show on hover")
             subtext: qsTr("Reveal the bar when the cursor reaches the screen edge")
-            checked: Config.bar.showOnHover
-            onToggled: GlobalConfig.bar.showOnHover = checked
+            checked: CortetsuConfig.bar.showOnHover
+            onToggled: CortetsuConfig.bar.showOnHover = checked
         }
 
         StepperRow {
             last: true
             label: qsTr("Drag threshold")
             subtext: qsTr("Pixels dragged before the bar reveals")
-            value: Config.bar.dragThreshold
+            value: CortetsuConfig.bar.dragThreshold
             from: 0
             to: 200
             stepSize: 5
-            onMoved: v => GlobalConfig.bar.dragThreshold = v
+            onMoved: v => CortetsuConfig.bar.dragThreshold = v
         }
 
         // Components
@@ -99,23 +100,23 @@ PageBase {
             first: true
             text: qsTr("Workspaces")
             subtext: qsTr("Scroll over the workspace indicator to switch workspaces")
-            checked: Config.bar.scrollActions.workspaces
-            onToggled: GlobalConfig.bar.scrollActions.workspaces = checked
+            checked: CortetsuConfig.bar.scrollActions.workspaces
+            onToggled: CortetsuConfig.bar.scrollActions.workspaces = checked
         }
 
         ToggleRow {
             text: qsTr("Volume")
             subtext: qsTr("Scroll on the top half of the bar to adjust volume")
-            checked: Config.bar.scrollActions.volume
-            onToggled: GlobalConfig.bar.scrollActions.volume = checked
+            checked: CortetsuConfig.bar.scrollActions.volume
+            onToggled: CortetsuConfig.bar.scrollActions.volume = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Brightness")
             subtext: qsTr("Scroll on the bottom half of the bar to adjust brightness")
-            checked: Config.bar.scrollActions.brightness
-            onToggled: GlobalConfig.bar.scrollActions.brightness = checked
+            checked: CortetsuConfig.bar.scrollActions.brightness
+            onToggled: CortetsuConfig.bar.scrollActions.brightness = checked
         }
     }
 }

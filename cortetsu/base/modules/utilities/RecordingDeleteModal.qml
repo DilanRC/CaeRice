@@ -57,12 +57,12 @@ Loader {
 
                 // Bottom left
                 ShapePath {
-                    startX: -root.CortetsuConfig.borderSmoothing * 2
-                    startY: shape.height - root.CortetsuConfig.borderThickness
+                    startX: -CortetsuConfig.borderSmoothing * 2
+                    startY: shape.height - CortetsuConfig.borderThickness
                     strokeWidth: 0
                     fillGradient: LinearGradient {
                         orientation: LinearGradient.Horizontal
-                        x1: -root.CortetsuConfig.borderSmoothing * 2
+                        x1: -CortetsuConfig.borderSmoothing * 2
 
                         GradientStop {
                             position: 0
@@ -75,34 +75,34 @@ Loader {
                     }
 
                     PathLine {
-                        relativeX: root.CortetsuConfig.borderSmoothing
+                        relativeX: CortetsuConfig.borderSmoothing
                         relativeY: 0
                     }
                     PathCubic {
-                        relativeX: root.CortetsuConfig.borderSmoothing
-                        relativeY: -root.CortetsuConfig.borderSmoothing
-                        relativeControl1X: root.CortetsuConfig.borderSmoothing * 0.93
-                        relativeControl1Y: -root.CortetsuConfig.borderSmoothing * 0.07
-                        relativeControl2X: root.CortetsuConfig.borderSmoothing * 0.93
-                        relativeControl2Y: -root.CortetsuConfig.borderSmoothing * 0.07
+                        relativeX: CortetsuConfig.borderSmoothing
+                        relativeY: -CortetsuConfig.borderSmoothing
+                        relativeControl1X: CortetsuConfig.borderSmoothing * 0.93
+                        relativeControl1Y: -CortetsuConfig.borderSmoothing * 0.07
+                        relativeControl2X: CortetsuConfig.borderSmoothing * 0.93
+                        relativeControl2Y: -CortetsuConfig.borderSmoothing * 0.07
                     }
                     PathLine {
                         relativeX: 0
-                        relativeY: root.CortetsuConfig.borderSmoothing + root.CortetsuConfig.borderThickness
+                        relativeY: CortetsuConfig.borderSmoothing + CortetsuConfig.borderThickness
                     }
                     PathLine {
-                        relativeX: -root.CortetsuConfig.borderSmoothing * 2
+                        relativeX: -CortetsuConfig.borderSmoothing * 2
                         relativeY: 0
                     }
                 }
 
                 // Top right curve
                 ShapePath {
-                    startX: shape.width - root.CortetsuConfig.borderSmoothing - root.CortetsuConfig.borderThickness + (1 - root.deformMatrix.m11) * shape.width / 2
+                    startX: shape.width - CortetsuConfig.borderSmoothing - CortetsuConfig.borderThickness + (1 - root.deformMatrix.m11) * shape.width / 2
                     strokeWidth: 0
                     fillGradient: LinearGradient {
                         orientation: LinearGradient.Vertical
-                        y1: -root.CortetsuConfig.borderSmoothing * 2
+                        y1: -CortetsuConfig.borderSmoothing * 2
 
                         GradientStop {
                             position: 0
@@ -115,19 +115,19 @@ Loader {
                     }
 
                     PathCubic {
-                        relativeX: root.CortetsuConfig.borderSmoothing
-                        relativeY: -root.CortetsuConfig.borderSmoothing
-                        relativeControl1X: root.CortetsuConfig.borderSmoothing * 0.93
-                        relativeControl1Y: -root.CortetsuConfig.borderSmoothing * 0.07
-                        relativeControl2X: root.CortetsuConfig.borderSmoothing * 0.93
-                        relativeControl2Y: -root.CortetsuConfig.borderSmoothing * 0.07
+                        relativeX: CortetsuConfig.borderSmoothing
+                        relativeY: -CortetsuConfig.borderSmoothing
+                        relativeControl1X: CortetsuConfig.borderSmoothing * 0.93
+                        relativeControl1Y: -CortetsuConfig.borderSmoothing * 0.07
+                        relativeControl2X: CortetsuConfig.borderSmoothing * 0.93
+                        relativeControl2Y: -CortetsuConfig.borderSmoothing * 0.07
                     }
                     PathLine {
                         relativeX: 0
-                        relativeY: -root.CortetsuConfig.borderSmoothing
+                        relativeY: -CortetsuConfig.borderSmoothing
                     }
                     PathLine {
-                        relativeX: root.CortetsuConfig.borderThickness
+                        relativeX: CortetsuConfig.borderThickness
                         relativeY: 0
                     }
                     PathLine {

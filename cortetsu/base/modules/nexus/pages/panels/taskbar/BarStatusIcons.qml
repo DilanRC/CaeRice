@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick.Layouts
 import Caelestia.Config
+import qs.modules
 import qs.modules.nexus.common
 
 PageBase {
@@ -91,8 +92,8 @@ PageBase {
             last: true
             text: qsTr("Popout on hover")
             subtext: qsTr("Show a details popout when hovering the status icons")
-            checked: Config.bar.popouts.statusIcons
-            onToggled: GlobalConfig.bar.popouts.statusIcons = checked
+            checked: CortetsuConfig.bar.popouts.statusIcons
+            onToggled: CortetsuConfig.bar.popouts.statusIcons = checked
         }
     }
 }
