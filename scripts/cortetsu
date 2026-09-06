@@ -265,6 +265,7 @@ test_cmd() {
         "cortetsu/tests/test-calendar-credentials.py"
         "cortetsu/tests/test-calendar-polish.py"
         "cortetsu/tests/test-pomodoro.py"
+        "cortetsu/tests/test-notifications.py"
         "cortetsu/tests/test-runtime-contract.py"
         "scripts/features/test-cortetsu-screen-state.py"
         "scripts/features/test-cortetsu-config.py"
@@ -280,6 +281,9 @@ test_cmd() {
         "scripts/features/test-cortetsu-network-dbus.py"
         "scripts/features/test-patch-debt-audit.py"
         "scripts/features/test-design-system-migration-status.py"
+        "scripts/features/test-cortetsu-notifications.py"
+        "scripts/features/test-notification-backend-boundary.py"
+        "scripts/features/test-cortetsu-notification-actions.py"
     )
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
