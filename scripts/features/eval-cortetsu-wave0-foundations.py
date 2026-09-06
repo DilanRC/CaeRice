@@ -10,6 +10,9 @@ row = (ROOT / "cortetsu/components/CortetsuListRow.qml").read_text()
 hub_button = (ROOT / "cortetsu/modules/HubButton.qml").read_text()
 app_rail = (ROOT / "cortetsu/modules/CortetsuAppRail.qml").read_text()
 tray = (ROOT / "cortetsu/modules/CortetsuTraySegment.qml").read_text()
+status = (ROOT / "cortetsu/modules/CortetsuStatusSegment.qml").read_text()
+status_pill = (ROOT / "cortetsu/modules/StatusPill.qml").read_text()
+workspaces = (ROOT / "cortetsu/modules/CortetsuWorkspaceDots.qml").read_text()
 hub = (ROOT / "cortetsu/modules/BottomHub.qml").read_text()
 
 checks = {
@@ -18,11 +21,17 @@ checks = {
     "hub button exposes focus": "focused: root.activeFocus" in hub_button,
     "app rail exposes focus": "focused: appItem.activeFocus" in app_rail,
     "tray exposes focus": "focused: trayItem.activeFocus" in tray,
+    "status clock exposes focus": "focused: parent.activeFocus" in status,
+    "status pill exposes focus": "focused: item.activeFocus" in status_pill,
+    "workspace exposes focus": "workspaceDot.activeFocus" in workspaces,
     "button supports keyboard": all(x in button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "row supports keyboard": all(x in row for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "hub button supports keyboard": all(x in hub_button for x in ("Keys.onEnterPressed", "Keys.onReturnPressed", "Keys.onSpacePressed")),
     "app rail supports keyboard": all(x in app_rail for x in ("Keys.onEnterPressed", "Keys.onLeftPressed", "Keys.onRightPressed")),
     "tray supports keyboard": all(x in tray for x in ("Keys.onEnterPressed", "Keys.onMenuPressed")),
+    "status clock supports keyboard": all(x in status for x in ("Keys.onEnterPressed", "Keys.onSpacePressed")),
+    "status pill supports keyboard": all(x in status_pill for x in ("Keys.onEnterPressed", "Keys.onSpacePressed")),
+    "workspace supports keyboard": all(x in workspaces for x in ("Keys.onEnterPressed", "Keys.onLeftPressed", "Keys.onRightPressed")),
     "popup controller untouched": "bottomAnchorCenter" in hub and "closeAllPopouts" in hub,
 }
 

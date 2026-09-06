@@ -160,6 +160,18 @@ Item {
             implicitHeight: 44
             width: implicitWidth
             height: implicitHeight
+            focus: true
+            activeFocusOnTab: true
+
+            CortetsuSurface {
+                anchors.fill: parent
+                radiusValue: CortetsuDesign.radiusSmall
+                baseColor: "transparent"
+                hoverColor: Qt.lighter(CortetsuDesign.colorTetsu, 1.18)
+                hovered: clockMouse.containsMouse
+                focused: parent.activeFocus
+                outlined: false
+            }
 
             Column {
                 anchors.centerIn: parent
@@ -181,11 +193,16 @@ Item {
             }
 
             MouseArea {
+                id: clockMouse
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.calendarRequested()
             }
+
+            Keys.onEnterPressed: root.calendarRequested()
+            Keys.onReturnPressed: root.calendarRequested()
+            Keys.onSpacePressed: root.calendarRequested()
         }
 
         HubButton {

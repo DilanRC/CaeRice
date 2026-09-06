@@ -32,6 +32,8 @@ Row {
 
             width: active ? 18 : 8
             height: 28
+            focus: true
+            activeFocusOnTab: true
 
             Behavior on width {
                 NumberAnimation {
@@ -50,6 +52,8 @@ Row {
                     : workspaceDot.occupied
                         ? CortetsuDesign.colorMuted
                         : Qt.darker(CortetsuDesign.colorMuted, 1.35)
+                border.width: workspaceDot.activeFocus ? 1 : 0
+                border.color: CortetsuDesign.colorWashi
 
                 Behavior on width {
                     NumberAnimation {
@@ -64,6 +68,12 @@ Row {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.workspaceRequested(workspaceDot.wsId)
             }
+
+            Keys.onEnterPressed: root.workspaceRequested(workspaceDot.wsId)
+            Keys.onReturnPressed: root.workspaceRequested(workspaceDot.wsId)
+            Keys.onSpacePressed: root.workspaceRequested(workspaceDot.wsId)
+            Keys.onLeftPressed: root.workspaceRequested(Math.max(root.workspaceOffset + 1, workspaceDot.wsId - 1))
+            Keys.onRightPressed: root.workspaceRequested(Math.min(root.workspaceOffset + root.workspaceCount, workspaceDot.wsId + 1))
         }
     }
 

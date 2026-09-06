@@ -127,6 +127,8 @@ Item {
 
         implicitWidth: content.implicitWidth + CortetsuDesign.spacingCompact
         implicitHeight: 28
+        focus: true
+        activeFocusOnTab: true
 
         CortetsuSurface {
             anchors.fill: parent
@@ -135,6 +137,7 @@ Item {
             hoverColor: Qt.lighter(CortetsuDesign.colorTetsu, 1.18)
             hovered: mouse.containsMouse
             pressed: mouse.pressed
+            focused: item.activeFocus
             outlined: false
         }
 
@@ -182,7 +185,7 @@ Item {
             id: tooltipPopup
 
             parent: item
-            visible: mouse.containsMouse
+            visible: mouse.containsMouse || item.activeFocus
             delay: CortetsuDesign.motionDeliberateMs
             text: item.tooltip
 
@@ -207,5 +210,9 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: item.clicked()
         }
+
+        Keys.onEnterPressed: item.clicked()
+        Keys.onReturnPressed: item.clicked()
+        Keys.onSpacePressed: item.clicked()
     }
 }
