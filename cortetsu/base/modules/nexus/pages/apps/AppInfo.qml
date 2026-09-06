@@ -12,8 +12,8 @@ PageBase {
     id: root
 
     readonly property DesktopEntry app: nState.selectedApp
-    readonly property bool favouriteByRegex: app && matchedByRegex(GlobalConfig.launcher.favouriteApps, app.id)
-    readonly property bool hiddenByRegex: app && matchedByRegex(GlobalConfig.launcher.hiddenApps, app.id)
+    readonly property bool favouriteByRegex: app && matchedByRegex(CortetsuConfig.favouriteApps, app.id)
+    readonly property bool hiddenByRegex: app && matchedByRegex(CortetsuConfig.hiddenApps, app.id)
 
     function isRegexEntry(s: string): bool {
         return /^\^.*\$$/.test(s);
@@ -84,10 +84,10 @@ PageBase {
             text: qsTr("Favourite")
             subtext: root.favouriteByRegex ? qsTr("Matched by a regex in favouriteApps — edit the config file to change") : qsTr("Pin to the top of the launcher")
             enabled: !root.favouriteByRegex
-            checked: root.app && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, root.app.id)
+            checked: root.app && Strings.testRegexList(CortetsuConfig.favouriteApps, root.app.id)
             onToggled: {
-                const apps = GlobalConfig.launcher.favouriteApps;
-                GlobalConfig.launcher.favouriteApps = checked ? [...apps, root.app.id] : apps.filter(a => a !== root.app.id);
+                const apps = CortetsuConfig.favouriteApps;
+                CortetsuConfig.favouriteApps = checked ? [...apps, root.app.id] : apps.filter(a => a !== root.app.id);
             }
         }
 
@@ -96,10 +96,10 @@ PageBase {
             text: qsTr("Hidden")
             subtext: root.hiddenByRegex ? qsTr("Matched by a regex in hiddenApps — edit the config file to change") : qsTr("Hide from the launcher")
             enabled: !root.hiddenByRegex
-            checked: root.app && Strings.testRegexList(GlobalConfig.launcher.hiddenApps, root.app.id)
+            checked: root.app && Strings.testRegexList(CortetsuConfig.hiddenApps, root.app.id)
             onToggled: {
-                const apps = GlobalConfig.launcher.hiddenApps;
-                GlobalConfig.launcher.hiddenApps = checked ? [...apps, root.app.id] : apps.filter(a => a !== root.app.id);
+                const apps = CortetsuConfig.hiddenApps;
+                CortetsuConfig.hiddenApps = checked ? [...apps, root.app.id] : apps.filter(a => a !== root.app.id);
             }
         }
 

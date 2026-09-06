@@ -9,6 +9,7 @@ import qs.components
 import qs.components.effects
 import qs.components.widgets
 import qs.services
+import qs.modules
 
 CortetsuSurface {
     id: root
@@ -75,7 +76,7 @@ CortetsuSurface {
 
                     text: {
                         const temp = Cpu.temperature;
-                        const useF = GlobalConfig.services.useFahrenheitPerformance;
+                        const useF = CortetsuConfig.useFahrenheitPerformance;
                         return `${Math.ceil(useF ? temp * 1.8 + 32 : temp)}°${useF ? "F" : "C"}`;
                     }
                     color: Cpu.temperature > 90 ? Colours.palette.m3onErrorContainer : Colours.palette.m3secondary

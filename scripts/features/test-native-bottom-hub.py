@@ -180,7 +180,8 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "StyledText" not in pill
 
     icon = source["CortetsuIcon.qml"]
-    assert 'font.family: CortetsuTypography.iconFamily' in icon
+    assert 'CortetsuTypography.iconFamily' in icon
+    assert 'property font fontStyle' in icon
     text = source["CortetsuText.qml"]
     assert 'font.family: CortetsuTypography.uiFamily' in text
 

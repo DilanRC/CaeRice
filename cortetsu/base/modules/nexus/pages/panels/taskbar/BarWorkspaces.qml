@@ -24,7 +24,7 @@ PageBase {
             from: 1
             to: 20
             stepSize: 1
-            onMoved: v => GlobalConfig.bar.workspaces.shown = v
+            onMoved: v => CortetsuConfig.workspacesShown = v
         }
 
         ToggleRow {

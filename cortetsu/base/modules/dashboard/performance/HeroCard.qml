@@ -5,6 +5,7 @@ import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
+import qs.modules
 
 CortetsuSurface {
     id: root
@@ -93,7 +94,7 @@ CortetsuSurface {
             }
 
             CortetsuText {
-                text: `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? root.temperature * 1.8 + 32 : root.temperature)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`
+                text: `${Math.ceil(CortetsuConfig.useFahrenheitPerformance ? root.temperature * 1.8 + 32 : root.temperature)}°${CortetsuConfig.useFahrenheitPerformance ? "F" : "C"}`
                 font: Tokens.font.body.builders.medium.build()
             }
         }

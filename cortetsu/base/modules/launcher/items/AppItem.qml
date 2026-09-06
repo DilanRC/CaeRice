@@ -77,7 +77,7 @@ Item {
             asynchronous: true
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            active: root.modelData && Strings.testRegexList(GlobalConfig.launcher.favouriteApps, root.modelData.id)
+            active: root.modelData && Strings.testRegexList(CortetsuConfig.favouriteApps, root.modelData.id)
 
             sourceComponent: CortetsuIcon {
                 text: "favorite"

@@ -45,7 +45,7 @@ PageBase {
             label: qsTr("Action prefix")
             subtext: qsTr("Prefix used to run actions in the launcher")
             errorText: qsTr("Prefix must not be alphanumeric")
-            value: GlobalConfig.launcher.actionPrefix === ">" ? "" : GlobalConfig.launcher.actionPrefix // TODO: replace with empty only when not loaded once loaded state is exposed
+            value: CortetsuConfig.actionPrefix === ">" ? "" : CortetsuConfig.actionPrefix // TODO: replace with empty only when not loaded once loaded state is exposed
             placeholderText: ">"
             maximumLength: 1
             smallField: true
@@ -54,8 +54,8 @@ PageBase {
                 if (!field.valid)
                     return;
                 /// TODO: replace with GlobalConfig.launcher.resetOption("actionPrefix") on empty commit when reset is fixed
-                GlobalConfig.launcher.actionPrefix = value || ">";
-                if (GlobalConfig.launcher.actionPrefix === ">")
+                CortetsuConfig.actionPrefix = value || ">";
+                if (CortetsuConfig.actionPrefix === ">")
                     clear();
             }
         }
@@ -104,16 +104,16 @@ PageBase {
             first: true
             text: qsTr("Vim keybinds")
             subtext: qsTr("Navigate results with Ctrl+hjkl")
-            checked: GlobalConfig.launcher.vimKeybinds
-            onToggled: GlobalConfig.launcher.vimKeybinds = checked
+            checked: CortetsuConfig.vimKeybinds
+            onToggled: CortetsuConfig.vimKeybinds = checked
         }
 
         ToggleRow {
             last: true
             text: qsTr("Enable dangerous actions")
             subtext: qsTr("Allow actions that shut down or log out")
-            checked: GlobalConfig.launcher.enableDangerousActions
-            onToggled: GlobalConfig.launcher.enableDangerousActions = checked
+            checked: CortetsuConfig.enableDangerousActions
+            onToggled: CortetsuConfig.enableDangerousActions = checked
         }
 
         // Fuzzy search

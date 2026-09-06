@@ -5,12 +5,13 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.services
+import qs.modules
 
 Item {
     id: root
 
     required property var list
-    readonly property string math: list.search.text.slice(`${GlobalConfig.launcher.actionPrefix}calc `.length)
+    readonly property string math: list.search.text.slice(`${CortetsuConfig.actionPrefix}calc `.length)
 
     function onClicked(): void {
         Quickshell.execDetached(["wl-copy", Qalculator.rawResult]);

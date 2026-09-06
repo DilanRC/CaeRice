@@ -60,7 +60,7 @@ PageBase {
                 required property string modelData
 
                 text: modelData
-                icon: modelData === GlobalConfig.services.defaultPlayer ? "check" : ""
+                icon: modelData === CortetsuConfig.defaultPlayer ? "check" : ""
                 activeIcon: "music_note"
             }
         }
@@ -136,10 +136,10 @@ PageBase {
             label: qsTr("Default player")
             subtext: qsTr("Preferred media player when several are open")
             menuItems: playerVariants.instances
-            active: menuItems.find(i => i.text === GlobalConfig.services.defaultPlayer) ?? null
+            active: menuItems.find(i => i.text === CortetsuConfig.defaultPlayer) ?? null
             fallbackIcon: "music_note"
-            fallbackText: GlobalConfig.services.defaultPlayer || qsTr("Auto")
-            onSelected: item => GlobalConfig.services.defaultPlayer = item.text
+            fallbackText: CortetsuConfig.defaultPlayer || qsTr("Auto")
+            onSelected: item => CortetsuConfig.defaultPlayer = item.text
         }
 
         // Input increments
@@ -151,32 +151,32 @@ PageBase {
             first: true
             label: qsTr("Volume step")
             subtext: qsTr("Amount the volume changes per scroll (%)")
-            value: Math.round(GlobalConfig.services.audioIncrement * 100)
+            value: Math.round(CortetsuConfig.audioIncrement * 100)
             from: 1
             to: 50
             stepSize: 1
-            onMoved: v => GlobalConfig.services.audioIncrement = v / 100
+            onMoved: v => CortetsuConfig.audioIncrement = v / 100
         }
 
         StepperRow {
             label: qsTr("Brightness step")
             subtext: qsTr("Amount the brightness changes per scroll (%)")
-            value: Math.round(GlobalConfig.services.brightnessIncrement * 100)
+            value: Math.round(CortetsuConfig.brightnessIncrement * 100)
             from: 1
             to: 50
             stepSize: 1
-            onMoved: v => GlobalConfig.services.brightnessIncrement = v / 100
+            onMoved: v => CortetsuConfig.brightnessIncrement = v / 100
         }
 
         StepperRow {
             last: true
             label: qsTr("Max volume")
             subtext: qsTr("Upper limit for output volume (%)")
-            value: Math.round(GlobalConfig.services.maxVolume * 100)
+            value: Math.round(CortetsuConfig.maxVolume * 100)
             from: 50
             to: 200
             stepSize: 5
-            onMoved: v => GlobalConfig.services.maxVolume = v / 100
+            onMoved: v => CortetsuConfig.maxVolume = v / 100
         }
 
         // Service tuning
@@ -188,18 +188,18 @@ PageBase {
             first: true
             label: qsTr("Visualiser bars")
             subtext: qsTr("Number of bars in the audio visualisers")
-            value: GlobalConfig.services.visualiserBars
+            value: CortetsuConfig.visualiserBars
             from: 10
             to: 120
             stepSize: 2
-            onMoved: v => GlobalConfig.services.visualiserBars = v
+            onMoved: v => CortetsuConfig.visualiserBars = v
         }
 
         ToggleRow {
             text: qsTr("Smart colour scheme")
             subtext: qsTr("Derive theme mode and variant from the wallpaper")
-            checked: GlobalConfig.services.smartScheme
-            onToggled: GlobalConfig.services.smartScheme = checked
+            checked: CortetsuConfig.smartScheme
+            onToggled: CortetsuConfig.smartScheme = checked
         }
 
         SelectRow {

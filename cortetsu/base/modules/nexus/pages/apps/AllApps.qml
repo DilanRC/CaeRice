@@ -82,7 +82,7 @@ PageBase {
                     }
 
                     CortetsuIcon {
-                        visible: Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appItem.modelData.id)
+                        visible: Strings.testRegexList(CortetsuConfig.favouriteApps, appItem.modelData.id)
                         text: "favorite"
                         fill: 1
                         color: Colours.palette.m3primary

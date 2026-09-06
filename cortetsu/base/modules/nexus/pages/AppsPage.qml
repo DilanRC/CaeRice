@@ -104,7 +104,7 @@ PageBase {
 
                 model: {
                     const apps = [...DesktopEntries.applications.values];
-                    const favourited = new Set(apps.filter(a => Strings.testRegexList(GlobalConfig.launcher.favouriteApps, a.id)));
+                    const favourited = new Set(apps.filter(a => Strings.testRegexList(CortetsuConfig.favouriteApps, a.id)));
                     return apps.sort((a, b) => (favourited.has(b) - favourited.has(a)) || a.name.localeCompare(b.name));
                 }
 
@@ -160,7 +160,7 @@ PageBase {
                         }
 
                         CortetsuIcon {
-                            visible: Strings.testRegexList(GlobalConfig.launcher.favouriteApps, appItem.modelData.id)
+                            visible: Strings.testRegexList(CortetsuConfig.favouriteApps, appItem.modelData.id)
                             text: "favorite"
                             fill: 1
                             color: Colours.palette.m3primary

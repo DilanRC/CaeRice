@@ -9,6 +9,7 @@ import Caelestia.Services
 import qs.components
 import qs.components.widgets
 import qs.services
+import qs.modules
 
 Item {
     id: root
@@ -33,7 +34,7 @@ Item {
         id: bars
 
         model: Array.from({
-            length: GlobalConfig.services.visualiserBars
+            length: CortetsuConfig.visualiserBars
         }, (_, i) => i)
 
         ShapePath {
@@ -42,11 +43,11 @@ Item {
             required property int modelData
             readonly property real value: Math.max(1e-2, Math.min(1, Audio.cava.values[modelData]))
 
-            readonly property real angle: modelData * 2 * Math.PI / GlobalConfig.services.visualiserBars
+            readonly property real angle: modelData * 2 * Math.PI / CortetsuConfig.visualiserBars
             readonly property real dist: shapeEdgeDist + value * root.maxMagnitude
             readonly property real shapeEdgeDist: {
                 cover.shape.rotation; // Update when shape rotation changes
-                const sDist = cover.shape.distanceAtAngle(modelData * 360 / GlobalConfig.services.visualiserBars + 90);
+                const sDist = cover.shape.distanceAtAngle(modelData * 360 / CortetsuConfig.visualiserBars + 90);
                 return sDist + root.spacing + strokeWidth / 2;
             }
             readonly property real cos: Math.cos(angle)
@@ -54,7 +55,7 @@ Item {
 
             asynchronous: true
             capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-            strokeWidth: 360 / GlobalConfig.services.visualiserBars - root.Tokens.spacing.small / 4
+            strokeWidth: 360 / CortetsuConfig.visualiserBars - root.Tokens.spacing.small / 4
             strokeColor: Colours.palette.m3primary
 
             startX: root.centerX + shapeEdgeDist * cos

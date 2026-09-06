@@ -9,6 +9,7 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.services
+import qs.modules
 
 ColumnLayout {
     id: root
@@ -95,9 +96,9 @@ ColumnLayout {
             // Brightness scroll on bottom half
             const monitor = Brightness.getMonitorForScreen(screen);
             if (angleDelta.y > 0)
-                monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
+                monitor.setBrightness(monitor.brightness + CortetsuConfig.brightnessIncrement);
             else if (angleDelta.y < 0)
-                monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
+                monitor.setBrightness(monitor.brightness - CortetsuConfig.brightnessIncrement);
         }
     }
 

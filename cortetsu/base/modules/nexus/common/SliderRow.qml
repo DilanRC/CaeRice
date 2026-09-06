@@ -62,7 +62,7 @@ ConnectedRect {
 
             CustomMouseArea {
                 function onWheel(event: WheelEvent): void {
-                    const step = GlobalConfig.services.audioIncrement;
+                    const step = CortetsuConfig.audioIncrement;
                     if (event.angleDelta.y > 0)
                         root.moved(Math.min(1, root.value + step));
                     else if (event.angleDelta.y < 0)

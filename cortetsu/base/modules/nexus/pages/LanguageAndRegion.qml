@@ -141,8 +141,8 @@ PageBase {
             label: qsTr("Temperature")
             subtext: qsTr("Units for weather temperatures")
             menuItems: root.tempItems
-            active: root.tempItems[GlobalConfig.services.useFahrenheit ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useFahrenheit = root.tempItems.indexOf(item) === 1
+            active: root.tempItems[CortetsuConfig.useFahrenheit ? 1 : 0]
+            onSelected: item => CortetsuConfig.useFahrenheit = root.tempItems.indexOf(item) === 1
         }
 
         SelectRow {
@@ -150,8 +150,8 @@ PageBase {
             label: qsTr("System temperatures")
             subtext: qsTr("Units for CPU and GPU temperatures")
             menuItems: root.tempItems
-            active: root.tempItems[GlobalConfig.services.useFahrenheitPerformance ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useFahrenheitPerformance = root.tempItems.indexOf(item) === 1
+            active: root.tempItems[CortetsuConfig.useFahrenheitPerformance ? 1 : 0]
+            onSelected: item => CortetsuConfig.useFahrenheitPerformance = root.tempItems.indexOf(item) === 1
         }
 
         // Time & date
@@ -165,8 +165,8 @@ PageBase {
             label: qsTr("Clock format")
             subtext: qsTr("How times are shown across the shell")
             menuItems: root.clockItems
-            active: root.clockItems[GlobalConfig.services.useTwelveHourClock ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useTwelveHourClock = root.clockItems.indexOf(item) === 1
+            active: root.clockItems[CortetsuConfig.useTwelveHourClock ? 1 : 0]
+            onSelected: item => CortetsuConfig.useTwelveHourClock = root.clockItems.indexOf(item) === 1
         }
     }
 }

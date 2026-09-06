@@ -4,6 +4,7 @@ import QtQuick
 import Caelestia.Config
 import qs.components
 import qs.services
+import qs.modules
 
 Item {
     id: root
@@ -41,7 +42,7 @@ Item {
 
         text: Time.minuteStr
         color: Colours.palette.m3secondary
-        font: Tokens.font.headline.builders.large.scale((GlobalConfig.services.useTwelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
+        font: Tokens.font.headline.builders.large.scale((CortetsuConfig.useTwelveHourClock ? 3.8 : 7) * root.centerScale).width(30).build()
 
         TextMetrics {
             id: minuteMetrics
@@ -56,7 +57,7 @@ Item {
         anchors.leftMargin: minuteMetrics.tightBoundingRect.x
         y: hourMetrics.tightBoundingRect.height - implicitHeight
 
-        active: GlobalConfig.services.useTwelveHourClock
+        active: CortetsuConfig.useTwelveHourClock
         asynchronous: true
 
         sourceComponent: CortetsuSurface {
