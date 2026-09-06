@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Models
 import qs.components
 import qs.components.controls
 import qs.components.effects
@@ -156,7 +155,7 @@ Item {
         id: item
 
         required property int index
-        required property FileSystemEntry modelData
+                required property var modelData
 
         readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Tokens.padding.medium * 2
 

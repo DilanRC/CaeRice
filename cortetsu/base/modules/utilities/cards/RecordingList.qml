@@ -4,10 +4,10 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Caelestia.Models
 import qs.components
 import qs.components.containers
 import qs.components.controls
+import qs.components.filedialog
 import qs.modules
 import qs.services
 import qs.utils
@@ -72,7 +72,7 @@ ColumnLayout {
         delegate: RowLayout {
             id: recording
 
-            required property FileSystemEntry modelData
+            required property var modelData
             property string baseName
 
             anchors.left: list.contentItem.left

@@ -75,6 +75,17 @@ for wallpaper_page in (
     wallpaper_text = wallpaper_page.read_text(encoding="utf-8")
     assert "import Caelestia.Models" not in wallpaper_text
     assert "FileSystemEntry" not in wallpaper_text
+file_model = (repo / "cortetsu/base/components/filedialog/FileSystemModel.qml").read_text(encoding="utf-8")
+assert "ListModel" in file_model and "find --" in file_model
+assert "nameFilters" in file_model and "sortReverse" in file_model
+for model_consumer in (
+    repo / "cortetsu/base/components/filedialog/FolderContents.qml",
+    repo / "cortetsu/base/modules/utilities/cards/RecordingList.qml",
+):
+    model_text = model_consumer.read_text(encoding="utf-8")
+    assert "import Caelestia.Models" not in model_text
+    assert "FileSystemEntry" not in model_text
+assert "import qs.components.filedialog" in (repo / "cortetsu/base/modules/utilities/cards/RecordingList.qml").read_text(encoding="utf-8")
 apps_page = (repo / "cortetsu/base/modules/nexus/pages/AppsPage.qml").read_text(encoding="utf-8")
 assert "import Caelestia\n" not in apps_page and "CUtils.clamp" not in apps_page
 for path in (
