@@ -16,7 +16,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | --- | --- | --- | --- | --- | --- |
 | BottomHub | `modules/BottomHub.qml`, `modules/CortetsuBottomHubView.qml` | `CortetsuAppRail`, `CortetsuModeSegment`, `CortetsuStatusSegment`, `CortetsuTraySegment` | FUNCTIONAL | density, hierarchy, keyboard focus, state polish | P0 |
 | Launcher | `modules/launcher/Wrapper.qml`, `Content.qml`, `AppList.qml`, `ContentList.qml` | launcher services, `CortetsuSearchBar`, item delegates | VERIFIED | runtime search/selection/Enter launch, Escape close, wallpaper query empty state, two-monitor visual inspection and clean journal verified | P1 |
-| Quick Settings / Utilities | `modules/utilities/Wrapper.qml`, `Content.qml` | utility cards, `CortetsuSurface`, toggle controls | FUNCTIONAL | control-surface composition and state feedback | P1 |
+| Quick Settings / Utilities | `modules/utilities/Wrapper.qml`, `Content.qml` | utility cards, `CortetsuSurface`, toggle controls | VERIFIED | two-monitor composition, Keep-awake feedback and restoration, Notification controls activation, keyboard contract and Escape close verified | P1 |
 | Notifications | `modules/sidebar/Content.qml`, `modules/notifications/Wrapper.qml`, `Notification.qml` | notification model, action list, scroll container | VERIFIED | real notify-send card, two-monitor toast, always-visible Dismiss, empty state, Escape close, and clean journal verified | P1 |
 | Wi-Fi / Network | `modules/bar/popouts/CortetsuNetworkPopup.qml`, `base/modules/bar/popouts/Network.qml` | network service, list rows, password popup | COMPONENTIZED | loading/error/disconnected states and density | P1 |
 | Audio / Volume | `modules/bar/popouts/CortetsuAudioPopup.qml`, `base/modules/bar/popouts/AudioPopout.qml` | audio service, sliders and device rows | COMPONENTIZED | hierarchy, slider feedback, keyboard control | P1 |
@@ -53,3 +53,12 @@ searching `kitty` produced a selected application result and Enter launched a
 new Kitty instance. Escape closed the launcher. On the left monitor, a
 wallpaper query rendered the first-party empty state. The shell remained
 active with zero restarts and no new warning/error/critical journal entries.
+
+## Quick Settings verification evidence
+
+Quick Settings was opened on both monitors. The Keep-awake control changed to
+its active visual state and was restored to `Allow idle`; Notification controls
+opened the notification center, and Escape closed the overlay. Static utility
+gates passed, including first-party ownership and keyboard-capable controls.
+The shell remained active with zero restarts and no new warning/error/critical
+journal entries.
