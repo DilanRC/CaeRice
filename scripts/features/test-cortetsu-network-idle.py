@@ -7,9 +7,14 @@ network = (modules / "CortetsuNetwork.qml").read_text(encoding="utf-8")
 idle = (modules / "CortetsuIdleInhibitor.qml").read_text(encoding="utf-8")
 hub = (modules / "BottomHub.qml").read_text(encoding="utf-8")
 
-for marker in ("nmcli", "device", "wifi", "interval: 10000", "activeEthernet", "strength"):
+# Network status is DBus-driven via Quickshell's native NetworkManager binding:
+# no nmcli, no Process/Timer polling, no Caelestia dependency.
+assert "import Quickshell.Networking" in network
+for marker in ("activeEthernet", "strength", "ssid", "DeviceType", "ConnectionState", "connecting"):
     assert marker in network, marker
-assert "monitor" not in network
+for banned in ("nmcli", "Quickshell.Io", "Process {", "Timer {", "monitor", "GlobalConfig", "Caelestia"):
+    assert banned not in network, banned
+
 for marker in ("IdleInhibitor", "PersistentProperties", "cortetsu-idle-inhibitor"):
     assert marker in idle, marker
 assert "Services.IdleInhibitor" not in hub

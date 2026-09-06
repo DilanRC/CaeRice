@@ -1,44 +1,44 @@
 pragma Singleton
 
 import Quickshell
-import Quickshell.Io
+import Quickshell.Networking
 import QtQuick
 
+/**
+ * First-party network status service.
+ *
+ * Backed by Quickshell's native Quickshell.Networking module, which talks to
+ * NetworkManager over DBus and exposes properties as Qt bindable properties
+ * (org.freedesktop.NetworkManager PropertiesChanged signals drive updates).
+ * No polling, no CLI subprocess, no upstream shell dependency.
+ *
+ * Contract (unchanged for consumers, e.g. BottomHub.qml):
+ *   - active: { strength, ssid } for the connected Wi-Fi network, else null.
+ *   - activeEthernet: { connected: true } when a wired device is connected, else null.
+ *   - connecting: true while NetworkManager reports an in-flight (re)connection.
+ */
 Singleton {
     id: root
 
-    property var active: null
-    property var activeEthernet: null
-
-    function refresh(): void {
-        deviceStatus.running = true;
-        wifiStatus.running = true;
+    function deviceOfType(type): var {
+        return (Networking.devices?.values ?? []).find(device => device.type === type) ?? null;
     }
 
-    Component.onCompleted: refresh()
+    readonly property var wifiDevice: deviceOfType(DeviceType.Wifi)
+    readonly property var wiredDevice: deviceOfType(DeviceType.Wired)
 
-    Process {
-        id: deviceStatus
-        command: ["nmcli", "-t", "-f", "TYPE,STATE,CONNECTION", "device", "status"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const rows = text.split("\n").map(line => line.split(":"));
-                root.activeEthernet = rows.some(row => row[0] === "ethernet" && row[1] === "connected")
-                    ? { connected: true } : null;
-            }
-        }
-    }
+    readonly property var activeWifiNetwork: wifiDevice
+        ? (wifiDevice.networks?.values ?? []).find(network => network.connected) ?? null
+        : null
 
-    Process {
-        id: wifiStatus
-        command: ["nmcli", "-t", "-f", "IN-USE,SIGNAL,SSID", "device", "wifi", "list", "--rescan", "no"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const row = text.split("\n").map(line => line.split(":")).find(parts => parts[0] === "*");
-                root.active = row ? { strength: Number(row[1]) || 0, ssid: row.slice(2).join(":") } : null;
-            }
-        }
-    }
+    readonly property var active: activeWifiNetwork
+        ? { strength: Math.round(activeWifiNetwork.signalStrength ?? 0), ssid: activeWifiNetwork.name }
+        : null
 
-    Timer { interval: 10000; repeat: true; running: true; onTriggered: root.refresh() }
+    readonly property var activeEthernet: (wiredDevice?.connected ?? false)
+        ? { connected: true } : null
+
+    readonly property bool connecting:
+        (wifiDevice?.state === ConnectionState.Connecting)
+        || (activeWifiNetwork?.stateChanging ?? false)
 }
