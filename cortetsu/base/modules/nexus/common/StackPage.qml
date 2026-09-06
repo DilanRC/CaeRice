@@ -100,7 +100,7 @@ StackView {
     LoggingCategory {
         id: logCat
 
-        name: "caelestia.nexus"
+        name: "cortetsu.nexus"
         defaultLogLevel: LoggingCategory.Info
     }
 
