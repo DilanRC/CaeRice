@@ -24,6 +24,14 @@ criteria = {
     "animacion corta": "CortetsuDesign.motionFastMs" in rail,
     "tooltip de aplicaciones": "modelData.title" in rail and "ToolTip" in rail,
     "tooltip de tray": "modelData.title" in tray and "ToolTip" in tray,
+    "tooltip de tray con superficie": all(
+        token in tray
+        for token in (
+            "contentItem: CortetsuText",
+            "CortetsuTypography.labelSmallPx",
+            "baseColor: CortetsuDesign.colorTetsu",
+        )
+    ),
     "contador expandido": 'root.notificationCount > 9 ? qsTr("9+")' in status,
     "audio Cortetsu": "volumeIcon" in status and "volumeWheel" in status,
     "wifi first-party": 'attachedControlRequested("network"' in status,

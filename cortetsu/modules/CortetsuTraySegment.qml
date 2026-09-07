@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import "CortetsuDesign.js" as CortetsuDesign
+import "CortetsuTypography.js" as CortetsuTypography
 
 Item {
     id: root
@@ -101,6 +102,18 @@ Item {
                         && (trayMouse.containsMouse || trayItem.activeFocus)
                     delay: CortetsuDesign.motionDeliberateMs
                     text: trayItem.modelData.title
+
+                    background: CortetsuSurface {
+                        radiusValue: CortetsuDesign.radiusSmall
+                        baseColor: CortetsuDesign.colorTetsu
+                        outlined: true
+                    }
+
+                    contentItem: CortetsuText {
+                        text: trayTooltip.text
+                        textSize: CortetsuTypography.labelSmallPx
+                        color: CortetsuDesign.colorWashi
+                    }
                 }
             }
         }

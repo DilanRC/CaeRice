@@ -160,6 +160,9 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "width: visible ? implicitWidth : 0" in tray
     assert "modelData.title" in tray
     assert "ToolTip" in tray
+    assert "CortetsuTypography.labelSmallPx" in tray
+    assert "baseColor: CortetsuDesign.colorTetsu" in tray
+    assert "contentItem: CortetsuText" in tray
 
     status = source["CortetsuStatusSegment.qml"]
     for signal in (
