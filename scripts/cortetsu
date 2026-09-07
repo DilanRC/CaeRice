@@ -319,6 +319,7 @@ test_cmd() {
     local test_path
     for test_path in "${tests[@]}"; do run_python_test "$test_path"; done
     run_node_test "cortetsu/tests/test-wallpaper-search.node.js"
+    run_node_test "scripts/features/test-ascension-motion.js"
     run_bash_test "scripts/features/test-v2-migration-unreadable.sh"
     run_bash_test "cortetsu/tests/test-calendar-readonly.sh"
     run_bash_test "cortetsu/tests/test-legacy-process-migration-eval.sh"

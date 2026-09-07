@@ -200,6 +200,8 @@ Scope {
 
         closeAllLaunchers();
         closeAllPanels();
+        popouts.cancelClose();
+        popouts.detachedMode = "";
         popouts.bottomAnchorCenter = anchorCenter;
         popouts.bottomAttached = true;
         popouts.currentName = mode;
@@ -214,6 +216,18 @@ Scope {
         function show(): void { hubRoot.setShown(true); }
         function hide(): void { hubRoot.setShown(false); }
         function isShown(): bool { return hubRoot.shown; }
+        // Read-only runtime evidence for focus, lifetime and monitor ownership.
+        function inspect(): string {
+            return JSON.stringify(CortetsuScreens.screens.map(screen => {
+                const state = CortetsuShellState.forScreen(screen);
+                const popup = CortetsuShellState.componentsFor(screen)?.popouts;
+                return { screen: screen.name, launcher: state?.launcher ?? false,
+                    utilities: state?.utilities ?? false, sidebar: state?.sidebar ?? false,
+                    popup: popup?.currentName ?? "", open: popup?.hasCurrent ?? false,
+                    closing: popup?.closing ?? false, detached: popup?.detachedMode ?? "",
+                    anchor: popup?.bottomAnchorCenter ?? -1, focus: popup?.activeFocus ?? false };
+            }));
+        }
         function launcher(): void {
             const state = CortetsuShellState.forActive();
             if (!state)

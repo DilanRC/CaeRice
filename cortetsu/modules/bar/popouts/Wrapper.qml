@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import ".."
 import "../.."
+import "../../CortetsuDesign.js" as CortetsuDesign
 
 Item {
     id: root
@@ -39,8 +40,13 @@ Item {
         animCurve = Easing.OutCubic;
     }
 
-    function detach(mode: string): void {
+    function cancelClose(): void {
+        closeTimer.stop();
         closing = false;
+    }
+
+    function detach(mode: string): void {
+        cancelClose();
         hasCurrent = true;
         bottomAttached = false;
         bottomAnchorCenter = -1;
@@ -70,7 +76,7 @@ Item {
 
     Timer {
         id: closeTimer
-        interval: 180
+        interval: CortetsuDesign.motionFastMs
         repeat: false
         onTriggered: {
             root.hasCurrent = false;
@@ -83,8 +89,7 @@ Item {
 
     onHasCurrentChanged: {
         if (hasCurrent) {
-            closing = false;
-            closeTimer.stop();
+            cancelClose();
             root.forceActiveFocus();
             Qt.callLater(() => root.forceActiveFocus());
             return;
