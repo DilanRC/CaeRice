@@ -125,6 +125,7 @@ Item {
         enabled: !root.disabled
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+        onPressed: root.forceActiveFocus()
         onClicked: root.clicked()
         onWheel: event => {
             root.wheel(event.angleDelta.y);

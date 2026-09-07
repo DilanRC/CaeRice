@@ -197,6 +197,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                onPressed: parent.forceActiveFocus()
                 onClicked: root.calendarRequested()
             }
 

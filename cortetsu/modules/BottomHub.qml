@@ -650,10 +650,10 @@ Scope {
                 }
             }
 
-            focusable: toasts.visibleToasts.length > 0
+            focusable: true
             WlrLayershell.keyboardFocus: toasts.visibleToasts.length > 0
                 ? WlrKeyboardFocus.Exclusive
-                : WlrKeyboardFocus.None
+                : WlrKeyboardFocus.OnDemand
 
             anchors.bottom: true
             margins.bottom: 2

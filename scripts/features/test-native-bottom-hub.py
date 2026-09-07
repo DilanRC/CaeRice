@@ -111,6 +111,8 @@ def assert_controller(text: str) -> None:
     assert "/cortetsu/pomodoro-notification.json" in text
     assert "/cortetsu/pomodoro-notification.json" not in toaster
     assert "/caelestia/pomodoro-notification.json" not in toaster
+    assert "focusable: true" in text
+    assert "WlrKeyboardFocus.OnDemand" in text
 
 
 def assert_view_file(path: Path, text: str) -> None:
@@ -152,6 +154,7 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "width: implicitWidth" in rail
     assert "modelData.title" in rail
     assert "ToolTip" in rail
+    assert "onPressed: appItem.forceActiveFocus()" in rail
 
     tray = source["CortetsuTraySegment.qml"]
     assert "signal hoverRequested(string itemId, real centerX)" in tray
@@ -160,6 +163,7 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "width: visible ? implicitWidth : 0" in tray
     assert "modelData.title" in tray
     assert "ToolTip" in tray
+    assert "onPressed: trayItem.forceActiveFocus()" in tray
     assert "CortetsuTypography.labelSmallPx" in tray
     assert "baseColor: CortetsuDesign.colorTetsu" in tray
     assert "contentItem: CortetsuText" in tray
@@ -177,17 +181,20 @@ def assert_view_contract(source: dict[str, str]) -> None:
     assert "StatusPill {" in status
     assert "width: implicitWidth" in status
     assert 'root.notificationCount > 9 ? qsTr("9+")' in status
+    assert "onPressed: parent.forceActiveFocus()" in status
 
     button = source["HubButton.qml"]
     assert "CortetsuIcon {" in button
     assert "CortetsuSurface {" in button
     assert "CortetsuDesign.hoverScale" in button
+    assert "onPressed: root.forceActiveFocus()" in button
 
     pill = source["StatusPill.qml"]
     assert "CortetsuIcon {" in pill
     assert "CortetsuText {" in pill
     assert "MaterialIcon" not in pill
     assert "StyledText" not in pill
+    assert "onPressed: item.forceActiveFocus()" in pill
 
     icon = source["CortetsuIcon.qml"]
     assert 'CortetsuTypography.iconFamily' in icon

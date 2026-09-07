@@ -140,6 +140,8 @@ Item {
                         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
                         cursorShape: Qt.PointingHandCursor
 
+                        onPressed: appItem.forceActiveFocus()
+
                         onClicked: event => {
                             if (event.button === Qt.RightButton) {
                                 root.togglePinnedRequested(appItem.modelData.key);

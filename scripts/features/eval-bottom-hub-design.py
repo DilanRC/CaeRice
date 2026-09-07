@@ -11,6 +11,7 @@ rail = (modules / "CortetsuAppRail.qml").read_text(encoding="utf-8")
 tray = (modules / "CortetsuTraySegment.qml").read_text(encoding="utf-8")
 status = (modules / "CortetsuStatusSegment.qml").read_text(encoding="utf-8")
 mode = (modules / "CortetsuModeSegment.qml").read_text(encoding="utf-8")
+workspace = (modules / "CortetsuWorkspaceDots.qml").read_text(encoding="utf-8")
 
 criteria = {
     "superficie exterior transparente": 'color: "transparent"' in hub,
@@ -42,6 +43,17 @@ criteria = {
     "quick settings first-party": "toggleUtilitiesFor" in hub,
     "notificaciones first-party": "toggleSidebarFor" in hub,
     "anclaje de popups": "attachedControlRequested" in view and "bottomAnchorCenter" in hub,
+    "foco bajo demanda": "focusable: true" in hub and "WlrKeyboardFocus.OnDemand" in hub,
+    "foco al presionar": all(
+        token in text
+        for text, token in (
+            (view, "CortetsuAppRail"),
+            (rail, "onPressed: appItem.forceActiveFocus()"),
+            (tray, "onPressed: trayItem.forceActiveFocus()"),
+            (status, "onPressed: parent.forceActiveFocus()"),
+            (workspace, "onPressed: workspaceDot.forceActiveFocus()"),
+        )
+    ),
 }
 
 if "toggleOverviewFor" in hub or 'icon: "view_quilt"' in hub:

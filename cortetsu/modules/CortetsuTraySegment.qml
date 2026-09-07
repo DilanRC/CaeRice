@@ -78,6 +78,7 @@ Item {
                     hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     cursorShape: Qt.PointingHandCursor
+                    onPressed: trayItem.forceActiveFocus()
                     onEntered: root.hoverRequested(
                         trayItem.modelData.id,
                         trayItem.x + trayItem.width / 2

@@ -66,6 +66,7 @@ Row {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                onPressed: workspaceDot.forceActiveFocus()
                 onClicked: root.workspaceRequested(workspaceDot.wsId)
             }
 

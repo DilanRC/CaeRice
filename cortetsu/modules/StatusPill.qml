@@ -208,6 +208,7 @@ Item {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+            onPressed: item.forceActiveFocus()
             onClicked: item.clicked()
         }
 
