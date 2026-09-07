@@ -22,5 +22,8 @@ assert "color: CortetsuDesign.colorScrim" in content_window
 assert "id: viewportBackground" in overview_content
 assert "acceptedButtons: Qt.LeftButton" in overview_content
 assert "Keys.onSpacePressed" in overview_content
+assert "DragHandler" in card
+assert "dragHandler.active" in card
+assert "CanTakeOverFromAnything" in card
 
 print("PASS: Overview wrapper and window cards use Cortetsu visual primitives")

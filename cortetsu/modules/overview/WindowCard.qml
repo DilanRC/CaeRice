@@ -499,13 +499,24 @@ Item {
         width: 1
         height: 1
 
-        Drag.active: pointer.drag.active
+        Drag.active: pointer.drag.active || dragHandler.active
         Drag.source: root
         Drag.keys: ["overview-window"]
         Drag.supportedActions: Qt.MoveAction
         Drag.proposedAction: Qt.MoveAction
         Drag.hotSpot.x: 0
         Drag.hotSpot.y: 0
+    }
+
+    DragHandler {
+        id: dragHandler
+        target: dragPoint
+        acceptedButtons: Qt.LeftButton
+        grabPermissions: PointerHandler.CanTakeOverFromAnything
+        onActiveChanged: {
+            if (!active && dragPoint.Drag.active)
+                dragPoint.Drag.drop();
+        }
     }
 
     MouseArea {
@@ -526,10 +537,6 @@ Item {
             drag.active
                 ? Qt.ClosedHandCursor
                 : Qt.PointingHandCursor
-
-        drag.target: dragPoint
-        drag.threshold: 10
-        drag.smoothed: false
 
         onEntered:
             root.selectRequested(root.client)
