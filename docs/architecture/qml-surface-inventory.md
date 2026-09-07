@@ -30,7 +30,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Tray submenus | `base/modules/bar/popouts/TrayMenu.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | menu rows, separators, submenu state | FUNCTIONAL | nested focus and close feedback | P1 |
 | OSD | `modules/osd/Wrapper.qml`, `Content.qml` | OSD host and indicators | VERIFIED | two-monitor volume trigger, shared indicator surface, bounded levels, restored volume, and clean journal verified; brightness wheel remains a separate device-dependent check | P2 |
 | Toasts | `modules/utilities/toasts/Toasts.qml`, `ToastItem.qml` | toaster service, action rows | VERIFIED | two-monitor runtime, stacking, five-second expiration, mouse and Escape dismissal verified; full notification-center promotion remains separate | P1 |
-| Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | FUNCTIONAL | keyboard selection, selected-card identity, scrim, and focused-monitor routing verified; many-window, empty-workspace, drag, close, and floating-action matrix remains | P0 |
+| Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | VERIFIED | multi-window adaptive grid, empty-workspace navigation, keyboard selection, card close, drag, floating action, scrim, focused-monitor routing, Escape and clean journal verified | P0 |
 | Display | `modules/display/Wrapper.qml`, `Content.qml` | display controller and editor | VERIFIED | two-monitor topology, layout controls, dry-run/save surface, IPC open and Escape close verified | P2 |
 | Hardware | `modules/hardware/Wrapper.qml`, `Content.qml` | hardware controller, metric cards | VERIFIED | live CPU/memory/storage/GPU/battery metrics, sensor cards, loading pipeline, IPC open and Escape close verified | P2 |
 | Wallpaper | `modules/wallpaper/Wrapper.qml`, `Content.qml` | `CortetsuWallpapers`, orbit controls | VERIFIED | live orbit previews, categories, current selection, Cancel/Random/Apply actions, IPC open and Escape close verified | P2 |
@@ -117,3 +117,15 @@ popup on the right monitor with a live Kitty title/class and screencopy
 preview. The Details action remains connected to the detached Window Info
 surface; Escape closed the attached popup, and the shell stayed active with
 zero restarts and no new warning/error/critical journal entries.
+
+## Overview verification evidence
+
+The promoted runtime rendered the adaptive overview grid with live windows on
+the right monitor, workspace/monitor badges and the empty workspace chips.
+Keyboard selection and `F` floating action were exercised and the floating
+state was restored. A temporary Kitty card was closed through the card mouse
+action, and a second temporary card was dragged from workspace 1 to workspace
+2 through the visible workspace rail. Clicking the empty workspace 3 chip
+closed Overview and Hyprland confirmed `eDP-1` on workspace 3. Escape closed
+the overview sequence; the shell stayed active with zero restarts and no new
+warning/error/critical journal entries.
