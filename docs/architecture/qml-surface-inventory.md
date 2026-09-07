@@ -26,8 +26,8 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 | Lock Status | `modules/bar/popouts/CortetsuLockStatusPopup.qml`, `base/modules/bar/popouts/LockStatus.qml` | lock state, action rows | VERIFIED | live Caps/Num indicator state, first-party service ownership and Escape close verified | P2 |
 | Active Window | `modules/bar/popouts/CortetsuActiveWindowPopup.qml`, `base/modules/bar/popouts/ActiveWindow.qml` | Hyprland active toplevel | VERIFIED | live title/class, preview, Details action, attached host, keyboard close and clean journal verified | P2 |
 | Window Info | `modules/bar/popouts/CortetsuWindowInfoPopup.qml`, `base/modules/windowinfo/WindowInfo.qml` | preview, details and buttons | VERIFIED | active-window details, workspace controls, keyboard focus, mouse Done, Escape, and two-monitor detached host verified | P2 |
-| Tray | `modules/CortetsuTraySegment.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | tray items and nested menu | FUNCTIONAL | row rhythm, nested affordance, keyboard | P1 |
-| Tray submenus | `base/modules/bar/popouts/TrayMenu.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | menu rows, separators, submenu state | FUNCTIONAL | nested focus and close feedback | P1 |
+| Tray | `modules/CortetsuTraySegment.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | tray items and nested menu | VERIFIED | SNI item activation, row rhythm, focus-visible menu rows and clean close verified | P1 |
+| Tray submenus | `base/modules/bar/popouts/TrayMenu.qml`, `modules/bar/popouts/CortetsuTrayMenu.qml` | menu rows, separators, submenu state | VERIFIED | `Right` opens nested state, `Left` returns to parent, `Escape` closes and clean journal verified | P1 |
 | OSD | `modules/osd/Wrapper.qml`, `Content.qml` | OSD host and indicators | VERIFIED | two-monitor volume trigger, shared indicator surface, bounded levels, restored volume, and clean journal verified; brightness wheel remains a separate device-dependent check | P2 |
 | Toasts | `modules/utilities/toasts/Toasts.qml`, `ToastItem.qml` | toaster service, action rows | VERIFIED | two-monitor runtime, stacking, five-second expiration, mouse and Escape dismissal verified; full notification-center promotion remains separate | P1 |
 | Overview | `modules/overview/Wrapper.qml`, `Content.qml`, `WindowCard.qml` | Hyprland windows/workspaces | VERIFIED | multi-window adaptive grid, empty-workspace navigation, keyboard selection, card close, drag, floating action, scrim, focused-monitor routing, Escape and clean journal verified | P0 |
@@ -117,6 +117,16 @@ popup on the right monitor with a live Kitty title/class and screencopy
 preview. The Details action remains connected to the detached Window Info
 surface; Escape closed the attached popup, and the shell stayed active with
 zero restarts and no new warning/error/critical journal entries.
+
+## Tray and submenu verification evidence
+
+The promoted runtime exposed the live ChatGPT StatusNotifier item in the
+Tray segment on the left monitor. Clicking it opened the first-party menu
+with Running, Recent, More, New Chat, Open ChatGPT and Quit states. `Tab`
+cycled through menu rows with a visible focus outline. `Right` opened the
+More submenu with its action rows; `Left` returned to the parent menu and
+`Escape` closed the retained menu. The shell stayed active with zero
+restarts and no new warning/error/critical journal entries.
 
 ## Overview verification evidence
 
