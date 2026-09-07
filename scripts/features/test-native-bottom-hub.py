@@ -141,6 +141,11 @@ def assert_view_contract(source: dict[str, str]) -> None:
     workspace = source["CortetsuWorkspaceDots.qml"]
     assert "signal workspaceRequested(int workspaceId)" in workspace
     assert "CortetsuDesign.motionStandardMs" in workspace
+    assert "function focusWorkspace(workspaceId): void" in workspace
+    assert "function activateWorkspace(workspaceId): void" in workspace
+    assert "restoreFocus.workspaceId = workspaceId" in workspace
+    assert "restoreFocus.restart()" in workspace
+    assert "onTriggered: root.focusWorkspace(workspaceId)" in workspace
 
     rail = source["CortetsuAppRail.qml"]
     for signal in (

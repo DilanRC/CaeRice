@@ -44,6 +44,16 @@ criteria = {
     "notificaciones first-party": "toggleSidebarFor" in hub,
     "anclaje de popups": "attachedControlRequested" in view and "bottomAnchorCenter" in hub,
     "foco bajo demanda": "focusable: true" in hub and "WlrKeyboardFocus.OnDemand" in hub,
+    "foco conserva navegacion de workspaces": all(
+        token in workspace
+        for token in (
+            "function focusWorkspace(workspaceId): void",
+            "function activateWorkspace(workspaceId): void",
+            "restoreFocus.workspaceId = workspaceId",
+            "restoreFocus.restart()",
+            "onTriggered: root.focusWorkspace(workspaceId)",
+        )
+    ),
     "foco al presionar": all(
         token in text
         for text, token in (

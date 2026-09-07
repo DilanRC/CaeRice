@@ -11,6 +11,12 @@ Row {
 
     signal workspaceRequested(int workspaceId)
 
+    function focusWorkspace(workspaceId): void {
+        const target = root.children.find(child => child.wsId === workspaceId);
+        if (target)
+            target.forceActiveFocus();
+    }
+
     spacing: 5
 
     Item {
@@ -30,6 +36,12 @@ Row {
             readonly property bool active: wsId === root.activeWsId
             readonly property bool occupied: root.occupiedWorkspaceIds.includes(wsId)
 
+            function activateWorkspace(workspaceId): void {
+                root.workspaceRequested(workspaceId);
+                restoreFocus.workspaceId = workspaceId;
+                restoreFocus.restart();
+            }
+
             width: active ? 18 : 8
             height: 28
             focus: true
@@ -40,6 +52,14 @@ Row {
                     duration: CortetsuDesign.motionStandardMs
                     easing.type: Easing.OutCubic
                 }
+            }
+
+            Timer {
+                id: restoreFocus
+                interval: 60
+                repeat: false
+                property int workspaceId: workspaceDot.wsId
+                onTriggered: root.focusWorkspace(workspaceId)
             }
 
             Rectangle {
@@ -67,14 +87,18 @@ Row {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onPressed: workspaceDot.forceActiveFocus()
-                onClicked: root.workspaceRequested(workspaceDot.wsId)
+                onClicked: workspaceDot.activateWorkspace(workspaceDot.wsId)
             }
 
-            Keys.onEnterPressed: root.workspaceRequested(workspaceDot.wsId)
-            Keys.onReturnPressed: root.workspaceRequested(workspaceDot.wsId)
-            Keys.onSpacePressed: root.workspaceRequested(workspaceDot.wsId)
-            Keys.onLeftPressed: root.workspaceRequested(Math.max(root.workspaceOffset + 1, workspaceDot.wsId - 1))
-            Keys.onRightPressed: root.workspaceRequested(Math.min(root.workspaceOffset + root.workspaceCount, workspaceDot.wsId + 1))
+            Keys.onEnterPressed: workspaceDot.activateWorkspace(workspaceDot.wsId)
+            Keys.onReturnPressed: workspaceDot.activateWorkspace(workspaceDot.wsId)
+            Keys.onSpacePressed: workspaceDot.activateWorkspace(workspaceDot.wsId)
+            Keys.onLeftPressed: workspaceDot.activateWorkspace(
+                Math.max(root.workspaceOffset + 1, workspaceDot.wsId - 1)
+            )
+            Keys.onRightPressed: workspaceDot.activateWorkspace(
+                Math.min(root.workspaceOffset + root.workspaceCount, workspaceDot.wsId + 1)
+            )
         }
     }
 

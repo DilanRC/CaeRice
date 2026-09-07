@@ -14,7 +14,7 @@ and clean journal evidence. Technical gates alone do not promote a surface.
 
 | Surface | Entrypoint | Direct visual dependencies | Maturity | Main product gap | Priority |
 | --- | --- | --- | --- | --- | --- |
-| BottomHub | `modules/BottomHub.qml`, `modules/CortetsuBottomHubView.qml` | `CortetsuAppRail`, `CortetsuModeSegment`, `CortetsuStatusSegment`, `CortetsuTraySegment` | FUNCTIONAL | density, hierarchy, keyboard focus, state polish | P0 |
+| BottomHub | `modules/BottomHub.qml`, `modules/CortetsuBottomHubView.qml` | `CortetsuAppRail`, `CortetsuModeSegment`, `CortetsuStatusSegment`, `CortetsuTraySegment` | VERIFIED | multi-monitor bar, segment hierarchy, on-demand focus, workspace navigation and popup anchoring verified | P0 |
 | Launcher | `modules/launcher/Wrapper.qml`, `Content.qml`, `AppList.qml`, `ContentList.qml` | launcher services, `CortetsuSearchBar`, item delegates | VERIFIED | runtime search/selection/Enter launch, Escape close, wallpaper query empty state, two-monitor visual inspection and clean journal verified | P1 |
 | Quick Settings / Utilities | `modules/utilities/Wrapper.qml`, `Content.qml` | utility cards, `CortetsuSurface`, toggle controls | VERIFIED | two-monitor composition, Keep-awake feedback and restoration, Notification controls activation, keyboard contract and Escape close verified | P1 |
 | Notifications | `modules/sidebar/Content.qml`, `modules/notifications/Wrapper.qml`, `Notification.qml` | notification model, action list, scroll container | VERIFIED | real notify-send card, two-monitor toast, always-visible Dismiss, empty state, Escape close, and clean journal verified | P1 |
@@ -127,6 +127,19 @@ cycled through menu rows with a visible focus outline. `Right` opened the
 More submenu with its action rows; `Left` returned to the parent menu and
 `Escape` closed the retained menu. The shell stayed active with zero
 restarts and no new warning/error/critical journal entries.
+
+## BottomHub verification evidence
+
+The promoted runtime rendered the continuous BottomHub on both 1080p
+monitors with the mode, app, Tray and status segments aligned in their
+respective islands. The bar remained non-stealing at startup and switched to
+on-demand keyboard focus after interaction. On `eDP-1`, clicking the network
+control opened the attached popup on the same monitor; `Tab` produced a
+visible row focus and `Escape` closed it. Clicking a workspace dot moved the
+monitor from workspace 1 to 3; `Left` then navigated 3 to 2 and 2 to 1 while
+the dot focus was restored to the destination. App-rail focus feedback was
+visible through its tooltip. The shell stayed active with zero restarts and
+no new warning/error/critical journal entries.
 
 ## Overview verification evidence
 
